@@ -26,15 +26,15 @@ export const mainOutRoutes: AppRouteModule[] = [
       ignoreAuth: true,
     },
   },
-  {
-    path: '/test',
-    name: 'main',
-    component: () => import('/@/views/main/test.vue'),
-    meta: {
-      title: '城北街道述求管理平台',
-      ignoreAuth: true,
-    },
-  },
+  //   {
+  //     path: '/test',
+  //     name: 'test',
+  //     component: () => imp../../views/main/index.vuet.vue'),
+  //     meta: {
+  //       title: '城北街道述求管理平台',
+  //       ignoreAuth: true,
+  //     },
+  //   },
 ];
 
 export const mainOutRouteNames = mainOutRoutes.map((item) => item.name);
