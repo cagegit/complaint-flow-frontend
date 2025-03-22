@@ -161,7 +161,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(21, 51, 50);
   }
   .chart {
     width: 100%;

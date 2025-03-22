@@ -15,29 +15,6 @@
     },
   });
 
-  const chartRef = ref(null);
-  let chartInstance = null;
-
-  function processData(data) {
-    const total = data.reduce((sum, item) => sum + item.value, 0);
-    const result = [...data];
-
-    if (total < 100) {
-      result.push({
-        value: 100 - total,
-        name: 'Empty',
-        itemStyle: {
-          color: 'rgba(200, 200, 200, 0.1)', // 透明扇区
-        },
-        color: '200, 200, 200',
-        label: { show: false }, // 不显示标签
-        tooltip: { show: false }, // 不显示提示
-      });
-    }
-
-    return result;
-  }
-
   // Helper functions with fixes
   const getCoordinates = (startArc, endArc) => {
     const posi = [
@@ -73,14 +50,21 @@
     return res;
   };
 
+  const chartRef = ref(null);
+  let chartInstance = null;
+
   const setChartOption = () => {
     if (!chartInstance) return;
-    console.log('setChartOption', chartRef.value);
-    const data = processData(props.seriesData);
-    const series = [];
-    let startAngle = 180;
-    // 已经按100补齐
-    const total = 100;
+
+    const data = props.seriesData;
+
+    // Calculate total for percentages
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+
+    // Create series data with gradients
+    const seriesData = [];
+    let startAngle = 0;
+
     data.forEach((item, index) => {
       const angle = (item.value / total) * 360;
       const endAngle = startAngle + angle;
@@ -97,7 +81,7 @@
       const startColor = `rgba(${item.color}, 0)`;
       const endColor = `rgba(${item.color}, 1)`;
 
-      let targetSerie = {
+      seriesData.push({
         name: `${item.name}`,
         value: item.value,
         itemStyle: {
@@ -113,35 +97,26 @@
             ],
           },
         },
-      };
-      if (index === data.length - 1) {
-        targetSerie = {
-          ...targetSerie,
-          itemStyle: {
-            color: 'rgba(255,25255,255,0.1)',
-          },
-        };
-      }
-      series.push(targetSerie);
+      });
 
       startAngle = endAngle;
     });
 
+    console.log(seriesData);
+
+    // ECharts option
     const option = {
       tooltip: {
         trigger: 'item',
       },
       series: [
         {
-          name: '满意度',
           type: 'pie',
-          radius: ['50%', '55%'], // 调细圆环
-          startAngle: -90,
-          avoidLabelOverlap: false,
-          emphasis: { disabled: true },
-          itemStyle: {
-            borderColor: 'transparent',
-          },
+          radius: ['50%', '70%'],
+          center: ['50%', '50%'],
+          startAngle: 90,
+          data: seriesData,
+          silent: true,
           label: {
             alignTo: 'edge',
             formatter: '{name|{b}}\n{time|{c} 小时}',
@@ -157,7 +132,7 @@
               time: {
                 fontSize: 12,
                 padding: [6, 0, 0, 0],
-                color: '#999',
+                color: '#fff',
               },
             },
           },
@@ -174,17 +149,6 @@
               labelLinePoints: points,
             };
           },
-          title: {
-            text: '100%',
-            left: 'center',
-            top: 'center',
-            textStyle: {
-              color: '#fff',
-              fontSize: 28,
-              fontWeight: 'bold',
-            },
-          },
-          data: series,
         },
       ],
     };
