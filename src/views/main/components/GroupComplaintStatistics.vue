@@ -7,24 +7,11 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
+  import blockImage from '@/assets/images/dashboard/block.png';
+  import { CASE_COLOR, PERCENT_COLOR, tooltip, calculateDynamicYAxis } from './common';
 
   const chartRef = ref(null);
   let chart = null;
-
-  // Sample data extracted from the image
-  const chartData = {
-    dateRange: '2024年10月12日——2025年1月11日',
-    dates: [],
-    caseNumbers: [
-      140, 154, 154, 128, 154, 165, 146, 165, 121, 124, 100, 69, 100, 139, 80, 96, 157, 92, 105, 120, 150, 112, 154, 254, 154, 114, 84, 94, 154,
-    ],
-    satisfactionRates: [98, 92, 92, 93, 94, 86, 82, 93, 91, 87, 99, 96, 98, 92, 100, 99, 92, 99, 99, 98, 81, 38, 54, 52, 100, 56, 89, 32, 54, 87],
-  };
-
-  const dateRange = 30;
-  Array.from({ length: dateRange }, (_, index) => {
-    chartData.dates.push(`${index + 1}`);
-  });
 
   const initChart = () => {
     if (chartRef.value) {
@@ -32,14 +19,13 @@
 
       // 数据抽离
       const categories = Array.from({ length: 15 }, (_, i) => (i + 1).toString());
-      const barData = [173, 117, 125, 103, 172, 124, 173, 117, 125, 103, 172, 124, 125, 103, 172];
+      const barData = [173, 117, 125, 103, 40, 124, 173, 117, 115, 103, 172, 124, 125, 103, 172];
       const satisfactionRate = [96, 89, 95, 87, 95, 83, 96, 89, 95, 87, 95, 83, 95, 87, 95]; // 百分比
 
+      const { max, interval } = calculateDynamicYAxis(barData, 10);
+
       const option = {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-        },
+        tooltip,
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
         xAxis: [
           {
@@ -61,22 +47,27 @@
             type: 'value',
             name: '案件数量/件',
             axisLine: { lineStyle: { color: '#ccc' } },
-            max: function (value) {
-              return Math.ceil(value.max * 1.2);
-            },
             splitLine: {
-              lineStyle: {
-                color: 'rgba(255,255,255,0.3)',
-              },
+              show: false,
             },
+            min: 0,
+            max,
+            interval,
           },
           {
             type: 'value',
             name: '满意率',
             axisLabel: { formatter: '{value}%' },
             axisLine: { lineStyle: { color: '#ccc' } },
+            min: 0,
             max: 100,
-            splitLine: { show: false },
+            interval: 10,
+            splitLine: {
+              lineStyle: {
+                color: 'rgba(255,255,255,0.3)',
+              },
+            },
+            alignTicks: true,
           },
         ],
         series: [
@@ -94,17 +85,34 @@
                 x2: 0,
                 y2: 0,
                 colorStops: [
-                  { offset: 0, color: 'rgba(34, 214, 242, 0)' },
-                  { offset: 1, color: 'rgba(34, 214, 242, 1)' },
+                  { offset: 0, color: `rgba(${CASE_COLOR.rgbStr}, 0)` },
+                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 1)` },
                 ],
               },
             },
             label: {
               show: true,
               position: 'top',
-              align: 'center', // 右对齐
-              distance: 5,
-              formatter: '{c}',
+              color: '#fff',
+              formatter: function (params) {
+                return `{value|${params.value}}\n{block|}`;
+              },
+              rich: {
+                value: {
+                  color: '#fff',
+                  align: 'center',
+                  padding: [0, 0, 4, 0],
+                },
+                block: {
+                  height: 2,
+                  width: 14,
+                  backgroundColor: {
+                    image: blockImage,
+                  },
+                  align: 'center',
+                },
+              },
+              offset: [0, 6], // 调整标签位置，向上偏移
             },
           },
           {
@@ -117,12 +125,13 @@
             symbolSize: 8,
             max: 100,
             itemStyle: {
-              color: 'rgba(255, 113, 35, 1)',
+              color: PERCENT_COLOR.rgb,
             },
             label: {
               show: true,
               position: 'top',
               formatter: '{c}%',
+              color: '#fff',
             },
           },
         ],

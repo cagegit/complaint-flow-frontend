@@ -7,6 +7,7 @@
 <script setup>
   import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
   import * as echarts from 'echarts';
+  import { getCoordinates } from './common';
 
   const props = defineProps({
     seriesData: {
@@ -37,41 +38,6 @@
 
     return result;
   }
-
-  // Helper functions with fixes
-  const getCoordinates = (startArc, endArc) => {
-    const posi = [
-      Math.sin(startArc),
-      -Math.cos(startArc), // Fixed: negative sign added
-      Math.sin(endArc),
-      -Math.cos(endArc), // Fixed: negative sign added
-    ];
-    const dx = posi[2] - posi[0];
-    const dy = posi[3] - posi[1];
-    return getLocation(dx, dy);
-  };
-
-  const getLocation = (dx, dy) => {
-    const tanV = dx / dy;
-    const directsign = Math.abs(tanV) < 1;
-    const t = directsign ? tanV : 1 / tanV;
-    const sign1 = t > 0 ? 1 : -1;
-    const sign2 = dx > 0 ? 1 : -1;
-    const sign = directsign ? sign1 * sign2 : sign2;
-
-    // Fixed: corrected numerical constants
-    const group1 = [0.5 - (sign * t) / 2, 0.5 + (sign * t) / 2];
-    const group2 = sign > 0 ? [0, 1] : [1, 0];
-
-    const group = [...group1, ...group2];
-    const keys = directsign ? ['x', 'x2', 'y', 'y2'] : ['y', 'y2', 'x', 'x2'];
-
-    let res = {};
-    keys.forEach((k, idx) => {
-      res[k] = group[idx];
-    });
-    return res;
-  };
 
   const setChartOption = () => {
     if (!chartInstance) return;

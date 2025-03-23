@@ -7,6 +7,8 @@
 <script setup>
   import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
   import * as echarts from 'echarts';
+  import blockImage from '@/assets/images/dashboard/block.png';
+  import { calculateDynamicYAxis, tooltip } from './common';
 
   const props = defineProps({
     seriesData: {
@@ -21,6 +23,8 @@
 
   const chartRef = ref(null);
   let chartInstance = null;
+
+  const { max, interval } = calculateDynamicYAxis(props.seriesData[0].data);
 
   // 通用 pattern 生成器
   const createPattern = (color) => {
@@ -37,10 +41,7 @@
   const setChartOption = () => {
     if (!chartInstance) return;
     const option = {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' },
-      },
+      tooltip,
       xAxis: {
         data: props.xAxisData,
         axisTick: {
@@ -64,13 +65,14 @@
             color: '#fff',
           },
           position: 'left',
-          max: function (value) {
-            return Math.ceil(value.max * 1.2);
-          },
+          max,
+          interval,
           axisLabel: {
             color: '#fff',
           },
-          splitLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.6)' } },
+          splitLine: {
+            show: false,
+          },
         },
         {
           type: 'value',
@@ -80,11 +82,19 @@
           },
           position: 'right',
           max: 100,
+          min: 0,
+          interval: 20,
           axisLabel: {
             formatter: '{value}%',
             color: '#fff',
           },
-          splitLine: { show: false },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: 'rgba(255,255,255,0.6)',
+            },
+          },
+          alignTicks: true,
         },
       ],
       series: props.seriesData.map((s) => ({
@@ -99,8 +109,25 @@
           show: true,
           position: 'top',
           color: '#fff',
-          fontSize: 12,
-          formatter: s.labelFomatter,
+          formatter: function (params) {
+            return `{value|${params.value}}\n{block|}`;
+          },
+          rich: {
+            value: {
+              color: '#fff',
+              align: 'center',
+              padding: [0, 0, 4, 0],
+            },
+            block: {
+              height: 2,
+              width: 14,
+              backgroundColor: {
+                image: blockImage,
+              },
+              align: 'center',
+            },
+          },
+          offset: [0, 6], // 调整标签位置，向上偏移
         },
         itemStyle: {
           color: {

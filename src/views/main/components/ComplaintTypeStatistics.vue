@@ -7,6 +7,8 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
+  import blockImage from '@/assets/images/dashboard/block.png';
+  import { tooltip, PERCENT_COLOR, CASE_COLOR } from './common';
 
   const chartRef = ref(null);
   let chart = null;
@@ -35,11 +37,12 @@
       const barData = [173, 117, 125, 103, 172, 124, 173, 117, 125, 103, 172, 124, 125, 103, 172];
       const satisfactionRate = [96, 89, 95, 87, 95, 83, 96, 89, 95, 87, 95, 83, 95, 87, 95]; // 百分比
 
+      const maxBarNumber = Math.max(...barData);
+      const interval = 40;
+      const max = Math.ceil(maxBarNumber / interval) * interval;
+
       const option = {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-        },
+        tooltip,
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
         xAxis: [
           {
@@ -57,18 +60,25 @@
             name: '案件数量/件',
             axisLine: { lineStyle: { color: '#ccc' } },
             splitLine: {
-              lineStyle: {
-                color: 'rgba(255,255,255,0.3)',
-              },
+              show: false,
             },
+            min: 0,
+            max,
+            interval,
           },
           {
             type: 'value',
             name: '满意率',
             axisLabel: { formatter: '{value}%' },
             axisLine: { lineStyle: { color: '#ccc' } },
+            min: 0,
             max: 100,
-            splitLine: { show: false },
+            splitLine: {
+              lineStyle: {
+                color: 'rgba(255,255,255,0.3)',
+              },
+            },
+            alignTicks: true,
           },
         ],
         series: [
@@ -77,7 +87,6 @@
             type: 'bar',
             barGap: 0,
             data: barData,
-
             yAxisIndex: 0,
             barWidth: 10,
             itemStyle: {
@@ -88,8 +97,8 @@
                 x2: 0,
                 y2: 0,
                 colorStops: [
-                  { offset: 0, color: 'rgba(255, 113, 35, 0)' },
-                  { offset: 1, color: 'rgba(255, 113, 35, 1)' },
+                  { offset: 0, color: `rgba(${CASE_COLOR.rgbStr}, 0)` },
+                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 1)` },
                 ],
               },
             },
@@ -98,7 +107,25 @@
               position: 'top',
               align: 'right', // 右对齐
               distance: 5,
-              formatter: '{c}',
+              formatter: function (params) {
+                return `{value|${params.value}}\n{block|}`;
+              },
+              rich: {
+                value: {
+                  color: '#fff',
+                  align: 'right',
+                  padding: [0, 2, 4, 0],
+                },
+                block: {
+                  height: 2,
+                  width: 12,
+                  backgroundColor: {
+                    image: blockImage,
+                  },
+                  align: 'right',
+                },
+              },
+              offset: [5, 6], // 调整标签位置，向上偏移
             },
           },
           {
@@ -115,17 +142,35 @@
                 x2: 0,
                 y2: 0,
                 colorStops: [
-                  { offset: 0, color: 'rgba(34, 214, 242, 0)' },
-                  { offset: 1, color: 'rgba(34, 214, 242, 1)' },
+                  { offset: 0, color: `rgba(${PERCENT_COLOR.rgbStr}, 0)` },
+                  { offset: 1, color: `rgba(${PERCENT_COLOR.rgbStr}, 1)` },
                 ],
               },
             },
             label: {
               show: true,
               position: 'top',
-              align: 'left', // 左对齐
+              align: 'left', // 右对齐
               distance: 5,
-              formatter: '{c}%',
+              formatter: function (params) {
+                return `{value|${params.value}%}\n{block|}`;
+              },
+              rich: {
+                value: {
+                  color: '#fff',
+                  align: 'left',
+                  padding: [0, 0, 4, 0],
+                },
+                block: {
+                  height: 2,
+                  width: 12,
+                  backgroundColor: {
+                    image: blockImage,
+                  },
+                  align: 'left',
+                },
+              },
+              offset: [-5, 5], // 调整标签位置，向上偏移
             },
           },
         ],

@@ -7,6 +7,7 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
+  import { tooltip, CASE_COLOR, PERCENT_COLOR } from './common';
 
   const chartRef = ref(null);
   let chart = null;
@@ -16,7 +17,7 @@
     dateRange: '2024年12月12日——2025年1月11日',
     dates: [],
     caseNumbers: [
-      140, 154, 154, 128, 154, 165, 146, 165, 121, 124, 100, 69, 100, 139, 80, 96, 157, 92, 105, 120, 150, 112, 154, 254, 154, 114, 84, 94, 154,
+      140, 154, 154, 128, 154, 165, 146, 165, 121, 124, 100, 69, 100, 139, 80, 96, 157, 92, 105, 120, 150, 112, 154, 254, 154, 114, 84, 94, 154, 151,
     ],
     satisfactionRates: [98, 92, 92, 93, 94, 86, 82, 93, 91, 87, 99, 96, 98, 92, 100, 99, 92, 99, 99, 98, 81, 38, 54, 52, 100, 56, 89, 32, 54, 87],
   };
@@ -42,29 +43,13 @@
         },
         // 浮窗
         tooltip: {
-          trigger: 'axis',
+          ...tooltip,
           axisPointer: {
-            type: 'cross',
-          },
-          backgroundColor: 'rgba(50,50,50,0.7)',
-          borderColor: '#ccc',
-          borderWidth: 1,
-          textStyle: {
-            color: '#fff',
-          },
-          formatter: function (params) {
-            const date = params[0].axisValue;
-            let result = `${date}<br/>`;
-
-            params.forEach((param) => {
-              if (param.seriesName === '案件数量/件') {
-                result += `${param.marker} ${param.seriesName}: ${param.value}<br/>`;
-              } else {
-                result += `${param.marker} ${param.seriesName}: ${param.value}%<br/>`;
-              }
-            });
-
-            return result;
+            type: 'line',
+            lineStyle: {
+              color: '#6e7079',
+              type: 'solid',
+            },
           },
         },
         legend: {
@@ -85,6 +70,7 @@
           axisTick: {
             show: false, // 隐藏刻度线
           },
+          boundaryGap: true,
         },
         yAxis: [
           {
@@ -95,10 +81,7 @@
               color: '#fff',
             },
             axisLine: {
-              show: true,
-              lineStyle: {
-                color: '#6e7079',
-              },
+              show: false,
             },
             splitLine: {
               lineStyle: {
@@ -115,18 +98,19 @@
             name: '满意度',
             min: 0,
             max: 100,
+            interval: 10,
             nameTextStyle: {
               color: '#fff',
             },
             axisLine: {
-              show: true,
-              lineStyle: {
-                color: '#6e7079',
-              },
-            },
-            splitLine: {
               show: false,
             },
+            splitLine: {
+              lineStyle: {
+                color: 'rgba(255,255,255,0.3)',
+              },
+            },
+            alignTicks: true,
             axisLabel: {
               color: '#fff',
               formatter: '{value}%',
@@ -151,13 +135,27 @@
               color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                 {
                   offset: 0,
-                  color: 'rgba(65, 182, 171, 0)', // Completely transparent at bottom
+                  color: `rgba(${CASE_COLOR.rgbStr}, 0)`, // Completely transparent at bottom
                 },
                 {
                   offset: 1,
-                  color: 'rgba(65, 182, 171, 0.3)', // Slightly visible at top
+                  color: `rgba(${CASE_COLOR.rgbStr}, 0.3)`, // Slightly visible at top
                 },
               ]),
+            },
+            label: {
+              show: true, // 确保标签总开关是打开的
+              position: 'top', // 可以根据需要调整 label 位置
+              align: 'center', // 标签居中对齐
+              color: '#fff', // 标签文本颜色
+              formatter: function (params) {
+                // params 包含当前数据项的信息，例如 dataIndex（索引）和 value（数值）
+                if (params.dataIndex % 2 === 0) {
+                  return params.value; // 显示偶数索引的标签值
+                } else {
+                  return ''; // 奇数索引返回空字符串，达到隐藏效果
+                }
+              },
             },
           },
           {
@@ -179,13 +177,27 @@
               color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                 {
                   offset: 0,
-                  color: 'rgba(247, 155, 42, 0)', // Completely transparent at bottom
+                  color: `rgba(${PERCENT_COLOR.rgbStr}, 0)`, // Completely transparent at bottom
                 },
                 {
                   offset: 1,
-                  color: 'rgba(247, 155, 42, 0.3)', // Slightly visible at top
+                  color: `rgba(${PERCENT_COLOR.rgbStr}, 0.3)`, // Slightly visible at top
                 },
               ]),
+            },
+            label: {
+              show: true, // 确保标签总开关是打开的
+              position: 'top', // 可以根据需要调整 label 位置
+              align: 'center', // 标签居中对齐
+              color: '#fff', // 标签文本颜色
+              formatter: function (params) {
+                // params 包含当前数据项的信息，例如 dataIndex（索引）和 value（数值）
+                if (params.dataIndex % 2 === 0) {
+                  return `${params.value}%`; // 显示偶数索引的标签值
+                } else {
+                  return ''; // 奇数索引返回空字符串，达到隐藏效果
+                }
+              },
             },
           },
         ],

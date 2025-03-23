@@ -7,6 +7,7 @@
 <script setup>
   import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
   import * as echarts from 'echarts';
+  import { getCoordinates } from './common';
 
   const props = defineProps({
     seriesData: {
@@ -14,41 +15,6 @@
       required: true,
     },
   });
-
-  // Helper functions with fixes
-  const getCoordinates = (startArc, endArc) => {
-    const posi = [
-      Math.sin(startArc),
-      -Math.cos(startArc), // Fixed: negative sign added
-      Math.sin(endArc),
-      -Math.cos(endArc), // Fixed: negative sign added
-    ];
-    const dx = posi[2] - posi[0];
-    const dy = posi[3] - posi[1];
-    return getLocation(dx, dy);
-  };
-
-  const getLocation = (dx, dy) => {
-    const tanV = dx / dy;
-    const directsign = Math.abs(tanV) < 1;
-    const t = directsign ? tanV : 1 / tanV;
-    const sign1 = t > 0 ? 1 : -1;
-    const sign2 = dx > 0 ? 1 : -1;
-    const sign = directsign ? sign1 * sign2 : sign2;
-
-    // Fixed: corrected numerical constants
-    const group1 = [0.5 - (sign * t) / 2, 0.5 + (sign * t) / 2];
-    const group2 = sign > 0 ? [0, 1] : [1, 0];
-
-    const group = [...group1, ...group2];
-    const keys = directsign ? ['x', 'x2', 'y', 'y2'] : ['y', 'y2', 'x', 'x2'];
-
-    let res = {};
-    keys.forEach((k, idx) => {
-      res[k] = group[idx];
-    });
-    return res;
-  };
 
   const chartRef = ref(null);
   let chartInstance = null;
@@ -102,36 +68,46 @@
       startAngle = endAngle;
     });
 
-    console.log(seriesData);
-
     // ECharts option
     const option = {
-      tooltip: {
-        trigger: 'item',
-      },
       series: [
         {
           type: 'pie',
-          radius: ['50%', '70%'],
+          radius: ['40%', '50%'],
           center: ['50%', '50%'],
           startAngle: 90,
           data: seriesData,
           silent: true,
           label: {
             alignTo: 'edge',
-            formatter: '{name|{b}}\n{time|{c} 小时}',
+            formatter: '{colorTag|■} {name|{b}} {value|{c}} {percent|{d}%}',
             minMargin: 5,
             edgeDistance: 10,
             lineHeight: 15,
             rich: {
-              name: {
+              colorTag: {
+                width: 30,
                 fontSize: 16,
-                padding: [0, 0, 10, 0],
+                padding: [0, 0, 18, 0],
                 color: '#fff',
               },
-              time: {
-                fontSize: 12,
-                padding: [6, 0, 0, 0],
+              name: {
+                width: 150,
+                fontSize: 16,
+                padding: [0, 0, 18, 0],
+                color: '#fff',
+                align: 'left',
+              },
+              value: {
+                fontSize: 14,
+                width: 30,
+                padding: [4, 0, 20, 0],
+                color: '#fff',
+                align: 'left',
+              },
+              percent: {
+                fontSize: 14,
+                padding: [4, 0, 20, 0],
                 color: '#fff',
               },
             },
@@ -140,6 +116,9 @@
             length: 15,
             length2: 0,
             maxSurfaceAngle: 80,
+            lineStyle: {
+              color: '#7aa39e',
+            },
           },
           labelLayout: function (params) {
             const isLeft = params.labelRect.x < chartInstance.getWidth() / 2;
