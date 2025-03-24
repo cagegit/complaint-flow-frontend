@@ -110,25 +110,12 @@ export const columns: BasicColumn[] = [
     { title: '年次', dataIndex: 'yearCount', width: 80 },
   ];
 
-//    const presets = ref([
-//     { label: '今天', value: dayjs().add(0, 'd') },
-//     { label: '近7天', value: dayjs().add(-7, 'd') },
-//     { label: '最近1个月', value: dayjs().add(-1, 'month') },
-//     { label: '最近3个月', value: dayjs().add(-3, 'month') },
-//    ]);
-
    const rangePresets = ref([
     { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
     { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
     { label: '近1个月', value: [dayjs().add(-1, 'm'), dayjs()] },
     { label: '近3个月', value: [dayjs().add(-3, 'm'), dayjs()] },
   ]);
-
-  // 案件标签
-  const caseLabels = [
-    { label: '待接收', value: '0' },
-    { label: '已接收', value: '1' },
-  ]
 
     export const searchFormSchema: FormSchema[] = [
     //   {
