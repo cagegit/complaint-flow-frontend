@@ -575,3 +575,13 @@ export const getUrlParams = (url) => {
   }
   return result;
 };
+
+
+// params 的pageNo 转为 pageNum
+export const pageNoToPageNum = (params) => {
+  if (params.pageNo) {
+    params.pageNum = params.pageNo;
+    delete params.pageNo;
+  }
+  return params;
+};

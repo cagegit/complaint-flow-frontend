@@ -39,7 +39,7 @@
 
       <SettingDrawer v-if="getShowSetting" :class="`${prefixCls}-action__item`" />
       <!-- ai助手 -->
-      <Aide></Aide>
+      <!-- <Aide></Aide> -->
     </div>
   </Header>
   <LoginSelect ref="loginSelectRef" @success="loginSelectOk"></LoginSelect>
@@ -74,7 +74,7 @@
   import LoginSelect from '/@/views/sys/login/LoginSelect.vue';
   import { useUserStore } from '/@/store/modules/user';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import Aide from "@/views/dashboard/ai/components/aide/index.vue"
+  // import Aide from "@/views/dashboard/ai/components/aide/index.vue"
   const { t } = useI18n();
 
   export default defineComponent({
@@ -95,8 +95,7 @@
       LoginSelect,
       SettingDrawer: createAsyncComponent(() => import('/@/layouts/default/setting/index.vue'), {
         loading: true,
-      }),
-      Aide
+      })
     },
     props: {
       fixed: propTypes.bool,
