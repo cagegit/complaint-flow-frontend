@@ -19,7 +19,7 @@ jobs:
           node-version: '20' # 或者你使用的 Node.js 版本
 
       - name: Install dependencies
-        run: pnpm install # 或者 yarn install / pnpm install
+        run: npm install pnpm && pnpm install # 或者 yarn install / pnpm install
 
       - name: Build project
         run: pnpm run build # 或者 yarn build / pnpm build，根据你的项目配置修改
