@@ -36,11 +36,11 @@
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list } from './out.api'
     import { columns, searchFormSchema } from './out.data'
-    import { useDrawer } from '/@/components/Drawer';
+    // import { useDrawer } from '/@/components/Drawer';
     //@ts-ignore
     import TicketEdit from './TicketEdit.vue';
     //注册drawer
-    const [registerDrawer, { openDrawer }] = useDrawer();
+    // const [registerDrawer, { openDrawer }] = useDrawer();
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
         designScope: 'ticket-list',
