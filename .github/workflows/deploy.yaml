@@ -1,4 +1,4 @@
-name: Deploy Front to Ecs
+name: Deploy Dist to Ecs
 
 on:
   push:
