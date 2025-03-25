@@ -165,16 +165,16 @@ export const columns: BasicColumn[] = [
     },
     {
         label: '状态',
-        field: 'status',
+        field: 'receiveStatus',
         component: 'Select',
         componentProps: {
             options: [
                 { label: '待接收', value: '0' },
                 { label: '已接收', value: '1' },
-            ],
-            defaultValue: '0',
+            ]
         },
-        colProps: { span: 6 }
+        colProps: { span: 6 },
+        defaultValue: '0',
     },
     {
         label: '数据来源',
@@ -197,7 +197,11 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
         componentProps: {
           presets: rangePresets,
-        }
+        },
+        defaultValue: [
+            dayjs().add(-30, 'd'),
+            dayjs()
+        ]
     },
     {
         label: '派单时间',

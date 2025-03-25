@@ -44,7 +44,7 @@
     const { tableContext } = useListPage({
         designScope: 'ticket-list',
         tableProps: {
-            title: '工单接收列表',
+            title: '工单分派列表',
             api: list,
             columns: columns,
             size: 'small',

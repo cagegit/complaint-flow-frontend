@@ -51,15 +51,16 @@ const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
       size: 'small',
       formConfig: {
         // labelWidth: 200,
-        schemas: searchFormSchema,
+        schemas: searchFormSchema
       },
       actionColumn: {
         width: 120,
+        fixed: 'right',
       },
       beforeFetch: (params) => {
         console.log(params);
         return Object.assign({ pageNum:  params.pageNo }, params);
-      },
+      }
     },
     // exportConfig: {
     //   name: '用户列表',
