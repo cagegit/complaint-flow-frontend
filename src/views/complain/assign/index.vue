@@ -27,7 +27,6 @@
             <TableAction :actions="getTableAction(record)" />
           </template>
         </BasicTable>
-    
         <!--工单编辑-->
        <!-- <TicketEdit @register="registerDrawer" @success="handleSuccess" /> -->
     </template>
@@ -36,13 +35,13 @@
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list } from './assign.api'
     import { columns, searchFormSchema } from './assign.data'
-    import { useDrawer } from '/@/components/Drawer';
+    // import { useDrawer } from '/@/components/Drawer';
     //@ts-ignore
     import TicketEdit from './TicketEdit.vue';
     //注册drawer
-    const [registerDrawer, { openDrawer }] = useDrawer();
+    // const [registerDrawer, { openDrawer }] = useDrawer();
     // 列表页面公共参数、方法
-    const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+    const { tableContext } = useListPage({
         designScope: 'ticket-list',
         tableProps: {
             title: '工单接收列表',
@@ -71,7 +70,7 @@
     });
 
     //注册table数据
-    const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+    const [registerTable, { reload }, { rowSelection }] = tableContext;
     
     function getTableAction(record): ActionItem[] {
     return [];
