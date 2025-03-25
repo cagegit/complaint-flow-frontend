@@ -1,4 +1,4 @@
-name: Deploy Frontend to Ecs
+name: Deploy Front to Ecs
 
 on:
   push:
