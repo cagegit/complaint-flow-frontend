@@ -57,14 +57,26 @@ import { ref } from 'vue';
 
 //根据上面的内容生成表格的columns和搜索表单的schema
 export const columns: BasicColumn[] = [
+  { title: 'id', dataIndex: 'id', width: 80 },
+  { title: '数据来源', dataIndex: 'sourceType', width: 120 },
+  { title: '标签code', dataIndex: 'labelCode', width: 120 },
+  { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '来电人', dataIndex: 'callUserName', width: 120 },
+  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
+  { title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
+    return text === 0 ? '待接收' : '已接收';
+   }},
+   { title: '月次', dataIndex: 'monthCount', width: 80 },
+   { title: '年次', dataIndex: 'yearCount', width: 80 },
+   { title: '标题', dataIndex: 'title', width: 180 },
+   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+
     { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
     { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
     { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
-    { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
     { title: '来电时间', dataIndex: 'callTime', width: 150 },
     { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
-    { title: '来电人', dataIndex: 'callUserName', width: 120 },
-    { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
     { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
     { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
     { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
@@ -75,12 +87,8 @@ export const columns: BasicColumn[] = [
     { title: '截止时间', dataIndex: 'deadline', width: 150 },
     { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
     { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
-    { title: 'id', dataIndex: 'id', width: 80 },
     { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
-    { title: '标签code', dataIndex: 'labelCode', width: 120 },
-    { title: '主要内容', dataIndex: 'mainContent', width: 200 },
     { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
-    { title: '月次', dataIndex: 'monthCount', width: 80 },
     { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
     { title: '所属部门', dataIndex: 'orgId', width: 150 },
     { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
@@ -90,7 +98,6 @@ export const columns: BasicColumn[] = [
     { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
     { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
     { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-    { title: '备注', dataIndex: 'remark', width: 180 },
     { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
     { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
     { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
@@ -100,14 +107,12 @@ export const columns: BasicColumn[] = [
     { title: '派单时间', dataIndex: 'sendTime', width: 150 },
     { title: '派单人员', dataIndex: 'sendUser', width: 120 },
     { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
-    { title: '数据来源', dataIndex: 'sourceType', width: 120 },
-    { title: '标题', dataIndex: 'title', width: 180 },
     { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
     { title: '修改时间', dataIndex: 'updateTime', width: 150 },
     { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
     { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-    { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
-    { title: '年次', dataIndex: 'yearCount', width: 80 },
+    { title: '备注', dataIndex: 'remark', width: 180 },
+
   ];
 
 //    const presets = ref([
