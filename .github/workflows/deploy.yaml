@@ -1,0 +1,36 @@
+name: Deploy Frontend to Server
+
+on:
+  push:
+    branches:
+      - develop # 指定触发工作流的分支
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # 或者你使用的 Node.js 版本
+
+      - name: Install dependencies
+        run: pnpm install # 或者 yarn install / pnpm install
+
+      - name: Build project
+        run: pnpm run build # 或者 yarn build / pnpm build，根据你的项目配置修改
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }} # 远程服务器 IP 或域名
+          username: ${{ secrets.SERVER_USER }} # 远程服务器用户名
+          key: ${{ secrets.SERVER_PRIVATE_KEY }} # 远程服务器私钥
+          source: ./dist/ # 打包后的文件路径，根据你的项目配置修改
+          target: /data/java-program/complaint-flow-frontend/ # 远程服务器部署目录，根据你的项目配置修改
+          rm: true # 清空远程目录
+          strip_components: 1 #如果打包后，dist 下面还有一层，则为1.如果直接把dist 文件夹内容推送到服务器，则为0.
