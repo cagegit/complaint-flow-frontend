@@ -1,24 +1,24 @@
 <template>
-    <BasicDrawer
+    <BasicModal
       v-bind="$attrs"
       @register="registerDrawer"
       :title="getTitle"
-      :width="adaptiveWidth"
+      :width="600"
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
     >
-      <BasicForm @register="registerForm" />
-    </BasicDrawer>
+      <BasicForm @register="registerForm"/>
+    </BasicModal>
   </template>
   <script lang="ts" setup>
-    import { defineComponent, ref, computed, unref, useAttrs } from 'vue';
+    import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema } from './ticket.data';
-    import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+    import { BasicModal, useModalInner } from '/@/components/Modal';
+    
     import { editTicket } from './ticket.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
-    import { getTenantId } from "/@/utils/auth";
   
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -29,17 +29,30 @@
     let isFormDepartUser = false;
     //表单配置
     const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
-      labelWidth: 90,
+      // labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
+      layout: 'horizontal',
+      rowProps: {
+        gutter: 24,
+      },
+      baseRowStyle: {
+        marginBottom: '10px',
+      },
+      labelCol: {
+        span: 6,
+      },
+      wrapperCol: {
+        span: 14,
+      }
     });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
     //表单赋值
-    const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+    const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
       showFooter.value = data?.showFooter ?? true;
-      setDrawerProps({ confirmLoading: false, showFooter: showFooter.value });
+      setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
     //   if (unref(isUpdate)) {
     //     rowId.value = data.record.id;
@@ -156,7 +169,7 @@
     async function handleSubmit() {
       try {
         let values = await validate();
-        setDrawerProps({ confirmLoading: true });
+        setModalProps({ confirmLoading: true });
         values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
         // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
@@ -168,11 +181,11 @@
         //提交表单
         await editTicket(params);
         //关闭弹窗
-        closeDrawer();
+        closeModal();
         //刷新列表
         emit('success',{isUpdateVal ,values});
       } finally {
-        setDrawerProps({ confirmLoading: false });
+        setModalProps({ confirmLoading: false });
       }
     }
   </script>

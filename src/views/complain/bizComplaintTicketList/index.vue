@@ -29,18 +29,18 @@
     </BasicTable>
 
     <!--工单编辑-->
-   <TicketEdit @register="registerDrawer" @success="handleSuccess" />
+   <TicketEdit @register="registerModal" @success="handleSuccess" />
 </template>
 <script lang="ts" setup>
 import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
 import { useListPage } from '/@/hooks/system/useListPage';
 import { list, deleteTicket } from './ticket.api'
 import { columns, searchFormSchema } from './ticket.data'
-import { useDrawer } from '/@/components/Drawer';
+import { useModal } from '/@/components/Modal';
 //@ts-ignore
 import TicketEdit from './TicketEdit.vue';
 //注册drawer
-const [registerDrawer, { openDrawer }] = useDrawer();
+const [registerModal, { openModal }] = useModal();
 // 列表页面公共参数、方法
 const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'ticket-list',
@@ -71,7 +71,7 @@ const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     // },
   });
 
-  //注册table数据
+   //@ts-ignore 注册table数据
    const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
    
   function getTableAction(record): ActionItem[] {
@@ -92,7 +92,7 @@ const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
   }
 
   function handleEdit(record: Recordable) {
-    openDrawer(true, {
+    openModal(true, {
        record,
        isUpdate: true,
        showFooter: true,
