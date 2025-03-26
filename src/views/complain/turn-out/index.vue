@@ -22,6 +22,12 @@
               </a-button>
             </a-dropdown>
           </template>
+          <!--插槽:表格内容-->
+          <template #bodyCell="{ text, column, record }">
+            <template v-if="column.dataIndex === 'caseNumber'">
+              <a href="javascript:void(0)" @click="showEdit(record)">{{ text }}</a>
+            </template>
+          </template>
           <!--操作栏-->
           <template #action="{ record }">
             <TableAction :actions="getTableAction(record)" />
@@ -29,18 +35,18 @@
         </BasicTable>
     
         <!--工单编辑-->
-       <!-- <TicketEdit @register="registerDrawer" @success="handleSuccess" /> -->
+        <TicketEdit @register="registerModal" @success="handleSuccess" />
     </template>
     <script lang="ts" setup name="forward-complain">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list, forwardTicket, forwardTicketBatch } from './out.api'
     import { columns, searchFormSchema } from './out.data'
-
+    import { useModal } from '/@/components/Modal';
     import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
-    import TicketEdit from './TicketEdit.vue';
-    //注册drawer
+    import TicketEdit from '../bizComplaintTicketList/TicketEdit.vue';
+    const [registerModal, { openModal }] = useModal();
     const { createMessage, createConfirm } = useMessage();
 
     // 列表页面公共参数、方法
@@ -91,9 +97,10 @@
           title: '温馨提示',
           content: `是否确认转出选中工单？`,
           iconType: 'warning',
-          onOk: () => async () => {
+          onOk: async () => {
+            console.log(record);
             try {
-              await forwardTicket({ ids: record.id });
+              await forwardTicket({ id: record.id });
               reload();
               createMessage.success('转出成功');
             } catch (error) {
@@ -128,7 +135,12 @@
         reload();
       }
     
-      function showEdit() {
-        // handleEdit({id: 1})
+       
+     function showEdit(record: Recordable) {
+        openModal(true, {
+          record,
+          isUpdate: true,
+          showFooter: true,
+        });
       }
     </script>

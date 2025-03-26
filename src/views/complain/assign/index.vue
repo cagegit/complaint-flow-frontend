@@ -22,6 +22,12 @@
               </a-button>
             </a-dropdown> -->
           </template>
+          <!--插槽:表格内容-->
+          <template #bodyCell="{ text, column, record }">
+            <template v-if="column.dataIndex === 'caseNumber'">
+              <a href="javascript:void(0)" @click="showEdit(record)">{{ text }}</a>
+            </template>
+          </template>
           <!--操作栏-->
           <template #action="{ record }">
             <TableAction :actions="getTableAction(record)" />

@@ -2,7 +2,8 @@ import { getDictItems } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
-import { ref } from 'vue';
+import { ref, h } from 'vue';
+import { render } from '/@/utils/common/renderUtils';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -58,7 +59,11 @@ import { ref } from 'vue';
 //根据上面的内容生成表格的columns和搜索表单的schema
 export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
-   { title: '数据来源', dataIndex: 'sourceType', width: 120 },
+   { title: '数据来源', dataIndex: 'sourceType', width: 120,
+      customRender: ({ text }) => {
+        return render.renderDict(text, 'biz_source_type');
+      }
+ },
    { title: '标签code', dataIndex: 'labelCode', width: 120 },
    { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
    { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
@@ -118,8 +123,8 @@ export const columns: BasicColumn[] = [
    const rangePresets = ref([
     { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
     { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
-    { label: '近1个月', value: [dayjs().add(-1, 'm'), dayjs()] },
-    { label: '近3个月', value: [dayjs().add(-3, 'm'), dayjs()] },
+      { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
+      { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
   ]);
 
     export const searchFormSchema: FormSchema[] = [
@@ -171,14 +176,26 @@ export const columns: BasicColumn[] = [
     {
         label: '数据来源',
         field: 'sourceType',
-        component: 'Select',
+        component: 'ApiSelect',
         componentProps: {
-        options: [
-            { label: '所有', value: '' },
-            { label: '本地录入', value: '0' },
-            { label: '区分转', value: '1' },
-            { label: '直派', value: '2' },
-        ],
+          // options: [
+          //     { label: '所有', value: '' },
+          //     { label: '本地录入', value: '0' },
+          //     { label: '区分转', value: '1' },
+          //     { label: '直派', value: '2' },
+          // ],
+          api: async () => {
+            const res  = await getDictItems('biz_source_type')
+              console.log(res)
+              if(Array.isArray(res)){
+                  res.unshift({text: '所有', value: ''})
+                  return res;
+              } else {
+                  return [];
+              }
+          },
+          labelField: 'text',
+          valueField: 'value'
         },
         colProps: { span: 6 },
     },
@@ -244,14 +261,26 @@ export const columns: BasicColumn[] = [
     {
         label: '重点对象',
         field: 'monitorType',
-        component: 'Select',
+        component: 'ApiSelect',
         componentProps: {
-        options: [
-            { label: '==请选择==', value: '' },
-            { label: '红名单', value: '0' },
-            { label: '黑名单', value: '1' },
-            { label: '失信名单', value: '3' },
-        ],
+          // options: [
+          //     { label: '==请选择==', value: '' },
+          //     { label: '红名单', value: '0' },
+          //     { label: '黑名单', value: '1' },
+          //     { label: '失信名单', value: '3' },
+          // ],
+          api: async () => {
+            const res  = await getDictItems('biz_monitor_type')
+              console.log(res)
+              if(Array.isArray(res)){
+                  res.unshift({text: '==请选择==', value: ''})
+                  return res;
+              } else {
+                  return [];
+              }
+          },
+          labelField: 'text',
+          valueField: 'value',
         },
         colProps: { span: 6 },
     }

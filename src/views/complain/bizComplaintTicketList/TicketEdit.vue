@@ -7,6 +7,7 @@
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
+      :maskClosable="false"
     >
       <BasicForm @register="registerForm"/>
     </BasicModal>
@@ -29,15 +30,15 @@
     let isFormDepartUser = false;
     //表单配置
     const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
-      // labelWidth: 150,
+      labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
       layout: 'inline',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: 12, style: { marginBottom: '10px'} },
       //row行的样式
-      baseRowStyle: { width: '100%', marginBottom: '30px', },
+      baseRowStyle: { width: '100%', }
     });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
