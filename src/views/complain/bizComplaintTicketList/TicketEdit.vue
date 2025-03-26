@@ -3,7 +3,7 @@
       v-bind="$attrs"
       @register="registerDrawer"
       :title="getTitle"
-      :width="600"
+      :width="900"
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
@@ -32,19 +32,12 @@
       // labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
-      layout: 'horizontal',
-      rowProps: {
-        gutter: 24,
-      },
-      baseRowStyle: {
-        marginBottom: '10px',
-      },
-      labelCol: {
-        span: 6,
-      },
-      wrapperCol: {
-        span: 14,
-      }
+      layout: 'inline',
+      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+      baseColProps: { span: 12 },
+      //row行的样式
+      baseRowStyle: { width: '100%', marginBottom: '30px', },
     });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);

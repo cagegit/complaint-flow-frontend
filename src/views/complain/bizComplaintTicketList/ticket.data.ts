@@ -413,6 +413,14 @@ export const formSchema: FormSchema[] = [
       field: 'resolveDepartment',
       component: 'Input',
     },
+    {
+      label: '',
+      field: 'department',
+      component: 'Input',
+      componentProps: {
+        style: {display: 'none'}
+      }
+    },
   ];
 
 
