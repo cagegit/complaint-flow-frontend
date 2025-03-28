@@ -26,6 +26,24 @@ export const mainOutRoutes: AppRouteModule[] = [
       ignoreAuth: true,
     },
   },
+  {
+    path: '/runtime',
+    name: 'runtime',
+    component: () => import('/@/views/runtime/index.vue'),
+    meta: {
+      title: '城北街道述求管理平台',
+      ignoreAuth: true,
+    },
+  },
+  {
+    path: '/composite',
+    name: 'composite',
+    component: () => import('/@/views/composite/index.vue'),
+    meta: {
+      title: '城北街道述求管理平台',
+      ignoreAuth: true,
+    },
+  },
   //   {
   //     path: '/test',
   //     name: 'test',
