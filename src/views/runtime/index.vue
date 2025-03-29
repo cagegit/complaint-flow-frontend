@@ -7,7 +7,7 @@
         <CaseOverview />
         <SatisfactionRanking />
       </div>
-      <div class="center"></div>
+      <div class="center"> CaseCarousel </div>
       <div class="right"></div>
     </div>
   </div>

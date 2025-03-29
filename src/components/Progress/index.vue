@@ -3,7 +3,7 @@
     <div
       class="progress-bar"
       :style="{
-        width: `${progress}%`,
+        width: `${animatedProgress}%`,
         background: gradientStyle,
       }"
     ></div>
@@ -11,12 +11,12 @@
       class="progress-block"
       :style="{
         ...getStyle(),
-        left: `${progress}%`,
+        left: `${animatedProgress}%`,
       }"
     ></div>
     <div
       :style="{
-        left: `${progress}%`,
+        left: `${animatedProgress}%`,
       }"
       class="progress-text"
       v-if="showText"
@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-  import { computed, onMounted, ref, nextTick } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
 
   const props = defineProps({
     // 进度值 (0-100)
@@ -54,6 +54,8 @@
       default: 'rgba(133, 255, 224, 0.7)',
     },
   });
+  // 用于动画的进度值
+  const animatedProgress = ref(0);
 
   // 计算渐变样式
   const gradientStyle = computed(() => {
@@ -69,6 +71,50 @@
       'box-shadow': `0px 0px 6px 1px ${props.endColor}`,
     };
   };
+
+  // 进度动画函数
+  const animateProgress = (start, end) => {
+    const startTime = Date.now();
+    const duration = props.animationDuration;
+
+    // 开始值处理，首次加载时使用0
+    const startValue = isNaN(start) ? 0 : start;
+
+    const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+
+      if (elapsed < duration) {
+        const progress = elapsed / duration;
+        // 使用缓动函数让动画更自然
+        const easeProgress = easeOutQuad(progress);
+        animatedProgress.value = startValue + (end - startValue) * easeProgress;
+        requestAnimationFrame(animate);
+      } else {
+        animatedProgress.value = end;
+      }
+    };
+
+    requestAnimationFrame(animate);
+  };
+
+  // 缓动函数，使动画更平滑
+  const easeOutQuad = (t) => {
+    return t * (2 - t);
+  };
+
+  // 组件挂载时初始化动画
+  onMounted(() => {
+    animateProgress(0, props.progress);
+  });
+  // 监听进度值变化并执行动画
+  watch(
+    () => props.progress,
+    (newValue, oldValue) => {
+      animateProgress(oldValue, newValue);
+    },
+    { immediate: true }
+  );
 </script>
 
 <style scoped>
@@ -95,10 +141,12 @@
     background: #fff;
     transform: skewX(-20deg);
     left: 0;
+    flex-shrink: 0;
     transition: left 0.8s ease-out;
   }
 
   .progress-text {
+    flex-shrink: 0;
     font-family: SourceHanSansCN, SourceHanSansCN;
     font-weight: 500;
     font-size: 16px;
