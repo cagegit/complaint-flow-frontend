@@ -5,7 +5,7 @@
     <div class="content">
       <div class="left">
         <CaseOverview />
-        <BlockSatisfactionRanking />
+        <SatisfactionRanking />
       </div>
       <div class="center"></div>
       <div class="right"></div>
@@ -16,17 +16,17 @@
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';
-  import BlockSatisfactionRanking from './BlockSatisfactionRanking.vue';
+  import SatisfactionRanking from './SatisfactionRanking.vue';
 </script>
 <style lang="less" scoped>
   .runtime-box {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     background-image: url(@/assets/images/runtime/bg.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    overflow: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
 
