@@ -1,3 +1,10 @@
+export const grid = {
+  left: '4%',
+  right: '5%',
+  top: 50,
+  bottom: 40,
+};
+
 export const tooltip = {
   trigger: 'axis',
   axisPointer: {

@@ -7,8 +7,15 @@
         <CaseOverview />
         <SatisfactionRanking />
       </div>
-      <div class="center"> CaseCarousel </div>
-      <div class="right"></div>
+      <div class="center">
+        <CaseCarousel />
+        <div class="case-type-chart">
+          <CaseTypeStatistics />
+        </div>
+      </div>
+      <div class="right">
+        <CaseTypeCategory />
+      </div>
     </div>
   </div>
 </template>
@@ -17,6 +24,9 @@
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';
   import SatisfactionRanking from './SatisfactionRanking.vue';
+  import CaseCarousel from './CaseCarousel.vue';
+  import CaseTypeStatistics from './CaseTypeStatistics.vue';
+  import CaseTypeCategory from './CaseTypeCategory.vue';
 </script>
 <style lang="less" scoped>
   .runtime-box {
@@ -46,6 +56,12 @@
       .center {
         width: 932px;
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        .case-type-chart {
+          flex: 1;
+          width: 100%;
+        }
       }
 
       .right {

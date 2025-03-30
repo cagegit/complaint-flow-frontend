@@ -146,7 +146,9 @@
           labelLayout: function (params) {
             const isLeft = params.labelRect.x < chartInstance.getWidth() / 2;
             const points = params.labelLinePoints;
-            points[2][0] = isLeft ? params.labelRect.x : params.labelRect.x + params.labelRect.width;
+            if (points && points[2]) {
+              points[2][0] = isLeft ? params.labelRect.x : params.labelRect.x + params.labelRect.width;
+            }
             return {
               labelLinePoints: points,
             };
