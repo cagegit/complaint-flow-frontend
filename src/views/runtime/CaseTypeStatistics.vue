@@ -11,8 +11,7 @@
 <script setup>
   import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
   import * as echarts from 'echarts';
-  import { calculateDynamicYAxis, tooltip, grid } from '@/utils/dashboard';
-  import { CASE_COLOR, PERCENT_COLOR } from '@/utils/dashboard';
+  import { calculateDynamicYAxis, tooltip, grid, CASE_COLOR, PERCENT_COLOR } from '@/utils/dashboard';
   import Pagination from '@/components/Pagination/index.vue';
 
   const caseStatistics = [
@@ -151,6 +150,7 @@
           nameTextStyle: {
             color: '#B0E1D9',
             fontSize: 14,
+            padding: [0, 0, 10, 0],
           },
           position: 'left',
           max,
@@ -169,6 +169,7 @@
             color: '#B0E1D9',
             fontSize: 14,
             align: 'left',
+            padding: [0, 0, 10, 0],
           },
           position: 'right',
           max: 100,
