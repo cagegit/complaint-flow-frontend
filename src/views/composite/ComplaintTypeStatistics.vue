@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <div ref="chartRef" style="width: 100%; height: 400px"></div>
+    <div ref="chartRef" style="width: 100%; height: 100%"></div>
   </div>
 </template>
 
@@ -8,7 +8,7 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
   import blockImage from '@/assets/images/dashboard/block.png';
-  import { tooltip, PERCENT_COLOR, CASE_COLOR } from '@/utils/dashboard';
+  import { tooltip, PERCENT_COLOR, CASE_COLOR, grid } from '@/utils/dashboard';
 
   const chartRef = ref(null);
   let chart = null;
@@ -43,14 +43,21 @@
 
       const option = {
         tooltip,
-        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+        grid,
         xAxis: [
           {
             type: 'category',
             data: categories,
-            axisLine: { lineStyle: { color: '#ccc' } },
             axisTick: {
               show: false, // 隐藏刻度线
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#30665D',
+              },
+            },
+            axisLabel: {
+              color: '#B0E1D9',
             },
           },
         ],
@@ -58,27 +65,48 @@
           {
             type: 'value',
             name: '案件数量/件',
-            axisLine: { lineStyle: { color: '#ccc' } },
+            axisLine: {
+              show: false,
+            },
             splitLine: {
               show: false,
+            },
+            nameTextStyle: {
+              color: '#B0E1D9',
+              fontSize: 14,
+              padding: [0, 0, 10, 0],
             },
             min: 0,
             max,
             interval,
+            axisLabel: {
+              color: '#B0E1D9',
+              formatter: '{value}',
+            },
           },
           {
             type: 'value',
             name: '满意率',
-            axisLabel: { formatter: '{value}%' },
-            axisLine: { lineStyle: { color: '#ccc' } },
+            axisLine: {
+              show: false,
+            },
             min: 0,
             max: 100,
             splitLine: {
               lineStyle: {
-                color: 'rgba(255,255,255,0.3)',
+                color: 'rgba(110, 112, 121, 0.2)',
               },
             },
+            nameTextStyle: {
+              color: '#B0E1D9',
+              fontSize: 14,
+              padding: [0, 0, 10, 0],
+            },
             alignTicks: true,
+            axisLabel: {
+              color: '#B0E1D9',
+              formatter: '{value}%',
+            },
           },
         ],
         series: [
@@ -98,7 +126,7 @@
                 y2: 0,
                 colorStops: [
                   { offset: 0, color: `rgba(${CASE_COLOR.rgbStr}, 0)` },
-                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 1)` },
+                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 0.7)` },
                 ],
               },
             },
@@ -205,7 +233,6 @@
 <style scoped>
   .chart-container {
     width: 100%;
-    border-radius: 4px;
-    padding: 10px;
+    height: 100%;
   }
 </style>

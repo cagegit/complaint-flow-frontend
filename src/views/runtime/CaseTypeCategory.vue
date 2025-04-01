@@ -155,6 +155,7 @@
         background-repeat: no-repeat;
         display: flex;
         align-items: center;
+        padding-left: 10px;
       }
       .category-icon {
         width: 56px;

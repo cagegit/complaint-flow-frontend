@@ -1,6 +1,10 @@
 <template>
   <div class="chart-container">
-    <div ref="chartRef" class="chart"></div>
+    <div ref="chartRef" class="chart" style="width: 100%; height: 100%"></div>
+    <div class="total">
+      <div class="total-number">{{ total }}</div>
+      <div class="total-label">总计</div>
+    </div>
   </div>
 </template>
 
@@ -30,6 +34,8 @@
     { value: 7, name: '企业服务', color: '201,203,207' },
     { value: 8, name: '物业管理', color: '255,99,132' },
   ];
+
+  const total = ref(dissatisfactionData.reduce((acc, item) => acc + item.value, 0));
 
   const chartRef = ref(null);
   let chartInstance = null;
@@ -88,7 +94,7 @@
       series: [
         {
           type: 'pie',
-          radius: ['40%', '50%'],
+          radius: ['45%', '51%'],
           center: ['50%', '50%'],
           startAngle: 90,
           data: seriesData,
@@ -179,9 +185,35 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  .chart {
-    width: 100%;
-    height: 400px;
+    position: relative;
+
+    .total {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 50%; // 垂直居中，根据实际情况调整值
+      left: 50%; // 水平居中，根据实际情况调整值
+      transform: translate(-50%, -50%); // 居中偏移，根据实际情况调整值
+
+      .total-number {
+        font-weight: bold;
+        font-size: 32px;
+        color: #ffffff;
+        line-height: 40px;
+        text-shadow: 0px 0px 8px rgba(100, 244, 255, 0.9);
+        text-align: left;
+        background: linear-gradient(180deg, #ffffff 0%, #ffffff 80%, #57debd 100%);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-fill-color: transparent;
+        margin-bottom: 5px;
+      }
+      .total-label {
+        font-weight: 500;
+        font-size: 14px;
+        color: rgba(228, 255, 249, 1);
+      }
+    }
   }
 </style>

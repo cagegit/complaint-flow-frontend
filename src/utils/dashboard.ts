@@ -93,7 +93,7 @@ export function calculateDynamicYAxis(data, number = 5) {
 
 export const PERCENT_COLOR = {
   hex: '#ff8547',
-  rgb: 'rgb(255, 133, 71)',
+  rgb: 'rgb(255, 137, 59)',
   rgbStr: '255, 133, 71',
 };
 
