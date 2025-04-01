@@ -86,7 +86,7 @@
                 y2: 0,
                 colorStops: [
                   { offset: 0, color: `rgba(${CASE_COLOR.rgbStr}, 0)` },
-                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 1)` },
+                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 0.7)` },
                 ],
               },
             },

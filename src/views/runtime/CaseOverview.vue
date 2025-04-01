@@ -2,6 +2,8 @@
   <div class="case-overview">
     <div class="title">
       <div class="text">案件总览</div>
+
+      <CustomTabs :data="tabs" />
     </div>
     <div class="long-case">
       <div class="long-case-item">
@@ -37,7 +39,9 @@
   import waitbg from '@/assets/images/runtime/overview/wait.png';
   import donebg from '@/assets/images/runtime/overview/done.png';
   import CaseSummaryChart from './CaseSummaryChart.vue';
+  import CustomTabs from '@/components/CustomTabs/index.vue';
 
+  const tabs = [{ value: 2, label: '期' }];
   const totalCase = ref(646);
   const doingCase = ref(646);
   const statusData = ref([
@@ -107,6 +111,10 @@
       background-image: url(@/assets/images/runtime/overview/title.png);
       background-size: 100% 100%;
       background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
       .text {
         font-size: 20px;
         color: #ffffff;

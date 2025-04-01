@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <div ref="chartRef" style="width: 100%; height: 380px"></div>
+    <div ref="chartRef" style="width: 100%; height: 100%"></div>
   </div>
 </template>
 <script setup>
@@ -79,9 +79,7 @@
               show: false,
             },
             splitLine: {
-              lineStyle: {
-                color: 'rgba(110, 112, 121, 0.2)',
-              },
+              show: false,
             },
             axisLabel: {
               color: '#B0E1D9',
@@ -105,7 +103,7 @@
             },
             splitLine: {
               lineStyle: {
-                color: 'rgba(255,255,255,0.3)',
+                color: 'rgba(110, 112, 121, 0.2)',
               },
             },
             alignTicks: true,
@@ -200,52 +198,6 @@
           },
         ],
       };
-
-      // Display special tooltip for a specific data point (day 18)
-      chart.on('mouseover', { dataIndex: 17 }, function () {
-        chart.setOption({
-          graphic: [
-            {
-              type: 'rect',
-              id: 'tooltip-box',
-              z: 100,
-              left: 'center',
-              top: 'middle',
-              shape: {
-                width: 180,
-                height: 100,
-                r: 5,
-              },
-              style: {
-                fill: 'rgba(0,22,41,0.8)',
-                stroke: '#41b6ab',
-                lineWidth: 2,
-                shadowBlur: 8,
-                shadowColor: 'rgba(0,0,0,0.3)',
-                shadowOffsetX: 3,
-                shadowOffsetY: 3,
-              },
-            },
-            {
-              type: 'text',
-              z: 100,
-              left: 'center',
-              top: 'middle',
-              style: {
-                text: '2024-12-18\n\n• 案件数量  139\n\n• 满意度     96%',
-                fill: '#fff',
-                font: '14px Arial',
-              },
-            },
-          ],
-        });
-      });
-
-      chart.on('mouseout', { dataIndex: 17 }, function () {
-        chart.setOption({
-          graphic: [],
-        });
-      });
 
       chart.setOption(option);
 
