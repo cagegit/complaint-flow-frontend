@@ -99,7 +99,7 @@
       },
       series: [
         {
-          name: '满意度',
+          name: '满意率',
           type: 'pie',
           radius: ['50%', '55%'], // 调细圆环
           startAngle: -90,

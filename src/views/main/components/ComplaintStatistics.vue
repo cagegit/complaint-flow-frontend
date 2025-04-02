@@ -95,7 +95,7 @@
           },
           {
             type: 'value',
-            name: '满意度',
+            name: '满意率',
             min: 0,
             max: 100,
             interval: 10,
@@ -159,7 +159,7 @@
             },
           },
           {
-            name: '满意度',
+            name: '满意率',
             type: 'line',
             yAxisIndex: 1,
             data: chartData.satisfactionRates,
@@ -234,7 +234,7 @@
               left: 'center',
               top: 'middle',
               style: {
-                text: '2024-12-18\n\n• 案件数量  139\n\n• 满意度     96%',
+                text: '2024-12-18\n\n• 案件数量  139\n\n• 满意率     96%',
                 fill: '#fff',
                 font: '14px Arial',
               },
