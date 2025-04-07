@@ -9,12 +9,12 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
   import * as echarts from 'echarts';
   import { getCoordinates } from '@/utils/dashboard';
 
   const dissatisfactionData = [
-    { value: 68, name: '社会秩序', color: '122,213,23' },
+    { value: 68, name: '社会秩序', color: '122,213,23', custom: 'a' },
     { value: 59, name: '交通管理', color: '247,112,98' },
     { value: 48, name: '公共安全', color: '126,232,250' },
     { value: 32, name: '公共服务', color: '255,154,158' },
@@ -68,9 +68,20 @@
       const startColor = `rgba(${item.color}, 0)`;
       const endColor = `rgba(${item.color}, 1)`;
 
+      const getColorRich = (colorKey, color) => {
+        let target = {};
+        target[colorKey] = {
+          color: `rgb(${color})`,
+          padding: [0, 10, 20, 0],
+          fontSize: 18,
+        };
+        return target;
+      };
+
       seriesData.push({
         name: `${item.name}`,
         value: item.value,
+        color: item.color,
         itemStyle: {
           color: {
             type: 'linear',
@@ -83,6 +94,39 @@
               { offset: 1, color: endColor }, // Increasing opacity
             ],
           },
+        },
+        label: {
+          alignTo: 'edge',
+          formatter: (params) => {
+            const colorKey = params.data.color.split(',').join('');
+            return `{${colorKey}|■} {name|${params.name}} {value|${params.value}} {percent|${params.percent}%}`;
+          },
+          rich: {
+            name: {
+              width: 140,
+              color: '#E0FCF6',
+              fontSize: 16,
+              padding: [0, 0, 18, 0],
+              align: 'left',
+            },
+            value: {
+              fontSize: 16,
+              width: 40,
+              padding: [4, 0, 20, 0],
+              color: '#E0FCF6',
+              align: 'left',
+            },
+            percent: {
+              fontSize: 16,
+              padding: [4, 0, 20, 0],
+              color: '#E0FCF6',
+              fontWeight: 400,
+            },
+            ...getColorRich(item.color.split(',').join(''), item.color),
+          },
+          minMargin: 5,
+          edgeDistance: 10,
+          lineHeight: 15,
         },
       });
 
@@ -99,46 +143,12 @@
           startAngle: 90,
           data: seriesData,
           silent: true,
-          label: {
-            alignTo: 'edge',
-            formatter: '{colorTag|■} {name|{b}} {value|{c}} {percent|{d}%}',
-            minMargin: 5,
-            edgeDistance: 10,
-            lineHeight: 15,
-            rich: {
-              colorTag: {
-                width: 30,
-                fontSize: 16,
-                padding: [0, 0, 18, 0],
-                color: '#fff',
-              },
-              name: {
-                width: 150,
-                fontSize: 16,
-                padding: [0, 0, 18, 0],
-                color: '#fff',
-                align: 'left',
-              },
-              value: {
-                fontSize: 14,
-                width: 30,
-                padding: [4, 0, 20, 0],
-                color: '#fff',
-                align: 'left',
-              },
-              percent: {
-                fontSize: 14,
-                padding: [4, 0, 20, 0],
-                color: '#fff',
-              },
-            },
-          },
           labelLine: {
             length: 15,
             length2: 0,
             maxSurfaceAngle: 80,
             lineStyle: {
-              color: '#7aa39e',
+              color: 'rgba(72, 255, 210, 0.30)',
             },
           },
           labelLayout: function (params) {

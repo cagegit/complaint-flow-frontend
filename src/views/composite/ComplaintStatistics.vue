@@ -88,7 +88,7 @@
           },
           {
             type: 'value',
-            name: '满意度',
+            name: '满意率',
             min: 0,
             max: 100,
             interval: 10,
@@ -155,7 +155,7 @@
             },
           },
           {
-            name: '满意度',
+            name: '满意率',
             type: 'line',
             yAxisIndex: 1,
             data: chartData.satisfactionRates,

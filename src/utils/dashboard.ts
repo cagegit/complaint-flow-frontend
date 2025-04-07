@@ -10,8 +10,8 @@ export const tooltip = {
   axisPointer: {
     type: 'shadow',
   },
-  backgroundColor: 'rgba(50,50,50,0.7)',
-  borderColor: '#ccc',
+  backgroundColor: 'rgba(4, 42, 43, 0.7)',
+  borderColor: '#357F71',
   borderWidth: 1,
   textStyle: {
     color: '#fff',
@@ -22,12 +22,18 @@ export const tooltip = {
 
     params.forEach((param) => {
       let color = '';
+      let label = param.seriesName;
+      let value = param.value;
       if (param.seriesName === '满意率') {
         color = PERCENT_COLOR.hex;
+        value = `${param.value}%`;
+        label = '满意率';
       } else {
         color = CASE_COLOR.hex;
+        value = param.value;
+        label = '案件数量';
       }
-      result += `<span style="color: ${color}">●</span> ${param.seriesName}: ${param.value}<br/>`;
+      result += `<span style="color: ${color}">●</span> ${label}: ${value}<br/>`;
     });
 
     return result;
