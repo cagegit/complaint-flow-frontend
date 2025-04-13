@@ -67,17 +67,17 @@
   import Icon from './Icon.vue';
   import SvgIcon from './SvgIcon.vue';
 
-  import iconsData from '../data/icons.data';
+  // import iconsData from '../data/icons.data';
   import { propTypes } from '/@/utils/propTypes';
   import { useI18n } from '/@/hooks/web/useI18n';
   import svgIcons from 'virtual:svg-icons-names';
   import IconList from "./IconList.vue";
-
+  const iconsData:any = {};
   // 没有使用别名引入，是因为WebStorm当前版本还不能正确识别，会报unused警告
   const AInput = Input;
 
   function getIcons() {
-    const data = iconsData as any;
+    const data = iconsData as any || {};
     const prefix: string = data?.prefix ?? '';
     let result: string[] = [];
     if (prefix) {

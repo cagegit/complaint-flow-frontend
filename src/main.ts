@@ -4,6 +4,8 @@ import '/@/design/index.less';
 import 'ant-design-vue/dist/reset.css';
 // 注册图标
 import 'virtual:svg-icons-register';
+// tailwindcss
+import '/@/design/tailwind.less';
 
 import App from './App.vue';
 import { createApp } from 'vue';

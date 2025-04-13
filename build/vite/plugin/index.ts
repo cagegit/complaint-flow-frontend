@@ -1,25 +1,30 @@
 import { PluginOption } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
-import purgeIcons from 'vite-plugin-purge-icons';
+// import purgeIcons from 'vite-plugin-purge-icons';
+import Icons from 'unplugin-icons/vite'
 import UnoCSS from 'unocss/vite';
 import { presetTypography, presetUno } from 'unocss';
 
 // 本地调试https配置方法
 import VitePluginCertificate from 'vite-plugin-mkcert';
 //[issues/555]开发环境，vscode断点调试，文件或行数对不上
-import vueSetupExtend from 'vite-plugin-vue-setup-extend-plus';
-import { configHtmlPlugin } from './html';
-import { configMockPlugin } from './mock';
-import { configCompressPlugin } from './compress';
-import { configVisualizerConfig } from './visualizer';
-import { configThemePlugin } from './theme';
-import { configSvgIconsPlugin } from './svgSprite';
-import { configQiankunMicroPlugin } from './qiankunMicro';
+// import vueSetupExtend from 'vite-plugin-vue-setup-extend-plus';
+import * as vueSetupExtendModule from 'vite-plugin-vue-setup-extend-plus';
+const vueSetupExtend = vueSetupExtendModule.default || vueSetupExtendModule;
+
+import { configHtmlPlugin } from './html.js';
+import { configMockPlugin } from './mock.js';
+import { configCompressPlugin } from './compress.js';
+import { configVisualizerConfig } from './visualizer.js';
+import { configThemePlugin } from './theme.js';
+import { configSvgIconsPlugin } from './svgSprite.js';
+import { configQiankunMicroPlugin } from './qiankunMicro.js';
+
+// console.log(vueSetupExtend)
 // //预编译加载插件(不支持vite3作废)
 // import OptimizationPersist from 'vite-plugin-optimize-persist';
 // import PkgConfig from 'vite-plugin-package-config';
-
 /**
  *
  * @param viteEnv
@@ -35,11 +40,11 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean, isQiankunM
     // have to
     vueJsx(),
     // support name
-    vueSetupExtend(),
+    typeof vueSetupExtend === 'function' ? vueSetupExtend() : null,
     // @ts-ignore
     VitePluginCertificate({
       source: 'coding',
-    }),
+    })
   ];
 
   vitePlugins.push(UnoCSS({ presets: [presetUno(), presetTypography()] }));
@@ -54,7 +59,14 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean, isQiankunM
   VITE_USE_MOCK && vitePlugins.push(configMockPlugin(isBuild));
 
   // vite-plugin-purge-icons
-  vitePlugins.push(purgeIcons());
+  // vitePlugins.push(purgeIcons());
+
+  // unplugin-icons
+  vitePlugins.push(Icons({ 
+    compiler: 'vue3',
+    autoInstall: true,
+  }));
+
 
   // rollup-plugin-visualizer
   vitePlugins.push(configVisualizerConfig());

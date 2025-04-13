@@ -3,11 +3,14 @@ import pkg from './package.json';
 import dayjs from 'dayjs';
 import { loadEnv } from 'vite';
 import { resolve } from 'path';
-import { generateModifyVars } from './build/generate/generateModifyVars';
-import { createProxy } from './build/vite/proxy';
-import { wrapperEnv } from './build/utils';
-import { createVitePlugins } from './build/vite/plugin';
-import { OUTPUT_DIR } from './build/constant';
+import { generateModifyVars } from './build/generate/generateModifyVars.js';
+import { createProxy } from './build/vite/proxy.js';
+import { wrapperEnv } from './build/utils.js';
+import { createVitePlugins } from './build/vite/plugin/index.js';
+import { OUTPUT_DIR } from './build/constant.js';
+import tailwindcss from '@tailwindcss/vite'
+
+
 
 function pathResolve(dir: string) {
   return resolve(process.cwd(), '.', dir);
@@ -131,7 +134,10 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 
     // The vite plugin used by the project. The quantity is large, so it is separately extracted and managed
     // 预加载构建配置（首屏性能)
-    plugins: createVitePlugins(viteEnv, isBuild, isQiankunMicro),
+    plugins: [
+      ...createVitePlugins(viteEnv, isBuild, isQiankunMicro),
+      tailwindcss()
+    ],
     optimizeDeps: {
       esbuildOptions: {
         target: 'es2020',

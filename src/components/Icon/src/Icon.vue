@@ -43,7 +43,7 @@
         await nextTick();
         const icon = unref(getIconRef);
         if (!icon) return;
-
+        console.log(icon);
         const svg = Iconify.renderSVG(icon, {});
         if (svg) {
           el.textContent = '';

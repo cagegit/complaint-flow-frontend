@@ -57,8 +57,9 @@
     "build/**/*.ts",
     "build/**/*.d.ts",
     "mock/**/*.ts",
-    "vite.config.ts",
-    "src/api/workOrder/index.js"
+    "vite.config.mts",
+    "src/api/workOrder/index.js", 
+    "build/vite/plugin/index.ts"  
   ],
   "exclude": [
     "node_modules",

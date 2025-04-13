@@ -62,85 +62,71 @@ export const columns: BasicColumn[] = [
   { title: '数据来源', dataIndex: 'sourceType', width: 120,
     customRender: ({ text }) => {
       return render.renderDict(text, 'biz_source_type');
-    },
-   },
+    }
+  },
   { title: '标签code', dataIndex: 'labelCode', width: 120 },
   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
   { title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
-    return text === 0 ? '待接收' : '已接收';
-   }},
-   { title: '月次', dataIndex: 'monthCount', width: 80 },
-   { title: '年次', dataIndex: 'yearCount', width: 80 },
-   { title: '标题', dataIndex: 'title', width: 180 },
-   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+   return text === 0 ? '待转出' : '已转出';
+  }},
+  { title: '月次', dataIndex: 'monthCount', width: 80 },
+  { title: '年次', dataIndex: 'yearCount', width: 80 },
+  { title: '标题', dataIndex: 'title', width: 180 },
+  { title: '主要内容', dataIndex: 'mainContent', width: 200 },
 
-    { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
-    { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
-    { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
-    { title: '来电时间', dataIndex: 'callTime', width: 150 },
-    { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
-    { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
-    { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
-    { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
-    { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
-    { title: '创建人名称', dataIndex: 'createBy', width: 120 },
-    { title: '创建时间', dataIndex: 'createTime', width: 150 },
-    { title: '创建人id', dataIndex: 'createUserId', width: 120 },
-    { title: '截止时间', dataIndex: 'deadline', width: 150 },
-    { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
-    { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
-    { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
-    { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
-    { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
-    { title: '所属部门', dataIndex: 'orgId', width: 150 },
-    { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
-    { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
-    { title: '流程节点名称', dataIndex: 'processName', width: 150 },
-    { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
-    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
-    { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
-    { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-    { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
-    { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
-    { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
-    { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
-    { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
-    { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
-    { title: '派单时间', dataIndex: 'sendTime', width: 150 },
-    { title: '派单人员', dataIndex: 'sendUser', width: 120 },
-    { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
-    { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
-    { title: '修改时间', dataIndex: 'updateTime', width: 150 },
-    { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
-    { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-    { title: '备注', dataIndex: 'remark', width: 180 },
-
+   { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+   { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
+   { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
+   { title: '来电时间', dataIndex: 'callTime', width: 150 },
+   { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
+   { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
+   { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
+   { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
+   { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
+   { title: '创建人名称', dataIndex: 'createBy', width: 120 },
+   { title: '创建时间', dataIndex: 'createTime', width: 150 },
+   { title: '创建人id', dataIndex: 'createUserId', width: 120 },
+   { title: '截止时间', dataIndex: 'deadline', width: 150 },
+   { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
+   { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
+   { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
+   { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
+   { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
+   { title: '所属部门', dataIndex: 'orgId', width: 150 },
+   { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
+   { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
+   { title: '流程节点名称', dataIndex: 'processName', width: 150 },
+   { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
+   { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
+   { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
+   { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
+   { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
+   { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
+   { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
+   { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+   { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
+   { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
+   { title: '派单时间', dataIndex: 'sendTime', width: 150 },
+   { title: '派单人员', dataIndex: 'sendUser', width: 120 },
+   { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
+   { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
+   { title: '修改时间', dataIndex: 'updateTime', width: 150 },
+   { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
+   { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+   { title: '备注', dataIndex: 'remark', width: 180 },
   ];
-
-//    const presets = ref([
-//     { label: '今天', value: dayjs().add(0, 'd') },
-//     { label: '近7天', value: dayjs().add(-7, 'd') },
-//     { label: '最近1个月', value: dayjs().add(-1, 'month') },
-//     { label: '最近3个月', value: dayjs().add(-3, 'month') },
-//    ]);
 
    const rangePresets = ref([
     { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
     { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
-    { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
-    { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
+      { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
+      { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
   ]);
 
-  // 案件标签
-  const caseLabels = [
-    { label: '待接收', value: '0' },
-    { label: '已接收', value: '1' },
-  ]
-
-    export const searchFormSchema: FormSchema[] = [
+  export const searchFormSchema: FormSchema[] = [
     //   {
     //     label: '姓名',
     //     field: 'realname',
@@ -175,13 +161,14 @@ export const columns: BasicColumn[] = [
     },
     {
         label: '状态',
-        field: 'receiveStatus',
+        field: 'replyStatus',
         component: 'Select',
         componentProps: {
             options: [
-                { label: '待接收', value: '0' },
-                { label: '已接收', value: '1' },
-            ]
+                { label: '待回复', value: '0' },
+                { label: '已回复', value: '1' },
+            ],
+            
         },
         colProps: { span: 6 },
         defaultValue: '0',
@@ -221,8 +208,8 @@ export const columns: BasicColumn[] = [
           presets: rangePresets,
         },
         defaultValue: [
-            dayjs().add(-3, 'M'),
-            dayjs()
+          dayjs().add(-30, 'd'),
+          dayjs()
         ]
     },
     {
@@ -290,7 +277,6 @@ export const columns: BasicColumn[] = [
           },
           labelField: 'text',
           valueField: 'value',
-        
         },
         colProps: { span: 6 },
     }
@@ -442,14 +428,6 @@ export const formSchema: FormSchema[] = [
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
-    },
-    {
-      label: '',
-      field: 'department',
-      component: 'Input',
-      componentProps: {
-        style: {display: 'none'}
-      }
     },
   ];
 

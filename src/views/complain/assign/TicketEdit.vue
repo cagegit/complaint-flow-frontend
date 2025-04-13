@@ -9,18 +9,28 @@
       destroyOnClose
       :maskClosable="false"
     >
-      <div class="pl-8">
-        <BasicForm @register="registerForm"/>
+      <div class="flex px-3">
+        <div style="flex: 1; border-right: 1px solid #ddd;">
+            <BasicForm @register="registerForm"/>
+        </div>
+        <div style="width: 300px; padding-left: 30px;">
+            <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
+            <!-- 待补充信息区域 -->
+            <BasicForm
+                :schemas="addFormSchema"
+                @register="registerAddForm"
+            />
+        </div>
       </div>
     </BasicModal>
   </template>
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema } from './ticket.data';
+    import { formSchema, addFormSchema } from './assign.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
-    import { editTicket } from './ticket.api';
+    import { addAssign } from './assign.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
   
     // 声明Emits
@@ -38,9 +48,19 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12, style: { marginBottom: '10px'} },
+      baseColProps: { span: 12 },
       //row行的样式
       baseRowStyle: { width: '100%', }
+    });
+    //待补充表单配置
+    const [registerAddForm] = useForm({
+      labelWidth: 150,
+      schemas: addFormSchema,
+      showActionButtonGroup: false,
+      layout: 'vertical',
+      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+      //row行的样式
     });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
@@ -155,7 +175,7 @@
       if (!unref(isUpdate)) {
         return '新增工单';
       } else {
-        return '编辑工单';
+        return '转派工单';
       }
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });
@@ -175,7 +195,7 @@
         // }
         // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
         //提交表单
-        await editTicket(params);
+        await addAssign(params);
         //关闭弹窗
         closeModal();
         //刷新列表

@@ -1,18 +1,20 @@
+import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { pageNoToPageNum } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
+import qs from 'qs';
 export enum Api {
-  // 获取工单列表
-  list = '/complain/assign/getAssignPageList',
-  // 单个分派
-  addAssign = '/complain/assign/addAssign',
-  // 重新指派
-  assignOther = '/complain/assign/assignOther',
-  // 分派详情
-  getAssignDetail = '/complain/assign/getAssignDetail',
+  // 获取回复列表
+  list = '/complain/reply/getReplyPageList',
+  // 获取回复详情
+  getReplyDetail = '/complain/reply/getReplyDetail',
+  // 保存回复
+  saveReply = '/complain/reply/saveReply',
+  // 确认回复
+  confirmReply = '/complain/reply/confirmReply',
 }
 /**
- * 分派列表
+ * 已接收列表
  */
 export const list = (param) => {
     const params:any = pageNoToPageNum(param);
@@ -49,18 +51,25 @@ export const list = (param) => {
 };
 
 
-/**
- * 单个分派
- */
-export const addAssign = (params) => defHttp.post({ url: Api.addAssign, params});
 
 /**
- * 重新指派
+ * 获取回复详情
  */
-export const assignOther = (params) => defHttp.post({ url: Api.assignOther, params});
+export const getReplyDetail = (param) => {
+  return defHttp.get({ url: Api.getReplyDetail, params: param})
+}
 
 /**
- * 分派详情
+ * 保存回复
  */
-export const getAssignDetail = (ticketId:string) => defHttp.get({ url: Api.getAssignDetail + '?ticketId='+ticketId});
+export const saveReply = (param) => {
+  return defHttp.post({ url: Api.saveReply, params: param})
+}
+
+/**
+ * 确认回复
+ */
+export const confirmReply = (param) => {
+  return defHttp.post({ url: Api.confirmReply, params: param})
+}
 

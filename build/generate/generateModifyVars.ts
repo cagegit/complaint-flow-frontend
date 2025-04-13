@@ -3,7 +3,11 @@ import { primaryColor } from '../config/themeConfig';
 import { resolve } from 'path';
 import { generate } from '@ant-design/colors';
 import { theme } from 'ant-design-vue/lib';
-import convertLegacyToken from 'ant-design-vue/lib/theme/convertLegacyToken';
+import * as ConvertLegacyTokenDefault from 'ant-design-vue/lib/theme/convertLegacyToken.js';
+// console.log(ConvertLegacyTokenDefault);
+//@ts-innore
+const convertLegacyToken = ConvertLegacyTokenDefault.default.default || ConvertLegacyTokenDefault;
+// console.log(convertLegacyToken);
 const { defaultAlgorithm, defaultSeed } = theme;
 
 function generateAntColors(color: string, theme: 'default' | 'dark' = 'default') {

@@ -208,7 +208,7 @@ export const columns: BasicColumn[] = [
           presets: rangePresets,
         },
         defaultValue: [
-          dayjs().add(-30, 'd'),
+          dayjs().add(-3, 'M'),
           dayjs()
         ]
     },
@@ -219,11 +219,7 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
         componentProps: {
           presets: rangePresets,
-        },
-        defaultValue: [
-          dayjs().add(-30, 'd'),
-          dayjs()
-        ]
+        }
     },
     {
         label: '关键字',
@@ -300,26 +296,30 @@ export const formSchema: FormSchema[] = [
           { label: '直派', value: '2' },
         ],
       },
+      colProps: { span: 12 },
     },
     {
       label: '工单编号',
       field: 'workOrderNumber',
       component: 'Input',
+      colProps: { span: 12 },
       required: true,
     },
     {
       label: '案件编号',
       field: 'caseNumber',
       component: 'Input',
+      colProps: { span: 12 },
       required: true,
     },
     {
       label: '导入时间',
       field: 'importTime',
       component: 'RangePicker',
-      colProps: { span: 6 },
+      colProps: { span: 12 },
       componentProps: {
         presets: rangePresets,
+        style: { width: '100%' },
       },
       required: true
     },
@@ -436,7 +436,28 @@ export const formSchema: FormSchema[] = [
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
+      colProps: { span: 24 },
     },
   ];
 
-
+ // 待补充表单
+ export const addFormSchema: FormSchema[] = [
+  { field: 'tag', label: '标签', component: 'RadioGroup', componentProps: { options: [
+      { label: '普通', value: '普通' },
+      { label: '2小时', value: '2小时' },
+      { label: '企业48小时', value: '企业48小时' },
+      { label: '重点人', value: '重点人' },
+      { label: '蛋壳', value: '蛋壳' },
+      { label: '为民', value: '为民' },
+      { label: '24小时', value: '24小时' },
+      { label: '反水', value: '反水' },
+      { label: '失信', value: '失信' },
+      { label: '未接', value: '未接' },
+  ] } },
+  { field: 'community', label: '反映社区', component: 'Input' },
+  { field: 'committee', label: '反映居委会', component: 'Input' },
+  { field: 'office', label: '处理科室', component: 'Input' },
+  { field: 'processingCommunity', label: '处理社区/居委会', component: 'Input' },
+  { field: 'sevenAttributes', label: '七有五性', component: 'Input' },
+  { field: 'remarks', label: '备注', component: 'InputTextArea' },
+  ];

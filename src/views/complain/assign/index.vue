@@ -6,11 +6,11 @@
             <!-- <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button> -->
             <!-- <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls" :disabled="isDisabledAuth('system:user:export')"> 导出</a-button> -->
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
-            <a-button type="primary" @click="showEdit" preIcon="ant-design:edit-outlined">分派</a-button>
-            <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
+            <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:edit-outlined">分派</a-button> -->
+            <a-dropdown v-if="selectedRowKeys.length > 0">
               <template #overlay>
                 <a-menu>
-                  <a-menu-item key="1" @click="batchHandleDelete">
+                  <a-menu-item key="1" @click="batchHandleAssign">
                     <Icon icon="ant-design:send-outlined"></Icon>
                     批量分派
                   </a-menu-item>
@@ -20,7 +20,7 @@
                 >批量操作
                 <Icon icon="mdi:chevron-down"></Icon>
               </a-button>
-            </a-dropdown> -->
+            </a-dropdown>
           </template>
           <!--插槽:表格内容-->
           <template #bodyCell="{ text, column, record }">
@@ -34,18 +34,18 @@
           </template>
         </BasicTable>
         <!--工单编辑-->
-       <!-- <TicketEdit @register="registerDrawer" @success="handleSuccess" /> -->
+       <TicketEdit @register="registerModal" @success="handleSuccess" />
     </template>
 <script lang="ts" setup name="forward-complain">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list } from './assign.api'
     import { columns, searchFormSchema } from './assign.data'
-    // import { useDrawer } from '/@/components/Drawer';
+    import { useModal } from '/@/components/Modal';
     //@ts-ignore
     import TicketEdit from './TicketEdit.vue';
-    //注册drawer
-    // const [registerDrawer, { openDrawer }] = useDrawer();
+    //注册 modal
+    const [registerModal, { openModal }] = useModal();
     // 列表页面公共参数、方法
     const { tableContext } = useListPage({
         designScope: 'ticket-list',
@@ -59,7 +59,8 @@
             schemas: searchFormSchema,
             },
             actionColumn: {
-            width: 120,
+              width: 120,
+              fixed: 'right',
             },
             beforeFetch: (params) => {
             console.log(params);
@@ -76,19 +77,25 @@
     });
 
     //注册table数据
-    const [registerTable, { reload }, { rowSelection }] = tableContext;
+    const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
     
     function getTableAction(record): ActionItem[] {
-    return [];
+      return [
+        {
+          label: '分派',
+          onClick: handleEdit.bind(null, record),
+          // ifShow: () => hasPermission('system:user:edit'),
+        }
+      ];
     }
 
-//   function handleEdit(record: Recordable) {
-//     openDrawer(true, {
-//        record,
-//        isUpdate: true,
-//        showFooter: true,
-//     });
-//   }
+  function handleEdit(record: Recordable) {
+    openModal(true, {
+       record,
+       isUpdate: true,
+       showFooter: true,
+    });
+  }
 
 //   async function handleDelete(record: Recordable) {
 
@@ -100,11 +107,6 @@
 //     }
 //   }
 
-    function batchHandleDelete() {
-        // deleteUser({ ids: selectedRowKeys }).then(() => {
-        //   reload();
-        // });
-    }
 
     /**
      * 成功回调
@@ -113,7 +115,16 @@
     reload();
     }
 
-    function showEdit() {
-    // handleEdit({id: 1})
+    function showEdit(record:any) {
+      handleEdit(record)
+    }
+
+    // 批量分派
+    function batchHandleAssign() {
+      openModal(true, {
+        record: selectedRowKeys,
+        isUpdate: true,
+        showFooter: true,
+      });
     }
 </script>

@@ -208,7 +208,7 @@ export const columns: BasicColumn[] = [
           presets: rangePresets,
         },
         defaultValue: [
-          dayjs().add(-30, 'd'),
+          dayjs().add(-3, 'M'),
           dayjs()
         ]
     },
