@@ -46,16 +46,22 @@
     </div>
     <div style="height: 20px"></div>
     <div class="title">
-      <div class="text">各科室排名</div>
-      <LabelBox />
-      <Pagination :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
+      <div class="text">排名</div>
+      <CustomTabs :data="tabs" />
     </div>
     <div class="ranking-list">
+      <LabelBox />
       <div class="ranking-item" v-for="(item, index) in ranking" :key="item.value">
         <div class="ranking-top">
           <img v-if="index < 3" class="top" :src="item.icon" alt="" />
           <div v-else class="top">{{ item.id }}</div>
-          <div class="name">{{ item.name }}</div>
+          <div class="name">
+            <div class="name-up">{{ item.name }}</div>
+            <div class="name-down">
+              <div class="name-down-label">案件数</div>
+              <div>{{ item.value }}</div>
+            </div>
+          </div>
           <div class="progres">
             <Progress :progress="item.value" start-color="rgba(125, 249, 218, 0)" end-color="rgba(133, 255, 224, 0.70)" />
             <Progress :progress="item.percentage" start-color="rgba(255, 132, 71, 0)" end-color="rgba(255, 119, 51, 1)" showUnit />
@@ -73,12 +79,27 @@
   import top2 from '@/assets/images/runtime/ranking/top2.png';
   import top3 from '@/assets/images/runtime/ranking/top3.png';
   import LabelBox from '@/components/LabelBox/index.vue';
-  import Pagination from '@/components/Pagination/index.vue';
+  import CustomTabs from '@/components/CustomTabs/index.vue';
+
+  const tabs = [
+    {
+      label: '科室',
+      value: '1',
+    },
+    {
+      label: '管区',
+      value: '2',
+    },
+    {
+      label: '社区',
+      value: '3',
+    },
+  ];
 
   const ranking = ref([
     { id: 1, icon: top1, name: '科室1名称', value: 128, percentage: 99.8 },
     { id: 2, icon: top2, name: '科室2名称', value: 99, percentage: 96.7 },
-    { id: 3, icon: top3, name: '科室3名称', value: 128, percentage: 93 },
+    { id: 3, icon: top3, name: '科室3名称最多10个字', value: 128, percentage: 93 },
     { id: 4, name: '科室4名称', value: 80, percentage: 88 },
     { id: 5, name: '科室5名称', value: 53, percentage: 86.8 },
     { id: 6, name: '科室6名称', value: 140, percentage: 88.2 },
@@ -86,6 +107,13 @@
     { id: 8, name: '科室8名称', value: 140, percentage: 85.2 },
     { id: 9, name: '科室9名称', value: 64, percentage: 84 },
     { id: 10, name: '科室10名称', value: 70, percentage: 81.2 },
+    // { id: 14, name: '科室4名称', value: 80, percentage: 88 },
+    // { id: 15, name: '科室5名称', value: 53, percentage: 86.8 },
+    // { id: 16, name: '科室6名称', value: 140, percentage: 88.2 },
+    // { id: 17, name: '科室7名称', value: 53, percentage: 86.8 },
+    // { id: 18, name: '科室8名称', value: 140, percentage: 85.2 },
+    // { id: 19, name: '科室9名称', value: 64, percentage: 84 },
+    // { id: 20, name: '科室10名称', value: 70, percentage: 81.2 },
   ]);
   const data = ref({
     normalCase: {
@@ -229,13 +257,31 @@
           }
 
           .name {
-            width: 75px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            font-weight: 400;
-            font-size: 16px;
-            color: #ffffff;
+            max-width: 172px;
+            display: flex;
+            flex-direction: column;
+
+            .name-up {
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+              font-weight: 400;
+              font-size: 16px;
+              color: #ffffff;
+            }
+
+            .name-down {
+              display: flex;
+              align-items: center;
+              margin-top: 10px;
+              font-weight: 400;
+              font-size: 14px;
+              color: #ffffff;
+              .name-down-label {
+                margin-right: 9px;
+                color: #b0e1d9;
+              }
+            }
           }
 
           .progres {

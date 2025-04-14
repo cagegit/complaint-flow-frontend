@@ -2,21 +2,26 @@
   <div class="case-overview">
     <div class="title">
       <div class="text">案件总览</div>
-
       <CustomTabs :data="tabs" />
     </div>
     <div class="long-case">
       <div class="long-case-item">
-        <div class="case-text">接件数</div>
-        <div class="case-number">
-          {{ totalCase }}
+        <img :src="caseIcon" alt="" class="case-item-l" />
+        <div class="case-item-r">
+          <div class="case-text">接件数</div>
+          <div class="case-number">
+            {{ totalCase }}
+          </div>
         </div>
       </div>
       <div class="long-case-item">
-        <div class="case-text">处理中</div>
-        <div class="case-number">
-          {{ doingCase }}
-        </div>
+        <img :src="doingIcon" alt="" class="case-item-l" />
+        <div class="case-item-r">
+          <div class="case-text">处理中</div>
+          <div class="case-number">
+            {{ doingCase }}
+          </div></div
+        >
       </div>
     </div>
     <div class="case-list">
@@ -27,6 +32,14 @@
       </div>
     </div>
     <div class="chart-box">
+      <div class="title">
+        <div class="sub-text">综合双是率</div>
+      </div>
+      <!-- 案件总览 -->
+      <CaseSummaryChart :seriesData="summaryData" />
+      <div class="title">
+        <div class="sub-text">直派双是率</div>
+      </div>
       <!-- 案件总览 -->
       <CaseSummaryChart :seriesData="summaryData" />
     </div>
@@ -38,6 +51,8 @@
   import errorbg from '@/assets/images/runtime/overview/error.png';
   import waitbg from '@/assets/images/runtime/overview/wait.png';
   import donebg from '@/assets/images/runtime/overview/done.png';
+  import caseIcon from '@/assets/images/runtime/overview/case-icon.png';
+  import doingIcon from '@/assets/images/runtime/overview/doing-icon.png';
   import CaseSummaryChart from './CaseSummaryChart.vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
 
@@ -81,19 +96,25 @@
   const summaryData = ref([
     {
       value: 60,
-      name: '满意率',
+      name: '双是',
       persent: 3.5,
       color: '62, 237, 241',
     },
     {
       value: 8,
-      name: '不满意率',
+      name: '单是',
       persent: 6,
       color: '242, 127, 69',
     },
     {
       value: 5,
-      name: '不合理诉求率',
+      name: '双否',
+      persent: 15,
+      color: '224, 224, 224',
+    },
+    {
+      value: 5,
+      name: '其他',
       persent: 15,
       color: '244, 229, 106',
     },
@@ -105,6 +126,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    height: 100%;
     .title {
       width: 100%;
       height: 43px;
@@ -117,6 +140,12 @@
 
       .text {
         font-size: 20px;
+      }
+      .sub-text {
+        font-size: 16px;
+      }
+      .text,
+      .sub-text {
         color: #ffffff;
         line-height: 40px;
         text-shadow: 0px 0px 8px rgba(100, 244, 255, 0.9);
@@ -128,38 +157,47 @@
         padding-left: 35px;
       }
     }
+
     .long-case {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      height: 44px;
+      height: 100px;
       margin-top: 16px;
       .long-case-item {
         display: flex;
         align-items: center;
-        padding-left: 20px;
+        padding-left: 10px;
         padding-right: 24px;
         width: 207px;
         height: 100%;
         background-image: url(@/assets/images/runtime/overview/long-bg.png);
-        justify-content: space-between;
         background-size: 100% 100%;
         background-repeat: no-repeat;
+        .case-item-l {
+          width: 64px;
+          height: 64px;
+          margin-right: 13px;
+        }
+        .case-item-r {
+          display: flex;
+          flex-direction: column;
+          .case-text {
+            font-weight: 500;
+            font-size: 16px;
+            color: #ffffff;
+          }
+          .case-number {
+            font-weight: bold;
+            font-size: 28px;
+            color: #ffffff;
+            line-height: 32px;
+            text-shadow: 0px 0px 6px #6dffdb;
+          }
+        }
         &:hover {
           cursor: pointer;
-        }
-        .case-text {
-          font-weight: 500;
-          font-size: 16px;
-          color: #ffffff;
-        }
-        .case-number {
-          font-weight: bold;
-          font-size: 28px;
-          color: #ffffff;
-          line-height: 32px;
-          text-shadow: 0px 0px 6px #6dffdb;
         }
       }
     }
@@ -169,6 +207,7 @@
       grid-template-columns: repeat(3, 1fr);
       width: 100%;
       margin-top: 16px;
+      margin-bottom: 20px;
 
       .case-item {
         width: 154px;
@@ -182,6 +221,7 @@
         box-sizing: border-box;
         position: relative;
         padding-bottom: 4px;
+        margin-bottom: 5px;
         margin-left: -4px;
         &:hover {
           cursor: pointer;
@@ -213,7 +253,10 @@
 
     .chart-box {
       width: 100%;
-      height: 206px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
     }
   }
 </style>

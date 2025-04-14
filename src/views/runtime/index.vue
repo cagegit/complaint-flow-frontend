@@ -5,7 +5,6 @@
     <div class="content">
       <div class="left">
         <CaseOverview />
-        <SatisfactionRanking />
       </div>
       <div class="center">
         <CaseCarousel />
@@ -23,7 +22,6 @@
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';
-  import SatisfactionRanking from './SatisfactionRanking.vue';
   import CaseCarousel from './CaseCarousel.vue';
   import CaseTypeStatistics from './CaseTypeStatistics.vue';
   import CaseTypeCategory from './CaseTypeCategory.vue';
@@ -50,7 +48,6 @@
       box-sizing: border-box;
       .left {
         width: 446px;
-        height: 100%;
       }
 
       .center {

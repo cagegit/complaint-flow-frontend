@@ -55,9 +55,11 @@
     let startAngle = 180;
     // 已经按100补齐
     const total = 100;
+    let currentAngleSum = 0;
     data.forEach((item, index) => {
       const angle = (item.value / total) * 360;
       const endAngle = startAngle + angle;
+      console.log('angle', startAngle, angle);
 
       // Convert to radians for the helper functions
       const startRad = (startAngle * Math.PI) / 180;
@@ -68,6 +70,7 @@
       const segmentEnd = startRad + (endRad - startRad);
 
       const coords = getCoordinates(segmentStart, segmentEnd);
+      console.log('coords', coords);
       const startColor = `rgba(${item.color}, 0)`;
       const endColor = `rgba(${item.color}, 1)`;
 
@@ -87,6 +90,14 @@
             ],
           },
         },
+        labelLine: {
+          length: 20,
+          length2: 0,
+          maxSurfaceAngle: 80,
+          lineStyle: {
+            color: `rgba(${item.color}, 0.6)`, // 白色
+          },
+        },
       };
       if (index === data.length - 1) {
         targetSerie = {
@@ -102,6 +113,7 @@
       series.push(targetSerie);
 
       startAngle = endAngle;
+      currentAngleSum += angle;
     });
 
     const option = {
@@ -114,7 +126,7 @@
           type: 'pie',
           radius: ['68%', '75%'], // 调细圆环
           startAngle: -90,
-          avoidLabelOverlap: false,
+          avoidLabelOverlap: true,
           emphasis: { disabled: true },
           itemStyle: {
             borderColor: 'transparent',
@@ -137,11 +149,6 @@
                 color: '#999',
               },
             },
-          },
-          labelLine: {
-            length: 15,
-            length2: 0,
-            maxSurfaceAngle: 80,
           },
           labelLayout: function (params) {
             const isLeft = params.labelRect.x < chartInstance.getWidth() / 2;
@@ -207,7 +214,7 @@
 <style scoped lang="less">
   .chart-container {
     width: 100%;
-    height: 100%;
+    height: 202px;
     display: flex;
     justify-content: center;
     align-items: center;
