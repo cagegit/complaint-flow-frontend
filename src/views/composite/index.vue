@@ -7,7 +7,7 @@
         <div class="title">
           <div class="text">诉件统计</div>
           <div>
-            <LabelBox />
+            <CaseLabelBox />
           </div>
         </div>
         <div class="composite-content">
@@ -42,7 +42,7 @@
         <div class="title">
           <div class="text">群诉案件数量和满意率</div>
           <div class="title-right">
-            <LabelBox />
+            <CaseLabelBox />
             <div style="width: 24px"></div>
             <CustomTabs :data="complaintTypeTabs" />
           </div>
@@ -57,7 +57,7 @@
 <script setup>
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
-  import LabelBox from '@/components/LabelBox/index.vue';
+  import CaseLabelBox from '@/components/CaseLabelBox/index.vue';
   import Pagination from '@/components/Pagination/index.vue';
   import ComplaintStatistics from './ComplaintStatistics.vue';
   import DissatisfactionAnalysis from './DissatisfactionAnalysis.vue';

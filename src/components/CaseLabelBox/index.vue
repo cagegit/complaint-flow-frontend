@@ -2,10 +2,14 @@
   <div class="label-box">
     <div class="label-item mr20">
       <div class="icon1"></div>
+      <div>诉件数</div>
+    </div>
+    <div class="label-item mr20">
+      <div class="icon2"></div>
       <div>双是率</div>
     </div>
     <div class="label-item">
-      <div class="icon2"></div>
+      <div class="icon3"></div>
       <div>双否率</div>
     </div>
   </div>
@@ -13,7 +17,6 @@
 <style lang="less" scoped>
   .label-box {
     display: flex;
-    justify-content: center;
     align-items: center;
     .mr20 {
       margin-right: 20px;
@@ -34,6 +37,13 @@
         width: 8px;
         height: 8px;
         background: #ff8447;
+        margin-right: 8px;
+        border-radius: 50%;
+      }
+      .icon3 {
+        width: 8px;
+        height: 8px;
+        background: #e0e0e0;
         margin-right: 8px;
         border-radius: 50%;
       }

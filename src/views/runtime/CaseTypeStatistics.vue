@@ -1,7 +1,10 @@
 <template>
   <div class="chart-container">
     <div class="title">
-      <div class="text">案件性质分类</div>
+      <div class="left">
+        <div class="text">案件性质分类</div>
+        <DispatchTabs
+      /></div>
       <Pagination :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
     </div>
     <div ref="chartRef" class="chart"></div>
@@ -13,6 +16,7 @@
   import * as echarts from 'echarts';
   import { calculateDynamicYAxis, tooltip, grid, CASE_COLOR, PERCENT_COLOR } from '@/utils/dashboard';
   import Pagination from '@/components/Pagination/index.vue';
+  import DispatchTabs from '@/components/DispatchTabs/index.vue';
 
   const caseStatistics = [
     {
@@ -285,17 +289,23 @@
       align-items: center;
       justify-content: space-between;
       padding-right: 20px;
-      .text {
-        font-size: 20px;
-        color: #ffffff;
-        line-height: 40px;
-        text-shadow: 0px 0px 8px rgba(100, 244, 255, 0.9);
-        text-align: left;
-        background: linear-gradient(180deg, #ffffff 0%, #ffffff 70%, #57debd 100%);
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-fill-color: transparent;
-        padding-left: 35px;
+
+      .left {
+        display: flex;
+        align-items: center;
+        .text {
+          font-size: 20px;
+          color: #ffffff;
+          line-height: 40px;
+          text-shadow: 0px 0px 8px rgba(100, 244, 255, 0.9);
+          text-align: left;
+          background: linear-gradient(180deg, #ffffff 0%, #ffffff 70%, #57debd 100%);
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-fill-color: transparent;
+          padding-left: 35px;
+          margin-right: 30px;
+        }
       }
     }
     .chart {

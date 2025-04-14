@@ -6,19 +6,15 @@
         <div>预警：</div>
         <div class="warning-one">
           <div class="icon"></div>
-          <div>一级</div>
+          <div>≤48h</div>
         </div>
         <div class="warning-two">
           <div class="icon"></div>
-          <div>二级</div>
+          <div>≤72h</div>
         </div>
         <div class="warning-three">
           <div class="icon"></div>
-          <div>三级</div>
-        </div>
-        <div class="warning-four">
-          <div class="icon"></div>
-          <div>四级</div>
+          <div>≤96h</div>
         </div>
       </div>
     </div>
@@ -169,8 +165,7 @@
         color: #b0e1d9;
         .warning-one,
         .warning-two,
-        .warning-three,
-        .warning-four {
+        .warning-three {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -201,11 +196,6 @@
       .warning-three {
         .icon {
           background: #ffef6e;
-        }
-      }
-      .warning-four {
-        .icon {
-          background: #37ecf9;
         }
       }
     }
