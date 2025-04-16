@@ -29,7 +29,7 @@
 <style lang="less" scoped>
   .runtime-box {
     width: 100vw;
-    min-height: 100vh;
+    height: 1080px;
     background-image: url(@/assets/images/runtime/bg.png);
     background-size: cover;
     background-position: center;

@@ -310,7 +310,7 @@
     }
     .chart {
       width: 100%;
-      height: 440px;
+      height: 400px;
     }
   }
 </style>

@@ -83,12 +83,12 @@
 <style lang="less" scoped>
   .composite-box {
     width: 100vw;
-    height: 100vh;
+    height: 1080px;
     background-image: url(@/assets/images/runtime/bg.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    overflow-y: auto;
+    overflow: hidden;
 
     .composite-block {
       padding-left: 22px;
