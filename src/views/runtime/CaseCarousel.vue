@@ -32,7 +32,6 @@
           <div v-if="item.status === 1" class="status-one"></div>
           <div v-else-if="item.status === 2" class="status-two"></div>
           <div v-else-if="item.status === 3" class="status-three"></div>
-          <div v-else-if="item.status === 4" class="status-four"></div>
         </div>
         <div class="type">{{ item.type }}</div>
         <div class="table-title">{{ item.title }}</div>
@@ -51,7 +50,7 @@
   import { ref, onMounted, onBeforeUnmount } from 'vue';
   import dayjs from 'dayjs';
 
-  const issuesData = ref([
+  const allData = ref([
     {
       type: '市直派',
       title: '小区外道路乱停违停，造成交通堵塞，小区住户反映强烈',
@@ -66,7 +65,7 @@
       time: '2023-12-28 09:23:19',
       department: '综合管理科',
       community: '社区名称B',
-      status: 2,
+      status: 1,
     },
     {
       type: '市直派',
@@ -82,7 +81,7 @@
       time: '2023-12-28 09:23:19',
       department: '社区协调科',
       community: '社区名称D',
-      status: 3,
+      status: 2,
     },
     {
       type: '区分转',
@@ -90,7 +89,7 @@
       time: '2023-12-28 09:23:19',
       department: '安全管理科',
       community: '社区名称E',
-      status: 3,
+      status: 2,
     },
     {
       type: '市指派',
@@ -98,7 +97,7 @@
       time: '2023-12-28 09:23:19',
       department: '交通管理科',
       community: '社区名称F',
-      status: 4,
+      status: 3,
     },
     {
       type: '市指派',
@@ -106,7 +105,7 @@
       time: '2023-12-28 09:23:19',
       department: '物业管理处',
       community: '社区名称G',
-      status: 4,
+      status: 3,
     },
     {
       type: '区分转',
@@ -114,9 +113,79 @@
       time: '2023-12-28 09:23:19',
       department: '消防监管科',
       community: '社区名称H',
-      status: 4,
+      status: 3,
+    },
+    {
+      type: '区分转',
+      title: '消防通道被占用的安全隐患1',
+      time: '2023-12-28 09:23:19',
+      department: '消防监管科',
+      community: '社区名称H',
+      status: 3,
+    },
+    {
+      type: '区分转',
+      title: '消防通道被占用的安全隐患2',
+      time: '2023-12-28 09:23:19',
+      department: '消防监管科',
+      community: '社区名称H',
+      status: 3,
+    },
+    {
+      type: '区分转',
+      title: '消防通道被占用的安全隐患3',
+      time: '2023-12-28 09:23:19',
+      department: '消防监管科',
+      community: '社区名称H',
+      status: 3,
+    },
+    {
+      type: '区分转',
+      title: '消防通道被占用的安全隐患3',
+      time: '2023-12-28 09:23:19',
+      department: '消防监管科',
+      community: '社区名称H',
+      status: 3,
+    },
+    {
+      type: '区分转',
+      title: '消防通道被占用的安全隐患5',
+      time: '2023-12-28 09:23:19',
+      department: '消防监管科',
+      community: '社区名称H',
+      status: 3,
+    },
+    {
+      type: '区分转',
+      title: '消防通道被占用的安全隐患6',
+      time: '2023-12-28 09:23:19',
+      department: '消防监管科',
+      community: '社区名称H',
+      status: 3,
     },
   ]);
+
+  const issuesData = ref([]);
+
+  const currentIndex = ref(0);
+  const timer = ref(null);
+
+  onMounted(() => {
+    if (allData.value.length !== 0) {
+      timer.value = setInterval(() => {
+        currentIndex.value = (currentIndex.value + 1) % allData.value.length;
+        issuesData.value = allData.value.slice(currentIndex.value, currentIndex.value + 9);
+        // // 创建包含9个元素的数组（自动循环）
+        // issuesData.value = Array.from({ length: 9 }, (_, i) => {
+        //   return allData.value[(currentIndex.value + i) % allData.value.length];
+        // });
+      }, 2000);
+    }
+  });
+
+  onBeforeUnmount(() => {
+    clearInterval(timer.value);
+  });
 
   const getDate = (timeStr) => {
     const date = dayjs(timeStr).format('MM.DD');
@@ -253,8 +322,8 @@
     }
     .carousel-list {
       width: 100%;
-      height: 352px;
-      overflow: auto;
+      height: 372px;
+      overflow: hidden;
       margin-top: 10px;
 
       .carousel-item {
@@ -295,12 +364,6 @@
             width: 6px;
             height: 6px;
             background: #ffef6e;
-            border-radius: 50%;
-          }
-          .status-four {
-            width: 6px;
-            height: 6px;
-            background: #37ecf9;
             border-radius: 50%;
           }
         }

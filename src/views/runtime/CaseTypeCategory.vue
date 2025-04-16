@@ -49,8 +49,10 @@
       <div class="text">排名</div>
       <CustomTabs :data="tabs" />
     </div>
-    <div class="ranking-list">
+    <div style="margin: 10px">
       <LabelBox />
+    </div>
+    <div class="ranking-list">
       <div class="ranking-item" v-for="(item, index) in ranking" :key="item.value">
         <div class="ranking-top">
           <img v-if="index < 3" class="top" :src="item.icon" alt="" />
@@ -107,13 +109,13 @@
     { id: 8, name: '科室8名称', value: 140, percentage: 85.2 },
     { id: 9, name: '科室9名称', value: 64, percentage: 84 },
     { id: 10, name: '科室10名称', value: 70, percentage: 81.2 },
-    // { id: 14, name: '科室4名称', value: 80, percentage: 88 },
-    // { id: 15, name: '科室5名称', value: 53, percentage: 86.8 },
-    // { id: 16, name: '科室6名称', value: 140, percentage: 88.2 },
-    // { id: 17, name: '科室7名称', value: 53, percentage: 86.8 },
-    // { id: 18, name: '科室8名称', value: 140, percentage: 85.2 },
-    // { id: 19, name: '科室9名称', value: 64, percentage: 84 },
-    // { id: 20, name: '科室10名称', value: 70, percentage: 81.2 },
+    { id: 14, name: '科室4名称', value: 80, percentage: 88 },
+    { id: 15, name: '科室5名称', value: 53, percentage: 86.8 },
+    { id: 16, name: '科室6名称', value: 140, percentage: 88.2 },
+    { id: 17, name: '科室7名称', value: 53, percentage: 86.8 },
+    { id: 18, name: '科室8名称', value: 140, percentage: 85.2 },
+    { id: 19, name: '科室9名称', value: 64, percentage: 84 },
+    { id: 20, name: '科室10名称', value: 70, percentage: 81.2 },
   ]);
   const data = ref({
     normalCase: {
@@ -147,6 +149,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
     .title {
       width: 100%;
       height: 42px;
@@ -173,7 +176,6 @@
     .category-list {
       display: flex;
       align-items: center;
-
       margin-top: 17px;
       .category-item {
         width: 154px;
@@ -221,6 +223,8 @@
     .ranking-list {
       width: 100%;
       margin-top: 10px;
+      overflow-y: auto;
+      flex: 1;
 
       .ranking-item {
         display: flex;
@@ -293,6 +297,19 @@
             justify-content: space-around;
           }
         }
+      }
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #398b79;
+        border-radius: 2px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #0e3d3c;
       }
     }
   }
