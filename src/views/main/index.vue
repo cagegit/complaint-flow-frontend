@@ -19,7 +19,7 @@
     <div class="block">
       <!-- 诉讼类型分析统计 -->
       <ComplaintTypeStatistics />
-      <!-- 群诉案件数量和满意率 -->
+      <!-- 群诉诉件数和双是率 -->
       <GroupComplaintStatistics />
     </div>
   </div>
@@ -33,19 +33,19 @@
   import ComplaintStatistics from './components/ComplaintStatistics.vue';
   import ComplaintTypeStatistics from './components/ComplaintTypeStatistics.vue';
   import GroupComplaintStatistics from './components/GroupComplaintStatistics.vue';
-  import { CASE_COLOR, PERCENT_COLOR } from './components/common';
+  import { CASE_COLOR, YES_PERCENT_COLOR } from './components/common';
   // 案件类型统计数据
   const seriesData = [
     {
-      label: '案件数量/件',
+      label: '诉件数/件',
       data: [120, 200, 150, 80, 70, 110, 130],
       color: CASE_COLOR.rgbStr, // 蓝色
       yAxisIndex: 0,
     },
     {
-      label: '满意率',
+      label: '双是率',
       data: [90, 80, 30, 60, 92, 100, 70],
-      color: PERCENT_COLOR.rgbStr, // 橙色
+      color: YES_PERCENT_COLOR.rgbStr, // 橙色
       yAxisIndex: 1,
     },
   ];
@@ -55,13 +55,13 @@
   const summaryData = [
     {
       value: 10,
-      name: '满意率',
+      name: '双是率',
       persent: 3.5,
       color: '255, 99, 132',
     },
     {
       value: 5,
-      name: '不满意率',
+      name: '不双是率',
       persent: 6,
       color: '255, 206, 86',
     },

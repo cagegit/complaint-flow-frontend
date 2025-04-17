@@ -24,14 +24,18 @@ export const tooltip = {
       let color = '';
       let label = param.seriesName;
       let value = param.value;
-      if (param.seriesName === '满意率') {
-        color = PERCENT_COLOR.hex;
+      if (param.seriesName === '双是率') {
+        color = YES_PERCENT_COLOR.hex;
         value = `${param.value}%`;
-        label = '满意率';
+        label = '双是率';
+      } else if (param.seriesName === '双否率') {
+        color = NO_PERCENT_COLOR.hex;
+        value = `${param.value}%`;
+        label = '双否率';
       } else {
         color = CASE_COLOR.hex;
         value = param.value;
-        label = '案件数量';
+        label = '诉件数';
       }
       result += `<span style="color: ${color}">●</span> ${label}: ${value}<br/>`;
     });
@@ -97,10 +101,16 @@ export function calculateDynamicYAxis(data, number = 5) {
   return { max, interval };
 }
 
-export const PERCENT_COLOR = {
+export const YES_PERCENT_COLOR = {
   hex: '#ff8547',
   rgb: 'rgb(255, 137, 59)',
   rgbStr: '255, 133, 71',
+};
+
+export const NO_PERCENT_COLOR = {
+  hex: '#E0E0E0',
+  rgb: 'rgb(224, 224, 224)',
+  rgbStr: '244, 244, 244',
 };
 
 export const CASE_COLOR = {

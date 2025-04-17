@@ -15,8 +15,8 @@ export const tooltip = {
 
     params.forEach((param) => {
       let color = '';
-      if (param.seriesName === '满意率') {
-        color = PERCENT_COLOR.hex;
+      if (param.seriesName === '双是率') {
+        color = YES_PERCENT_COLOR.hex;
       } else {
         color = CASE_COLOR.hex;
       }
@@ -84,7 +84,7 @@ export function calculateDynamicYAxis(data, number = 5) {
   return { max, interval };
 }
 
-export const PERCENT_COLOR = {
+export const YES_PERCENT_COLOR = {
   hex: '#ff8547',
   rgb: 'rgb(255, 133, 71)',
   rgbStr: '255, 133, 71',

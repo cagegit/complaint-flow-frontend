@@ -7,7 +7,7 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
-  import { tooltip, CASE_COLOR, PERCENT_COLOR } from './common';
+  import { tooltip, CASE_COLOR, YES_PERCENT_COLOR } from './common';
 
   const chartRef = ref(null);
   let chart = null;
@@ -75,7 +75,7 @@
         yAxis: [
           {
             type: 'value',
-            name: '案件数量/件',
+            name: '诉件数/件',
             min: 0,
             nameTextStyle: {
               color: '#fff',
@@ -95,7 +95,7 @@
           },
           {
             type: 'value',
-            name: '满意率',
+            name: '双是率',
             min: 0,
             max: 100,
             interval: 10,
@@ -119,7 +119,7 @@
         ],
         series: [
           {
-            name: '案件数量/件',
+            name: '诉件数/件',
             type: 'line',
             data: chartData.caseNumbers,
             symbol: 'circle',
@@ -159,7 +159,7 @@
             },
           },
           {
-            name: '满意率',
+            name: '双是率',
             type: 'line',
             yAxisIndex: 1,
             data: chartData.satisfactionRates,
@@ -177,11 +177,11 @@
               color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                 {
                   offset: 0,
-                  color: `rgba(${PERCENT_COLOR.rgbStr}, 0)`, // Completely transparent at bottom
+                  color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 0)`, // Completely transparent at bottom
                 },
                 {
                   offset: 1,
-                  color: `rgba(${PERCENT_COLOR.rgbStr}, 0.3)`, // Slightly visible at top
+                  color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 0.3)`, // Slightly visible at top
                 },
               ]),
             },
@@ -234,7 +234,7 @@
               left: 'center',
               top: 'middle',
               style: {
-                text: '2024-12-18\n\n• 案件数量  139\n\n• 满意率     96%',
+                text: '2024-12-18\n\n• 诉件数  139\n\n• 双是率     96%',
                 fill: '#fff',
                 font: '14px Arial',
               },

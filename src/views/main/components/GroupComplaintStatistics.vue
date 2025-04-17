@@ -8,7 +8,7 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
   import blockImage from '@/assets/images/dashboard/block.png';
-  import { CASE_COLOR, PERCENT_COLOR, tooltip, calculateDynamicYAxis } from './common';
+  import { CASE_COLOR, YES_PERCENT_COLOR, tooltip, calculateDynamicYAxis } from './common';
 
   const chartRef = ref(null);
   let chart = null;
@@ -45,7 +45,7 @@
         yAxis: [
           {
             type: 'value',
-            name: '案件数量/件',
+            name: '诉件数/件',
             axisLine: { lineStyle: { color: '#ccc' } },
             splitLine: {
               show: false,
@@ -56,7 +56,7 @@
           },
           {
             type: 'value',
-            name: '满意率',
+            name: '双是率',
             axisLabel: { formatter: '{value}%' },
             axisLine: { lineStyle: { color: '#ccc' } },
             min: 0,
@@ -72,7 +72,7 @@
         ],
         series: [
           {
-            name: '案件数量',
+            name: '诉件数',
             type: 'bar',
             barGap: 0,
             data: barData,
@@ -116,7 +116,7 @@
             },
           },
           {
-            name: '满意率',
+            name: '双是率',
             type: 'line',
             yAxisIndex: 1,
             data: satisfactionRate,
@@ -125,7 +125,7 @@
             symbolSize: 8,
             max: 100,
             itemStyle: {
-              color: PERCENT_COLOR.rgb,
+              color: YES_PERCENT_COLOR.rgb,
             },
             label: {
               show: true,

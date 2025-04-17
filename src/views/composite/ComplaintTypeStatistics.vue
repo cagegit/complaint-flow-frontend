@@ -8,25 +8,10 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
   import blockImage from '@/assets/images/dashboard/block.png';
-  import { tooltip, PERCENT_COLOR, CASE_COLOR, grid } from '@/utils/dashboard';
+  import { tooltip, YES_PERCENT_COLOR, NO_PERCENT_COLOR, CASE_COLOR, grid } from '@/utils/dashboard';
 
   const chartRef = ref(null);
   let chart = null;
-
-  // Sample data extracted from the image
-  const chartData = {
-    dateRange: '2024年12月12日——2025年1月11日',
-    dates: [],
-    caseNumbers: [
-      140, 154, 154, 128, 154, 165, 146, 165, 121, 124, 100, 69, 100, 139, 80, 96, 157, 92, 105, 120, 150, 112, 154, 254, 154, 114, 84, 94, 154,
-    ],
-    satisfactionRates: [98, 92, 92, 93, 94, 86, 82, 93, 91, 87, 99, 96, 98, 92, 100, 99, 92, 99, 99, 98, 81, 38, 54, 52, 100, 56, 89, 32, 54, 87],
-  };
-
-  const dateRange = 30;
-  Array.from({ length: dateRange }, (_, index) => {
-    chartData.dates.push(`${index + 1}`);
-  });
 
   const initChart = () => {
     if (chartRef.value) {
@@ -35,7 +20,8 @@
       // 数据抽离
       const categories = Array.from({ length: 15 }, (_, i) => (i + 1).toString());
       const barData = [173, 117, 125, 103, 172, 124, 173, 117, 125, 103, 172, 124, 125, 103, 172];
-      const satisfactionRate = [96, 89, 95, 87, 95, 83, 96, 89, 95, 87, 95, 83, 95, 87, 95]; // 百分比
+      const doubleYesRate = [96, 89, 95, 87, 95, 83, 96, 89, 95, 87, 95, 83, 95, 87, 95]; // 百分比
+      const dobuleNoRate = [28, 32, 32, 13, 24, 16, 32, 13, 31, 27, 29, 36, 48, 52, 10, 29];
 
       const maxBarNumber = Math.max(...barData);
       const interval = 40;
@@ -64,7 +50,7 @@
         yAxis: [
           {
             type: 'value',
-            name: '案件数量/件',
+            name: '诉件数/件',
             axisLine: {
               show: false,
             },
@@ -86,7 +72,7 @@
           },
           {
             type: 'value',
-            name: '满意率',
+            name: '双是率',
             axisLine: {
               show: false,
             },
@@ -101,6 +87,7 @@
               color: '#B0E1D9',
               fontSize: 14,
               padding: [0, 0, 10, 0],
+              align: 'left',
             },
             alignTicks: true,
             axisLabel: {
@@ -111,7 +98,7 @@
         ],
         series: [
           {
-            name: '案件数量',
+            name: '诉件数',
             type: 'bar',
             barGap: 0,
             data: barData,
@@ -126,7 +113,7 @@
                 y2: 0,
                 colorStops: [
                   { offset: 0, color: `rgba(${CASE_COLOR.rgbStr}, 0)` },
-                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 0.7)` },
+                  { offset: 1, color: `rgba(${CASE_COLOR.rgbStr}, 0.8)` },
                 ],
               },
             },
@@ -157,9 +144,9 @@
             },
           },
           {
-            name: '满意率',
+            name: '双是率',
             type: 'bar',
-            data: satisfactionRate,
+            data: doubleYesRate,
             yAxisIndex: 1,
             barWidth: 10,
             itemStyle: {
@@ -170,8 +157,53 @@
                 x2: 0,
                 y2: 0,
                 colorStops: [
-                  { offset: 0, color: `rgba(${PERCENT_COLOR.rgbStr}, 0)` },
-                  { offset: 1, color: `rgba(${PERCENT_COLOR.rgbStr}, 1)` },
+                  { offset: 0, color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 0)` },
+                  { offset: 1, color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 0.8)` },
+                ],
+              },
+            },
+            label: {
+              show: true,
+              position: 'top',
+              align: 'center', // 右对齐
+              distance: 5,
+              formatter: function (params) {
+                return `{value|${params.value}%}\n{block|}`;
+              },
+              rich: {
+                value: {
+                  color: '#fff',
+                  align: 'center',
+                  padding: [0, 0, 4, 0],
+                },
+                block: {
+                  height: 2,
+                  width: 10,
+                  backgroundColor: {
+                    image: blockImage,
+                  },
+                  align: 'center',
+                },
+              },
+              offset: [0, 5], // 调整标签位置，向上偏移
+            },
+          },
+          {
+            name: '双否率',
+            type: 'bar',
+            data: dobuleNoRate,
+            yAxisIndex: 1,
+            barWidth: 10,
+            itemStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 1,
+                x2: 0,
+                y2: 0,
+                colorStops: [
+                  { offset: 0, color: `rgba(${NO_PERCENT_COLOR.rgbStr}, 0)` },
+                  { offset: 1, color: `rgba(${NO_PERCENT_COLOR.rgbStr}, 0.8)` },
                 ],
               },
             },

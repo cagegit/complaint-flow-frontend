@@ -14,7 +14,7 @@
 <script setup>
   import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
   import * as echarts from 'echarts';
-  import { calculateDynamicYAxis, tooltip, grid, CASE_COLOR, PERCENT_COLOR } from '@/utils/dashboard';
+  import { calculateDynamicYAxis, tooltip, grid, CASE_COLOR, YES_PERCENT_COLOR } from '@/utils/dashboard';
   import Pagination from '@/components/Pagination/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
 
@@ -74,15 +74,15 @@
   // 案件类型统计数据
   const seriesData = [
     {
-      label: '案件数量/件',
+      label: '诉件数/件',
       data: caseStatistics.map((item) => item.caseCount),
       color: CASE_COLOR.rgbStr, // 蓝色
       yAxisIndex: 0,
     },
     {
-      label: '满意率',
+      label: '双是率',
       data: caseStatistics.map((item) => item.satisfactionRate * 100),
-      color: PERCENT_COLOR.rgbStr, // 橙色
+      color: YES_PERCENT_COLOR.rgbStr, // 橙色
       yAxisIndex: 1,
     },
   ];

@@ -8,7 +8,7 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
   import blockImage from '@/assets/images/dashboard/block.png';
-  import { tooltip, PERCENT_COLOR, CASE_COLOR } from './common';
+  import { tooltip, YES_PERCENT_COLOR, CASE_COLOR } from './common';
 
   const chartRef = ref(null);
   let chart = null;
@@ -57,7 +57,7 @@
         yAxis: [
           {
             type: 'value',
-            name: '案件数量/件',
+            name: '诉件数/件',
             axisLine: { lineStyle: { color: '#ccc' } },
             splitLine: {
               show: false,
@@ -68,7 +68,7 @@
           },
           {
             type: 'value',
-            name: '满意率',
+            name: '双是率',
             axisLabel: { formatter: '{value}%' },
             axisLine: { lineStyle: { color: '#ccc' } },
             min: 0,
@@ -83,7 +83,7 @@
         ],
         series: [
           {
-            name: '案件数量',
+            name: '诉件数',
             type: 'bar',
             barGap: 0,
             data: barData,
@@ -129,7 +129,7 @@
             },
           },
           {
-            name: '满意率',
+            name: '双是率',
             type: 'bar',
             data: satisfactionRate,
             yAxisIndex: 1,
@@ -142,8 +142,8 @@
                 x2: 0,
                 y2: 0,
                 colorStops: [
-                  { offset: 0, color: `rgba(${PERCENT_COLOR.rgbStr}, 0)` },
-                  { offset: 1, color: `rgba(${PERCENT_COLOR.rgbStr}, 1)` },
+                  { offset: 0, color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 0)` },
+                  { offset: 1, color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 1)` },
                 ],
               },
             },
