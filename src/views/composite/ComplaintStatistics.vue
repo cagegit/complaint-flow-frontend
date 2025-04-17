@@ -89,7 +89,7 @@
           },
           {
             type: 'value',
-            name: '双是率',
+            name: '百分比',
             min: 0,
             max: 100,
             interval: 10,

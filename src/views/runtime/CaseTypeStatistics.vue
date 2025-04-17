@@ -80,7 +80,7 @@
       yAxisIndex: 0,
     },
     {
-      label: '双是率',
+      label: '百分比',
       data: caseStatistics.map((item) => item.satisfactionRate * 100),
       color: YES_PERCENT_COLOR.rgbStr, // 橙色
       yAxisIndex: 1,
@@ -150,6 +150,7 @@
       yAxis: [
         {
           type: 'value',
+          name: '诉件数/件',
           name: seriesData.find((s) => s.yAxisIndex === 0)?.label || '',
           nameTextStyle: {
             color: '#B0E1D9',
@@ -168,6 +169,7 @@
         },
         {
           type: 'value',
+          name: '百分比',
           name: seriesData.find((s) => s.yAxisIndex === 1)?.label || '',
           nameTextStyle: {
             color: '#B0E1D9',

@@ -72,7 +72,7 @@
           },
           {
             type: 'value',
-            name: '双是率',
+            name: '百分比',
             axisLine: {
               show: false,
             },

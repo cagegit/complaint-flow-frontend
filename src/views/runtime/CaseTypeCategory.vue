@@ -60,7 +60,7 @@
           <div class="name">
             <div class="name-up">{{ item.name }}</div>
             <div class="name-down">
-              <div class="name-down-label">案件数</div>
+              <div class="name-down-label">诉件数</div>
               <div>{{ item.value }}</div>
             </div>
           </div>
