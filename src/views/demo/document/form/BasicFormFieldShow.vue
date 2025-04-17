@@ -40,7 +40,7 @@
     },
     {
       field: 'satisfiedLevel',
-      label: '满意率',
+      label: '双是率',
       component: 'Slider',
       componentProps: {
         tipFormatter: (value) => {

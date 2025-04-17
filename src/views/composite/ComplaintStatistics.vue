@@ -6,7 +6,7 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
-  import { tooltip, CASE_COLOR, PERCENT_COLOR, grid } from '@/utils/dashboard';
+  import { tooltip, CASE_COLOR, YES_PERCENT_COLOR, NO_PERCENT_COLOR, grid } from '@/utils/dashboard';
   const chartRef = ref(null);
   let chart = null;
 
@@ -17,7 +17,8 @@
     caseNumbers: [
       140, 154, 154, 128, 154, 165, 146, 165, 121, 124, 100, 69, 100, 139, 80, 96, 157, 92, 105, 120, 150, 112, 154, 254, 154, 114, 84, 94, 154, 151,
     ],
-    satisfactionRates: [98, 92, 92, 93, 94, 86, 82, 93, 91, 87, 99, 96, 98, 92, 100, 99, 92, 99, 99, 98, 81, 38, 54, 52, 100, 56, 89, 32, 54, 87],
+    dobuleYesRate: [98, 92, 92, 93, 94, 86, 82, 93, 91, 87, 99, 96, 98, 92, 100, 99, 92, 99, 99, 98, 81, 38, 54, 52, 100, 56, 89, 32, 54, 87],
+    dobuleNoRate: [28, 32, 32, 13, 24, 16, 32, 13, 31, 27, 29, 36, 48, 52, 10, 29, 0, 19, 19, 28, 41, 38, 14, 52, 10, 56, 18, 32, 54, 18],
   };
 
   const dateRange = 30;
@@ -68,7 +69,7 @@
         yAxis: [
           {
             type: 'value',
-            name: '案件数量/件',
+            name: '诉件数/件',
             min: 0,
             nameTextStyle: {
               color: '#B0E1D9',
@@ -88,7 +89,7 @@
           },
           {
             type: 'value',
-            name: '满意率',
+            name: '百分比',
             min: 0,
             max: 100,
             interval: 10,
@@ -115,7 +116,7 @@
         ],
         series: [
           {
-            name: '案件数量/件',
+            name: '诉件数/件',
             type: 'line',
             data: chartData.caseNumbers,
             symbol: 'circle',
@@ -155,10 +156,10 @@
             },
           },
           {
-            name: '满意率',
+            name: '双是率',
             type: 'line',
             yAxisIndex: 1,
-            data: chartData.satisfactionRates,
+            data: chartData.dobuleYesRate,
             symbol: 'circle',
             symbolSize: 4,
             itemStyle: {
@@ -173,11 +174,53 @@
               color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                 {
                   offset: 0,
-                  color: `rgba(${PERCENT_COLOR.rgbStr}, 0)`, // Completely transparent at bottom
+                  color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 0)`, // Completely transparent at bottom
                 },
                 {
                   offset: 1,
-                  color: `rgba(${PERCENT_COLOR.rgbStr}, 0.3)`, // Slightly visible at top
+                  color: `rgba(${YES_PERCENT_COLOR.rgbStr}, 0.3)`, // Slightly visible at top
+                },
+              ]),
+            },
+            label: {
+              show: true, // 确保标签总开关是打开的
+              position: 'top', // 可以根据需要调整 label 位置
+              align: 'center', // 标签居中对齐
+              color: '#fff', // 标签文本颜色
+              formatter: function (params) {
+                // params 包含当前数据项的信息，例如 dataIndex（索引）和 value（数值）
+                if (params.dataIndex % 2 === 0) {
+                  return `${params.value}%`; // 显示偶数索引的标签值
+                } else {
+                  return ''; // 奇数索引返回空字符串，达到隐藏效果
+                }
+              },
+            },
+          },
+          {
+            name: '双否率',
+            type: 'line',
+            yAxisIndex: 1,
+            data: chartData.dobuleNoRate,
+            symbol: 'circle',
+            symbolSize: 4,
+            itemStyle: {
+              color: '#E0E0E0',
+            },
+            lineStyle: {
+              width: 1,
+              color: '#E0E0E0',
+            },
+            // No areaStyle for the satisfaction rate line
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
+                {
+                  offset: 0,
+                  color: `rgba(${NO_PERCENT_COLOR.rgbStr}, 0)`, // Completely transparent at bottom
+                },
+                {
+                  offset: 1,
+                  color: `rgba(${NO_PERCENT_COLOR.rgbStr}, 0.3)`, // Slightly visible at top
                 },
               ]),
             },
