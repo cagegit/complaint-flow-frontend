@@ -24,6 +24,7 @@
   const chartRef = ref(null);
   const chartNumber = ref(0);
   let chartInstance = null;
+  let isNo100 = ref(false);
 
   function processData(data) {
     const total = data.reduce((sum, item) => sum + item.value, 0);
@@ -31,6 +32,9 @@
 
     chartNumber.value = total;
 
+    console.log('total', total, 'result', result);
+
+    isNo100.value = total < 100;
     if (total < 100) {
       result.push({
         value: 100 - total,
@@ -98,8 +102,9 @@
             color: `rgba(${item.color}, 0.6)`, // 白色
           },
         },
+        rate: item.rate,
       };
-      if (index === data.length - 1) {
+      if (isNo100.value && index === data.length - 1) {
         targetSerie = {
           ...targetSerie,
           itemStyle: {
@@ -137,16 +142,26 @@
             minMargin: 5,
             edgeDistance: 10,
             lineHeight: 15,
+            formatter: (params) => {
+              console.log('params', params);
+              return `{name|${params.name}} {percent|${params.percent}} {unit|%} \n {rate|同比${params.data.rate}%}`;
+            },
             rich: {
               name: {
                 fontSize: 16,
                 padding: [0, 0, 10, 0],
                 color: '#fff',
               },
-              time: {
+              percent: {
+                fontSize: 24,
+                padding: [0, 0, 12, 6],
+                color: '#fff',
+              },
+              unit: { fontSize: 12, color: '#E4FFF9' },
+              rate: {
                 fontSize: 12,
                 padding: [6, 0, 0, 0],
-                color: '#999',
+                color: '#E4FFF9',
               },
             },
           },
@@ -236,7 +251,8 @@
       top: 50%;
       transform: translate(-50%, -50%);
       display: flex;
-      align-items: baseline;
+      flex-direction: column;
+      align-items: center;
 
       .number {
         font-family: SourceHanSansCN, SourceHanSansCN;

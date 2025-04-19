@@ -2,7 +2,7 @@
   <div class="chart-container">
     <div class="title">
       <div class="left">
-        <div class="text">案件性质分类</div>
+        <div class="text">案件类型统计</div>
         <DispatchTabs
       /></div>
       <Pagination :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
