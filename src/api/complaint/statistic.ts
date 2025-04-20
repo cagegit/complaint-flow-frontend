@@ -1,6 +1,10 @@
 import { defHttp } from '/@/utils/http/axios';
 
 const Api = {
+  // 月度周期
+  getTimeCycle: '/complain/timeCycle/getTimeCycle',
+  // 年度周期
+  getYearCycle: '/complain/timeCycle/getYearCycle',
   // 总览
   getOverviewCount: '/complain/statistic/getOverviewCount',
   // 满意度
@@ -21,6 +25,20 @@ const Api = {
   getDoubleNoList: '/complain/statistic/getDoubleNoList',
   // 群诉案件分析
   getQunsuList: '/complain/statistic/getQunsuList',
+};
+export const getTimeCycle = () => {
+  return new Promise((resolve) => {
+    defHttp.get({ url: Api.getTimeCycle }, { successMessageMode: 'none' }).then((res) => {
+      resolve(res);
+    });
+  });
+};
+export const getYearCycle = () => {
+  return new Promise((resolve) => {
+    defHttp.get({ url: Api.getYearCycle }, { successMessageMode: 'none' }).then((res) => {
+      resolve(res);
+    });
+  });
 };
 export const getOverviewCount = () => {
   return new Promise((resolve) => {

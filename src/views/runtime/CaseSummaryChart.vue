@@ -13,6 +13,8 @@
   import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
   import * as echarts from 'echarts';
   import { getCoordinates } from '@/utils/dashboard';
+  import upIcon from '@/assets/images/runtime/category/up-icon.png';
+  import downIcon from '@/assets/images/runtime/category/down-icon.png';
 
   const props = defineProps({
     seriesData: {
@@ -144,7 +146,8 @@
             lineHeight: 15,
             formatter: (params) => {
               console.log('params', params);
-              return `{name|${params.name}} {percent|${params.percent}} {unit|%} \n {rate|同比${params.data.rate}%}`;
+              const rate = params.data.rate || 0;
+              return `{name|${params.name}} {percent|${params.percent}} {unit|%} \n {rate|同比} {${rate > 0 ? 'rateUp|' : rate == 0 ? 'zero|' : 'rateDown|'}} {rate|${rate}%}`;
             },
             rich: {
               name: {
@@ -163,6 +166,21 @@
                 padding: [6, 0, 0, 0],
                 color: '#E4FFF9',
               },
+              rateUp: {
+                width: 9,
+                height: 11,
+                backgroundColor: {
+                  image: upIcon,
+                },
+              },
+              rateDown: {
+                width: 9,
+                height: 11,
+                backgroundColor: {
+                  image: downIcon,
+                },
+              },
+              zero: {},
             },
           },
           labelLayout: function (params) {

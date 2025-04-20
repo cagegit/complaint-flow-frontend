@@ -57,6 +57,7 @@
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import { message } from 'ant-design-vue';
   import {
+    getTimeCycle,
     getOverviewCount,
     getSatisfyRate,
     getAssignPageList,
@@ -155,6 +156,22 @@
     },
   ]);
 
+  function calculateYoY(current, previous, decimalPlaces = 2) {
+    // 类型检查
+    if (typeof current !== 'number' || typeof previous !== 'number') {
+      throw new TypeError('current 和 previous 必须是数字');
+    }
+
+    // 处理去年同期为0的情况
+    if (previous === 0) {
+      if (current === 0) return NaN; // 两者都为0，无法计算
+      return current > 0 ? Infinity : -Infinity; // 无限增长/下降
+    }
+
+    // 计算并格式化增长率
+    const growthRate = ((current - previous) / previous) * 100;
+    return Number(growthRate.toFixed(decimalPlaces));
+  }
   onMounted(() => {
     fetchOverview();
     fetchRate();
@@ -209,59 +226,66 @@
 
   const fetchRate = async () => {
     try {
-      const directRes: any = await getSatisfyRate({
+      const directStartRes: any = await getSatisfyRate({
+        sourceType: 2,
+        offset: -1,
+      });
+      const directEndRes: any = await getSatisfyRate({
         sourceType: 2,
       });
       directData.value = [
         {
-          value: directRes.doubleYes,
+          value: directEndRes.doubleYes,
           name: '双是',
-          rate: 0,
+          rate: calculateYoY(directEndRes.doubleYes, directStartRes.doubleYes),
           color: '62, 237, 241',
         },
         {
-          value: directRes.singleYes,
+          value: directEndRes.singleYes,
           name: '单是',
-          rate: 0,
+          rate: calculateYoY(directEndRes.singleYes, directStartRes.singleYes),
           color: '242, 127, 69',
         },
         {
-          value: directRes.doubleNo,
+          value: directEndRes.doubleNo,
           name: '双否',
-          rate: 0,
+          rate: calculateYoY(directEndRes.doubleNo, directStartRes.doubleNo),
           color: '224, 224, 224',
         },
         {
-          value: directRes.other,
+          value: directEndRes.other,
           name: '其他',
-          rate: 0,
+          rate: calculateYoY(directEndRes.other, directStartRes.other),
           color: '244, 229, 106',
         },
       ];
-      const compositeRes: any = await getSatisfyRate();
+      const compositeStartRes: any = await getSatisfyRate({
+        offset: -1,
+      });
+      const compositeEndRes: any = await getSatisfyRate();
       compositeData.value = [
         {
-          value: compositeRes.doubleYes,
+          value: compositeEndRes.doubleYes,
           name: '双是',
-          rate: 0,
+          rate: calculateYoY(compositeEndRes.doubleYes, compositeStartRes.doubleYes),
           color: '62, 237, 241',
         },
         {
-          value: compositeRes.singleYes,
+          value: compositeEndRes.singleYes,
           name: '单是',
-          rate: 0,
+          rate: calculateYoY(compositeEndRes.singleYes, compositeStartRes.singleYes),
           color: '242, 127, 69',
         },
         {
-          value: compositeRes.doubleNo,
+          value: compositeEndRes.doubleNo,
           name: '双否',
-          rate: 0,
+          rate: calculateYoY(compositeEndRes.doubleNo, compositeStartRes.doubleNo),
           color: '224, 224, 224',
         },
         {
-          value: compositeRes.other,
+          value: compositeEndRes.other,
           name: '其他',
-          rate: 0,
+          rate: calculateYoY(compositeEndRes.other, compositeStartRes.other),
           color: '244, 229, 106',
         },
       ];
