@@ -3,24 +3,24 @@
     <div
       :class="{
         'tab-left': true,
-        active: currentValue === 1,
+        active: currentValue === 2,
       }"
-      @click="onClick(1)"
+      @click="onClick(2)"
       ><text class="tab-text">直派</text></div
     >
     <div
       :class="{
         'tab-right': true,
-        active: currentValue === 2,
+        active: currentValue === -1,
       }"
-      @click="onClick(2)"
+      @click="onClick(-1)"
       ><text class="tab-text">综合</text></div
     >
   </div>
 </template>
 <script setup>
   import { ref } from 'vue';
-  const currentValue = ref(1);
+  const currentValue = ref(2);
 
   const props = defineProps({
     onTabChange: {

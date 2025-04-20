@@ -32,6 +32,10 @@
   import { ref } from 'vue';
 
   const props = defineProps({
+    currentPage: {
+      type: Number,
+      required: true,
+    },
     maxPage: {
       type: Number,
       required: true,
@@ -46,27 +50,19 @@
     },
   });
 
-  // 当前页码
-  const currentPage = ref(1);
   // 总页数
   const totalPages = ref(props.maxPage);
 
   // 上一页方法
   const prevPage = () => {
-    if (currentPage.value > 1) {
-      currentPage.value--;
-      if (props.onPrevPage) {
-        props.onPrevPage();
-      }
+    if (props.onPrevPage) {
+      props.onPrevPage();
     }
   };
   // 下一页方法
   const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-      currentPage.value++;
-      if (props.onNextPage) {
-        props.onNextPage();
-      }
+    if (props.onNextPage) {
+      props.onNextPage();
     }
   };
 </script>

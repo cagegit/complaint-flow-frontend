@@ -57,7 +57,6 @@
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import { message } from 'ant-design-vue';
   import {
-    getTimeCycle,
     getOverviewCount,
     getSatisfyRate,
     getAssignPageList,
