@@ -29,162 +29,75 @@
     <div class="carousel-list">
       <div class="carousel-item" v-for="(item, index) in issuesData" :key="item.value">
         <div class="label">
-          <div v-if="item.status === 1" class="status-one"></div>
-          <div v-else-if="item.status === 2" class="status-two"></div>
-          <div v-else-if="item.status === 3" class="status-three"></div>
+          <div v-if="item.timeLevel === 1" class="status-one"></div>
+          <div v-else-if="item.timeLevel === 2" class="status-two"></div>
+          <div v-else-if="item.timeLevel === 3" class="status-three"></div>
         </div>
-        <div class="type">{{ item.type }}</div>
+        <div class="type">{{ SourceTypeNameMap[item.type] }}</div>
         <div class="table-title">{{ item.title }}</div>
         <div class="time">
-          <div class="date">{{ getDate(item.time) }}</div>
-          <div class="text">{{ getTime(item.time) }}</div>
+          <div class="date">{{ getDate(item.createTime) }}</div>
+          <div class="text">{{ getTime(item.createTime) }}</div>
         </div>
-        <div class="department">{{ item.department }}</div>
-        <div class="community">{{ item.community }}</div>
+        <div class="department">{{ item.assignDepts }}</div>
+        <div class="community">{{ item.assignCommunitys }}</div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount } from 'vue';
   import dayjs from 'dayjs';
+  import { message } from 'ant-design-vue';
+  import { getAssignPageList } from '@/api/complaint/statistic';
+  import { SourceTypeNameMap } from '@/enums/statisticEnum';
 
-  const allData = ref([
-    {
-      type: '市直派',
-      title: '小区外道路乱停违停，造成交通堵塞，小区住户反映强烈',
-      time: '2023-12-28 09:23:19',
-      department: '科室1',
-      community: '社区名称A',
-      status: 1,
-    },
-    {
-      type: '区分转',
-      title: '物业收费问题引发业主强烈反对，聚众要求更换物业',
-      time: '2023-12-28 09:23:19',
-      department: '综合管理科',
-      community: '社区名称B',
-      status: 1,
-    },
-    {
-      type: '市直派',
-      title: '物业收费争议引发集体抗议事件',
-      time: '2023-12-28 09:23:19',
-      department: '物业监管科',
-      community: '社区名称C',
-      status: 2,
-    },
-    {
-      type: '区分转',
-      title: '车位分配不公导致业主冲突事件',
-      time: '2023-12-28 09:23:19',
-      department: '社区协调科',
-      community: '社区名称D',
-      status: 2,
-    },
-    {
-      type: '区分转',
-      title: '楼道杂物堆积存在重大安全隐患',
-      time: '2023-12-28 09:23:19',
-      department: '安全管理科',
-      community: '社区名称E',
-      status: 2,
-    },
-    {
-      type: '市指派',
-      title: '违规停车导致交通拥堵问题',
-      time: '2023-12-28 09:23:19',
-      department: '交通管理科',
-      community: '社区名称F',
-      status: 3,
-    },
-    {
-      type: '市指派',
-      title: '车位分配管理混乱问题',
-      time: '2023-12-28 09:23:19',
-      department: '物业管理处',
-      community: '社区名称G',
-      status: 3,
-    },
-    {
-      type: '区分转',
-      title: '消防通道被占用的安全隐患',
-      time: '2023-12-28 09:23:19',
-      department: '消防监管科',
-      community: '社区名称H',
-      status: 3,
-    },
-    {
-      type: '区分转',
-      title: '消防通道被占用的安全隐患1',
-      time: '2023-12-28 09:23:19',
-      department: '消防监管科',
-      community: '社区名称H',
-      status: 3,
-    },
-    {
-      type: '区分转',
-      title: '消防通道被占用的安全隐患2',
-      time: '2023-12-28 09:23:19',
-      department: '消防监管科',
-      community: '社区名称H',
-      status: 3,
-    },
-    {
-      type: '区分转',
-      title: '消防通道被占用的安全隐患3',
-      time: '2023-12-28 09:23:19',
-      department: '消防监管科',
-      community: '社区名称H',
-      status: 3,
-    },
-    {
-      type: '区分转',
-      title: '消防通道被占用的安全隐患3',
-      time: '2023-12-28 09:23:19',
-      department: '消防监管科',
-      community: '社区名称H',
-      status: 3,
-    },
-    {
-      type: '区分转',
-      title: '消防通道被占用的安全隐患5',
-      time: '2023-12-28 09:23:19',
-      department: '消防监管科',
-      community: '社区名称H',
-      status: 3,
-    },
-    {
-      type: '区分转',
-      title: '消防通道被占用的安全隐患6',
-      time: '2023-12-28 09:23:19',
-      department: '消防监管科',
-      community: '社区名称H',
-      status: 3,
-    },
-  ]);
+  //   const allData = ref([
+  //     {
+  //       type: 0,
+  //       title: '小区外道路乱停违停，造成交通堵塞，小区住户反映强烈',
+  //       createTime: '2023-12-28 09:23:19',
+  //       assignDepts: '科室1',
+  //       assignCommunitys: '社区名称A',
+  //       timeLevel: 1,
+  //     },
+  //   ]);
 
   const issuesData = ref([]);
-
-  const currentIndex = ref(0);
-  const timer = ref(null);
+  const currentNum = ref(1);
+  const timer = ref<NodeJS.Timeout | null>(null);
 
   onMounted(() => {
-    if (allData.value.length !== 0) {
-      timer.value = setInterval(() => {
-        currentIndex.value = (currentIndex.value + 1) % allData.value.length;
-        issuesData.value = allData.value.slice(currentIndex.value, currentIndex.value + 9);
-        // // 创建包含9个元素的数组（自动循环）
-        // issuesData.value = Array.from({ length: 9 }, (_, i) => {
-        //   return allData.value[(currentIndex.value + i) % allData.value.length];
-        // });
-      }, 2000);
-    }
+    fetchData(currentNum.value);
+    timer.value = setInterval(() => {
+      currentNum.value = currentNum.value + 1;
+      fetchData(currentNum.value);
+    }, 5000);
   });
 
+  const fetchData = async (pageNum) => {
+    try {
+      const res: any = await getAssignPageList({
+        pageNum,
+        pageSize: 9,
+      });
+      const { list } = res;
+      issuesData.value = list;
+      if (list.length < 9) {
+        currentNum.value = 0;
+      }
+      console.log(res);
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
   onBeforeUnmount(() => {
-    clearInterval(timer.value);
+    if (timer.value) {
+      clearInterval(timer.value);
+    }
   });
 
   const getDate = (timeStr) => {

@@ -118,3 +118,20 @@ export const CASE_COLOR = {
   rgb: 'rgb(96, 240, 187)',
   rgbStr: '96, 240, 187',
 };
+
+export const calculateYoY = (current, previous, decimalPlaces = 2) => {
+  // 类型检查
+  if (typeof current !== 'number' || typeof previous !== 'number') {
+    throw new TypeError('current 和 previous 必须是数字');
+  }
+
+  // 处理去年同期为0的情况
+  if (previous === 0) {
+    if (current === 0) return NaN; // 两者都为0，无法计算
+    return current > 0 ? Infinity : -Infinity; // 无限增长/下降
+  }
+
+  // 计算并格式化增长率
+  const growthRate = ((current - previous) / previous) * 100;
+  return Number(growthRate.toFixed(decimalPlaces));
+};

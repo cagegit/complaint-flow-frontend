@@ -34,7 +34,7 @@
     }
     console.log('currentIndex', item);
     currentIndex.value = index;
-    props.onTabChange(item.value);
+    props.onTabChange(item);
   };
 </script>
 <style lang="less" scoped>

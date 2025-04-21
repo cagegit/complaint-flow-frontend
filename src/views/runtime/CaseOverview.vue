@@ -36,18 +36,18 @@
         <div class="sub-text">综合双是率</div>
       </div>
       <!-- 案件总览 -->
-      <CaseSummaryChart :seriesData="summaryData" />
+      <CaseSummaryChart :seriesData="compositeData" />
       <div class="title">
         <div class="sub-text">直派双是率</div>
       </div>
       <!-- 案件总览 -->
-      <CaseSummaryChart :seriesData="summaryData" />
+      <CaseSummaryChart :seriesData="directData" />
     </div>
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
   import errorbg from '@/assets/images/runtime/overview/error.png';
   import waitbg from '@/assets/images/runtime/overview/wait.png';
   import donebg from '@/assets/images/runtime/overview/done.png';
@@ -55,70 +55,222 @@
   import doingIcon from '@/assets/images/runtime/overview/doing-icon.png';
   import CaseSummaryChart from './CaseSummaryChart.vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
+  import { message } from 'ant-design-vue';
+  import { getOverviewCount, getSatisfyRate } from '@/api/complaint/statistic';
+  import { calculateYoY } from '@/utils/dashboard';
 
   const tabs = [{ value: 2, label: '期' }];
-  const totalCase = ref(646);
-  const doingCase = ref(646);
+  const totalCase = ref(0);
+  const doingCase = ref(0);
   const statusData = ref([
     {
       label: '待分配',
-      value: 66,
+      value: 0,
       bg: errorbg,
     },
     {
       label: '待回复',
-      value: 26,
+      value: 0,
       bg: waitbg,
     },
     {
       label: '二次办理',
-      value: 6,
+      value: 0,
       bg: waitbg,
     },
     {
       label: '待回访',
-      value: 11,
+      value: 0,
       bg: waitbg,
     },
     {
       label: '待审核',
-      value: 111,
+      value: 0,
       bg: waitbg,
     },
     {
       label: '已办结',
-      value: 2323,
+      value: 0,
       bg: donebg,
     },
   ]);
 
   // 案件总结数据
-  const summaryData = ref([
+  const directData = ref([
     {
-      value: 60,
+      value: 0,
       name: '双是',
-      persent: 3.5,
+      rate: 0,
       color: '62, 237, 241',
     },
     {
-      value: 8,
+      value: 0,
       name: '单是',
-      persent: 6,
+      rate: 0,
       color: '242, 127, 69',
     },
     {
-      value: 5,
+      value: 0,
       name: '双否',
-      persent: 15,
+      rate: 0,
       color: '224, 224, 224',
     },
     {
-      value: 5,
+      value: 0,
       name: '其他',
-      persent: 15,
+      rate: 0,
       color: '244, 229, 106',
     },
   ]);
+  const compositeData = ref([
+    {
+      value: 0,
+      name: '双是',
+      rate: 0,
+      color: '62, 237, 241',
+    },
+    {
+      value: 0,
+      name: '单是',
+      rate: 0,
+      color: '242, 127, 69',
+    },
+    {
+      value: 0,
+      name: '双否',
+      rate: 0,
+      color: '224, 224, 224',
+    },
+    {
+      value: 0,
+      name: '其他',
+      rate: 0,
+      color: '244, 229, 106',
+    },
+  ]);
+
+  onMounted(() => {
+    fetchOverview();
+    fetchRate();
+  });
+
+  const fetchOverview = async () => {
+    try {
+      const res: any = await getOverviewCount();
+      console.log(res);
+      const { completCount, processingCount, receiveCount, twoHandleCount, waitAssignCount, waitAuditCount, waitReplyCount, waitVisitCount } = res;
+      totalCase.value = receiveCount;
+      doingCase.value = processingCount;
+
+      statusData.value = [
+        {
+          label: '待分配',
+          value: waitAssignCount,
+          bg: errorbg,
+        },
+        {
+          label: '待回复',
+          value: waitReplyCount,
+          bg: waitbg,
+        },
+        {
+          label: '二次办理',
+          value: twoHandleCount,
+          bg: waitbg,
+        },
+        {
+          label: '待回访',
+          value: waitVisitCount,
+          bg: waitbg,
+        },
+        {
+          label: '待审核',
+          value: waitAuditCount,
+          bg: waitbg,
+        },
+        {
+          label: '已办结',
+          value: completCount,
+          bg: donebg,
+        },
+      ];
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    } finally {
+    }
+  };
+
+  const fetchRate = async () => {
+    try {
+      const directStartRes: any = await getSatisfyRate({
+        sourceType: 2,
+        offset: -1,
+      });
+      const directEndRes: any = await getSatisfyRate({
+        sourceType: 2,
+      });
+      directData.value = [
+        {
+          value: directEndRes.doubleYes,
+          name: '双是',
+          rate: calculateYoY(directEndRes.doubleYes, directStartRes.doubleYes),
+          color: '62, 237, 241',
+        },
+        {
+          value: directEndRes.singleYes,
+          name: '单是',
+          rate: calculateYoY(directEndRes.singleYes, directStartRes.singleYes),
+          color: '242, 127, 69',
+        },
+        {
+          value: directEndRes.doubleNo,
+          name: '双否',
+          rate: calculateYoY(directEndRes.doubleNo, directStartRes.doubleNo),
+          color: '224, 224, 224',
+        },
+        {
+          value: directEndRes.other,
+          name: '其他',
+          rate: calculateYoY(directEndRes.other, directStartRes.other),
+          color: '244, 229, 106',
+        },
+      ];
+      const compositeStartRes: any = await getSatisfyRate({
+        offset: -1,
+      });
+      const compositeEndRes: any = await getSatisfyRate();
+      compositeData.value = [
+        {
+          value: compositeEndRes.doubleYes,
+          name: '双是',
+          rate: calculateYoY(compositeEndRes.doubleYes, compositeStartRes.doubleYes),
+          color: '62, 237, 241',
+        },
+        {
+          value: compositeEndRes.singleYes,
+          name: '单是',
+          rate: calculateYoY(compositeEndRes.singleYes, compositeStartRes.singleYes),
+          color: '242, 127, 69',
+        },
+        {
+          value: compositeEndRes.doubleNo,
+          name: '双否',
+          rate: calculateYoY(compositeEndRes.doubleNo, compositeStartRes.doubleNo),
+          color: '224, 224, 224',
+        },
+        {
+          value: compositeEndRes.other,
+          name: '其他',
+          rate: calculateYoY(compositeEndRes.other, compositeStartRes.other),
+          color: '244, 229, 106',
+        },
+      ];
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
 </script>
 
 <style lang="less" scoped>

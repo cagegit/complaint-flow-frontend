@@ -18,7 +18,7 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts" name="ComplaintRuntime">
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';

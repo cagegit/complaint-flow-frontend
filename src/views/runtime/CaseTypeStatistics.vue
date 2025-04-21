@@ -2,104 +2,61 @@
   <div class="chart-container">
     <div class="title">
       <div class="left">
-        <div class="text">案件性质分类</div>
-        <DispatchTabs
-      /></div>
-      <Pagination :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
+        <div class="text">案件类型统计</div>
+        <DispatchTabs :onTabChange="onTabChange" />
+        /></div
+      >
+      <Pagination :currentPage="currentPage" :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
     </div>
     <div ref="chartRef" class="chart"></div>
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+<script setup lang="ts">
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
   import * as echarts from 'echarts';
   import { calculateDynamicYAxis, tooltip, grid, CASE_COLOR, YES_PERCENT_COLOR } from '@/utils/dashboard';
   import Pagination from '@/components/Pagination/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
+  import { message } from 'ant-design-vue';
+  import { getQuestionTypeCountList } from '@/api/complaint/statistic';
 
-  const caseStatistics = [
-    {
-      category: '社会权力',
-      caseCount: 157,
-      satisfactionRate: 0.98,
-    },
-    {
-      category: '交通管理',
-      caseCount: 178,
-      satisfactionRate: 0.86,
-    },
-    {
-      category: '公共安全',
-      caseCount: 117,
-      satisfactionRate: 0.94,
-    },
-    {
-      category: '公共服务',
-      caseCount: 78,
-      satisfactionRate: 0.84,
-    },
-    {
-      category: '农村管理',
-      caseCount: 175,
-      satisfactionRate: 0.88,
-    },
-    {
-      category: '邮政业服务管理',
-      caseCount: 136,
-      satisfactionRate: 0.93,
-    },
-    {
-      category: '环境保护',
-      caseCount: 73,
-      satisfactionRate: 0.91,
-    },
-    {
-      category: '市政',
-      caseCount: 63,
-      satisfactionRate: 0.66,
-    },
-    {
-      category: '市容市貌',
-      caseCount: 86,
-      satisfactionRate: 0.86,
-    },
-    {
-      category: '城市绿化',
-      caseCount: 90,
-      satisfactionRate: 0.9,
-    },
-  ];
+  type CaseStatistics = { caseCount: number; questionName: string; satisfyRate: number };
+  const allCaseStatistics = ref<CaseStatistics[]>([]);
+  const currentCaseStatistics = ref<CaseStatistics[]>([]);
+  const currentPage = ref(1);
 
   // 案件类型统计数据
-  const seriesData = [
+  const seriesData = ref<
     {
-      label: '诉件数/件',
-      data: caseStatistics.map((item) => item.caseCount),
-      color: CASE_COLOR.rgbStr, // 蓝色
-      yAxisIndex: 0,
-    },
-    {
-      label: '百分比',
-      data: caseStatistics.map((item) => item.satisfactionRate * 100),
-      color: YES_PERCENT_COLOR.rgbStr, // 橙色
-      yAxisIndex: 1,
-    },
-  ];
+      label: string;
+      data: number[];
+      color: string;
+      yAxisIndex: number;
+    }[]
+  >([]);
+
+  const onTabChange = (sourceType) => {
+    fetchData(sourceType);
+  };
 
   const onPrevPage = () => {
     console.log('上一页');
+    currentPage.value = 1;
+    currentCaseStatistics.value = allCaseStatistics.value.slice(0, 10);
+    initData();
   };
   const onNextPage = () => {
     console.log('下一页');
+    currentPage.value = 2;
+    currentCaseStatistics.value = allCaseStatistics.value.slice(10, 20);
+    initData();
   };
 
-  const xAxisData = caseStatistics.map((item) => item.category);
+  const xAxisData = ref<string[]>([]);
 
   const chartRef = ref(null);
-  let chartInstance = null;
-
-  const { max, interval } = calculateDynamicYAxis(seriesData[0].data);
+  let chartInstance = ref<echarts.EChartsType | null>(null);
 
   // 通用 pattern 生成器
   const createPattern = (color) => {
@@ -107,19 +64,22 @@
     canvas.width = 10;
     canvas.height = 4;
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, 10, 2);
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 10, 2);
+    }
     return canvas;
   };
 
   const setChartOption = () => {
-    if (!chartInstance) return;
+    if (!chartInstance.value || seriesData.value.length === 0) return;
+    const { max, interval } = calculateDynamicYAxis(seriesData.value[0].data);
     const option = {
       tooltip,
       grid,
       xAxis: {
-        data: xAxisData,
+        data: xAxisData.value,
         axisTick: {
           alignWithLabel: true,
         },
@@ -151,7 +111,6 @@
         {
           type: 'value',
           name: '诉件数/件',
-          name: seriesData.find((s) => s.yAxisIndex === 0)?.label || '',
           nameTextStyle: {
             color: '#B0E1D9',
             fontSize: 14,
@@ -170,7 +129,6 @@
         {
           type: 'value',
           name: '百分比',
-          name: seriesData.find((s) => s.yAxisIndex === 1)?.label || '',
           nameTextStyle: {
             color: '#B0E1D9',
             fontSize: 14,
@@ -194,13 +152,13 @@
           alignTicks: true,
         },
       ],
-      series: seriesData.map((s) => ({
+      series: seriesData.value.map((s) => ({
         name: s.label,
         type: 'bar',
         data: s.data,
         yAxisIndex: s.yAxisIndex,
         barWidth: 10,
-        barCategoryGap: '200%',
+        barquestionNameGap: '200%',
         barGap: '200%',
         label: {
           show: true,
@@ -236,41 +194,66 @@
       })),
     };
 
-    chartInstance.setOption(option);
+    chartInstance.value.setOption(option);
   };
 
   const initChart = () => {
-    chartInstance = echarts.init(chartRef.value);
+    chartInstance.value = echarts.init(chartRef.value);
     setChartOption();
   };
 
   const resizeChart = () => {
-    chartInstance && chartInstance.resize();
+    chartInstance.value && chartInstance.value.resize();
   };
 
   onMounted(() => {
-    console.log('1111');
     initChart();
+    fetchData(2);
     window.addEventListener('resize', resizeChart);
   });
 
   onBeforeUnmount(() => {
     window.removeEventListener('resize', resizeChart);
-    if (chartInstance) {
-      chartInstance.dispose();
+    if (chartInstance.value) {
+      chartInstance.value.dispose();
     }
   });
 
-  // 监听 props 数据变化，重新渲染
-  watch(
-    () => [seriesData, xAxisData],
-    () => {
-      nextTick(() => {
-        setChartOption();
-      });
-    },
-    { deep: true }
-  );
+  const fetchData = async (sourceType) => {
+    let parmas = {};
+    if (sourceType > 0) {
+      parmas = { sourceType };
+    }
+    try {
+      const res: any = await getQuestionTypeCountList(parmas);
+      console.log('res', res);
+      allCaseStatistics.value = res;
+      currentPage.value = 1;
+      currentCaseStatistics.value = allCaseStatistics.value.slice(0, 10);
+      initData();
+    } catch (error) {
+      message.error('获取数据失败');
+    }
+  };
+
+  const initData = () => {
+    xAxisData.value = currentCaseStatistics.value.map((item) => item.questionName);
+    seriesData.value = [
+      {
+        label: '诉件数/件',
+        data: currentCaseStatistics.value.map((item) => item.caseCount),
+        color: CASE_COLOR.rgbStr, // 蓝色
+        yAxisIndex: 0,
+      },
+      {
+        label: '百分比',
+        data: currentCaseStatistics.value.map((item) => item.satisfyRate),
+        color: YES_PERCENT_COLOR.rgbStr, // 橙色
+        yAxisIndex: 1,
+      },
+    ];
+    setChartOption();
+  };
 </script>
 
 <style scoped lang="less">

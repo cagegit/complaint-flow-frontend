@@ -13,7 +13,7 @@
             <div>同比</div>
             <img v-if="data.normalCase.status === 1" class="percent-icon" src="@/assets/images/runtime/category/up-icon.png" alt="" />
             <img v-else-if="data.normalCase.status === 2" class="percent-icon" src="@/assets/images/runtime/category/down-icon.png" alt="" />
-            <div>{{ data.normalCase.percent }}</div>
+            <div>{{ data.normalCase.percent }}%</div>
           </div>
         </div>
       </div>
@@ -26,7 +26,7 @@
             <div>同比</div>
             <img v-if="data.enterpriseCase.status === 1" class="percent-icon" src="@/assets/images/runtime/category/up-icon.png" alt="" />
             <img v-else-if="data.enterpriseCase.status === 2" class="percent-icon" src="@/assets/images/runtime/category/down-icon.png" alt="" />
-            <div>{{ data.enterpriseCase.percent }}</div>
+            <div>{{ data.enterpriseCase.percent }}%</div>
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
             <div>同比</div>
             <img v-if="data.groupCase.status === 1" class="percent-icon" src="@/assets/images/runtime/category/up-icon.png" alt="" />
             <img v-else-if="data.groupCase.status === 2" class="percent-icon" src="@/assets/images/runtime/category/down-icon.png" alt="" />
-            <div>{{ data.groupCase.percent }}</div>
+            <div>{{ data.groupCase.percent }}%</div>
           </div>
         </div>
       </div>
@@ -47,26 +47,28 @@
     <div style="height: 20px"></div>
     <div class="title">
       <div class="text">排名</div>
-      <CustomTabs :data="tabs" />
+      <CustomTabs :data="tabs" :onTabChange="onTabChange" />
     </div>
     <div style="margin: 10px">
       <LabelBox />
     </div>
     <div class="ranking-list">
-      <div class="ranking-item" v-for="(item, index) in ranking" :key="item.value">
+      <div class="ranking-item" v-for="(item, index) in ranking" :key="item.orgId">
         <div class="ranking-top">
-          <img v-if="index < 3" class="top" :src="item.icon" alt="" />
-          <div v-else class="top">{{ item.id }}</div>
+          <img v-if="index === 0" class="top" :src="top1" alt="" />
+          <img v-else-if="index === 1" class="top" :src="top2" alt="" />
+          <img v-else-if="index === 2" class="top" :src="top3" alt="" />
+          <div v-else class="top">{{ index + 1 }}</div>
           <div class="name">
-            <div class="name-up">{{ item.name }}</div>
+            <div class="name-up">{{ item.orgName }}</div>
             <div class="name-down">
               <div class="name-down-label">诉件数</div>
-              <div>{{ item.value }}</div>
+              <div>{{ item.caseCount }}</div>
             </div>
           </div>
           <div class="progres">
-            <Progress :progress="item.value" start-color="rgba(125, 249, 218, 0)" end-color="rgba(133, 255, 224, 0.70)" />
-            <Progress :progress="item.percentage" start-color="rgba(255, 132, 71, 0)" end-color="rgba(255, 119, 51, 1)" showUnit />
+            <Progress :progress="item.doubleYes" start-color="rgba(125, 249, 218, 0)" end-color="rgba(133, 255, 224, 0.70)" showUnit />
+            <Progress :progress="item.doubleNo" start-color="rgba(255, 132, 71, 0)" end-color="rgba(255, 119, 51, 1)" showUnit />
           </div>
         </div>
       </div>
@@ -74,73 +76,111 @@
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
   import Progress from '@/components/Progress/index.vue';
   import top1 from '@/assets/images/runtime/ranking/top1.png';
   import top2 from '@/assets/images/runtime/ranking/top2.png';
   import top3 from '@/assets/images/runtime/ranking/top3.png';
   import LabelBox from '@/components/LabelBox/index.vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
-
-  const tabs = [
+  import { message } from 'ant-design-vue';
+  import { getCaseNatureCount, getDeptRankList } from '@/api/complaint/statistic';
+  import { calculateYoY } from '@/utils/dashboard';
+  import { UnitTypeEnum, UnitTypeNameMap } from '@/enums/statisticEnum';
+  const tabs = ref([
     {
-      label: '科室',
-      value: '1',
+      label: UnitTypeNameMap[UnitTypeEnum.DEPT],
+      value: UnitTypeEnum.DEPT,
     },
     {
-      label: '管区',
-      value: '2',
+      label: UnitTypeNameMap[UnitTypeEnum.AREA],
+      value: UnitTypeEnum.AREA,
     },
     {
-      label: '社区',
-      value: '3',
+      label: UnitTypeNameMap[UnitTypeEnum.COMMUNITY],
+      value: UnitTypeEnum.COMMUNITY,
     },
-  ];
-
-  const ranking = ref([
-    { id: 1, icon: top1, name: '科室1名称', value: 128, percentage: 99.8 },
-    { id: 2, icon: top2, name: '科室2名称', value: 99, percentage: 96.7 },
-    { id: 3, icon: top3, name: '科室3名称最多10个字', value: 128, percentage: 93 },
-    { id: 4, name: '科室4名称', value: 80, percentage: 88 },
-    { id: 5, name: '科室5名称', value: 53, percentage: 86.8 },
-    { id: 6, name: '科室6名称', value: 140, percentage: 88.2 },
-    { id: 7, name: '科室7名称', value: 53, percentage: 86.8 },
-    { id: 8, name: '科室8名称', value: 140, percentage: 85.2 },
-    { id: 9, name: '科室9名称', value: 64, percentage: 84 },
-    { id: 10, name: '科室10名称', value: 70, percentage: 81.2 },
-    { id: 14, name: '科室4名称', value: 80, percentage: 88 },
-    { id: 15, name: '科室5名称', value: 53, percentage: 86.8 },
-    { id: 16, name: '科室6名称', value: 140, percentage: 88.2 },
-    { id: 17, name: '科室7名称', value: 53, percentage: 86.8 },
-    { id: 18, name: '科室8名称', value: 140, percentage: 85.2 },
-    { id: 19, name: '科室9名称', value: 64, percentage: 84 },
-    { id: 20, name: '科室10名称', value: 70, percentage: 81.2 },
   ]);
+
+  console.log('tabs', tabs);
+
+  const ranking = ref<{ orgId: number; orgName: string; doubleNo: number; doubleYes: number; caseCount: number }[]>([]);
+
+  const currentIndex = ref(UnitTypeEnum.DEPT);
+
   const data = ref({
     normalCase: {
-      value: 761,
-      percent: 8.2,
-      status: 1,
+      value: 0,
+      percent: 0,
+      status: 0,
     },
     enterpriseCase: {
-      value: 761,
-      percent: 0.5,
-      status: 2,
+      value: 0,
+      percent: 0,
+      status: 0,
     },
     groupCase: {
-      value: 125,
-      percent: 8.2,
-      status: 1,
+      value: 0,
+      percent: 0,
+      status: 0,
     },
   });
   console.log(data);
 
-  const onPrevPage = () => {
-    console.log('上一页');
+  onMounted(() => {
+    fetchData();
+    fetchRanking({
+      deptType: UnitTypeEnum.DEPT,
+    });
+  });
+
+  const onTabChange = ({ value }) => {
+    currentIndex.value = value;
+    fetchRanking({
+      deptType: value,
+    });
   };
-  const onNextPage = () => {
-    console.log('下一页');
+
+  const fetchData = async () => {
+    try {
+      const res: any = await getCaseNatureCount({});
+      console.log('endRes', res);
+      const normalPercent = calculateYoY(res.normalCount, res.lastNormalCount, 0);
+      const enterprisePercent = calculateYoY(res.enterpriseCount, res.lastEnterpriseCount, 0);
+      const groupCasePercent = calculateYoY(res.groupCount, res.lastGroupCount, 0);
+      data.value = {
+        normalCase: {
+          value: res.normalCount,
+          percent: Math.abs(normalPercent),
+          status: normalPercent > 0 ? 1 : 2,
+        },
+        enterpriseCase: {
+          value: res.enterpriseCount,
+          percent: Math.abs(enterprisePercent),
+          status: enterprisePercent > 0 ? 1 : 2,
+        },
+        groupCase: {
+          value: res.groupCount,
+          percent: Math.abs(groupCasePercent),
+          status: groupCasePercent > 0 ? 1 : 2,
+        },
+      };
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
+  const fetchRanking = async (params) => {
+    try {
+      const res: any = await getDeptRankList(params);
+      ranking.value = res;
+      console.log('res', res);
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
   };
 </script>
 
