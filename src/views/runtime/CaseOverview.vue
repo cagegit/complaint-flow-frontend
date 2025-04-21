@@ -56,14 +56,8 @@
   import CaseSummaryChart from './CaseSummaryChart.vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import { message } from 'ant-design-vue';
-  import {
-    getOverviewCount,
-    getSatisfyRate,
-    getAssignPageList,
-    getQuestionTypeCountList,
-    getCaseNatureCount,
-    getDeptRankList,
-  } from '@/api/complaint/statistic';
+  import { getOverviewCount, getSatisfyRate } from '@/api/complaint/statistic';
+  import { calculateYoY } from '@/utils/dashboard';
 
   const tabs = [{ value: 2, label: '期' }];
   const totalCase = ref(0);
@@ -155,22 +149,6 @@
     },
   ]);
 
-  function calculateYoY(current, previous, decimalPlaces = 2) {
-    // 类型检查
-    if (typeof current !== 'number' || typeof previous !== 'number') {
-      throw new TypeError('current 和 previous 必须是数字');
-    }
-
-    // 处理去年同期为0的情况
-    if (previous === 0) {
-      if (current === 0) return NaN; // 两者都为0，无法计算
-      return current > 0 ? Infinity : -Infinity; // 无限增长/下降
-    }
-
-    // 计算并格式化增长率
-    const growthRate = ((current - previous) / previous) * 100;
-    return Number(growthRate.toFixed(decimalPlaces));
-  }
   onMounted(() => {
     fetchOverview();
     fetchRate();

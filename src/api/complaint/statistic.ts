@@ -69,7 +69,7 @@ export const getQuestionTypeCountList = (params) => {
     });
   });
 };
-export const getCaseNatureCount = (params) => {
+export const getCaseNatureCount = (params?) => {
   return new Promise((resolve) => {
     defHttp.get({ url: Api.getCaseNatureCount, params }, { successMessageMode: 'none' }).then((res) => {
       resolve(res);

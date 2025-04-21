@@ -35,3 +35,13 @@ export enum UnitTypeEnum {
   //   社区
   COMMUNITY = 3,
 }
+
+// 	数据来源
+export const UnitTypeNameMap = {
+  // 本地
+  [UnitTypeEnum.DEPT]: '科室',
+  // 区分转
+  [UnitTypeEnum.AREA]: '管区',
+  // 直派
+  [UnitTypeEnum.COMMUNITY]: '社区',
+};
