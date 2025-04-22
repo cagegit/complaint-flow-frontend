@@ -1,17 +1,32 @@
 <template>
-  <div class="chart-container">
-    <div ref="chartRef" class="chart" style="width: 100%; height: 100%"></div>
-    <div class="total">
-      <div class="total-number">{{ total }}</div>
-      <div class="total-label">总计</div>
+  <div class="title">
+    <div class="title-left">
+      <div class="text">双否分析</div>
+      <DispatchTabs :onTabChange="onTabChange" />
+    </div>
+    <CustomTabs :data="RomplaintTypeTabs" :onTabChange="onTypeChange" />
+  </div>
+  <div class="composite-content">
+    <img class="composite-bg" src="@/assets/images/composite/group-bg.png" alt="" />
+    <div class="chart-container">
+      <div ref="chartRef" class="chart" style="width: 100%; height: 100%"></div>
+      <div class="total">
+        <div class="total-number">{{ total }}</div>
+        <div class="total-label">总计</div>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
   import * as echarts from 'echarts';
   import { getCoordinates } from '@/utils/dashboard';
+  import { getDoubleNoList } from '@/api/complaint/statistic';
+  import { message } from 'ant-design-vue';
+  import CustomTabs from '@/components/CustomTabs/index.vue';
+  import DispatchTabs from '@/components/DispatchTabs/index.vue';
+  import { RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
 
   const dissatisfactionData = [
     { value: 68, name: '社会秩序', color: '122,213,23', custom: 'a' },
@@ -38,10 +53,10 @@
   const total = ref(dissatisfactionData.reduce((acc, item) => acc + item.value, 0));
 
   const chartRef = ref(null);
-  let chartInstance = null;
+  let chart: echarts.EChartsType | null = null;
 
   const setChartOption = () => {
-    if (!chartInstance) return;
+    if (!chart) return;
 
     const data = dissatisfactionData.slice();
 
@@ -152,7 +167,7 @@
             },
           },
           labelLayout: function (params) {
-            const isLeft = params.labelRect.x < chartInstance.getWidth() / 2;
+            const isLeft = params.labelRect.x < (chart as echarts.EChartsType).getWidth() / 2;
             const points = params.labelLinePoints;
             points[2][0] = isLeft ? params.labelRect.x : params.labelRect.x + params.labelRect.width;
             return {
@@ -163,32 +178,95 @@
       ],
     };
 
-    chartInstance.setOption(option);
+    chart.setOption(option);
   };
 
   const initChart = () => {
-    chartInstance = echarts.init(chartRef.value);
+    chart = echarts.init(chartRef.value);
     setChartOption();
   };
 
-  onMounted(() => {
-    initChart();
-    window.addEventListener('resize', resizeChart);
-  });
-
-  onBeforeUnmount(() => {
-    window.removeEventListener('resize', resizeChart);
-    if (chartInstance) {
-      chartInstance.dispose();
-    }
-  });
-
-  const resizeChart = () => {
-    chartInstance && chartInstance.resize();
+  const onTabChange = (sourceType) => {
+    console.log('sourceType', sourceType);
   };
+
+  const onTypeChange = (a) => {
+    console.log('onTypeChange', a);
+  };
+
+  const fetchData = async ({ sourceType }) => {
+    let parmas = {};
+    if (sourceType > 0) {
+      parmas = { sourceType };
+    }
+    try {
+      const res: any = await getDoubleNoList(parmas);
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
+  onMounted(() => {
+    fetchData({
+      sourceType: SourceTypeEnum.DIRECT,
+    });
+    initChart();
+  });
 </script>
 
 <style scoped lang="less">
+  .title {
+    width: 100%;
+    height: 42px;
+    background-image: url(@/assets/images/composite/title-bg.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 10px;
+
+    .title-left {
+      display: flex;
+      align-items: center;
+
+      .text {
+        font-size: 20px;
+        color: #ffffff;
+        line-height: 40px;
+        text-shadow: 0px 0px 8px rgba(100, 244, 255, 0.9);
+        text-align: left;
+        background: linear-gradient(180deg, #ffffff 0%, #ffffff 70%, #57debd 100%);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-fill-color: transparent;
+        padding-left: 35px;
+        margin-right: 20px;
+      }
+    }
+    .title-right {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .composite-content {
+    position: relative;
+    flex: 1;
+    padding-top: 10px;
+    box-sizing: border-box;
+
+    .composite-bg {
+      position: absolute;
+      width: 356px;
+      height: 356px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
   .chart-container {
     width: 100%;
     height: 100%;

@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+dayjs.locale('zh-cn');
+
 export const grid = {
   left: '4%',
   right: '5%',
@@ -134,4 +137,8 @@ export const calculateYoY = (current, previous, decimalPlaces = 2) => {
   // 计算并格式化增长率
   const growthRate = ((current - previous) / previous) * 100;
   return Number(growthRate.toFixed(decimalPlaces));
+};
+
+export const getDayString = (string) => {
+  return dayjs(string).format('YYYY年MM月DD日');
 };

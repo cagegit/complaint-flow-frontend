@@ -26,6 +26,17 @@ export enum RangeTypeEnum {
   YEAR = 2,
 }
 
+export const RomplaintTypeTabs = [
+  {
+    value: RangeTypeEnum.MONTH,
+    label: '期',
+  },
+  {
+    value: RangeTypeEnum.YEAR,
+    label: '年',
+  },
+];
+
 // 单位
 export enum UnitTypeEnum {
   //   科室

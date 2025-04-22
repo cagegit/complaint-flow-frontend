@@ -32,7 +32,6 @@
     if (currentIndex.value === index) {
       return;
     }
-    console.log('currentIndex', item);
     currentIndex.value = index;
     props.onTabChange(item);
   };

@@ -26,16 +26,16 @@ const Api = {
   // 群诉案件分析
   getQunsuList: '/complain/statistic/getQunsuList',
 };
-export const getTimeCycle = () => {
+export const getTimeCycle = (params) => {
   return new Promise((resolve) => {
-    defHttp.get({ url: Api.getTimeCycle }, { successMessageMode: 'none' }).then((res) => {
+    defHttp.get({ url: Api.getTimeCycle, params }, { successMessageMode: 'none' }).then((res) => {
       resolve(res);
     });
   });
 };
-export const getYearCycle = () => {
+export const getYearCycle = (params) => {
   return new Promise((resolve) => {
-    defHttp.get({ url: Api.getYearCycle }, { successMessageMode: 'none' }).then((res) => {
+    defHttp.get({ url: Api.getYearCycle, params }, { successMessageMode: 'none' }).then((res) => {
       resolve(res);
     });
   });
