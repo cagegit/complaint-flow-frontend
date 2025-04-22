@@ -11,37 +11,41 @@
     </div>
   </div>
   <div class="chart-container">
+    <TimeSwiper :startTime="getDayString(startTimeRef)" :endTime="getDayString(endTimeRef)" :onPrev="onRangePrev" :onNext="onRangeNext" />
     <div ref="chartRef" style="width: 100%; height: 100%"></div>
   </div>
 </template>
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import * as echarts from 'echarts';
-  import { tooltip, CASE_COLOR, YES_PERCENT_COLOR, NO_PERCENT_COLOR, grid } from '@/utils/dashboard';
+  import { tooltip, CASE_COLOR, YES_PERCENT_COLOR, NO_PERCENT_COLOR, grid, getDayString } from '@/utils/dashboard';
   import CaseLabelBox from '@/components/CaseLabelBox/index.vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
-  import { getOrderLineCountList } from '@/api/complaint/statistic';
+  import { getOrderLineCountList, getTimeCycle, getYearCycle } from '@/api/complaint/statistic';
   import { message } from 'ant-design-vue';
-  import { RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
+  import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
+  import TimeSwiper from '@/components/TimeSwiper/index.vue';
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
 
-  // Sample data extracted from the image
-  const chartData = {
-    dateRange: '2024年12月12日——2025年1月11日',
-    dates: [],
-    caseNumbers: [
-      140, 154, 154, 128, 154, 165, 146, 165, 121, 124, 100, 69, 100, 139, 80, 96, 157, 92, 105, 120, 150, 112, 154, 254, 154, 114, 84, 94, 154, 151,
-    ],
-    dobuleYesRate: [98, 92, 92, 93, 94, 86, 82, 93, 91, 87, 99, 96, 98, 92, 100, 99, 92, 99, 99, 98, 81, 38, 54, 52, 100, 56, 89, 32, 54, 87],
-    dobuleNoRate: [28, 32, 32, 13, 24, 16, 32, 13, 31, 27, 29, 36, 48, 52, 10, 29, 0, 19, 19, 28, 41, 38, 14, 52, 10, 56, 18, 32, 54, 18],
-  };
+  const offsetRef = ref(0); // 偏移量
+  const sourceTypeRef = ref(SourceTypeEnum.DIRECT); // 来源类型
+  const rangeTypeRef = ref(RangeTypeEnum.MONTH); // 时间周期类型
+  const startTimeRef = ref(''); // 时间周期类型
+  const endTimeRef = ref(''); // 时间周期类型
 
-  const dateRange = 30;
-  Array.from({ length: dateRange }, (_, index) => {
-    chartData.dates.push(`${index + 1}`);
+  const chartData = ref<{
+    labelNames: string[]; // 标签名称
+    caseCounts: number[]; // 诉件数
+    doubleYesRate: number[]; // 双是率
+    doubleNoRate: number[]; // 双否率
+  }>({
+    labelNames: [],
+    caseCounts: [],
+    doubleYesRate: [],
+    doubleNoRate: [],
   });
 
   const initChart = () => {
@@ -69,8 +73,7 @@
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false,
-          data: chartData.dates,
+          data: chartData.value.labelNames,
           axisLine: {
             lineStyle: {
               color: '#30665D',
@@ -136,7 +139,7 @@
           {
             name: '诉件数/件',
             type: 'line',
-            data: chartData.caseNumbers,
+            data: chartData.value.caseCounts,
             symbol: 'circle',
             symbolSize: 4,
             itemStyle: {
@@ -177,7 +180,7 @@
             name: '双是率',
             type: 'line',
             yAxisIndex: 1,
-            data: chartData.dobuleYesRate,
+            data: chartData.value.doubleYesRate,
             symbol: 'circle',
             symbolSize: 4,
             itemStyle: {
@@ -219,7 +222,7 @@
             name: '双否率',
             type: 'line',
             yAxisIndex: 1,
-            data: chartData.dobuleNoRate,
+            data: chartData.value.doubleNoRate,
             symbol: 'circle',
             symbolSize: 4,
             itemStyle: {
@@ -264,31 +267,110 @@
     }
   };
 
+  //   上一期
+  const onRangePrev = () => {
+    console.log('onRangePrev');
+    offsetRef.value = offsetRef.value - 1;
+    if (rangeTypeRef.value === RangeTypeEnum.MONTH) {
+      fetchMonthConfig();
+    } else if (rangeTypeRef.value === RangeTypeEnum.YEAR) {
+      fetchYearConfig();
+    }
+  };
+
+  // 下一期
+  const onRangeNext = () => {
+    console.log('onRangeNext');
+    offsetRef.value = offsetRef.value + 1;
+    if (rangeTypeRef.value === RangeTypeEnum.MONTH) {
+      fetchMonthConfig();
+    } else if (rangeTypeRef.value === RangeTypeEnum.YEAR) {
+      fetchYearConfig();
+    }
+  };
+
+  //   直派、综合
   const onTabChange = (sourceType) => {
     console.log('sourceType', sourceType);
+    sourceTypeRef.value = sourceType;
+    offsetRef.value = 0;
+    fetchData();
   };
 
-  const onTypeChange = (a) => {
-    console.log('onTypeChange', a);
-  };
-
-  const fetchData = async ({ sourceType }) => {
-    let parmas = {};
-    if (sourceType > 0) {
-      parmas = { sourceType };
+  // 期、年
+  const onTypeChange = ({ value }) => {
+    console.log('onTypeChange', value);
+    offsetRef.value = 0;
+    rangeTypeRef.value = value;
+    if (value === RangeTypeEnum.MONTH) {
+      fetchMonthConfig();
+    } else if (value === RangeTypeEnum.YEAR) {
+      fetchYearConfig();
     }
+  };
+
+  const fetchData = async () => {
+    let parmas: any = {
+      sourceType: sourceTypeRef.value,
+      rangeType: rangeTypeRef.value,
+      startTime: startTimeRef.value,
+      endTime: endTimeRef.value,
+    };
     try {
       const res: any = await getOrderLineCountList(parmas);
+      console.log('res', res);
+      if (res && res.length > 1) {
+        const newLabelNames: string[] = [];
+        const newCaseCounts: number[] = [];
+        const newDoubleYesRate: number[] = [];
+        const newDoubleNoRate: number[] = [];
+        res.forEach((item: any) => {
+          newLabelNames.push(item.labelName);
+          newCaseCounts.push(item.caseCount);
+          newDoubleYesRate.push(item.doubleYes);
+          newDoubleNoRate.push(item.doubleNo);
+        });
+        chartData.value = {
+          labelNames: newLabelNames,
+          caseCounts: newCaseCounts,
+          doubleYesRate: newDoubleYesRate,
+          doubleNoRate: newDoubleNoRate,
+        };
+        console.log(chartData.value);
+        initChart();
+      }
     } catch (error) {
       message.error('获取数据失败');
       console.error(error);
     }
   };
+
+  const fetchMonthConfig = async () => {
+    try {
+      const { startTime, endTime }: any = await getTimeCycle({ offset: offsetRef.value });
+      startTimeRef.value = startTime;
+      endTimeRef.value = endTime;
+      fetchData();
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
+  const fetchYearConfig = async () => {
+    try {
+      const { startTime, endTime }: any = await getYearCycle({ offset: offsetRef.value });
+      startTimeRef.value = startTime;
+      endTimeRef.value = endTime;
+      fetchData();
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
   onMounted(() => {
-    initChart();
-    fetchData({
-      sourceType: SourceTypeEnum.DIRECT,
-    });
+    fetchMonthConfig();
   });
 </script>
 
@@ -330,5 +412,7 @@
   .chart-container {
     width: 100%;
     height: 100%;
+    position: relative;
+    padding-top: 12px;
   }
 </style>

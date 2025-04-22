@@ -27,17 +27,6 @@
   import { message } from 'ant-design-vue';
   import { RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
 
-  const complaintTypeTabs = [
-    {
-      value: 2,
-      label: '期',
-    },
-    {
-      value: 3,
-      label: '年',
-    },
-  ];
-
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
 
@@ -286,6 +275,8 @@
     }
   }
   .chart-container {
+    position: relative;
+    padding-top: 12px;
     width: 100%;
     height: 100%;
   }

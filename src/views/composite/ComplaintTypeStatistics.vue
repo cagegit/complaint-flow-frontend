@@ -9,7 +9,7 @@
       <div style="width: 22px"></div>
       <CustomTabs :data="RomplaintTypeTabs" :onTabChange="onTypeChange" />
       <div style="width: 12px"></div>
-      <Pagination :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
+      <Pagination :currentPage="currentPage" :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
     </div>
   </div>
   <div class="chart-container">
@@ -27,16 +27,19 @@
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
   import { RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
+  import Pagination from '@/components/Pagination/index.vue';
+
+  const currentPage = ref(1);
 
   const onPrevPage = () => {
     console.log('上一页');
-    // currentPage.value = 1;
+    currentPage.value = 1;
     // currentCaseStatistics.value = allCaseStatistics.value.slice(0, 10);
     // initData();
   };
   const onNextPage = () => {
     console.log('下一页');
-    // currentPage.value = 2;
+    currentPage.value = 2;
     // currentCaseStatistics.value = allCaseStatistics.value.slice(10, 20);
     // initData();
   };
@@ -342,6 +345,8 @@
     }
   }
   .chart-container {
+    position: relative;
+    padding-top: 12px;
     width: 100%;
     height: 100%;
   }
