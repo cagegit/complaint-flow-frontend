@@ -1,17 +1,45 @@
 <template>
+  <div class="title">
+    <div class="title-left">
+      <div class="text">群诉案件分析</div>
+      <DispatchTabs :onTabChange="onTabChange" />
+    </div>
+    <div class="title-right">
+      <CaseLabelBox />
+      <div style="width: 24px"></div>
+      <CustomTabs :data="RomplaintTypeTabs" :onTabChange="onTypeChange" />
+    </div>
+  </div>
   <div class="chart-container">
     <div ref="chartRef" style="width: 100%; height: 100%"></div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as echarts from 'echarts';
   import blockImage from '@/assets/images/dashboard/block.png';
   import { CASE_COLOR, YES_PERCENT_COLOR, NO_PERCENT_COLOR, tooltip, calculateDynamicYAxis, grid } from '@/utils/dashboard';
+  import CaseLabelBox from '@/components/CaseLabelBox/index.vue';
+  import CustomTabs from '@/components/CustomTabs/index.vue';
+  import DispatchTabs from '@/components/DispatchTabs/index.vue';
+  import { getQunsuList } from '@/api/complaint/statistic';
+  import { message } from 'ant-design-vue';
+  import { RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
+
+  const complaintTypeTabs = [
+    {
+      value: 2,
+      label: '期',
+    },
+    {
+      value: 3,
+      label: '年',
+    },
+  ];
 
   const chartRef = ref(null);
-  let chart = null;
+  let chart: echarts.EChartsType | null = null;
 
   const initChart = () => {
     if (chartRef.value) {
@@ -185,32 +213,78 @@
       };
 
       chart.on('mouseout', { dataIndex: 17 }, function () {
-        chart.setOption({
+        chart?.setOption({
           graphic: [],
         });
       });
 
       chart.setOption(option);
-
-      window.addEventListener('resize', handleResize);
     }
   };
 
-  const handleResize = () => {
-    chart && chart.resize();
+  const onTabChange = (sourceType) => {
+    console.log('sourceType', sourceType);
   };
 
-  onMounted(() => {
-    initChart();
-  });
+  const onTypeChange = (a) => {
+    console.log('onTypeChange', a);
+  };
 
-  onUnmounted(() => {
-    window.removeEventListener('resize', handleResize);
-    chart && chart.dispose();
+  const fetchData = async ({ sourceType }) => {
+    let parmas = {};
+    if (sourceType > 0) {
+      parmas = { sourceType };
+    }
+    try {
+      const res: any = await getQunsuList(parmas);
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+  onMounted(() => {
+    fetchData({
+      sourceType: SourceTypeEnum.DIRECT,
+    });
+    initChart();
   });
 </script>
 
-<style scoped>
+<style scoped lang="less">
+  .title {
+    width: 100%;
+    height: 42px;
+    background-image: url(@/assets/images/composite/title-bg.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 10px;
+
+    .title-left {
+      display: flex;
+      align-items: center;
+
+      .text {
+        font-size: 20px;
+        color: #ffffff;
+        line-height: 40px;
+        text-shadow: 0px 0px 8px rgba(100, 244, 255, 0.9);
+        text-align: left;
+        background: linear-gradient(180deg, #ffffff 0%, #ffffff 70%, #57debd 100%);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-fill-color: transparent;
+        padding-left: 35px;
+        margin-right: 20px;
+      }
+    }
+    .title-right {
+      display: flex;
+      align-items: center;
+    }
+  }
   .chart-container {
     width: 100%;
     height: 100%;
