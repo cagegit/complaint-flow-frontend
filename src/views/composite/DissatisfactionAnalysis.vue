@@ -206,10 +206,8 @@
   const fetchData = async () => {
     let parmas: any = {
       rangeType: rangeType.value,
+      sourceType: sourceType.value,
     };
-    if (sourceType.value > 0) {
-      parmas.sourceType = sourceType.value;
-    }
     try {
       const res: any = await getDoubleNoList(parmas);
       const nowTotal = res.reduce((acc, item) => acc + item.caseCount, 0);
