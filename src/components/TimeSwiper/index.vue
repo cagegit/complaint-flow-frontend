@@ -1,5 +1,5 @@
 <template>
-  <div class="range-container">
+  <div class="range-container" :style="{ top: `${top}px` }">
     <div
       class="range-button range-left"
       :class="{
@@ -29,6 +29,10 @@
   import { ref } from 'vue';
 
   const props = defineProps({
+    top: {
+      type: Number,
+      default: 10,
+    },
     currentPage: {
       type: Number,
       required: true,

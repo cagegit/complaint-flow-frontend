@@ -26,31 +26,41 @@
   import { message } from 'ant-design-vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
-  import { RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
+  import { RomplaintTypeTabs, SourceTypeEnum, RangeTypeEnum } from '/@/enums/statisticEnum';
 
-  const dissatisfactionData = [
-    { value: 68, name: '社会秩序', color: '122,213,23', custom: 'a' },
-    { value: 59, name: '交通管理', color: '247,112,98' },
-    { value: 48, name: '公共安全', color: '126,232,250' },
-    { value: 32, name: '公共服务', color: '255,154,158' },
-    { value: 22, name: '农村管理', color: '161,140,209' },
-    { value: 18, name: '邮政业服务管理', color: '255,206,86' },
-    { value: 16, name: '环境保护', color: '75,192,192' },
-    { value: 15, name: '市政', color: '153,102,255' },
-    { value: 13, name: '市容市貌', color: '255,159,64' },
-    { value: 12, name: '城市绿化', color: '54,162,235' },
-    { value: 1, name: '城乡建设', color: '201,203,207' },
-    { value: 1, name: '供暖', color: '255,99,132' },
-    { value: 2, name: '住房', color: '255,205,86' },
-    { value: 3, name: '民政事务', color: '75,192,192' },
-    { value: 4, name: '妇女权益', color: '153,102,255' },
-    { value: 6, name: '卫生健康', color: '255,159,64' },
-    { value: 6, name: '劳动和社会保障', color: '54,162,235' },
-    { value: 7, name: '企业服务', color: '201,203,207' },
-    { value: 8, name: '物业管理', color: '255,99,132' },
+  interface DissatisfactionData {
+    caseCount: number;
+    labelName: string;
+    color: string;
+  }
+
+  const colors = [
+    '122,213,23',
+    '247,112,98',
+    '126,232,250',
+    '255,154,158',
+    '161,140,209',
+    '255,206,86',
+    '75,192,192',
+    '153,102,255',
+    '255,159,64',
+    '54,162,235',
+    '201,203,207',
+    '255,99,132',
+    '255,205,86',
+    '75,192,192',
+    '153,102,255',
+    '255,159,64',
+    '54,162,235',
+    '201,203,207',
+    '255,99,132',
   ];
 
-  const total = ref(dissatisfactionData.reduce((acc, item) => acc + item.value, 0));
+  const dissatisfactionData = ref<DissatisfactionData[]>([]);
+  const sourceType = ref(SourceTypeEnum.DIRECT);
+  const rangeType = ref(RangeTypeEnum.MONTH);
+
+  const total = ref(0);
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
@@ -58,17 +68,12 @@
   const setChartOption = () => {
     if (!chart) return;
 
-    const data = dissatisfactionData.slice();
-
-    // Calculate total for percentages
-    const total = data.reduce((sum, item) => sum + item.value, 0);
-
     // Create series data with gradients
-    const seriesData = [];
     let startAngle = 0;
+    const seriesData: any = [];
 
-    data.forEach((item, index) => {
-      const angle = (item.value / total) * 360;
+    dissatisfactionData.value.forEach((item) => {
+      const angle = (item.caseCount / total.value) * 360;
       const endAngle = startAngle + angle;
 
       // Convert to radians for the helper functions
@@ -94,8 +99,8 @@
       };
 
       seriesData.push({
-        name: `${item.name}`,
-        value: item.value,
+        name: `${item.labelName}`,
+        value: item.caseCount,
         color: item.color,
         itemStyle: {
           color: {
@@ -112,7 +117,7 @@
         },
         label: {
           alignTo: 'edge',
-          formatter: (params) => {
+          formatter: (params: { data: { color: string }; name: any; value: any; percent: any }) => {
             const colorKey = params.data.color.split(',').join('');
             return `{${colorKey}|■} {name|${params.name}} {value|${params.value}} {percent|${params.percent}%}`;
           },
@@ -186,21 +191,33 @@
     setChartOption();
   };
 
-  const onTabChange = (sourceType) => {
+  const onTabChange = (value) => {
     console.log('sourceType', sourceType);
+    sourceType.value = value;
+    fetchData();
   };
 
-  const onTypeChange = (a) => {
-    console.log('onTypeChange', a);
+  const onTypeChange = ({ value }) => {
+    console.log('onTypeChange', value);
+    rangeType.value = value;
+    fetchData();
   };
 
-  const fetchData = async ({ sourceType }) => {
-    let parmas = {};
-    if (sourceType > 0) {
-      parmas = { sourceType };
-    }
+  const fetchData = async () => {
+    let parmas: any = {
+      rangeType: rangeType.value,
+      sourceType: sourceType.value,
+    };
     try {
       const res: any = await getDoubleNoList(parmas);
+      const nowTotal = res.reduce((acc, item) => acc + item.caseCount, 0);
+      total.value = nowTotal;
+      dissatisfactionData.value = res.map((item, index) => ({
+        caseCount: item.caseCount,
+        labelName: item.labelName,
+        color: colors[index],
+      }));
+      initChart();
     } catch (error) {
       message.error('获取数据失败');
       console.error(error);
@@ -208,10 +225,7 @@
   };
 
   onMounted(() => {
-    fetchData({
-      sourceType: SourceTypeEnum.DIRECT,
-    });
-    initChart();
+    fetchData();
   });
 </script>
 
