@@ -1,4 +1,4 @@
-import { getDictItems } from '/@/api/common/api';
+import { getCommunityChildList, getCommunityList, getDictItems } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -442,7 +442,7 @@ export const formSchema: FormSchema[] = [
 
  // 待补充表单
  export const addFormSchema: FormSchema[] = [
-  { field: 'tag', label: '标签', component: 'RadioGroup', componentProps: { options: [
+  { field: 'labelCode', label: '标签', component: 'RadioGroup', componentProps: { options: [
       { label: '普通', value: '普通' },
       { label: '2小时', value: '2小时' },
       { label: '企业48小时', value: '企业48小时' },
@@ -454,10 +454,56 @@ export const formSchema: FormSchema[] = [
       { label: '失信', value: '失信' },
       { label: '未接', value: '未接' },
   ] } },
-  { field: 'community', label: '反映社区', component: 'Input' },
-  { field: 'committee', label: '反映居委会', component: 'Input' },
-  { field: 'office', label: '处理科室', component: 'Input' },
-  { field: 'processingCommunity', label: '处理社区/居委会', component: 'Input' },
-  { field: 'sevenAttributes', label: '七有五性', component: 'Input' },
-  { field: 'remarks', label: '备注', component: 'InputTextArea' },
+  { field: 'reportDistrictId', 
+    label: '反映管区', 
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res  = await getCommunityList('3') // 3表示管区
+          console.log(res)
+          if(Array.isArray(res)){
+              res.unshift({text: '所有', value: ''})
+              return res;
+          } else {
+              return [];
+          }
+      },
+      labelField: 'departName',
+      valueField: 'id'
+    } 
+  },
+  { field: 'reportCommunityId', 
+    label: '反映社区', 
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res  = await getCommunityChildList('3') // 3表示管区
+          console.log(res)
+          if(Array.isArray(res)){
+              res.unshift({text: '所有', value: ''})
+              return res;
+          } else {
+              return [];
+          }
+      },
+      labelField: 'departName',
+      valueField: 'id'
+    }  
+  },
+  { field: 'office', 
+    label: '处理科室', 
+    component: 'Input' 
+  },
+  { field: 'processingCommunity', 
+    label: '处理社区/居委会', 
+    component: 'Input' 
+  },
+  { field: 'sevenAttributes', 
+    label: '七有五性', 
+    component: 'Input' 
+  },
+  { field: 'remarks', 
+    label: '备注', 
+    component: 'InputTextArea'
+  },
   ];

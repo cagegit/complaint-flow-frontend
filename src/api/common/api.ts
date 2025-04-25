@@ -148,3 +148,17 @@ export const getFileblob = (url, parameter) => {
 export const uploadMyFile = (url, data) => {
   return defHttp.uploadMyFile(url, data);
 };
+
+
+// 管区接口（原社区）
+export const getCommunityList = (categoryId:string) => {
+  return defHttp.get({ url: '/biz/depart/getLevelTwoList' + `?orgCategory=${categoryId}` });
+};
+// 社区（原居委会）
+export const getCommunityChildList = (parentId:string) => {
+  return defHttp.get({ url: '/biz/depart/getChildList' + `?parentId=${parentId}`, });
+};
+// 七有无性树形列表
+export const getQywxTreeList = (params) => {
+  return defHttp.get({ url: '/biz/sevenFive/getTreeList', params });
+};
