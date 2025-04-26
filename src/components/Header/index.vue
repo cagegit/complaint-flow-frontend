@@ -45,8 +45,8 @@
   const navItems = [
     { title: '综合事态', path: '/composite' },
     { title: '运行事态', path: '/runtime' },
-    { title: '案件办理', path: '/' },
-    { title: '案件管理', path: '/' },
+    { title: '案件办理', path: '/complain/bizComplaintTicketList' },
+    { title: '案件管理', path: '/complaint/manager' },
   ];
 
   // 更新时间
