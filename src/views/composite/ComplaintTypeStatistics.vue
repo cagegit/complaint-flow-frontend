@@ -20,7 +20,6 @@
         :key="index"
         :style="{
           width: `${item.width}px`,
-          height: selectedCategory === item.value ? '38px' : '34px',
           backgroundImage: selectedCategory === item.value ? `url(${item.selectedBg})` : `url(${item.bg})`,
           backgroundSize: selectedCategory === item.value ? '100% 112%' : '100% 100%',
           opacity: selectedCategory === item.value ? 1 : 0.8,
@@ -35,7 +34,6 @@
         :key="index"
         :style="{
           width: `${item.width}px`,
-          height: selectedCategory === item.value ? '38px' : '34px',
           backgroundImage: selectedCategory === item.value ? `url(${item.selectedBg})` : `url(${item.bg})`,
           backgroundSize: selectedCategory === item.value ? '100% 112%' : '100% 100%',
         }"
@@ -49,7 +47,6 @@
         :key="index"
         :style="{
           width: `${item.width}px`,
-          height: selectedCategory === item.value ? '38px' : '34px',
           backgroundImage: selectedCategory === item.value ? `url(${item.selectedBg})` : `url(${item.bg})`,
           backgroundSize: selectedCategory === item.value ? '100% 112%' : '100% 100%',
         }"
@@ -85,6 +82,7 @@
   import yellowShortSelect from '@/assets/images/composite/yellow-short-s.png';
   import yellowLong from '@/assets/images/composite/yellow-long.png';
   import yellowLongSelect from '@/assets/images/composite/yellow-long-s.png';
+  import { getDictItems } from '/@/api/common/api';
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
@@ -101,36 +99,15 @@
   const doubleYesRate = ref<number[]>([]); // 双正
   const doubleNoRate = ref<number[]>([]); // 双负
 
-  const selectedCategory = ref(1);
+  const selectedCategory = ref('1');
 
-  const greenCategories = [
-    { label: '社会秩序', value: 1, bg: greenShort, selectedBg: greenShortSelect, width: 90 },
-    { label: '交通管理', value: 2, bg: greenShort, selectedBg: greenShortSelect, width: 90 },
-    { label: '公共安全', value: 3, bg: greenShort, selectedBg: greenShortSelect, width: 90 },
-    { label: '公共服务', value: 4, bg: greenShort, selectedBg: greenShortSelect, width: 90 },
-    { label: '农村管理', value: 5, bg: greenShort, selectedBg: greenShortSelect, width: 90 },
-    { label: '邮政业服务管理', value: 6, bg: greenLong, selectedBg: greenLongSelect, width: 128 },
-  ];
-  const blueCategories = [
-    { label: '环境保护', value: 7, bg: blueShort, selectedBg: blueShortSelect, width: 90 },
-    { label: '市政', value: 8, bg: blueShort, selectedBg: blueShortSelect, width: 56 },
-    { label: '市容市貌', value: 9, bg: blueShort, selectedBg: blueShortSelect, width: 90 },
-    { label: '城市绿化', value: 10, bg: blueShort, selectedBg: blueShortSelect, width: 90 },
-    { label: '城乡建设', value: 11, bg: blueShort, selectedBg: blueShortSelect, width: 90 },
-    { label: '供暖', value: 12, bg: blueShort, selectedBg: blueShortSelect, width: 56 },
-    { label: '住房', value: 13, bg: blueShort, selectedBg: blueShortSelect, width: 56 },
-  ];
-  const yellowCategories = [
-    { label: '民政事务', value: 14, bg: yellowShort, selectedBg: yellowShortSelect, width: 90 },
-    { label: '妇女权益', value: 15, bg: yellowShort, selectedBg: yellowShortSelect, width: 90 },
-    { label: '卫生健康', value: 16, bg: yellowShort, selectedBg: yellowShortSelect, width: 90 },
-    { label: '劳动和社会保障', value: 17, bg: yellowLong, selectedBg: yellowLongSelect, width: 128 },
-    { label: '企业服务', value: 18, bg: yellowShort, selectedBg: yellowShortSelect, width: 90 },
-    { label: '物业管理', value: 19, bg: yellowShort, selectedBg: yellowShortSelect, width: 90 },
-  ];
+  const greenCategories: any = ref([]);
+  const blueCategories: any = ref([]);
+  const yellowCategories: any = ref([]);
 
   const onCategoryClick = (value) => {
     selectedCategory.value = value;
+    fetchData();
   };
 
   const onPrevPage = () => {
@@ -441,6 +418,7 @@
       rangeType: rangeTypeRef.value,
       startTime: startTimeRef.value,
       endTime: endTimeRef.value,
+      caseCategory: selectedCategory.value,
     };
     try {
       const res: any = await getCaseCategoryList(parmas);
@@ -465,8 +443,51 @@
     }
   };
 
+  const getCaseCategoryEnumList = async () => {
+    try {
+      const res: any = await getDictItems('biz_case_category');
+      const newGreenCategories: any = [];
+      const newBlueCategories: any = [];
+      const newYellowCategories: any = [];
+      res.forEach((item: any) => {
+        if (item.color === '#00C345') {
+          newGreenCategories.push({
+            label: item.text,
+            value: item.value,
+            bg: item.text.length > 4 ? greenLong : greenShort,
+            selectedBg: item.text.length > 4 ? greenLongSelect : greenShortSelect,
+            width: item.text.length > 4 ? 128 : 90,
+          });
+        } else if (item.color === '#2196F3') {
+          newBlueCategories.push({
+            label: item.text,
+            value: item.value,
+            bg: blueShort,
+            selectedBg: blueShortSelect,
+            width: item.text.length > 2 ? 90 : 56,
+          });
+        } else if (item.color === '#FF9300') {
+          newYellowCategories.push({
+            label: item.text,
+            value: item.value,
+            bg: item.text.length > 4 ? yellowLong : yellowShort,
+            selectedBg: item.text.length > 4 ? yellowLongSelect : yellowShortSelect,
+            width: item.text.length > 4 ? 128 : 90,
+          });
+        }
+      });
+      greenCategories.value = newGreenCategories;
+      blueCategories.value = newBlueCategories;
+      yellowCategories.value = newYellowCategories;
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
   onMounted(() => {
     fetchMonthConfig();
+    getCaseCategoryEnumList();
   });
 </script>
 
@@ -509,7 +530,7 @@
     position: relative;
     padding-top: 12px;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 100px);
   }
 
   .categories-box {
@@ -522,6 +543,7 @@
       justify-content: center;
       font-weight: 400;
       font-size: 14px;
+      height: 38px;
       color: #e0fcf6;
       cursor: pointer;
       background-repeat: no-repeat;
