@@ -43,7 +43,7 @@
     // 当前表单内容
     let currentData:any = {};
     //表单配置
-    const [registerForm] = useForm({
+    const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -76,6 +76,7 @@
       isUpdate.value = !!data?.isUpdate;
       // 给当前data赋值
       currentData = data;
+      console.log(data);
       // 查询分派详情
       const res = await getAssignDetail(data.record.id);
       console.log(res);
@@ -169,7 +170,7 @@
       //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
-        setFieldsValue({
+        setBasicFieldsValue({
           ...data.record,
         });
       }
