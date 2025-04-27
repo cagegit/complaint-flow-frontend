@@ -139,35 +139,34 @@ export const columns: BasicColumn[] = [
     //     component: 'Input',
     //     colProps: { span: 6 },
     //   },
-    {
-        label: '案件标签',
-        field: 'labelCode',
-        component: 'ApiSelect',
-        componentProps: {
-            api: async () => {
-                const res  = await getDictItems('biz_complaint_lavel')
-                console.log(res)
-                if(Array.isArray(res)){
-                    res.unshift({text: '所有', value: ''})
-                    return res;
-                } else {
-                    return [];
-                }
-            },
-            labelField: 'text',
-            valueField: 'value'
-        },
-        colProps: { span: 6 }
-    },
+    // {
+    //     label: '案件标签',
+    //     field: 'labelCode',
+    //     component: 'ApiSelect',
+    //     componentProps: {
+    //         api: async () => {
+    //             const res  = await getDictItems('biz_complaint_lavel')
+    //             console.log(res)
+    //             if(Array.isArray(res)){
+    //                 res.unshift({text: '所有', value: ''})
+    //                 return res;
+    //             } else {
+    //                 return [];
+    //             }
+    //         },
+    //         labelField: 'text',
+    //         valueField: 'value'
+    //     },
+    //     colProps: { span: 6 }
+    // },
     {
         label: '状态',
-        field: 'replyStatus',
+        field: 'auditStatus',
         component: 'Select',
         componentProps: {
             options: [
-                { label: '待回复', value: '0' },
-                { label: '已回复', value: '1' },
-                { label: '回复已审核', value: '2' },
+                { label: '待审核', value: '0' },
+                { label: '已审核', value: '1' },
             ],
             
         },
@@ -594,6 +593,70 @@ export const addFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入备注',
+    },
+  },
+];
+
+// 回复审核表单
+export const formAuditSchema: FormSchema[] = [
+  {
+    field: 'status',
+    label: '工单状态',
+    component: 'Select',
+    required: true,
+    componentProps: {
+      options:[
+        { label: '待回复', value: '0' },
+        { label: '已回复', value: '1' },
+        { label: '待办结', value: '2' },
+      ],
+      placeholder: '==请选择==',
+    },
+  },
+  {
+    field: 'fileRead',
+    label: '录音已倾听',
+    component: 'Select',
+    required: true,
+    componentProps: {
+      options:[
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+  },
+  {
+    field: 'followCode',
+    label: '跟进情况',
+    component: 'ApiSelect',
+    required: true,
+    componentProps: {
+      api: async () => {
+        const res  = await getDictItems('biz_follow_code')
+          console.log(res)
+          if(Array.isArray(res)){
+              return res;
+          } else {
+              return [];
+          }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+  },
+  {
+    field: 'factFlag',
+    label: '是否属实',
+    component: 'Select',
+    required: true,
+    componentProps: {
+      options:[
+        { label: '属实', value: '1' },
+        { label: '不属实', value: '0' },
+      ],
+      placeholder: '==请选择==',
     },
   },
 ];

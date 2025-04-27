@@ -1,17 +1,15 @@
-import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { pageNoToPageNum } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
-import qs from 'qs';
 export enum Api {
-  // 获取回复列表
-  list = '/complain/reply/getReplyPageList',
-  // 获取回复详情
-  getReplyDetail = '/complain/reply/getReplyDetail',
-  // 保存回复
-  saveReply = '/complain/reply/saveReply',
+  // 获取回复审核列表
+  list = '/complain/replyAudit/getReplyAuditList',
+  // 获取回复审核详情
+  getReviewReplyDetail = '/complain/replyAudit/getReplyAuditDetail',
+  // 保存回复审核
+  saveReviewReply = '/complain/replyAudit/saveReplyAudit',
   // 确认回复
-  confirmReply = '/complain/reply/confirmReply',
+  // confirmReply = '/complain/reply/confirmReply',
 }
 /**
  * 已接收列表
@@ -56,27 +54,12 @@ export const list = (param) => {
  * 获取回复详情
  */
 export const getReplyDetail = (param) => {
-  return defHttp.get({ url: Api.getReplyDetail, params: param})
+  return defHttp.get({ url: Api.getReviewReplyDetail, params: param})
 }
 
 /**
- * 保存回复
+ * 保存回复审核
  */
-export const saveReply = (param) => {
-  return defHttp.post({ url: Api.saveReply, params: param})
-}
-
-/**
- * 确认回复
- */
-export const confirmReply = (param) => {
-  return defHttp.post({ url: Api.confirmReply, params: param})
-}
-
-
-/**
- * 增加社区回复内容
- */
-export const addCommunityReploy = (params) => {
-  return defHttp.post({ url: Api.saveReply, data: params });
+export const saveReviewReply = (param) => {
+  return defHttp.post({ url: Api.saveReviewReply, data: param})
 }

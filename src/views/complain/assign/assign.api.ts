@@ -52,7 +52,7 @@ export const list = (param) => {
 /**
  * 单个分派
  */
-export const addAssign = (params) => defHttp.post({ url: Api.addAssign, params});
+export const addAssign = (params) => defHttp.post({ url: Api.addAssign, data:params});
 
 /**
  * 重新指派

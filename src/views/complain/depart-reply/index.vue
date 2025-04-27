@@ -45,7 +45,7 @@
     import { useModal } from '/@/components/Modal';
     import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
-    import TicketEdit from '../bizComplaintTicketList/TicketEdit.vue';
+    import TicketEdit from './TicketEditForm.vue';
     const [registerModal, { openModal }] = useModal();
     const { createMessage, createConfirm } = useMessage();
 
@@ -67,7 +67,7 @@
           },
           beforeFetch: (params) => {
             console.log(params);
-            return Object.assign({ pageNum:  params.pageNo }, params);
+            return Object.assign(params, { pageNum:  params.pageNo });
           },
         },
         // exportConfig: {

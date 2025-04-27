@@ -73,3 +73,9 @@ export const confirmReply = (param) => {
   return defHttp.post({ url: Api.confirmReply, params: param})
 }
 
+/**
+ * 增加部门回复内容
+ */
+export const addDepartReploy = (params) => {
+  return defHttp.post({ url: Api.saveReply, data: params });
+}

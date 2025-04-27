@@ -208,7 +208,7 @@ export const columns: BasicColumn[] = [
           presets: rangePresets,
         },
         defaultValue: [
-          dayjs().add(-30, 'd'),
+          dayjs().add(-3, 'M'),
           dayjs()
         ]
     },
@@ -254,32 +254,32 @@ export const columns: BasicColumn[] = [
         component: 'Input',
         colProps: { span: 6 },
     },
-    {
-        label: '重点对象',
-        field: 'monitorType',
-        component: 'ApiSelect',
-        componentProps: {
-          // options: [
-          //     { label: '==请选择==', value: '' },
-          //     { label: '红名单', value: '0' },
-          //     { label: '黑名单', value: '1' },
-          //     { label: '失信名单', value: '3' },
-          // ],
-          api: async () => {
-            const res  = await getDictItems('biz_monitor_type')
-              console.log(res)
-              if(Array.isArray(res)){
-                  res.unshift({text: '==请选择==', value: ''})
-                  return res;
-              } else {
-                  return [];
-              }
-          },
-          labelField: 'text',
-          valueField: 'value',
-        },
-        colProps: { span: 6 },
-    }
+    // {
+    //     label: '重点对象',
+    //     field: 'monitorType',
+    //     component: 'ApiSelect',
+    //     componentProps: {
+    //       // options: [
+    //       //     { label: '==请选择==', value: '' },
+    //       //     { label: '红名单', value: '0' },
+    //       //     { label: '黑名单', value: '1' },
+    //       //     { label: '失信名单', value: '3' },
+    //       // ],
+    //       api: async () => {
+    //         const res  = await getDictItems('biz_monitor_type')
+    //           console.log(res)
+    //           if(Array.isArray(res)){
+    //               res.unshift({text: '==请选择==', value: ''})
+    //               return res;
+    //           } else {
+    //               return [];
+    //           }
+    //       },
+    //       labelField: 'text',
+    //       valueField: 'value',
+    //     },
+    //     colProps: { span: 6 },
+    // }
 ];
 
 // 新增或者编辑表单项
@@ -432,3 +432,114 @@ export const formSchema: FormSchema[] = [
   ];
 
 
+// 待补充表单内容（根据截图生成）
+export const addFormSchema: FormSchema[] = [
+  {
+    field: 'department',
+    label: '处理部门',
+    component: 'Input',
+    required: true,
+    componentProps: {
+      placeholder: '请输入处理部门',
+    },
+  },
+  {
+    field: 'transferTo',
+    label: '转至',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        // TODO: 替换为实际接口
+        return [
+          { label: '==请选择==', value: '' },
+          // 其他选项...
+        ];
+      },
+      labelField: 'label',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+  },
+  {
+    field: 'labelCode',
+    label: '标签',
+    component: 'RadioGroup',
+    required: true,
+    componentProps: {
+      placeholder: '请选择标签',
+      options: [
+        { label: '普通', value: '1' },
+        { label: '为民', value: '2' },
+      ],
+    },
+  },
+  {
+    field: 'handler',
+    label: '督办人',
+    component: 'Input',
+    required: true,
+    componentProps: {
+      placeholder: '请输入督办人',
+    },
+  },
+  {
+    field: 'attachment',
+    label: '附件/视频',
+    component: 'Upload',
+    componentProps: {
+      // 具体上传配置
+      multiple: false,
+      accept: '*',
+      // action: '/api/upload', // 上传接口
+      // showDownloadButton: true,
+      // showPreviewButton: true,
+    },
+  },
+  {
+    field: 'image',
+    label: '图片上传',
+    component: 'Upload',
+    componentProps: {
+      multiple: false,
+      accept: 'image/*',
+      // action: '/api/upload',
+    },
+  },
+  {
+    field: 'audio',
+    label: '录音上传',
+    component: 'Upload',
+    componentProps: {
+      multiple: false,
+      accept: 'audio/*',
+      // action: '/api/upload',
+    },
+  },
+  {
+    field: 'audioDuration',
+    label: '录音时长',
+    component: 'Input',
+    componentProps: {
+      placeholder: '00分00秒处表明态度',
+      addonBefore: ' ',
+    },
+  },
+  {
+    field: 'processStatus',
+    label: '处理情况',
+    component: 'InputTextArea',
+    required: true,
+    componentProps: {
+      placeholder: '请输入处理情况',
+      rows: 4,
+    },
+  },
+  {
+    field: 'remark',
+    label: '备注',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入备注',
+    },
+  },
+];

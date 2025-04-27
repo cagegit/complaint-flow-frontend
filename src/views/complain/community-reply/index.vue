@@ -67,7 +67,7 @@
           },
           beforeFetch: (params) => {
             console.log(params);
-            return Object.assign({ pageNum:  params.pageNo }, params);
+            return Object.assign(params, { pageNum:  params.pageNo });
           },
         },
         // exportConfig: {

@@ -1,9 +1,10 @@
-import { getCommunityChildList, getCommunityList, getDictItems } from '/@/api/common/api';
+import { getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
 import { ref, h } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
+import { getDictItemsByCode } from '/@/utils/dict';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -392,12 +393,14 @@ export const formSchema: FormSchema[] = [
       field: 'title',
       component: 'Input',
       required: true,
+      colProps: { span: 24 }
     },
     {
       label: '主要内容',
       field: 'mainContent',
       component: 'InputTextArea',
       required: true,
+      colProps: { span: 24 }
     },
     {
       label: '派单人员',
@@ -409,11 +412,13 @@ export const formSchema: FormSchema[] = [
       field: 'sendTime',
       component: 'DatePicker',
       required: true,
+      colProps: { span: 12 }
     },
     {
       label: '处理意见',
       field: 'resolveOpinion',
       component: 'Input',
+      colProps: { span: 24 }
     },
     {
       label: '截止时间',
@@ -431,6 +436,7 @@ export const formSchema: FormSchema[] = [
       field: 'finalResolveResult',
       component: 'Input',
       required: true,
+      colProps: { span: 24 },
     },
     {
       label: '承办单位',
@@ -442,67 +448,150 @@ export const formSchema: FormSchema[] = [
 
  // 待补充表单
  export const addFormSchema: FormSchema[] = [
-  { field: 'labelCode', label: '标签', component: 'RadioGroup', componentProps: { options: [
-      { label: '普通', value: '普通' },
-      { label: '2小时', value: '2小时' },
-      { label: '企业48小时', value: '企业48小时' },
-      { label: '重点人', value: '重点人' },
-      { label: '蛋壳', value: '蛋壳' },
-      { label: '为民', value: '为民' },
-      { label: '24小时', value: '24小时' },
-      { label: '反水', value: '反水' },
-      { label: '失信', value: '失信' },
-      { label: '未接', value: '未接' },
-  ] } },
+  { field: 'labelCode', label: '标签', 
+    component: 'RadioGroup', 
+    componentProps: { 
+      options: getDictItemsByCode('biz_complaint_lavel') 
+    } },
   { field: 'reportDistrictId', 
     label: '反映管区', 
     component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        const res  = await getCommunityList('3') // 3表示管区
+    componentProps: ({ formActionType }) => {
+      return {
+        api: async () => {
+          const res  = await getCommunityList('3') // 3表示管区
+            console.log(res)
+            if(Array.isArray(res)){
+                // res.unshift({label: '所有', value: ''})
+              return res;
+            } else {
+              return [];
+            }
+        },
+        onSelect: async (options, values) => {
+          console.log(options, values);
+          const { updateSchema } = formActionType;
+          const { value } = values;
+          const res  = await getCommunityChildList(value)
           console.log(res)
           if(Array.isArray(res)){
-              res.unshift({text: '所有', value: ''})
-              return res;
+              // res.unshift({label: '所有', value: ''})
+              updateSchema({
+                field: 'reportCommunityId',
+                componentProps: {
+                  options: res.map(v => {
+                    return {
+                      label: v.departName,
+                      value: v.id
+                    }
+                  }),
+                }
+              });
           } else {
-              return [];
+              updateSchema({
+                field: 'reportCommunityId',
+                componentProps: {
+                  options: [],
+                }
+              });
           }
-      },
-      labelField: 'departName',
-      valueField: 'id'
+        },
+        labelField: 'departName',
+        valueField: 'id'
+      }
     } 
   },
   { field: 'reportCommunityId', 
     label: '反映社区', 
-    component: 'ApiSelect',
+    component: 'Select',
     componentProps: {
-      api: async () => {
-        const res  = await getCommunityChildList('3') // 3表示管区
+      options:[]
+    }  
+  },
+  { field: 'assignDeptIdList', 
+    label: '处理科室', 
+    component: 'ApiSelect',
+    componentProps: ({ formActionType }) => {
+      return {
+        api: async () => {
+          const res  = await getCommunityList('2') // 2表示部门
+            console.log(res)
+            if(Array.isArray(res)){
+                // res.unshift({label: '所有', value: ''})
+              return res;
+            } else {
+              return [];
+            }
+        },
+        onSelect: async (options, values) => {
+          console.log(options, values);
+          const { updateSchema } = formActionType;
+          const { value } = values;
+          const res  = await getCommunityChildList(value)
           console.log(res)
           if(Array.isArray(res)){
-              res.unshift({text: '所有', value: ''})
-              return res;
+              // res.unshift({label: '所有', value: ''})
+              updateSchema({
+                field: 'assignCommunityIdList',
+                componentProps: {
+                  options: res.map(v => {
+                    return {
+                      label: v.departName,
+                      value: v.id
+                    }
+                  }),
+                }
+              });
+          } else {
+              updateSchema({
+                field: 'assignCommunityIdList',
+                componentProps: {
+                  options: [],
+                }
+              });
+          }
+        },
+        labelField: 'departName',
+        valueField: 'id',
+        multiple: true,
+      }
+    } 
+  },
+  { 
+    field: 'assignCommunityIdList', 
+    label: '处理社区/居委会', 
+    component: 'Select',
+    componentProps: {
+      options:[],
+      multiple: true
+    }
+  },
+  { 
+    field: 'sevenFiveId', 
+    label: '七有五性', 
+    component: 'ApiTreeSelect',
+    componentProps: {
+      api: async () => {
+        const res  = await getQywxTreeList();
+          console.log(res)
+          if(Array.isArray(res)){
+              // res.unshift({text: '==请选择==', value: ''})
+              return res.map(v => {
+                return {
+                  id: v.id,
+                  pId: v.parentId,
+                  title: v.name,
+                  value: v.id,
+                }
+              });
           } else {
               return [];
           }
       },
-      labelField: 'departName',
-      valueField: 'id'
-    }  
+      treeDataSimpleMode: true,
+    } 
   },
-  { field: 'office', 
-    label: '处理科室', 
-    component: 'Input' 
-  },
-  { field: 'processingCommunity', 
-    label: '处理社区/居委会', 
-    component: 'Input' 
-  },
-  { field: 'sevenAttributes', 
-    label: '七有五性', 
-    component: 'Input' 
-  },
-  { field: 'remarks', 
+  { field: 'remark', 
     label: '备注', 
     component: 'InputTextArea'
   },

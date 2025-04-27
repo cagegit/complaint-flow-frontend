@@ -159,6 +159,6 @@ export const getCommunityChildList = (parentId:string) => {
   return defHttp.get({ url: '/biz/depart/getChildList' + `?parentId=${parentId}`, });
 };
 // 七有无性树形列表
-export const getQywxTreeList = (params) => {
-  return defHttp.get({ url: '/biz/sevenFive/getTreeList', params });
+export const getQywxTreeList = () => {
+  return defHttp.get({ url: '/biz/sevenFive/getList' });
 };

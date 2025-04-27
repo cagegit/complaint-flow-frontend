@@ -37,15 +37,15 @@
         <!--工单编辑-->
         <TicketEdit @register="registerModal" @success="handleSuccess" />
     </template>
-    <script lang="ts" setup name="forward-complain">
+    <script lang="ts" setup name="review-reply">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
-    import { list, forwardTicket, forwardTicketBatch } from './out.api'
-    import { columns, searchFormSchema } from './out.data'
+    import { list} from './review.api'
+    import { columns, searchFormSchema } from './review.data'
     import { useModal } from '/@/components/Modal';
     import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
-    import TicketEdit from '../bizComplaintTicketList/TicketEdit.vue';
+    import TicketEdit from './TicketEditForm.vue';
     const [registerModal, { openModal }] = useModal();
     const { createMessage, createConfirm } = useMessage();
 
@@ -53,7 +53,7 @@
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
         designScope: 'ticket-list',
         tableProps: {
-          title: '工单接收列表',
+          title: '回复审核列表',
           api: list,
           columns: columns,
           size: 'small',
@@ -67,7 +67,14 @@
           },
           beforeFetch: (params) => {
             console.log(params);
-            return Object.assign(params, { pageNum:  params.pageNo });
+            // 增加processStatus字段
+            let processStatus = 0;
+            if(params.auditStatus === '0'){
+              processStatus = 0;
+            } else if(params.auditStatus === '1'){
+              processStatus = 1;
+            } 
+            return Object.assign(params, {pageNum:  params.pageNo, processStatus});
           },
         },
         // exportConfig: {
@@ -100,7 +107,7 @@
           onOk: async () => {
             console.log(record);
             try {
-              await forwardTicket({ id: record.id });
+              // await saveReply({ id: record.id });
               reload();
               createMessage.success('转出成功');
             } catch (error) {

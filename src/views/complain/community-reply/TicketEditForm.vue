@@ -27,10 +27,10 @@
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema, addFormSchema } from './assign.data';
+    import { formSchema, addFormSchema } from './community.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
-    import { addAssign, getAssignDetail } from './assign.api';
+    import { addCommunityReploy, getReplyDetail } from './community.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
   
     // 声明Emits
@@ -40,10 +40,8 @@
     const rowId = ref('');
     const departOptions = ref([]);
     let isFormDepartUser = false;
-    // 当前表单内容
-    let currentData:any = {};
     //表单配置
-    const [registerForm] = useForm({
+    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -57,7 +55,7 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerAddForm] = useForm({
       labelWidth: 150,
       schemas: addFormSchema,
       showActionButtonGroup: false,
@@ -71,13 +69,12 @@
     //表单赋值
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
+      console.log(data);
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
-      // 给当前data赋值
-      currentData = data;
-      // 查询分派详情
-      const res = await getAssignDetail(data.record.id);
+      // 查询详情数据
+      const res = await getReplyDetail({ assignId: data.record.assignId });
       console.log(res);
     //   if (unref(isUpdate)) {
     //     rowId.value = data.record.id;
@@ -175,16 +172,16 @@
       }
       // 隐藏底部时禁用整个表单
       //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      // setProps({ disabled: true });
+      setProps({ disabled: !showFooter.value });
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题
     const getTitle = computed(() => {
       // update-begin--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
       if (!unref(isUpdate)) {
-        return '转派工单';
+        return '社区回复';
       } else {
-        return '工单转派';
+        return '回复';
       }
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });
@@ -195,7 +192,7 @@
       try {
         let values = await validate();
         setModalProps({ confirmLoading: true });
-        // values.userIdentity === 1 && (values.departIds = '');
+        values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
         // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
         let params = values;
@@ -203,18 +200,8 @@
         //   params = { ...params, updateFromPage: 'deptUsers' };
         // }
         // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
-        console.log(params)
-        if(currentData) {
-          if(params.assignCommunityIdList) {
-            params.assignCommunityIdList = params.assignCommunityIdList.split(',');
-          }
-          if(params.assignDeptIdList) {
-            params.assignDeptIdList = params.assignDeptIdList.split(',');
-          }
-          params = { ...params, id: currentData.record.id, caseNature:0 };
-        }
         //提交表单
-        await addAssign(params);
+        await addCommunityReploy(params);
         //关闭弹窗
         closeModal();
         //刷新列表
