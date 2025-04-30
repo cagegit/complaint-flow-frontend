@@ -158,7 +158,16 @@ export const getCommunityList = (categoryId:string) => {
 export const getCommunityChildList = (parentId:string) => {
   return defHttp.get({ url: '/biz/depart/getChildList' + `?parentId=${parentId}`, });
 };
+
+// 获取二级树形
+export const getSecondTreeList = (orgCategory:string) => {
+  return defHttp.get({ url: '/biz/depart/getLevelTwoTree' + `?orgCategory=${orgCategory}` });
+};
 // 七有无性树形列表
 export const getQywxTreeList = () => {
   return defHttp.get({ url: '/biz/sevenFive/getList' });
+};
+// 刷新组织机构缓存
+export const refreshDepartCache = () => {
+  return defHttp.get({ url: '/biz/depart/refreshDepartCache' + `?random=`+ Date.now() });
 };

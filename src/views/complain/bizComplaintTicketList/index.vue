@@ -40,13 +40,15 @@
 <script lang="ts" setup>
 import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
 import { useListPage } from '/@/hooks/system/useListPage';
-import { list, deleteTicket } from './ticket.api'
+import { list, deleteTicket, deleteBatchTicket } from './ticket.api'
 import { columns, searchFormSchema } from './ticket.data'
 import { useModal } from '/@/components/Modal';
+import { useMessage } from '/@/hooks/web/useMessage';
 //@ts-ignore
 import TicketEdit from './TicketEdit.vue';
 //注册drawer
 const [registerModal, { openModal }] = useModal();
+const { createConfirm } = useMessage();
 // 列表页面公共参数、方法
 const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'ticket-list',
@@ -119,6 +121,22 @@ const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
         // deleteUser({ ids: selectedRowKeys }).then(() => {
         //   reload();
         // });
+      // 确认对话框
+      createConfirm({
+        title: '是否批量删除选中的数据？',
+        content: '删除后数据将不可恢复',
+        iconType: 'warning',
+        onOk: async () => {
+          try {
+            await deleteBatchTicket({ ids: selectedRowKeys.value.join(',') });
+            reload();
+          } catch (error) {
+            console.error('批量删除失败', error);
+          }
+        },
+      });
+      // confirm();
+      console.log('批量删除', selectedRowKeys.value);
     }
 
   /**

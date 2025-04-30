@@ -41,7 +41,7 @@
     const departOptions = ref([]);
     let isFormDepartUser = false;
     //表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -55,7 +55,7 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm] = useForm({
+    const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: addFormSchema,
       showActionButtonGroup: false,
@@ -166,22 +166,22 @@
       //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
-        setFieldsValue({
+        setBasicFieldsValue({
           ...data.record,
         });
       }
       // 隐藏底部时禁用整个表单
       //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      setProps({ disabled: !showFooter.value });
+      // setProps({ disabled: !showFooter.value });
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题
     const getTitle = computed(() => {
       // update-begin--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
       if (!unref(isUpdate)) {
-        return '社区回复';
-      } else {
         return '回复';
+      } else {
+        return '社区回复';
       }
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });

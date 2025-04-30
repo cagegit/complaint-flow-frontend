@@ -7,8 +7,9 @@
         <a-button type="primary" preIcon="ant-design:import-outlined">导入</a-button>
       </a-upload>
       <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
-      <a-button type="primary" preIcon="ant-design:sync-outlined">同步企微?</a-button>
-      <a-button type="primary" preIcon="ant-design:sync-outlined">同步钉钉?</a-button>
+      <!-- <a-button type="primary" preIcon="ant-design:sync-outlined">同步企微?</a-button>
+      <a-button type="primary" preIcon="ant-design:sync-outlined">同步钉钉?</a-button> -->
+      <a-button type="primary" preIcon="ant-design:sync-outlined" :loading="isRefreshCacheIng"  @click="syncCache">同步缓存</a-button>
       <template v-if="checkedKeys.length > 0">
         <a-dropdown>
           <template #overlay>
@@ -96,6 +97,7 @@
   import { searchByKeywords } from '/@/views/system/departUser/depart.user.api';
   import DepartFormModal from '/@/views/system/depart/components/DepartFormModal.vue';
   import { Popconfirm } from 'ant-design-vue';
+import { refreshDepartCache } from '/@/api/common/api';
 
   const prefixCls = inject('prefixCls');
   const emit = defineEmits(['select', 'rootTreeData']);
@@ -124,6 +126,9 @@
 
   // 注册 modal
   const [registerModal, { openModal }] = useModal();
+
+  // 是否刷新缓存
+  const isRefreshCacheIng = ref<boolean>(false);
 
   // 加载顶级部门信息
   async function loadRootTreeData() {
@@ -335,4 +340,17 @@
   defineExpose({
     loadRootTreeData,
   });
+
+  // 同步缓存
+  async function syncCache() {
+    isRefreshCacheIng.value = true;
+    try {
+      await refreshDepartCache();
+      createMessage.success('同步缓存成功');
+    } catch (e) {
+      createMessage.error('同步缓存失败');
+    } finally {
+      isRefreshCacheIng.value = false;
+    }
+  }
 </script>

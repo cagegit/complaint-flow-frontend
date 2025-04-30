@@ -1,4 +1,4 @@
-import { getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList } from '/@/api/common/api';
+import { getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -60,6 +60,24 @@ import { getDictItemsByCode } from '/@/utils/dict';
 //根据上面的内容生成表格的columns和搜索表单的schema
 export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
+    // 紧急程度
+    { title: '紧急程度', dataIndex: 'emergencyLevel', width: 100,
+      customRender: ({record}) => {
+        let text = '';
+        let color = '';
+        let array = getDictItemsByCode('biz_time_level') || [];
+        let obj = array.filter((item) => {
+          return item.value == record.timeLevel +'';
+        });
+        if (obj[0]) {
+          text = obj[0].text;
+          color = obj[0].color;
+           return render.renderTag(text, color);
+        } else {
+          return text;
+        }
+      },
+     },
    { title: '数据来源', dataIndex: 'sourceType', width: 120,
       customRender: ({ text }) => {
         return render.renderDict(text, 'biz_source_type');
@@ -523,48 +541,45 @@ export const formSchema: FormSchema[] = [
               return [];
             }
         },
-        onSelect: async (options, values) => {
-          console.log(options, values);
-          const { updateSchema } = formActionType;
-          const { value } = values;
-          const res  = await getCommunityChildList(value)
-          console.log(res)
-          if(Array.isArray(res)){
-              // res.unshift({label: '所有', value: ''})
-              updateSchema({
-                field: 'assignCommunityIdList',
-                componentProps: {
-                  options: res.map(v => {
-                    return {
-                      label: v.departName,
-                      value: v.id
-                    }
-                  }),
-                }
-              });
-          } else {
-              updateSchema({
-                field: 'assignCommunityIdList',
-                componentProps: {
-                  options: [],
-                }
-              });
-          }
-        },
         labelField: 'departName',
         valueField: 'id',
         multiple: true,
+        checkable:true,
       }
     } 
   },
   { 
     field: 'assignCommunityIdList', 
     label: '处理社区/居委会', 
-    component: 'Select',
+    component: 'ApiTreeSelect',
     componentProps: {
-      options:[],
-      multiple: true
-    }
+      checkable:true,
+      multiple: true,
+      api: async () => {
+        const res  = await getSecondTreeList('3');
+          console.log(res)
+          if(Array.isArray(res)){
+              // res.unshift({text: '==请选择==', value: ''})
+              // 把tree格式数据展开
+              const newList = treeToList(res);
+              // console.log(res)
+              // res.unshift({text: '==请选择==', value: ''})
+              // console.log(res)
+              return newList.map(v => {
+                return {
+                  id: v.id,
+                  pId: v.parentId,
+                  title: v.title,
+                  value: v.id,
+                }
+              });
+          } else {
+              return [];
+          }
+      },
+      treeDataSimpleMode: true,
+    },
+      // treeDataSimpleMode: true,
   },
   { 
     field: 'sevenFiveId', 
@@ -580,7 +595,7 @@ export const formSchema: FormSchema[] = [
                 return {
                   id: v.id,
                   pId: v.parentId,
-                  title: v.name,
+                  title: v.liveHoodIssueNames,
                   value: v.id,
                 }
               });
@@ -596,3 +611,16 @@ export const formSchema: FormSchema[] = [
     component: 'InputTextArea'
   },
   ];
+
+
+  function treeToList(tree:any[]) {
+    const list:any[] = [];
+    function traverse(node) {
+      list.push(node);
+      if (node.children) {
+        node.children.forEach(traverse);
+      }
+    }
+    tree.forEach(traverse);
+    return list;
+  }

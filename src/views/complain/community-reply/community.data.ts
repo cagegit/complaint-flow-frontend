@@ -4,6 +4,7 @@ import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
 import { ref } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
+import { getDictItemsByCode } from '/@/utils/dict';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -59,6 +60,24 @@ import { render } from '/@/utils/common/renderUtils';
 //根据上面的内容生成表格的columns和搜索表单的schema
 export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
+    // 紧急程度
+    { title: '紧急程度', dataIndex: 'emergencyLevel', width: 100,
+    customRender: ({record}) => {
+      let text = '';
+      let color = '';
+      let array = getDictItemsByCode('biz_time_level') || [];
+      let obj = array.filter((item) => {
+        return item.value == record.timeLevel +'';
+      });
+      if (obj[0]) {
+        text = obj[0].text;
+        color = obj[0].color;
+          return render.renderTag(text, color);
+      } else {
+        return text;
+      }
+    },
+    },
   { title: '数据来源', dataIndex: 'sourceType', width: 120,
     customRender: ({ text }) => {
       return render.renderDict(text, 'biz_source_type');
