@@ -1,4 +1,4 @@
-import { getDictItems } from '/@/api/common/api';
+import { getDictItems, uploadFile } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -310,9 +310,9 @@ export const formSchema: FormSchema[] = [
       required: true,
       componentProps: {
         options: [
-          { label: '本地录入', value: '0' },
-          { label: '区分转', value: '1' },
-          { label: '直派', value: '2' },
+          { label: '本地录入', value: 0 },
+          { label: '区分转', value: 1 },
+          { label: '直派', value: 2 },
         ],
       },
     },
@@ -508,10 +508,12 @@ export const addFormSchema: FormSchema[] = [
     componentProps: {
       // 具体上传配置
       multiple: false,
-      accept: '*',
-      // action: '/api/upload', // 上传接口
-      // showDownloadButton: true,
-      // showPreviewButton: true,
+       accept: ['*'],
+       api: uploadFile, // 上传接口
+       showDownloadButton: true,
+       showPreviewButton: true,
+       bizPath: 'complain/files', // 业务路径
+       maxSize: 30, // 限制大小10M
     },
   },
   {
@@ -520,8 +522,10 @@ export const addFormSchema: FormSchema[] = [
     component: 'Upload',
     componentProps: {
       multiple: false,
-      accept: 'image/*',
-      // action: '/api/upload',
+      accept: ['image/*'],
+      api: uploadFile, // 上传接口
+      bizPath: 'complain/images', // 业务路径
+      maxSize: 5, // 限制大小10M,
     },
   },
   {
@@ -530,19 +534,22 @@ export const addFormSchema: FormSchema[] = [
     component: 'Upload',
     componentProps: {
       multiple: false,
-      accept: 'audio/*',
-      // action: '/api/upload',
+      accept: ['audio/*'],
+      api: uploadFile, // 上传接口
+      bizPath: 'complain/audio', // 业务路径
+      maxSize: 30, // 限制大小30M',
     },
   },
-  {
-    field: 'audioDuration',
-    label: '录音时长',
-    component: 'Input',
-    componentProps: {
-      placeholder: '00分00秒处表明态度',
-      addonBefore: ' ',
-    },
-  },
+  // {
+  //   field: 'audioDuration',
+  //   label: '录音时长',
+  //   component: 'Input',
+  //   slot: 'audioDurationSlot',
+  //   componentProps: {
+  //     placeholder: '00分00秒处表明态度',
+  //   },
+  //   defaultValue: [null, null]
+  // },
   {
     field: 'processStatus',
     label: '处理情况',

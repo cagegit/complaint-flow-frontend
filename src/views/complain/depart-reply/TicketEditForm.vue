@@ -3,7 +3,7 @@
       v-bind="$attrs"
       @register="registerDrawer"
       :title="getTitle"
-      :width="900"
+      :width="1000"
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
@@ -13,13 +13,25 @@
         <div style="flex: 1; border-right: 1px solid #ddd;">
             <BasicForm @register="registerForm"/>
         </div>
-        <div style="width: 300px; padding-left: 30px;">
+        <div style="width: 400px; padding-left: 30px;">
             <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
             <!-- 待补充信息区域 -->
             <BasicForm
                 :schemas="addFormSchema"
                 @register="registerAddForm"
-            />
+            >
+            <template #audioDurationSlot="record">
+              <!-- <a>{{ JSON.stringify(record) }}</a> -->
+              <a-space>
+                <a-time-picker
+                  v-model="record.model.audioDuration[0]"
+                  format="HH:mm:ss"
+                  style="width: 100%"
+                />
+                <a-input v-model="record.model.audioDuration[1]" placeholder="00分00秒处表明态度" />
+              </a-space>
+              </template>
+            </BasicForm>
         </div>
       </div>
     </BasicModal>
@@ -54,7 +66,7 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerAddForm, { setProps, resetFields, setFieldsValue, validate }] = useForm({
       labelWidth: 150,
       schemas: addFormSchema,
       showActionButtonGroup: false,

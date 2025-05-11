@@ -92,7 +92,7 @@
         ];
       }
     
-      async function handleEdit(record: Recordable) {
+      function handleEdit(record: Recordable) {
         openModal(true, {
           record,
           isUpdate: true,
