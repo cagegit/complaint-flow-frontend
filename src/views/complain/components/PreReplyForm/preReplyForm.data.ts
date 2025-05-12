@@ -5,36 +5,36 @@ import { FormSchema } from '/@/components/Form';
 
 // 表单字段信息
 export const formSchema: FormSchema[] = [
-  {
-    field: 'specificHandleName',
-    label: '经办人',
-    component: 'Input',
-    required: true,
-    defaultValue: '城北街道',
-    colProps: { span: 12 },
-    componentProps: {
-      readonly: true,
-    }
-  },
-  {
-    field: 'handleTime',
-    label: '经办时间',
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      readonly: true,
-    },
-    required: true,
-    defaultValue: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    colProps: { span: 12 }
-  },
+  // {
+  //   field: 'specificHandleName',
+  //   label: '经办人',
+  //   component: 'Input',
+  //   required: true,
+  //   defaultValue: '城北街道',
+  //   colProps: { span: 12 },
+  //   componentProps: {
+  //     readonly: true,
+  //   }
+  // },
+  // {
+  //   field: 'handleTime',
+  //   label: '经办时间',
+  //   component: 'DatePicker',
+  //   componentProps: {
+  //     showTime: true,
+  //     format: 'YYYY-MM-DD HH:mm:ss',
+  //     readonly: true,
+  //   },
+  //   required: true,
+  //   defaultValue: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+  //   colProps: { span: 12 }
+  // },
   {
     field: 'handleResult',
-    label: '办办结果',
+    label: '经办结果',
     component: 'InputTextArea',
     componentProps: {
-      placeholder: '请填写办办结果',
+      placeholder: '请填写经办结果',
       rows: 6,
     },
     required: true,
@@ -177,7 +177,7 @@ export const formSchema: FormSchema[] = [
       allowClear: true,
     },
     required: true,
-    colProps: { span: 12 },
+    colProps: { span: 24 },
   },
   {
     field: 'handleDetail',
@@ -199,6 +199,10 @@ export const formSchema: FormSchema[] = [
     componentProps: {},
     colProps: { span: 24 },
     slot: 'satisfactionTimeSlot',
+    defaultValue: [
+      null,
+      null
+    ]
   },
   {
     field: 'contactTime',
@@ -207,6 +211,10 @@ export const formSchema: FormSchema[] = [
     componentProps: {},
     colProps: { span: 24 },
     slot: 'contactTimeSlot',
+    defaultValue: [
+      null,
+      null
+    ]
   },
   {
     field: 'resolutionTime',
@@ -215,6 +223,10 @@ export const formSchema: FormSchema[] = [
     componentProps: {},
     colProps: { span: 24 },
     slot: 'resolutionTimeSlot',
+    defaultValue: [
+      null,
+      null
+    ]
   },
   {
     field: 'sevenFiveAttributes',

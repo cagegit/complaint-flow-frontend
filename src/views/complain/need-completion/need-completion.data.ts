@@ -179,13 +179,15 @@ export const columns: BasicColumn[] = [
     //     colProps: { span: 6 }
     // },
     {
-        label: '状态',
-        field: 'auditStatus',
+        label: '办结状态',
+        field: 'completeStatus',
         component: 'Select',
         componentProps: {
+          // 0待最终回复;1待区级审核;2已办结
             options: [
-                { label: '待审核', value: '0' },
-                { label: '已审核', value: '1' },
+                { label: '待最终回复', value: '0' },
+                { label: '待区级审核', value: '1' },
+                { label: '已办结', value: '2' },
             ],
             
         },

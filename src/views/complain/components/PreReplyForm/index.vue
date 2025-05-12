@@ -3,14 +3,33 @@
       v-bind="$attrs"
       @register="registerModal"
       :title="'预回复'"
-      :width="1000"
+      :width="900"
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
       :maskClosable="false"
     >
     <div class="flex">
-         <BasicForm @register="registerForm"/>
+         <BasicForm @register="registerForm">
+           <template #satisfactionTimeSlot="{model, field}">
+             <a-space>
+               <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+               <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+             </a-space>
+           </template>
+           <template #contactTimeSlot="{model, field}">
+             <a-space>
+               <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+               <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+             </a-space>
+           </template>
+            <template #resolutionTimeSlot="{model, field}">
+             <a-space>
+               <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+               <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+             </a-space>
+           </template>
+         </BasicForm>
     </div>
 </BasicModal>
 </template>

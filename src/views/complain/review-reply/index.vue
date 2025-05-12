@@ -36,6 +36,8 @@
     
         <!--工单编辑-->
         <TicketEdit @register="registerModal" @success="handleSuccess" />
+        <!-- 预回复 -->
+        <pre-reply-form @register="registerReplyModal" @success="handleReplySuccess" />
     </template>
     <script lang="ts" setup name="review-reply">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
@@ -43,11 +45,14 @@
     import { list} from './review.api'
     import { columns, searchFormSchema } from './review.data'
     import { useModal } from '/@/components/Modal';
-    import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
     import TicketEdit from './TicketEditForm.vue';
+    //@ts-ignore
+    import PreReplyForm from '../components/PreReplyForm/index.vue';
     const [registerModal, { openModal }] = useModal();
-    const { createMessage, createConfirm } = useMessage();
+
+    const [registerReplyModal, { openModal:openReplyModal }] = useModal();
+    // const { createMessage, createConfirm } = useMessage();
 
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
@@ -92,7 +97,7 @@
       function getTableAction(record): ActionItem[] {
         return [
           {
-            label: '转出',
+            label: '审核',
             onClick: handleEdit.bind(null, record),
             // ifShow: () => hasPermission('system:user:edit'),
           },
@@ -100,23 +105,11 @@
       }
     
       async function handleEdit(record: Recordable) {
-        createConfirm({
-          title: '温馨提示',
-          content: `是否确认转出选中工单？`,
-          iconType: 'warning',
-          onOk: async () => {
-            console.log(record);
-            try {
-              // await saveReply({ id: record.id });
-              reload();
-              createMessage.success('转出成功');
-            } catch (error) {
-              console.error('删除失败', error);
-              createMessage.error('转出失败');
-            }
-          },
+        openModal(true, {
+          record,
+          isUpdate: true,
+          showFooter: true,
         });
-      
       }
     
     //   async function handleDelete(record: Recordable) {
@@ -149,5 +142,9 @@
           isUpdate: true,
           showFooter: true,
         });
+      }
+
+      function handleReplySuccess() {
+        reload();
       }
     </script>

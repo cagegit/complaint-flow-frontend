@@ -8,14 +8,14 @@
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
             <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:send-outlined">转出</a-button> -->
             <a-dropdown v-if="selectedRowKeys.length > 0">
-              <template #overlay>
+              <!-- <template #overlay>
                 <a-menu>
                   <a-menu-item key="1" @click="batchHandleDelete">
                     <Icon icon="ant-design:send-outlined"></Icon>
                     批量转出
                   </a-menu-item>
                 </a-menu>
-              </template>
+              </template> -->
               <a-button
                 >批量操作
                 <Icon icon="mdi:chevron-down"></Icon>
@@ -36,28 +36,30 @@
     
         <!--工单编辑-->
         <TicketEdit @register="registerModal" @success="handleSuccess" />
-           <!-- 预回复 -->
-        <PreReplyForm @register="registerReplyModal" @success="handleReplySuccess" />
+        <!-- 预回复 -->
+        <pre-reply-form @register="registerReplyModal" @success="handleReplySuccess" />
     </template>
-    <script lang="ts" setup name="deaprt-reply">
+    <script lang="ts" setup name="need-completion">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
-    import { list} from './depart.api'
-    import { columns, searchFormSchema } from './depart.data'
+    import { list} from './need-completion.api'
+    import { columns, searchFormSchema } from './need-completion.data'
     import { useModal } from '/@/components/Modal';
-    //@ts-ignore
-    import PreReplyForm from '../components/PreReplyForm/index.vue';
     // import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
     import TicketEdit from './TicketEditForm.vue';
+     //@ts-ignore
+    import PreReplyForm from '../components/PreReplyForm/index.vue';
     const [registerModal, { openModal }] = useModal();
-    // const { createMessage, createConfirm } = useMessage();
+
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
+    // const { createMessage, createConfirm } = useMessage();
+
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
         designScope: 'ticket-list',
         tableProps: {
-          title: '部门回复列表',
+          title: '待区级审核列表',
           api: list,
           columns: columns,
           size: 'small',
@@ -66,12 +68,19 @@
             schemas: searchFormSchema,
           },
           actionColumn: {
-            width: 180,
+            width: 120,
             fixed: 'right',
           },
           beforeFetch: (params) => {
             console.log(params);
-            return Object.assign(params, { pageNum:  params.pageNo });
+            // 增加processStatus字段
+            let processStatus = 0;
+            if(params.auditStatus === '0'){
+              processStatus = 0;
+            } else if(params.auditStatus === '1'){
+              processStatus = 1;
+            } 
+            return Object.assign(params, {pageNum:  params.pageNo, processStatus});
           },
         },
         // exportConfig: {
@@ -89,34 +98,30 @@
       function getTableAction(record): ActionItem[] {
         return [
           {
-            label: '回复',
+            label: '审核回访内容',
             onClick: handleEdit.bind(null, record),
-            // ifShow: () => hasPermission('system:user:edit'),
-          },
-          {
-            label: '预回复',
-            onClick: handlePreReply.bind(null, record),
             // ifShow: () => hasPermission('system:user:edit'),
           },
         ];
       }
     
-      function handleEdit(record: Recordable) {
+      async function handleEdit(record: Recordable) {
         openModal(true, {
           record,
           isUpdate: true,
           showFooter: true,
         });
       }
-
-       function handlePreReply(record: Recordable) {
-        openReplyModal(true, {
-          record,
-          isUpdate: false,
-          showFooter: false,
-        });
-      }
-  
+    
+    //   async function handleDelete(record: Recordable) {
+    
+    //     try {
+    //       await deleteTicket({ id: record.id });
+    //       reload();
+    //     } catch (error) {
+    //       console.error('删除失败', error);
+    //     }
+    //   }
     
       function batchHandleDelete() {
             // deleteUser({ ids: selectedRowKeys }).then(() => {

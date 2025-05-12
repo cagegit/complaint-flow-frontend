@@ -184,8 +184,8 @@ export const columns: BasicColumn[] = [
         component: 'Select',
         componentProps: {
             options: [
-                { label: '待审核', value: '0' },
-                { label: '已审核', value: '1' },
+                { label: '待回访', value: '0' },
+                { label: '已回访', value: '1' },
             ],
             
         },

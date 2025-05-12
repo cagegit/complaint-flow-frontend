@@ -1,19 +1,15 @@
-import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { pageNoToPageNum } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
-import qs from 'qs';
 export enum Api {
-  // 获取工单列表
-  list = '/complain/turnOut/getTurnOutList',
-  // 批量转出工单
-  forwardTicketBatch = '/complain/turnOut/turnOutBatch',
-  // 转出工单
-  forwardTicket = '/complain/turnOut/turnOutById',
-  // 转出到市
-  forwardTicketToCity = '/complain/turnOut/turnOutCity',
-  // 转出到区
-  forwardTicketToDistrict = '/complain/turnOut/turnOutArea',
+  // 获取回复审核列表
+  list = '/complain/replyAudit/getReplyAuditList',
+  // 获取回复审核详情
+  getReviewReplyDetail = '/complain/replyAudit/getReplyAuditDetail',
+  // 保存回复审核
+  saveReviewReply = '/complain/replyAudit/saveReplyAudit',
+  // 确认回复
+  // confirmReply = '/complain/reply/confirmReply',
 }
 /**
  * 已接收列表
@@ -52,20 +48,18 @@ export const list = (param) => {
     })
 };
 
-/**
- * 批量转出工单
- */
-export const forwardTicketBatch = (params) => defHttp.post({ url: Api.forwardTicketBatch, data: qs.stringify(params) , headers: {'content-type': ContentTypeEnum.FORM_URLENCODED}},);
+
 
 /**
- * 转出工单
+ * 获取回复详情
  */
-export const forwardTicket = (params) => {
-  console.log(params);
-  if(params.forwardType === 'city') {
-     return defHttp.post({ url: Api.forwardTicketToCity, data: params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
-  } else {
-     return defHttp.post({ url: Api.forwardTicketToDistrict, data: params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
-  }
-};
+export const getReplyDetail = (param) => {
+  return defHttp.get({ url: Api.getReviewReplyDetail, params: param})
+}
 
+/**
+ * 保存回复审核
+ */
+export const saveReviewReply = (param) => {
+  return defHttp.post({ url: Api.saveReviewReply, data: param})
+}
