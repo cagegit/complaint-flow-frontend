@@ -471,6 +471,7 @@ export const addFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入处理部门',
+      disabled: true
     },
   },
   {

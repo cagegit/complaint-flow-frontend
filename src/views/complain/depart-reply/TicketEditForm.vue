@@ -98,6 +98,11 @@
           ...data.record,
         });
       }
+      if(res) {
+        setFieldsValue({
+         department: res.orgName,
+        });
+      }
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题

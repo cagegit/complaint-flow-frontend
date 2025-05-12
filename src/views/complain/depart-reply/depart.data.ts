@@ -542,6 +542,7 @@ export const addFormSchema: FormSchema[] = [
     required: true,
     componentProps: {
       placeholder: '请输入处理部门',
+      disabled: true
     },
   },
   {

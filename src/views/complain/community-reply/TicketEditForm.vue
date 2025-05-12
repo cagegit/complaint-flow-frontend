@@ -98,6 +98,11 @@
           ...data.record,
         });
       }
+       if(res) {
+        setFieldsValue({
+         department: res.orgName,
+        });
+      }
     });
     //获取标题
     const getTitle = computed(() => {
