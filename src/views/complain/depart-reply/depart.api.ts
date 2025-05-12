@@ -1,8 +1,6 @@
-import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { pageNoToPageNum } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
-import qs from 'qs';
 export enum Api {
   // 获取回复列表
   list = '/complain/reply/getReplyPageList',
@@ -75,8 +73,29 @@ export const confirmReply = (param) => {
 
 /**
  * 增加部门回复内容
+ * 参数示例
+* {
+*   "addFileList": [
+*     {
+*       "assignId": 0,
+*       "fileKey": "",
+*       "id": 0,
+*       "remark": "",
+*       "type": 0
+*     }
+*   ],
+*   "assignId": 0,
+*   "deleteFileIdList": [],
+*   "overseeUserName": "",
+*   "overseeUserPhone": "",
+*   "remark": "",
+*   "replyAudioDuration": 0,
+*   "replyAudioNote": "",
+*   "resolveResult": ""
+* }
+ * @param params
  */
-export const addDepartReploy = (params) => {
+export const addDepartReply = (params) => {
   return defHttp.post({ url: Api.saveReply, data: params });
 }
 

@@ -1,4 +1,4 @@
-import { getDictItems, uploadFile } from '/@/api/common/api';
+import { getDictItems, uploadJsFile } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -403,12 +403,18 @@ export const formSchema: FormSchema[] = [
       field: 'title',
       component: 'Input',
       required: true,
+      colProps: {
+        span: 24
+      }
     },
     {
       label: '主要内容',
       field: 'mainContent',
       component: 'InputTextArea',
       required: true,
+      colProps: {
+        span: 24
+      }
     },
     {
       label: '派单人员',
@@ -425,6 +431,9 @@ export const formSchema: FormSchema[] = [
       label: '处理意见',
       field: 'resolveOpinion',
       component: 'Input',
+      colProps: {
+        span: 24
+      }
     },
     {
       label: '截止时间',
@@ -435,18 +444,21 @@ export const formSchema: FormSchema[] = [
     {
       label: '处理时限',
       field: 'resolveTimeLimit',
-      component: 'Input',
+      component: 'Input'
     },
     {
       label: '处理情况',
       field: 'finalResolveResult',
       component: 'Input',
-      required: true,
+      required: true
     },
     {
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
+      colProps: {
+        span: 24
+      }
     },
   ];
 
@@ -457,7 +469,6 @@ export const addFormSchema: FormSchema[] = [
     field: 'department',
     label: '处理部门',
     component: 'Input',
-    required: true,
     componentProps: {
       placeholder: '请输入处理部门',
     },
@@ -493,7 +504,7 @@ export const addFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'handler',
+    field: 'overseeUserName',
     label: '督办人',
     component: 'Input',
     required: true,
@@ -502,44 +513,53 @@ export const addFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'attachment',
-    label: '附件/视频',
-    component: 'Upload',
-    componentProps: {
-      // 具体上传配置
-      multiple: false,
-       accept: ['*'],
-       api: uploadFile, // 上传接口
-       showDownloadButton: true,
-       showPreviewButton: true,
-       bizPath: 'complain/files', // 业务路径
-       maxSize: 30, // 限制大小10M
+      field: 'file',
+      label: '附件/视频',
+      component: 'Upload',
+      componentProps: {
+        // 具体上传配置
+        multiple: true,
+        accept: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'mp4'],
+        api: uploadJsFile, // 上传接口
+        showDownloadButton: true,
+        showPreviewButton: true,
+        bizPath: 'complain/files', // 业务路径
+        maxSize: 30, // 限制大小30M
+        uploadParams: {
+          biz: 'complain/file',
+        },
+      },
     },
-  },
-  {
-    field: 'image',
-    label: '图片上传',
-    component: 'Upload',
-    componentProps: {
-      multiple: false,
-      accept: ['image/*'],
-      api: uploadFile, // 上传接口
-      bizPath: 'complain/images', // 业务路径
-      maxSize: 5, // 限制大小10M,
+    {
+      field: 'image',
+      label: '图片上传',
+      component: 'Upload',
+      componentProps: {
+        multiple: true,
+        accept: ['jpg', 'jpeg', 'png'],
+        api: uploadJsFile, // 上传接口
+        bizPath: 'complain/images', // 业务路径
+        maxSize: 10, // 限制大小10M
+        uploadParams: {
+          biz: 'complain/image',
+        }
+      },
     },
-  },
-  {
-    field: 'audio',
-    label: '录音上传',
-    component: 'Upload',
-    componentProps: {
-      multiple: false,
-      accept: ['audio/*'],
-      api: uploadFile, // 上传接口
-      bizPath: 'complain/audio', // 业务路径
-      maxSize: 30, // 限制大小30M',
+    {
+      field: 'audio',
+      label: '录音上传',
+      component: 'Upload',
+      componentProps: {
+        multiple: true,
+        accept: ['mp3', 'wav'],
+        api: uploadJsFile, // 上传接口
+        bizPath: 'complain/audio', // 业务路径
+        maxSize: 30, // 限制大小30M
+        uploadParams: {
+          biz: 'complain/audio',
+        },
+      },
     },
-  },
   // {
   //   field: 'audioDuration',
   //   label: '录音时长',
@@ -551,7 +571,7 @@ export const addFormSchema: FormSchema[] = [
   //   defaultValue: [null, null]
   // },
   {
-    field: 'processStatus',
+    field: 'resolveResult',
     label: '处理情况',
     component: 'InputTextArea',
     required: true,

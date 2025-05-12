@@ -168,7 +168,7 @@
         }
         try {
           item.status = UploadResultStatus.UPLOADING;
-          const { data } = await props.api?.(
+          const res = await props.api?.(
             {
               data: {
                 ...(props.uploadParams || {}),
@@ -182,8 +182,9 @@
               item.percent = complete;
             }
           );
+          console.log(res);
           item.status = UploadResultStatus.SUCCESS;
-          item.responseData = data;
+          item.responseData = res;
           return {
             success: true,
             error: null,

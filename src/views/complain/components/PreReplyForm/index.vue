@@ -1,0 +1,83 @@
+<template>
+<BasicModal
+      v-bind="$attrs"
+      @register="registerModal"
+      :title="'预回复'"
+      :width="1000"
+      @ok="handleSubmit"
+      :showFooter="showFooter"
+      destroyOnClose
+      :maskClosable="false"
+    >
+    <div class="flex">
+         <BasicForm @register="registerForm"/>
+    </div>
+</BasicModal>
+</template>
+<script lang="ts" setup name="PreReplayForm">
+    import { ref, computed, unref, useAttrs } from 'vue';
+    import { BasicForm, useForm } from '/@/components/Form/index';
+    import { formSchema } from './preReplyForm.data';
+    import { BasicModal, useModalInner } from '/@/components/Modal';
+    import { savePreReply, getPreReplyDetail } from './preReplyForm.api';
+    import { useMessage } from '/@/hooks/web/useMessage';
+    const { createMessage } = useMessage();
+    // 声明Emits
+    const emit = defineEmits(['success', 'register']);
+    const attrs = useAttrs();
+    const isUpdate = ref(true);
+    const rowId = ref('');
+    const departOptions = ref([]);
+    let isFormDepartUser = false;
+    const showFooter = ref(true);
+    //表单配置
+    const [registerForm, { setProps, resetFields, setFieldsValue, validate }] = useForm({
+      labelWidth: 150,
+      schemas: formSchema,
+      showActionButtonGroup: false,
+      layout: 'vertical',
+      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+      //row行的样式
+    });
+    //表单赋值
+    const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+      await resetFields();
+      console.log(data);
+      showFooter.value = data?.showFooter ?? true;
+      setModalProps({ confirmLoading: false });
+      isUpdate.value = !!data?.isUpdate;
+      // 查询详情数据
+      const res = await getPreReplyDetail({ assignId: data.record.assignId });
+      console.log(res);
+
+      //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
+      // 无论新增还是编辑，都可以设置表单值
+      if (typeof data.record === 'object') {
+        setFieldsValue({
+          ...data.record,
+        });
+      }
+    }); 
+    //表单提交
+    async function handleSubmit() {
+      const data = await validate();
+      console.log(data);
+      if (data) {
+        setModalProps({ confirmLoading: true });
+        const res = await savePreReply(data);
+        console.log(res);
+        if (res.code === 200) {
+          createMessage.success('操作成功');
+          closeModal();
+          emit('success', res);
+        } else {
+          setModalProps({ confirmLoading: false });
+        }
+        }
+    }
+    // 关闭弹窗
+    function handleClose() {
+      closeModal();
+    }
+</script>

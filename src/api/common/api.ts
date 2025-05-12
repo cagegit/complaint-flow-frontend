@@ -96,6 +96,24 @@ export const loadCategoryData = (params) => {
 export const uploadFile = (params, success) => {
   return defHttp.uploadFile({ url: uploadUrl }, params, { success });
 };
+
+/**
+ * 接诉文件上传-新返回结构
+ */
+export const uploadJsFile = (params, success) => {
+  return new Promise((resolve, reject) => {
+    defHttp.uploadFile({ url: uploadUrl }, params, { success })
+      .then(({result, ...rest}) => {
+        resolve({
+          url: result || '',
+          ...rest,
+        });
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
 /**
  * 下载文件
  * @param url 文件路径
