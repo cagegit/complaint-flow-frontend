@@ -1,0 +1,744 @@
+import { getDictItems } from '/@/api/common/api';
+import { FormSchema } from '/@/components/Form';
+import { BasicColumn } from '/@/components/Table';
+import dayjs, { Dayjs } from 'dayjs';
+import { ref } from 'vue';
+import { render } from '/@/utils/common/renderUtils';
+import { getDictItemsByCode } from '/@/utils/dict/index';
+import { h } from 'vue';
+
+// 基于工单接收的列定义，保持一致
+export const columns: BasicColumn[] = [
+  { title: 'id', dataIndex: 'id', width: 80 },
+  // 紧急程度
+  { 
+    title: '紧急程度', 
+    dataIndex: 'emergencyLevel', 
+    width: 100,
+    customRender: ({record}) => {
+      let text = '';
+      let color = '';
+      let array = getDictItemsByCode('biz_time_level') || [];
+      let obj = array.filter((item) => {
+        return item.value == record.timeLevel +'';
+      });
+      if (obj[0]) {
+        text = obj[0].text;
+        color = obj[0].color;
+        return render.renderTag(text, color);
+      } else {
+        return text;
+      }
+    },
+  },
+  { 
+    title: '数据来源', 
+    dataIndex: 'sourceType', 
+    width: 120,
+    customRender: ({ text }) => {
+      return render.renderDict(text, 'biz_source_type');
+    },
+  },
+  { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '来电人', dataIndex: 'callUserName', width: 120 },
+  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
+  { 
+    title: '状态', 
+    dataIndex: 'receiveStatus', 
+    width: 120, 
+    customRender: ({ text }) => {
+      return text === 0 ? '待接收' : '已接收';
+    }
+  },
+  { title: '月次', dataIndex: 'monthCount', width: 80 },
+  { title: '年次', dataIndex: 'yearCount', width: 80 },
+  { title: '标题', dataIndex: 'title', width: 180 },
+  { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+  { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
+  { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
+  { title: '来电时间', dataIndex: 'callTime', width: 150 },
+  { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
+  { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
+  { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
+  { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
+  { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
+  { title: '创建人名称', dataIndex: 'createBy', width: 120 },
+  { title: '创建时间', dataIndex: 'createTime', width: 150 },
+  { title: '截止时间', dataIndex: 'deadline', width: 150 },
+  { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
+  { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
+  { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
+  { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
+  { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
+  { title: '所属部门', dataIndex: 'orgId', width: 150 },
+  { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
+  { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
+  { title: '流程节点名称', dataIndex: 'processName', width: 150 },
+  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
+  { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
+  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
+  { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
+  { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
+  { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
+  { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
+  { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+  { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
+  { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
+  { title: '派单时间', dataIndex: 'sendTime', width: 150 },
+  { title: '派单人员', dataIndex: 'sendUser', width: 120 },
+  { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
+  { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
+  { title: '修改时间', dataIndex: 'updateTime', width: 150 },
+  { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+  { title: '备注', dataIndex: 'remark', width: 180 },
+];
+
+// 日期范围预设
+const rangePresets = ref([
+  { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+  { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
+  { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
+  { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
+]);
+
+// 根据图片中的搜索条件定义表单
+export const searchFormSchema: FormSchema[] = [
+  {
+    label: '数据来源',
+    field: 'sourceType',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_source_type');
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==所有==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '导入时间',
+    field: 'importTime',
+    component: 'RangePicker',
+    componentProps: {
+      presets: rangePresets,
+      placeholder: ['开始日期', '结束日期'],
+    },
+    colProps: { span: 8 },
+    defaultValue: [
+      dayjs().add(-3, 'M'),
+      dayjs()
+    ]
+  },
+  {
+    label: '关键字',
+    field: 'keyword',
+    component: 'Input',
+    componentProps: {
+      placeholder: '标题\\内容\\来电号码\\发生地址',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '案件类型',
+    field: 'caseType',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_complaint_type');
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '案件编号',
+    field: 'caseNumber',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入案件编号',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '工单编号',
+    field: 'workOrderNumber',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入工单编号',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '反映社区',
+    field: 'reportCommunityId',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_community_list');
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '处理科室',
+    field: 'assignDepts',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_dept_list');
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: () => h('span', {}, [
+      '处理社区/', h('br'), '居委会'
+    ]),
+    field: 'processCommunity',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_community_list');
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '办结状态',
+    field: 'resolveStatus',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '已办结', value: '1' },
+        { label: '未办结', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '办结时间',
+    field: 'resolveTime',
+    component: 'RangePicker',
+    componentProps: {
+      presets: rangePresets,
+      placeholder: ['开始日期', '结束日期'],
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '派单时间',
+    field: 'sendTime',
+    component: 'RangePicker',
+    componentProps: {
+      presets: rangePresets,
+      placeholder: ['开始日期', '结束日期'],
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '回复审核时间',
+    field: 'auditTime',
+    component: 'RangePicker',
+    componentProps: {
+      presets: rangePresets,
+      placeholder: ['开始日期', '结束日期'],
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '反映居委会',
+    field: 'reportCommittee',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_committee_list');
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '标题',
+    field: 'title',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入标题',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '主要内容',
+    field: 'mainContent',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入关键词搜索',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '是否解决',
+    field: 'isResolved',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '已解决', value: '1' },
+        { label: '未解决', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '是否满意',
+    field: 'isSatisfied',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '满意', value: '1' },
+        { label: '不满意', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '是否属实',
+    field: 'isReal',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '属实', value: '1' },
+        { label: '不属实', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '突发案件',
+    field: 'isCompleted',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '重点对象',
+    field: 'keyPerson',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '二次办理',
+    field: 'secondProcess',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '录音已倾听',
+    field: 'isAudited',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '==请选择==', value: '' },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '七有五性',
+    field: 'sevenFiveId',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_seven_five');
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '一级分类',
+    field: 'categoryOne',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入一级分类',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '二级分类',
+    field: 'categoryTwo',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入二级分类',
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '三级分类',
+    field: 'categoryThree',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入三级分类',
+    },
+    colProps: { span: 8 },
+  },
+];
+
+// 表单数据，用于编辑和新增
+export const formSchema: FormSchema[] = [
+  {
+    field: 'id',
+    label: 'ID',
+    component: 'Input',
+    show: false,
+  },
+  {
+    field: 'sourceType',
+    label: '数据来源',
+    component: 'ApiSelect',
+    required: true,
+    componentProps: {
+      api: async () => {
+        return await getDictItems('biz_source_type');
+      },
+      labelField: 'text',
+      valueField: 'value',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'caseNumber',
+    label: '案件编号',
+    component: 'Input',
+    required: true,
+    colProps: { span: 12 },
+  },
+  {
+    field: 'workOrderNumber',
+    label: '工单编号',
+    component: 'Input',
+    required: true,
+    colProps: { span: 12 },
+  },
+  {
+    field: 'title',
+    label: '标题',
+    component: 'InputTextArea',
+    required: true,
+    componentProps: {
+      rows: 3,
+      placeholder: '请输入标题',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    field: 'mainContent',
+    label: '主要内容',
+    component: 'InputTextArea',
+    required: true,
+    componentProps: {
+      rows: 6,
+      placeholder: '请输入主要内容',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    field: 'callUserName',
+    label: '来电人',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入来电人',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'callPhoneNumber',
+    label: '来电号码',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入来电号码',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'callTime',
+    label: '来电时间',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'callUserAddress',
+    label: '来电人地址',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入来电人地址',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'receiveStatus',
+    label: '状态',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '待接收', value: 0 },
+        { label: '已接收', value: 1 },
+      ],
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'assignDepts',
+    label: '处理科室',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        return await getDictItems('biz_dept_list');
+      },
+      labelField: 'text',
+      valueField: 'value',
+      mode: 'multiple',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'assignCommunitys',
+    label: '处理社区',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        return await getDictItems('biz_community_list');
+      },
+      labelField: 'text',
+      valueField: 'value',
+      mode: 'multiple',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'reportCommunityId',
+    label: '反映社区',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        return await getDictItems('biz_community_list');
+      },
+      labelField: 'text',
+      valueField: 'value',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'reportDistrictId',
+    label: '反映管区',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        return await getDictItems('biz_district_list');
+      },
+      labelField: 'text',
+      valueField: 'value',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'categoryOne',
+    label: '一级分类',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'categoryTwo',
+    label: '二级分类',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'categoryThree',
+    label: '三级分类',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'sendUser',
+    label: '派单人员',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'sendTime',
+    label: '派单时间',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'resolveOpinion',
+    label: '处理意见',
+    component: 'InputTextArea',
+    componentProps: {
+      rows: 4,
+      placeholder: '请输入处理意见',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    field: 'deadline',
+    label: '截止时间',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'resolveTimeLimit',
+    label: '处理时限',
+    component: 'InputNumber',
+    componentProps: {
+      min: 1,
+      addonAfter: '天',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'finalResolveResult',
+    label: '处理情况',
+    component: 'InputTextArea',
+    componentProps: {
+      rows: 4,
+      placeholder: '请输入处理情况',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    field: 'resolveDepartment',
+    label: '承办单位',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'sevenFiveId',
+    label: '七有五性',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        return await getDictItems('biz_seven_five');
+      },
+      labelField: 'text',
+      valueField: 'value',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'remark',
+    label: '备注',
+    component: 'InputTextArea',
+    componentProps: {
+      rows: 4,
+      placeholder: '请输入备注',
+    },
+    colProps: { span: 24 },
+  },
+]; 
