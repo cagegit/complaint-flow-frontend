@@ -154,6 +154,7 @@ export class VAxios {
         //--@updateBy-begin----author:liusq---date:20210914------for:上传判断是否包含回调方法------
         if (callback?.success && isFunction(callback?.success)) {
           callback?.success(res?.data);
+          return Promise.resolve(res?.data);
           //--@updateBy-end----author:liusq---date:20210914------for:上传判断是否包含回调方法------
         } else if (callback?.isReturnResponse) {
           //--@updateBy-begin----author:liusq---date:20211117------for:上传判断是否返回res信息------

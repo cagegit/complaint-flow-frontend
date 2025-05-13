@@ -8,8 +8,8 @@ export enum Api {
   list = '/complain/reply/getReplyPageList',
   // 获取回复详情
   getReplyDetail = '/complain/reply/getReplyDetail',
-  // 保存回复
-  saveReply = '/complain/reply/saveReply',
+  // 保存回复，社区审核
+  saveReply = '/complain/reply/submitReply',
   // 确认回复
   confirmReply = '/complain/reply/confirmReply',
 }

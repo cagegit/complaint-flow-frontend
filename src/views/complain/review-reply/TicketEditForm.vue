@@ -50,7 +50,8 @@
     let isFormDepartUser = false;
     // 当前key
     const activeKey = ref('1');
-
+    // 当前编辑工单
+    const currentEditRecordRef = ref<any>(null);
     //回复审核表单配置
     const [registerAuditForm] = useForm({
       labelWidth: 150,
@@ -95,97 +96,10 @@
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
+      currentEditRecordRef.value = data.record;
       // 查询详情数据
       const res = await getReplyDetail({ assignId: data.record.assignId });
       console.log(res);
-    //   if (unref(isUpdate)) {
-    //     rowId.value = data.record.id;
-    //     //租户信息定义成数组
-    //     if (data.record.relTenantIds && !Array.isArray(data.record.relTenantIds)) {
-    //       data.record.relTenantIds = data.record.relTenantIds.split(',');
-    //     } else {
-    //       //【issues/I56C5I】用户管理中连续点两次编辑租户配置就丢失了
-    //       //data.record.relTenantIds = [];
-    //     }
-  
-    //     //查角色/赋值/try catch 处理，不然编辑有问题
-    //     try {
-    //       const userRoles = await getUserRoles({ userid: data.record.id });
-    //       if (userRoles && userRoles.length > 0) {
-    //         data.record.selectedroles = userRoles;
-    //       }
-    //     } catch (error) {}
-  
-    //     //查所属部门/赋值
-    //     const userDepart = await getUserDepartList({ userId: data.record.id });
-    //     if (userDepart && userDepart.length > 0) {
-    //       data.record.selecteddeparts = userDepart;
-    //       let selectDepartKeys = Array.from(userDepart, ({ key }) => key);
-    //       data.record.selecteddeparts = selectDepartKeys.join(',');
-    //       departOptions.value = userDepart.map((item) => {
-    //         return { label: item.title, value: item.key };
-    //       });
-    //     }
-    //     //负责部门/赋值
-    //     data.record.departIds && !Array.isArray(data.record.departIds) && (data.record.departIds = data.record.departIds.split(','));
-    //     //update-begin---author:zyf   Date:20211210  for：避免空值显示异常------------
-    //     //update-begin---author:liusq   Date:20231008  for：[issues/772]避免空值显示异常------------
-    //     data.record.departIds =  (!data.record.departIds || data.record.departIds == '') ? [] : data.record.departIds;
-    //     //update-end-----author:liusq   Date:20231008  for：[issues/772]避免空值显示异常------------
-    //     //update-begin---author:zyf   Date:20211210  for：避免空值显示异常------------
-    //   }
-    //   //处理角色用户列表情况(和角色列表有关系)
-    //   data.selectedroles && (await setFieldsValue({ selectedroles: data.selectedroles }));
-    //   // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
-    //   isFormDepartUser = data?.departDisabled === true ? true : false;
-    //   // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
-    //   //编辑时隐藏密码/角色列表隐藏角色信息/我的部门时隐藏所属部门
-    //   updateSchema([
-    //     {
-    //       field: 'password',
-    //       // 【QQYUN-8324】
-    //       ifShow: !unref(isUpdate),
-    //     },
-    //     {
-    //       field: 'confirmPassword',
-    //       ifShow: !unref(isUpdate),
-    //     },
-    //     {
-    //       field: 'selectedroles',
-    //       show: !data.isRole,
-    //     },
-    //     {
-    //       field: 'departIds',
-    //       componentProps: { options: departOptions },
-    //     },
-    //     {
-    //       field: 'selecteddeparts',
-    //       show: !data?.departDisabled,
-    //     },
-    //     {
-    //       field: 'selectedroles',
-    //       show: !data?.departDisabled,
-    //       //update-begin---author:wangshuai ---date:20230424  for：【issues/4844】多租户模式下，新增或编辑用户，选择角色一栏，角色选项没有做租户隔离------------
-    //       //判断是否为多租户模式
-    //       componentProps:{
-    //         api: data.tenantSaas?getAllRolesList:getAllRolesListNoByTenant
-    //       }
-    //       //update-end---author:wangshuai ---date:20230424  for：【issues/4844】多租户模式下，新增或编辑用户，选择角色一栏，角色选项没有做租户隔离------------
-    //     },
-    //     //update-begin---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
-    //     {
-    //       field: 'relTenantIds',
-    //       componentProps:{
-    //         disabled: !!data.tenantSaas,
-    //       },
-    //     },
-    //     //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
-    //   ]);
-    //   //update-begin---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
-    //   if(!unref(isUpdate) && data.tenantSaas){
-    //     await setFieldsValue({ relTenantIds: getTenantId().toString() })
-    //   }
-      //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
         setFieldsValue({
@@ -216,14 +130,26 @@
         setModalProps({ confirmLoading: true });
         values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
-        // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
         let params = values;
-        // if (isFormDepartUser) {
-        //   params = { ...params, updateFromPage: 'deptUsers' };
-        // }
-        // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
+        const ticketId = currentEditRecordRef.value?.id;
+        const newParams = {
+          "auditList": [
+            // {
+            //   "assignId": 0,
+            //   "auditStatus": 0,
+            //   "rejectReason": ""
+            // }
+          ],
+          "fileRead": params.fileRead,
+          "finalResolveResult": params.finalResolveResult,
+          "followCode": params.followCode,
+          "needVisit": params.needVisit,
+          "overseeUserName": params.overseeUserName,
+          "overseeUserPhone": '',
+          "ticketId": ticketId
+        };
         //提交表单
-        await saveReviewReply(params);
+        await saveReviewReply(newParams);
         //关闭弹窗
         closeModal();
         //刷新列表

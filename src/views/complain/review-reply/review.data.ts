@@ -665,17 +665,41 @@ export const formAuditSchema: FormSchema[] = [
       placeholder: '==请选择==',
     },
   },
-  {
-    field: 'factFlag',
-    label: '是否属实',
+  // {
+  //   field: 'factFlag',
+  //   label: '是否属实',
+  //   component: 'Select',
+  //   required: true,
+  //   componentProps: {
+  //     options:[
+  //       { label: '属实', value: '1' },
+  //       { label: '不属实', value: '0' },
+  //     ],
+  //     placeholder: '==请选择==',
+  //   },
+  // },
+    {
+    field: 'needVisit',
+    label: '区回访',
     component: 'Select',
     required: true,
     componentProps: {
       options:[
-        { label: '属实', value: '1' },
-        { label: '不属实', value: '0' },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
-      placeholder: '==请选择==',
+      placeholder: '==请选择是否需求区回访==',
     },
-  },
+    },
+    // 最终处理情况文本框
+    {
+      field: 'finalResolveResult',
+      label: '最终处理情况',
+      component: 'InputTextArea',
+      required: true,
+      componentProps: {
+        placeholder: '请输入处理情况',
+        rows: 4,
+      },
+    },
 ];

@@ -52,6 +52,8 @@
     const rowId = ref('');
     const departOptions = ref([]);
     let isFormDepartUser = false;
+    // 当前编辑工单
+    const currentEditRecordRef = ref<any>(null);
     //表单配置
     const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
       labelWidth: 150,
@@ -85,107 +87,22 @@
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
+      currentEditRecordRef.value = data.record;
       // 查询详情数据
       const res = await getReplyDetail({ assignId: data.record.assignId });
       console.log(res);
-    //   if (unref(isUpdate)) {
-    //     rowId.value = data.record.id;
-    //     //租户信息定义成数组
-    //     if (data.record.relTenantIds && !Array.isArray(data.record.relTenantIds)) {
-    //       data.record.relTenantIds = data.record.relTenantIds.split(',');
-    //     } else {
-    //       //【issues/I56C5I】用户管理中连续点两次编辑租户配置就丢失了
-    //       //data.record.relTenantIds = [];
-    //     }
   
-    //     //查角色/赋值/try catch 处理，不然编辑有问题
-    //     try {
-    //       const userRoles = await getUserRoles({ userid: data.record.id });
-    //       if (userRoles && userRoles.length > 0) {
-    //         data.record.selectedroles = userRoles;
-    //       }
-    //     } catch (error) {}
-  
-    //     //查所属部门/赋值
-    //     const userDepart = await getUserDepartList({ userId: data.record.id });
-    //     if (userDepart && userDepart.length > 0) {
-    //       data.record.selecteddeparts = userDepart;
-    //       let selectDepartKeys = Array.from(userDepart, ({ key }) => key);
-    //       data.record.selecteddeparts = selectDepartKeys.join(',');
-    //       departOptions.value = userDepart.map((item) => {
-    //         return { label: item.title, value: item.key };
-    //       });
-    //     }
-    //     //负责部门/赋值
-    //     data.record.departIds && !Array.isArray(data.record.departIds) && (data.record.departIds = data.record.departIds.split(','));
-    //     //update-begin---author:zyf   Date:20211210  for：避免空值显示异常------------
-    //     //update-begin---author:liusq   Date:20231008  for：[issues/772]避免空值显示异常------------
-    //     data.record.departIds =  (!data.record.departIds || data.record.departIds == '') ? [] : data.record.departIds;
-    //     //update-end-----author:liusq   Date:20231008  for：[issues/772]避免空值显示异常------------
-    //     //update-begin---author:zyf   Date:20211210  for：避免空值显示异常------------
-    //   }
-    //   //处理角色用户列表情况(和角色列表有关系)
-    //   data.selectedroles && (await setFieldsValue({ selectedroles: data.selectedroles }));
-    //   // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
-    //   isFormDepartUser = data?.departDisabled === true ? true : false;
-    //   // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
-    //   //编辑时隐藏密码/角色列表隐藏角色信息/我的部门时隐藏所属部门
-    //   updateSchema([
-    //     {
-    //       field: 'password',
-    //       // 【QQYUN-8324】
-    //       ifShow: !unref(isUpdate),
-    //     },
-    //     {
-    //       field: 'confirmPassword',
-    //       ifShow: !unref(isUpdate),
-    //     },
-    //     {
-    //       field: 'selectedroles',
-    //       show: !data.isRole,
-    //     },
-    //     {
-    //       field: 'departIds',
-    //       componentProps: { options: departOptions },
-    //     },
-    //     {
-    //       field: 'selecteddeparts',
-    //       show: !data?.departDisabled,
-    //     },
-    //     {
-    //       field: 'selectedroles',
-    //       show: !data?.departDisabled,
-    //       //update-begin---author:wangshuai ---date:20230424  for：【issues/4844】多租户模式下，新增或编辑用户，选择角色一栏，角色选项没有做租户隔离------------
-    //       //判断是否为多租户模式
-    //       componentProps:{
-    //         api: data.tenantSaas?getAllRolesList:getAllRolesListNoByTenant
-    //       }
-    //       //update-end---author:wangshuai ---date:20230424  for：【issues/4844】多租户模式下，新增或编辑用户，选择角色一栏，角色选项没有做租户隔离------------
-    //     },
-    //     //update-begin---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
-    //     {
-    //       field: 'relTenantIds',
-    //       componentProps:{
-    //         disabled: !!data.tenantSaas,
-    //       },
-    //     },
-    //     //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
-    //   ]);
-    //   //update-begin---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
-    //   if(!unref(isUpdate) && data.tenantSaas){
-    //     await setFieldsValue({ relTenantIds: getTenantId().toString() })
-    //   }
-      //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
         setBasicFieldsValue({
           ...data.record,
         });
       }
-      // 隐藏底部时禁用整个表单
-      //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      // setProps({ disabled: !showFooter.value });
-      //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
+       if(res) {
+        setFieldsValue({
+         department: res.orgName,
+        });
+      }
     });
     //获取标题
     const getTitle = computed(() => {
@@ -206,14 +123,97 @@
         setModalProps({ confirmLoading: true });
         values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
-        // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
         let params = values;
-        // if (isFormDepartUser) {
-        //   params = { ...params, updateFromPage: 'deptUsers' };
-        // }
-        // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
+        console.log('params community:', params);
+        const assignId = currentEditRecordRef.value?.assignId || '';
+        const addFileList:any[] = [];
+        let idx = 0;
+        // 文件/视频
+        if(Array.isArray(params.file)){
+          params.file.forEach((item) => {
+            addFileList.push({
+              assignId: assignId,
+              fileKey: item.fileKey,
+              id: ++idx,
+              remark: '',
+              type: '1' // file
+            });
+          });
+        } else if(typeof params.file === 'string' && params.file) {
+          params.file.split(',').forEach((item) => {
+            item = item.trim();
+            if(!item) return;
+            addFileList.push({
+                assignId: assignId,
+                fileKey: item,
+                id: ++idx,
+                remark: '',
+                type: '1' // file
+              });
+          });
+        }
+        // 图片
+        if(Array.isArray(params.image)){
+          params.image.forEach((item) => {
+            addFileList.push({
+              assignId: assignId,
+              fileKey: item.fileKey,
+              id: ++idx,
+              remark: '',
+              type: '2' // 2 image
+            });
+          });
+        } else if(typeof params.image === 'string' && params.image) {
+            params.image.split(',').forEach((item) => {
+              item = item.trim();
+              if(!item) return;
+              addFileList.push({
+                  assignId: assignId,
+                  fileKey: item,
+                  id: ++idx,
+                  remark: '',
+                  type: '2' // 2 image
+                });
+            });
+        }
+        // 音频
+        if(Array.isArray(params.audio)){
+          params.audio.forEach((item) => {
+            addFileList.push({
+              assignId: assignId,
+              fileKey: item.fileKey,
+              id: ++idx,
+              remark: '',
+              type: '3' // 3 audio
+            });
+          });
+        } else if(typeof params.audio === 'string' && params.audio) {
+          params.audio.split(',').forEach((item) => {
+            item = item.trim();
+            if(!item) return;
+            // 处理音频
+            addFileList.push({
+              assignId: assignId,
+              fileKey: item,
+              id: ++idx,
+              remark: '',
+              type: '3' // 3 audio
+            });
+          });
+        }
+       const newParams = {
+          "addFileList": addFileList,
+          "assignId": assignId,
+          "deleteFileIdList": [],
+          "overseeUserName": params.overseeUserName,
+          "overseeUserPhone": "",
+          "remark": params.remark,
+          "replyAudioDuration": 0,
+          "replyAudioNote": "",
+          "resolveResult": params.resolveResult,
+        };
         //提交表单
-        await addCommunityReploy(params);
+        await addCommunityReploy(newParams);
         //关闭弹窗
         closeModal();
         //刷新列表

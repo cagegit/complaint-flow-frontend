@@ -71,7 +71,12 @@
 
       // 下载
       function handleDownload(record: PreviewFileItem) {
-        const { url = '' } = record;
+        let { url = '' } = record;
+        // 兼容新的上传接口
+        if(url.indexOf('app-data/complain/') > -1) {
+           url = `/citizen-voice/sys/common/static/${url}`;
+        }
+        console.log('url', url);
         downloadByUrl({ url });
       }
 
