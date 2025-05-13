@@ -8,14 +8,14 @@
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
             <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:send-outlined">转出</a-button> -->
             <a-dropdown v-if="selectedRowKeys.length > 0">
-              <template #overlay>
+              <!-- <template #overlay>
                 <a-menu>
                   <a-menu-item key="1" @click="batchHandleDelete">
                     <Icon icon="ant-design:send-outlined"></Icon>
                     批量转出
                   </a-menu-item>
                 </a-menu>
-              </template>
+              </template> -->
               <a-button
                 >批量操作
                 <Icon icon="mdi:chevron-down"></Icon>
@@ -32,10 +32,19 @@
           <template #action="{ record }">
             <TableAction :actions="getTableAction(record)" />
           </template>
+          <!-- 自定义slots -->
+          <template #monthCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('1', record)">{{ record.monthCount }}</a-button>
+          </template>
+          <template #yearCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('2', record)">{{ record.yearCount }}</a-button>
+          </template>
         </BasicTable>
     
         <!--工单编辑-->
         <TicketEdit @register="registerModal" @success="handleSuccess" />
+         <!-- 联系历史 -->
+        <ContactHistory @register="registerHistoryModal" />
     </template>
     <script lang="ts" setup name="forward-complain">
     import { ref, h } from 'vue';
@@ -48,7 +57,10 @@
     import { Select, Input } from 'ant-design-vue';
     //@ts-ignore
     import TicketEdit from '../bizComplaintTicketList/TicketEdit.vue';
+    //@ts-ignore
+    import ContactHistory from '../components/ContactHistory/index.vue';
     const [registerModal, { openModal }] = useModal();
+    const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     const { createMessage, createConfirm } = useMessage();
     const ASelect = Select;
     const AInput = Input;
@@ -237,6 +249,14 @@
           record,
           isUpdate: true,
           showFooter: true,
+        });
+      }
+
+      function showHistoryModal(type: string, record: Recordable) {
+        openHistoryModal(true, {
+          record: { timeType: type, ...record },
+          isUpdate: true,
+          showFooter: true
         });
       }
     </script>

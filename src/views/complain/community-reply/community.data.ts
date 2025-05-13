@@ -91,8 +91,14 @@ export const columns: BasicColumn[] = [
   { title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
    return text === 0 ? '待转出' : '已转出';
   }},
-  { title: '月次', dataIndex: 'monthCount', width: 80 },
-  { title: '年次', dataIndex: 'yearCount', width: 80 },
+  { title: '月次', dataIndex: 'monthCount', width: 80 , 
+    slots:{
+      customRender: 'monthCount',
+    }},
+  { title: '年次', dataIndex: 'yearCount', width: 80,
+    slots:{
+      customRender: 'yearCount',
+    } },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
 
@@ -491,19 +497,19 @@ export const addFormSchema: FormSchema[] = [
       placeholder: '==请选择==',
     },
   },
-  {
-    field: 'labelCode',
-    label: '标签',
-    component: 'RadioGroup',
-    required: true,
-    componentProps: {
-      placeholder: '请选择标签',
-      options: [
-        { label: '普通', value: '1' },
-        { label: '为民', value: '2' },
-      ],
-    },
-  },
+  // {
+  //   field: 'labelCode',
+  //   label: '标签',
+  //   component: 'RadioGroup',
+  //   required: true,
+  //   componentProps: {
+  //     placeholder: '请选择标签',
+  //     options: [
+  //       { label: '普通', value: '1' },
+  //       { label: '为民', value: '2' },
+  //     ],
+  //   },
+  // },
   {
     field: 'overseeUserName',
     label: '督办人',

@@ -4,17 +4,16 @@
       @register="registerModal"
       :title="'来电记录'"
       :width="1000"
-      :showFooter="false"
-      destroyOnClose
+      :showFooter="true"
       :maskClosable="false"
     >
-      <div>
+      <div style="min-height: 350px">
          <BasicTable @register="registerTable" />
       </div>
     </BasicModal>
 </template>
-<script lang="ts" setup name="ContactHistory">
-    import { useAttrs } from 'vue';
+<script lang="ts" setup name="contact-history-list">
+    import { ref, useAttrs } from 'vue';
     import { BasicTable } from '/@/components/Table';
     import { BasicModal, useModalInner } from '/@/components/Modal';
 
@@ -24,13 +23,14 @@
     import { useListPage } from '/@/hooks/system/useListPage';
 
 
-    const emit = defineEmits(['register']);
+    // const emit = defineEmits(['register']);
     const $attrs = useAttrs();
+
    // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
-        designScope: 'Contact-history-list',
+        designScope: 'contact-history-list',
         tableProps: {
-          title: '手机号来电记录',
+          title: '来电记录',
           api: list,
           columns: columns,
           size: 'small',
@@ -38,13 +38,10 @@
             // labelWidth: 200,
             schemas: searchFormSchema,
           },
-          // actionColumn: {
-          //   width: 120,
-          //   fixed: 'right',
-          // },
+          showActionColumn:false,
           beforeFetch: (params) => {
             console.log(params);
-            return Object.assign(params, { pageNum:  params.pageNo });
+            return Object.assign(params, { pageNum:  params.pageNo, phoneNumber: phoneNumber.value, timeType: timeType.value });
           },
         },
         // exportConfig: {
@@ -57,8 +54,17 @@
       });
       //注册table数据
       const [registerTable, { reload }] = tableContext;
+      // timeType 时间类型（1月；2年）
+      const timeType = ref<string>('1');
+      // 手机号
+      const phoneNumber = ref<string>('');
       // 注册弹窗
-      const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+      const [registerModal] = useModalInner(async (data) => {
         console.log(data);
+        if(data.record) {
+          timeType.value = data.record.timeType;
+          phoneNumber.value = data.record.callPhoneNumber;
+          // reload();
+        }
       }); 
 </script>

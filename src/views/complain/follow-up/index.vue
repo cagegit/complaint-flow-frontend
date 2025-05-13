@@ -32,12 +32,21 @@
           <template #action="{ record }">
             <TableAction :actions="getTableAction(record)" />
           </template>
+          <!-- 自定义slots -->
+          <template #monthCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('1', record)">{{ record.monthCount }}</a-button>
+          </template>
+          <template #yearCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('2', record)">{{ record.yearCount }}</a-button>
+          </template>
         </BasicTable>
     
         <!--工单编辑-->
         <TicketEdit @register="registerModal" @success="handleSuccess" />
         <!-- 预回复 -->
         <pre-reply-form @register="registerReplyModal" @success="handleReplySuccess" />
+        <!-- 联系历史 -->
+        <ContactHistory @register="registerHistoryModal" />
     </template>
     <script lang="ts" setup name="follow-up">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
@@ -49,9 +58,11 @@
     import TicketEdit from './TicketEditForm.vue';
     //@ts-ignore
     import PreReplyForm from '../components/PreReplyForm/index.vue';
+    //@ts-ignore
+    import ContactHistory from '../components/ContactHistory/index.vue';
     const [registerModal, { openModal }] = useModal();
-
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
+    const [registerHistoryModal, { openModal: openHistoryModal }] = useModal();
     // const { createMessage, createConfirm } = useMessage();
 
     // 列表页面公共参数、方法
@@ -146,5 +157,13 @@
 
       function handleReplySuccess() {
         reload();
+      }
+
+      function showHistoryModal(type: string, record: Recordable) {
+        openHistoryModal(true, {
+          record: { timeType: type, ...record },
+          isUpdate: true,
+          showFooter: true
+        });
       }
     </script>

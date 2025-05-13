@@ -8,14 +8,14 @@
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
             <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:send-outlined">转出</a-button> -->
             <a-dropdown v-if="selectedRowKeys.length > 0">
-              <template #overlay>
+              <!-- <template #overlay>
                 <a-menu>
                   <a-menu-item key="1" @click="batchHandleDelete">
                     <Icon icon="ant-design:send-outlined"></Icon>
                     批量转出
                   </a-menu-item>
                 </a-menu>
-              </template>
+              </template> -->
               <a-button
                 >批量操作
                 <Icon icon="mdi:chevron-down"></Icon>
@@ -32,12 +32,21 @@
           <template #action="{ record }">
             <TableAction :actions="getTableAction(record)" />
           </template>
+          <!-- 自定义slots -->
+          <template #monthCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('1', record)">{{ record.monthCount }}</a-button>
+          </template>
+          <template #yearCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('2', record)">{{ record.yearCount }}</a-button>
+          </template>
         </BasicTable>
     
         <!--工单编辑-->
         <TicketEdit @register="registerModal" @success="handleSuccess" />
-           <!-- 预回复 -->
+        <!-- 预回复 -->
         <PreReplyForm @register="registerReplyModal" @success="handleReplySuccess" />
+        <!-- 联系历史 -->
+        <ContactHistory @register="registerHistoryModal" />
     </template>
     <script lang="ts" setup name="deaprt-reply">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
@@ -47,12 +56,15 @@
     import { useModal } from '/@/components/Modal';
     //@ts-ignore
     import PreReplyForm from '../components/PreReplyForm/index.vue';
+      //@ts-ignore
+    import ContactHistory from '../components/ContactHistory/index.vue';
     // import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
     import TicketEdit from './TicketEditForm.vue';
     const [registerModal, { openModal }] = useModal();
     // const { createMessage, createConfirm } = useMessage();
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
+    const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
         designScope: 'ticket-list',
@@ -142,5 +154,13 @@
 
       function handleReplySuccess() {
         reload();
+      }
+
+      function showHistoryModal(tp: string, record: Recordable) {
+        openHistoryModal(true, {
+          record: { timeType: tp, ...record },
+          isUpdate: false,
+          showFooter: false,
+        });
       }
     </script>

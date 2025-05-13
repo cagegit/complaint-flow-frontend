@@ -91,8 +91,16 @@ export const columns: BasicColumn[] = [
   { title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
     return text === 0 ? '待接收' : '已接收';
    }},
-   { title: '月次', dataIndex: 'monthCount', width: 80 },
-   { title: '年次', dataIndex: 'yearCount', width: 80 },
+   { title: '月次', dataIndex: 'monthCount', width: 80 , 
+    slots:{
+      customRender: 'monthCount',
+    } 
+  },
+   { title: '年次', dataIndex: 'yearCount', width: 80,
+    slots:{
+      customRender: 'yearCount',
+    }
+  },
    { title: '标题', dataIndex: 'title', width: 180 },
    { title: '主要内容', dataIndex: 'mainContent', width: 200 },
 
