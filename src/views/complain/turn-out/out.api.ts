@@ -14,6 +14,8 @@ export enum Api {
   forwardTicketToCity = '/complain/turnOut/turnOutCity',
   // 转出到区
   forwardTicketToDistrict = '/complain/turnOut/turnOutArea',
+  // 获取工单详情
+  getTicketInfo = '/complain/assign/getAssignDetail',
 }
 /**
  * 已接收列表
@@ -68,4 +70,9 @@ export const forwardTicket = (params) => {
      return defHttp.post({ url: Api.forwardTicketToDistrict, data: params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
   }
 };
+
+/**
+ * 获取工单详情
+ */
+export const getTicketInfoInTurnOut = (params) => defHttp.get({ url: Api.getTicketInfo, params });
 

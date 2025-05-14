@@ -89,9 +89,13 @@
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
       // 查询详情数据
-      const res = await getReplyDetail({ assignId: data.record.assignId });
+      let res:any = null;
+      try {
+        res = await getReplyDetail({ assignId: data.record.assignId });
+      } catch (error) {
+        console.log(error);
+      }
       console.log(res);
-  
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
         setBasicFieldsValue({
@@ -101,6 +105,9 @@
        if(res) {
         setFieldsValue({
          department: res.orgName,
+         resolveResult: res.resolveResult || null,
+         remark: res.remark || null,
+         overseeUserName: res.overseeUserName || null,
         });
       }
     });

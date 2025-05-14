@@ -10,6 +10,8 @@ export enum Api {
   saveReply = '/complain/reply/saveReply',
   // 确认回复
   confirmReply = '/complain/reply/confirmReply',
+  //社区回复
+  saveSubmitReply = '/complain/reply/submitReply',
 }
 /**
  * 已接收列表
@@ -64,6 +66,12 @@ export const saveReply = (param) => {
   return defHttp.post({ url: Api.saveReply, params: param})
 }
 
+/**
+ * 社区回复
+ */
+export const saveSubmitReply = (param) => {
+  return defHttp.post({ url: Api.saveSubmitReply, params: param})
+}
 /**
  * 确认回复
  */

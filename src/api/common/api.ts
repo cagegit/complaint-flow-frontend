@@ -189,3 +189,11 @@ export const getQywxTreeList = () => {
 export const refreshDepartCache = () => {
   return defHttp.get({ url: '/biz/depart/refreshDepartCache' + `?random=`+ Date.now() });
 };
+// 获取区级全部基础字典
+export const getAllDistrictDict = () => {
+  return defHttp.get({ url: '/biz/upDict/getAllBaseDict' });
+};
+// 获取区级基础字典
+export const getDistrictDictByCode = (dictCode:string) => {
+  return defHttp.get({ url: '/biz/upDict/getBaseDictList?dictType=' + dictCode });
+};

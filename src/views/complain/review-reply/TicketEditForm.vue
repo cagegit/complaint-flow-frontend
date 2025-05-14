@@ -98,7 +98,12 @@
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
       // 查询详情数据
-      const res = await getReplyDetail({ assignId: data.record.assignId });
+      let res:any =null;
+      try {
+        res = await getReplyDetail({ ticketId: data.record.id });
+      } catch (error) {
+        console.error('获取详情失败', error);
+      }
       console.log(res);
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
@@ -108,7 +113,7 @@
       }
       // 隐藏底部时禁用整个表单
       //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      setProps({ disabled: !showFooter.value });
+      // setProps({ disabled: !showFooter.value });
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题

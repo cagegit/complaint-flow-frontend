@@ -341,6 +341,15 @@ export const formSchema: FormSchema[] = [
       required: true,
     },
     {
+      label: '来电时间',
+      field: 'callTime',
+      component: 'DatePicker',
+      componentProps: {
+        showTime: true,
+        format: 'YYYY-MM-DD HH:mm:ss',
+      },
+    },
+    {
       label: '热线号码',
       field: 'hotlineNumber',
       component: 'Input',
@@ -403,14 +412,24 @@ export const formSchema: FormSchema[] = [
       label: '三级分类',
       field: 'categoryThree',
       component: 'Input',
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
     {
       label: '标题',
       field: 'title',
-      component: 'Input',
+      component: 'InputTextArea',
       required: true,
-      colProps: {
-        span: 24
+      componentProps: {
+        rows: 3,
+        placeholder: '请输入标题',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
       }
     },
     {
@@ -418,8 +437,14 @@ export const formSchema: FormSchema[] = [
       field: 'mainContent',
       component: 'InputTextArea',
       required: true,
-      colProps: {
-        span: 24
+      componentProps: {
+        rows: 6,
+        placeholder: '请输入主要内容',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
       }
     },
     {
@@ -436,10 +461,7 @@ export const formSchema: FormSchema[] = [
     {
       label: '处理意见',
       field: 'resolveOpinion',
-      component: 'Input',
-      colProps: {
-        span: 24
-      }
+      component: 'Input'
     },
     {
       label: '截止时间',
@@ -453,17 +475,23 @@ export const formSchema: FormSchema[] = [
       component: 'Input'
     },
     {
-      label: '处理情况',
-      field: 'finalResolveResult',
-      component: 'Input',
-      required: true
-    },
-    {
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
-      colProps: {
-        span: 24
+    },
+    {
+      label: '处理情况',
+      field: 'finalResolveResult',
+      component: 'InputTextArea',
+      required: true,
+      componentProps: {
+        rows: 6,
+        placeholder: '请输入处理情况',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24, sm: { span: 24 } },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
       }
     },
   ];
@@ -584,7 +612,7 @@ export const addFormSchema: FormSchema[] = [
     required: true,
     componentProps: {
       placeholder: '请输入处理情况',
-      rows: 4,
+      rows: 6,
     },
   },
   {

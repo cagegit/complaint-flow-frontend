@@ -4,7 +4,6 @@
       @register="registerDrawer"
       :title="getTitle"
       :width="1000"
-      @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
       :maskClosable="false"
@@ -34,6 +33,16 @@
             </BasicForm>
         </div>
       </div>
+      <!-- 插值footer -->
+      <template #footer>
+        <div class="align-right">
+          <a-space>
+            <a-button @click="closeModal">取消</a-button>
+            <a-button type="primary" @click="handleSubmit('2')">提交社区审核</a-button>
+            <a-button type="primary" @click="handleSubmit('1')">保存</a-button>
+          </a-space>
+        </div>
+      </template>
     </BasicModal>
   </template>
   <script lang="ts" setup>
@@ -42,8 +51,8 @@
     import { formSchema, addFormSchema } from './depart.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
-    import { addDepartReply, getReplyDetail } from './depart.api';
-    import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
+    import { addDepartReply, getReplyDetail, saveSubmitReply } from './depart.api';
+    // import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
   
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -89,8 +98,13 @@
       // 赋值
       currentEditRecordRef.value = data.record;
       // 查询详情数据
-      const res = await getReplyDetail({ assignId: data.record.assignId });
-      console.log(res);
+      let res:any = null;
+      try {
+        res = await getReplyDetail({ assignId: data.record.assignId });
+        console.log(res);
+      } catch (error) {
+        console.error('获取详情失败', error);
+      }
      
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
@@ -101,6 +115,9 @@
       if(res) {
         setFieldsValue({
          department: res.orgName,
+         resolveResult: res.resolveResult || null,
+         remark: res.remark || null,
+         overseeUserName: res.overseeUserName || null,
         });
       }
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
@@ -115,10 +132,10 @@
       }
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });
-    const { adaptiveWidth } = useDrawerAdaptiveWidth();
+    // const { adaptiveWidth } = useDrawerAdaptiveWidth();
   
     //提交事件
-    async function handleSubmit() {
+    async function handleSubmit(tp:string ='1') {
       try {
         let values = await validate();
         setModalProps({ confirmLoading: true });
@@ -214,8 +231,15 @@
           "replyAudioNote": "",
           "resolveResult": params.resolveResult,
         };
-        //提交表单
-        await addDepartReply(newParams);
+        try {
+          if(tp === '2') { // 执行社区审核操作
+            await saveSubmitReply(newParams);
+          } else {
+            await addDepartReply(newParams);
+          }
+        } catch (error) {
+          console.error('提交失败', error);
+        }
         //关闭弹窗
         closeModal();
         //刷新列表

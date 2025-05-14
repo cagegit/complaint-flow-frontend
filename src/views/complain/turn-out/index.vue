@@ -47,7 +47,7 @@
         <ContactHistory @register="registerHistoryModal" />
     </template>
     <script lang="ts" setup name="forward-complain">
-    import { ref, h } from 'vue';
+    import { ref, h, onMounted } from 'vue';
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list, forwardTicket, forwardTicketBatch } from './out.api'
@@ -59,19 +59,33 @@
     import TicketEdit from '../bizComplaintTicketList/TicketEdit.vue';
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
+    import { getDistrictDictByCode } from '/@/api/common/api';
     const [registerModal, { openModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     const { createMessage, createConfirm } = useMessage();
     const ASelect = Select;
     const AInput = Input;
+    const AInputTextArea = Input.TextArea;
     // 选择转出位置
-    const forwardType = ref<string>('city');
+    const forwardType = ref<string|undefined>('city');
     // 退回原因
-    const forwardReason = ref<string>('');
+    const forwardReason = ref<string|undefined>(undefined);
     // 退回类型
-    const backType = ref<string>('');
+    const backType = ref<string|undefined>(undefined);
+    // 退回类型字典
+    const backTypeDict = ref<any[]>([]);
     // 退回单位
-    const backOffice = ref<string>('');
+    const backOffice = ref<string|undefined>(undefined);
+
+    onMounted(() => {
+      // 获取退回类型字典
+      getDistrictDictByCode('back_type').then((res) => {
+        console.log('res', res);
+        backTypeDict.value = Array.isArray(res) ? res : [];
+      }).catch((err) => {
+        console.error('获取退回类型字典失败', err);
+      });
+    });
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
         designScope: 'ticket-list',
@@ -138,10 +152,12 @@
               }),
               // 退回原因
               h('p', '退回原因：'),
-              h(AInput, {
+              h(AInputTextArea, {
                 style: 'width: 100%;',
                 placeholder: '请输入退回原因',
                 value: forwardReason.value,
+                rows: 6,
+                maxLength: 800,
                 onInput: (e:any) => {
                   forwardReason.value = e.target.value;
                 },
@@ -151,14 +167,15 @@
                 h(ASelect, {
                   style: 'width: 100%; margin-bottom: 15px;',
                   value: backType.value,
-                  placeholder: '请选择',
+                  placeholder: '请选择退回类型',
                   onChange: (val:any) => {
                     console.log('val', val);
                     backType.value = val;
                   },
                   options: [
-                    { value: '1', label: 'a' },
-                    { value: '2', label: 'b' },
+                    ...backTypeDict.value.map((item) => {
+                      return { value: item.id, label: item.name };
+                    }),
                   ],
                 }),
               ]: [],
@@ -248,7 +265,8 @@
         openModal(true, {
           record,
           isUpdate: true,
-          showFooter: true,
+          showFooter: false,
+          inTurnOut: true
         });
       }
 

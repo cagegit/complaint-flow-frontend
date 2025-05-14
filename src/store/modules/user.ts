@@ -33,6 +33,7 @@ interface UserState {
   tenantid?: string | number;
   shareTenantId?: Nullable<string | number>;
   loginInfo?: Nullable<LoginInfo>;
+  districtItems?: dictType | null;
 }
 
 export const useUserStore = defineStore({
@@ -57,6 +58,8 @@ export const useUserStore = defineStore({
     shareTenantId: null,
     //登录返回信息
     loginInfo: null,
+    // 区级字典
+    districtItems: null,
   }),
   getters: {
     getUserInfo(): UserInfo {
@@ -71,7 +74,7 @@ export const useUserStore = defineStore({
     getToken(): string {
       return this.token || getAuthCache<string>(TOKEN_KEY);
     },
-    getAllDictItems(): [] {
+    getAllDictItems(): any {
       return this.dictItems || getAuthCache(DB_DICT_DATA_KEY);
     },
     getRoleList(): RoleEnum[] {

@@ -3,7 +3,7 @@
 <BasicTable @register="registerTable" :rowSelection="rowSelection">
       <!--插槽:table标题-->
       <template #tableTitle>
-        <!-- <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button> -->
+        <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button>
         <!-- <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls" :disabled="isDisabledAuth('system:user:export')"> 导出</a-button> -->
         <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button>
         <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:hdd-outlined">编辑</a-button> -->
@@ -166,6 +166,13 @@ const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     openHistoryModal(true, {
       record: { timeType: type, ...record },
       isUpdate: true,
+      showFooter: true,
+    });
+  }
+
+  function handleCreate() {
+    openModal(true, {
+      isUpdate: false,
       showFooter: true,
     });
   }
