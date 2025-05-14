@@ -10,7 +10,7 @@ const Api = {
   // 满意度
   getSatisfyRate: '/complain/statistic/getSatisfyRate',
   // 案件轮动
-  getAssignPageList: '/complain/statistic/getAssignPageList',
+  getScrollPageList: '/complain/statistic/getScrollPageList',
   // 案件类型统计
   getQuestionTypeCountList: '/complain/statistic/getQuestionTypeCountList',
   // 案件性质分类
@@ -54,9 +54,9 @@ export const getSatisfyRate = (params?) => {
     });
   });
 };
-export const getAssignPageList = (params) => {
+export const getScrollPageList = (params) => {
   return new Promise((resolve) => {
-    defHttp.get({ url: Api.getAssignPageList, params }, { successMessageMode: 'none' }).then((res) => {
+    defHttp.get({ url: Api.getScrollPageList, params }, { successMessageMode: 'none' }).then((res) => {
       resolve(res);
     });
   });

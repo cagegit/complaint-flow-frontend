@@ -8,16 +8,6 @@ export enum SourceTypeEnum {
   DIRECT = 2,
 }
 
-// 	数据来源
-export const SourceTypeNameMap = {
-  // 本地
-  [SourceTypeEnum.LOCAL]: '本地',
-  // 区分转
-  [SourceTypeEnum.DISTRICT]: '区分转',
-  // 直派
-  [SourceTypeEnum.DIRECT]: '直派',
-};
-
 // 时间类型
 export enum RangeTypeEnum {
   // 期

@@ -210,10 +210,13 @@
     initChart();
     fetchData(2);
     window.addEventListener('resize', resizeChart);
+    // 监听自定义的dashboard-resize事件
+    window.addEventListener('dashboard-resize', resizeChart);
   });
 
   onBeforeUnmount(() => {
     window.removeEventListener('resize', resizeChart);
+    window.removeEventListener('dashboard-resize', resizeChart);
     if (chartInstance.value) {
       chartInstance.value.dispose();
     }
@@ -294,8 +297,8 @@
       }
     }
     .chart {
+      flex: 1;
       width: 100%;
-      height: 400px;
     }
   }
 </style>

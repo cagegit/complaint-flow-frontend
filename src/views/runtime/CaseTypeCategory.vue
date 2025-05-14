@@ -10,10 +10,10 @@
           <div class="name">普通案件</div>
           <div class="count">{{ data.normalCase.value }}</div>
           <div class="comparison">
-            <div>同比</div>
+            <div>环比</div>
             <img v-if="data.normalCase.status === 1" class="percent-icon" src="@/assets/images/runtime/category/up-icon.png" alt="" />
             <img v-else-if="data.normalCase.status === 2" class="percent-icon" src="@/assets/images/runtime/category/down-icon.png" alt="" />
-            <div>{{ data.normalCase.percent }}%</div>
+            <div>{{ data.normalCase.percent || 0 }}%</div>
           </div>
         </div>
       </div>
@@ -23,10 +23,10 @@
           <div class="name">企业案件</div>
           <div class="count">{{ data.enterpriseCase.value }}</div>
           <div class="comparison">
-            <div>同比</div>
+            <div>环比</div>
             <img v-if="data.enterpriseCase.status === 1" class="percent-icon" src="@/assets/images/runtime/category/up-icon.png" alt="" />
             <img v-else-if="data.enterpriseCase.status === 2" class="percent-icon" src="@/assets/images/runtime/category/down-icon.png" alt="" />
-            <div>{{ data.enterpriseCase.percent }}%</div>
+            <div>{{ data.enterpriseCase.percent || 0 }}%</div>
           </div>
         </div>
       </div>
@@ -35,11 +35,11 @@
         <div class="category-info">
           <div class="name">群诉案件</div>
           <div class="count">{{ data.groupCase.value }}</div>
-          <div class="comparison">
-            <div>同比</div>
+          <div class="comparison" v-if="!isNaN(data.groupCase.percent) && data.groupCase.percent !== null">
+            <div>环比</div>
             <img v-if="data.groupCase.status === 1" class="percent-icon" src="@/assets/images/runtime/category/up-icon.png" alt="" />
             <img v-else-if="data.groupCase.status === 2" class="percent-icon" src="@/assets/images/runtime/category/down-icon.png" alt="" />
-            <div>{{ data.groupCase.percent }}%</div>
+            <div>{{ data.groupCase.percent || 0 }}%</div>
           </div>
         </div>
       </div>
@@ -49,30 +49,35 @@
       <div class="text">排名</div>
       <CustomTabs :data="tabs" :onTabChange="onTabChange" />
     </div>
-    <div style="margin: 10px">
-      <LabelBox />
+    <div style="display: flex; flex: 1; align-items: center; justify-content: center" v-if="ranking.length === 0">
+      <EmptyState />
     </div>
-    <div class="ranking-list">
-      <div class="ranking-item" v-for="(item, index) in ranking" :key="item.orgId">
-        <div class="ranking-top">
-          <img v-if="index === 0" class="top" :src="top1" alt="" />
-          <img v-else-if="index === 1" class="top" :src="top2" alt="" />
-          <img v-else-if="index === 2" class="top" :src="top3" alt="" />
-          <div v-else class="top">{{ index + 1 }}</div>
-          <div class="name">
-            <div class="name-up">{{ item.orgName }}</div>
-            <div class="name-down">
-              <div class="name-down-label">诉件数</div>
-              <div>{{ item.caseCount }}</div>
+    <template v-else>
+      <div style="margin: 10px">
+        <LabelBox />
+      </div>
+      <div class="ranking-list">
+        <div class="ranking-item" v-for="(item, index) in ranking" :key="item.orgId">
+          <div class="ranking-top">
+            <img v-if="index === 0" class="top" :src="top1" alt="" />
+            <img v-else-if="index === 1" class="top" :src="top2" alt="" />
+            <img v-else-if="index === 2" class="top" :src="top3" alt="" />
+            <div v-else class="top">{{ index + 1 }}</div>
+            <div class="name">
+              <div class="name-up">{{ item.orgName }}</div>
+              <div class="name-down">
+                <div class="name-down-label">诉件数</div>
+                <div>{{ item.caseCount }}</div>
+              </div>
             </div>
-          </div>
-          <div class="progres">
-            <Progress :progress="item.doubleYes" start-color="rgba(125, 249, 218, 0)" end-color="rgba(133, 255, 224, 0.70)" showUnit />
-            <Progress :progress="item.doubleNo" start-color="rgba(255, 132, 71, 0)" end-color="rgba(255, 119, 51, 1)" showUnit />
+            <div class="progres">
+              <Progress :progress="item.doubleYes" start-color="rgba(125, 249, 218, 0)" end-color="rgba(133, 255, 224, 0.70)" showUnit />
+              <Progress :progress="item.doubleNo" start-color="rgba(255, 132, 71, 0)" end-color="rgba(255, 119, 51, 1)" showUnit />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -88,6 +93,8 @@
   import { getCaseNatureCount, getDeptRankList } from '@/api/complaint/statistic';
   import { calculateYoY } from '@/utils/dashboard';
   import { UnitTypeEnum, UnitTypeNameMap } from '@/enums/statisticEnum';
+  import EmptyState from '@/components/EmptyState/index.vue';
+
   const tabs = ref([
     {
       label: UnitTypeNameMap[UnitTypeEnum.DEPT],
@@ -180,6 +187,8 @@
     } catch (error) {
       message.error('获取数据失败');
       console.error(error);
+      // 错误时设置为空数组，显示空状态
+      ranking.value = [];
     }
   };
 </script>
@@ -214,11 +223,12 @@
       }
     }
     .category-list {
-      display: flex;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      width: 100%;
       margin-top: 17px;
       .category-item {
-        width: 154px;
         height: 106px;
         background-image: url(@/assets/images/runtime/category/category-bg.png);
         background-size: 100% 100%;

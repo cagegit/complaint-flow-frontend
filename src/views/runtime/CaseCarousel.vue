@@ -27,17 +27,17 @@
       <div class="colume5">处理社区</div>
     </div>
     <div class="carousel-list">
-      <div class="carousel-item" v-for="(item, index) in issuesData" :key="item.value">
+      <div class="carousel-item" v-for="(item, index) in issuesData" :key="index">
         <div class="label">
           <div v-if="item.timeLevel === 1" class="status-one"></div>
           <div v-else-if="item.timeLevel === 2" class="status-two"></div>
           <div v-else-if="item.timeLevel === 3" class="status-three"></div>
         </div>
-        <div class="type">{{ SourceTypeNameMap[item.type] }}</div>
+        <div class="type">{{ getSourceTypeText(item.sourceType) }}</div>
         <div class="table-title">{{ item.title }}</div>
         <div class="time">
-          <div class="date">{{ getDate(item.createTime) }}</div>
-          <div class="text">{{ getTime(item.createTime) }}</div>
+          <span class="date">{{ getDate(item.createTime) }}</span>
+          <span class="text">{{ getTime(item.createTime) }}</span>
         </div>
         <div class="department">{{ item.assignDepts }}</div>
         <div class="community">{{ item.assignCommunitys }}</div>
@@ -50,35 +50,61 @@
   import { ref, onMounted, onBeforeUnmount } from 'vue';
   import dayjs from 'dayjs';
   import { message } from 'ant-design-vue';
-  import { getAssignPageList } from '@/api/complaint/statistic';
-  import { SourceTypeNameMap } from '@/enums/statisticEnum';
+  import { getScrollPageList } from '@/api/complaint/statistic';
+  import { getDictItems } from '/@/api/common/api';
 
-  //   const allData = ref([
-  //     {
-  //       type: 0,
-  //       title: '小区外道路乱停违停，造成交通堵塞，小区住户反映强烈',
-  //       createTime: '2023-12-28 09:23:19',
-  //       assignDepts: '科室1',
-  //       assignCommunitys: '社区名称A',
-  //       timeLevel: 1,
-  //     },
-  //   ]);
+  interface IssueItem {
+    id?: string;
+    timeLevel?: number;
+    sourceType?: string;
+    title?: string;
+    createTime?: string;
+    assignDepts?: string;
+    assignCommunitys?: string;
+  }
 
-  const issuesData = ref([]);
+  interface DictItem {
+    text: string;
+    value: string;
+    label?: string;
+  }
+
+  const issuesData = ref<IssueItem[]>([]);
   const currentNum = ref(1);
   const timer = ref<NodeJS.Timeout | null>(null);
+  const sourceTypeDict = ref<DictItem[]>([]);
 
   onMounted(() => {
+    fetchSourceTypeDict();
     fetchData(currentNum.value);
     timer.value = setInterval(() => {
       currentNum.value = currentNum.value + 1;
       fetchData(currentNum.value);
-    }, 5000);
+    }, 10000);
   });
+
+  // 获取字典数据
+  const fetchSourceTypeDict = async () => {
+    try {
+      const res = await getDictItems('biz_source_type');
+      if (res && Array.isArray(res)) {
+        sourceTypeDict.value = res;
+      }
+    } catch (error) {
+      console.error('获取字典数据失败', error);
+    }
+  };
+
+  // 根据sourceType获取文本值
+  const getSourceTypeText = (sourceType?: string) => {
+    if (!sourceType) return '';
+    const item = sourceTypeDict.value.find((item) => Number(item.value) === Number(sourceType));
+    return item ? item.text : '';
+  };
 
   const fetchData = async (pageNum) => {
     try {
-      const res: any = await getAssignPageList({
+      const res: any = await getScrollPageList({
         pageNum,
         pageSize: 9,
       });
@@ -100,11 +126,14 @@
     }
   });
 
-  const getDate = (timeStr) => {
+  const getDate = (timeStr?: string) => {
+    if (!timeStr) return '';
     const date = dayjs(timeStr).format('MM.DD');
     return date;
   };
-  const getTime = (timeStr) => {
+
+  const getTime = (timeStr?: string) => {
+    if (!timeStr) return '';
     const date = dayjs(timeStr).format('HH:mm:ss');
     return date;
   };
@@ -307,6 +336,7 @@
           display: flex;
           align-items: baseline;
           margin-left: 20px;
+          flex-shrink: 0;
           .date {
             font-size: 14px;
             color: #ffffff;
