@@ -11,10 +11,10 @@
     <div
       :class="{
         'tab-right': true,
-        active: currentValue === -1,
+        active: currentValue === 1,
       }"
-      @click="onClick(-1)"
-      ><text class="tab-text">综合</text></div
+      @click="onClick(1)"
+      ><text class="tab-text">分转</text></div
     >
   </div>
 </template>

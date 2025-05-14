@@ -19,42 +19,69 @@
   </div>
 </template>
 <script setup lang="ts" name="ComplaintRuntime">
+  import { onMounted, onBeforeUnmount } from 'vue';
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';
   import CaseCarousel from './CaseCarousel.vue';
   import CaseTypeStatistics from './CaseTypeStatistics.vue';
   import CaseTypeCategory from './CaseTypeCategory.vue';
+
+  // 处理窗口大小变化，通知所有图表组件重新调整大小
+  const handleResize = () => {
+    // 创建一个自定义事件，所有组件都可以监听此事件
+    window.dispatchEvent(new CustomEvent('dashboard-resize'));
+  };
+
+  onMounted(() => {
+    window.addEventListener('resize', handleResize);
+    // 初始加载时也触发一次重绘
+    setTimeout(() => {
+      handleResize();
+    }, 300);
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+  });
 </script>
 <style lang="less" scoped>
   .runtime-box {
     width: 100vw;
-    height: 1080px;
+    min-width: 1080px;
+    height: 100vh;
     background-image: url(@/assets/images/runtime/bg.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    overflow-y: auto;
+    overflow: auto;
     display: flex;
     flex-direction: column;
 
     .content {
       flex: 1;
-      overflow: hidden;
       display: flex;
       justify-content: space-between;
-      overflow: hidden;
       padding: 6px 24px;
       box-sizing: border-box;
+      min-height: 0; // 允许内容区域缩小
+
       .left {
-        width: 446px;
+        width: 25%; // 使用百分比替代固定像素值
+        min-width: 320px;
+        max-width: 446px;
+        margin-right: 10px;
+        height: 100%;
       }
 
       .center {
-        width: 932px;
+        width: 50%; // 使用百分比替代固定像素值
+        min-width: 600px;
+        max-width: 932px;
         height: 100%;
         display: flex;
         flex-direction: column;
+        margin: 0 10px;
         .case-type-chart {
           flex: 1;
           width: 100%;
@@ -62,9 +89,43 @@
       }
 
       .right {
-        width: 446px;
+        width: 25%; // 使用百分比替代固定像素值
+        min-width: 320px;
+        max-width: 446px;
+        margin-left: 10px;
         height: 100%;
       }
+    }
+  }
+
+  /* 媒体查询，针对不同宽度的设备 */
+  @media screen and (max-width: 1400px) {
+    .runtime-box .content {
+      .left,
+      .right {
+        min-width: 300px;
+      }
+      .center {
+        min-width: 500px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 1200px) {
+    .runtime-box .content {
+      .left,
+      .right {
+        min-width: 280px;
+      }
+      .center {
+        min-width: 480px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 1080px) {
+    .runtime-box {
+      overflow-x: auto;
     }
   }
 </style>

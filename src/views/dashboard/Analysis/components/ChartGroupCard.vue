@@ -14,8 +14,8 @@
           </a-tooltip>
         </template>
         <div v-if="type === 'chart'">
-          <Trend term="周同比" :percentage="12" v-if="index === 0" />
-          <Trend term="日同比" :percentage="11" v-if="index === 0" :type="false" />
+          <Trend term="周环比" :percentage="12" v-if="index === 0" />
+          <Trend term="日环比" :percentage="11" v-if="index === 0" :type="false" />
 
           <SingleLine v-if="index === 1" :option="option" :chartData="chartData" :seriesColor="seriesColor" height="50px"></SingleLine>
 
@@ -31,14 +31,13 @@
           <Bar :seriesColor="seriesColor" v-if="index === 2" :option="option" :chartData="chartData" height="50px"></Bar>
 
           <Progress v-if="index === 3" :percent="78" :show-info="false"></Progress>
-
         </div>
         <template #footer v-if="type === 'chart'">
           <span v-if="index !== 3"
             >{{ item.footer }}<span>{{ item.value }}</span></span
           >
-          <Trend term="周同比" :percentage="12" v-if="index === 3" />
-          <Trend term="日同比" :percentage="11" v-if="index === 3" :type="false" />
+          <Trend term="周环比" :percentage="12" v-if="index === 3" />
+          <Trend term="日环比" :percentage="11" v-if="index === 3" :type="false" />
         </template>
         <template #footer v-else>
           <span
@@ -100,7 +99,7 @@
   ]);
   const seriesColor = computed(() => {
     return getThemeColor.value;
-  })
+  });
   const dataList = computed(() => (props.type === 'dbc' ? bdcCardList : chartCardList));
 
   function getTotal(total, index) {

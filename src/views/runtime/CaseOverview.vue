@@ -36,12 +36,14 @@
         <div class="sub-text">综合双是率</div>
       </div>
       <!-- 案件总览 -->
-      <CaseSummaryChart :seriesData="compositeData" />
+      <EmptyState v-if="isCompositeEmpty" />
+      <CaseSummaryChart v-else :seriesData="compositeData" />
       <div class="title">
         <div class="sub-text">直派双是率</div>
       </div>
       <!-- 案件总览 -->
-      <CaseSummaryChart :seriesData="directData" />
+      <EmptyState v-if="isDirectEmpty" />
+      <CaseSummaryChart v-else :seriesData="directData" />
     </div>
   </div>
 </template>
@@ -58,6 +60,7 @@
   import { message } from 'ant-design-vue';
   import { getOverviewCount, getSatisfyRate } from '@/api/complaint/statistic';
   import { calculateYoY } from '@/utils/dashboard';
+  import EmptyState from '@/components/EmptyState/index.vue';
 
   const tabs = [{ value: 2, label: '期' }];
   const totalCase = ref(0);
@@ -94,6 +97,10 @@
       bg: donebg,
     },
   ]);
+
+  // 判断是否为空状态
+  const isDirectEmpty = ref(false);
+  const isCompositeEmpty = ref(false);
 
   // 案件总结数据
   const directData = ref([
@@ -210,6 +217,10 @@
       const directEndRes: any = await getSatisfyRate({
         sourceType: 2,
       });
+
+      // 检查直派数据是否全为0
+      isDirectEmpty.value = checkIfAllZero(directEndRes);
+
       directData.value = [
         {
           value: directEndRes.doubleYes,
@@ -240,6 +251,10 @@
         offset: -1,
       });
       const compositeEndRes: any = await getSatisfyRate();
+
+      // 检查综合数据是否全为0
+      isCompositeEmpty.value = checkIfAllZero(compositeEndRes);
+
       compositeData.value = [
         {
           value: compositeEndRes.doubleYes,
@@ -270,6 +285,12 @@
       message.error('获取数据失败');
       console.error(error);
     }
+  };
+
+  // 检查数据是否全为0
+  const checkIfAllZero = (data: any) => {
+    if (!data) return true;
+    return data.doubleYes === 0 && data.singleYes === 0 && data.doubleNo === 0 && data.other === 0;
   };
 </script>
 
@@ -362,7 +383,6 @@
       margin-bottom: 20px;
 
       .case-item {
-        width: 154px;
         height: 66px;
         background-size: 100% 100%;
         background-repeat: no-repeat;
