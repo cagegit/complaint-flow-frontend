@@ -1,5 +1,5 @@
 import { ContentTypeEnum } from '/@/enums/httpEnum';
-import { pageNoToPageNum } from '/@/utils';
+import { pageNoToPageNum, paramsToQuery } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 
 export enum Api {
@@ -34,6 +34,7 @@ export const list = (param) => {
     });
   })
 };
+
 /**
  * 添加工单
  */
@@ -47,12 +48,12 @@ export const editPriority = (params) => defHttp.post({ url: Api.editPriority, pa
 /**
  * 通过id删除工单
  */
-export const deletePriority = (params) => defHttp.post({ url: Api.deletePriority, params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
+export const deletePriority = (params) => defHttp.post({ url: paramsToQuery(Api.deletePriority, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
 
 /**
  * 批量删除工单
  */
-export const deleteBatchPriority = (params) => defHttp.post({ url: Api.deleteBatchPriority, params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
+export const deleteBatchPriority = (params) => defHttp.post({ url: paramsToQuery(Api.deleteBatchPriority, params), headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
 
 /**
  * 获取工单详情

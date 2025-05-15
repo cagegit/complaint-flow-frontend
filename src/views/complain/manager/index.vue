@@ -2,8 +2,8 @@
   <!--引用表格-->
   <BasicTable @register="registerTable" :rowSelection="rowSelection">
     <!--插槽:table标题-->
-    <template #tableTitle>        
-        <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button>
+    <template #tableTitle>
+      <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button>
     </template>
     <!--插槽:表格内容-->
     <template #bodyCell="{ text, column, record }">
@@ -29,7 +29,7 @@ import { useModal } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
 //@ts-ignore
 import ManagerEdit from './ManagerEdit.vue';
-import { ref, h } from 'vue';
+// import { ref, h } from 'vue';
 
 //注册modal
 const [registerModal, { openModal }] = useModal();
@@ -44,26 +44,28 @@ const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     columns: columns,
     size: 'small',
     formConfig: {
+      labelCol: { span: 6 }, // 标签占 6 栅格
+      wrapperCol: { span: 18 },
       schemas: searchFormSchema,
-      labelWidth: 100,
-      rowProps: {
-        gutter: 24,
-      },
+      // labelWidth: 200,
+      // rowProps: {
+      //   gutter: 24,
+      // },
       // 是否开启高级搜索模式
-      showAdvancedButton: true,
-      // 折叠状态下显示的行数
-      showAdvancedNum: 6,
-      // 每行的列数
-      fieldMapToNumber: 3,
-      // 是否显示所有表单项，默认为false
-      showAllSchema: false,
-      // 折叠时隐藏超出的表单项
-      autoFoldRows: true,
-      // 新增如下配置
-      actionColOptions: {
-        span: 24,
-        style: { textAlign: 'left' }, // 可选，按钮靠左
-      },
+      // showAdvancedButton: true,
+      // // 折叠状态下显示的行数
+      // showAdvancedNum: 6,
+      // // 每行的列数
+      // // fieldMapToNumber: 3,
+      // // 是否显示所有表单项，默认为false
+      // showAllSchema: false,
+      // // 折叠时隐藏超出的表单项
+      // autoFoldRows: true,
+      // // 新增如下配置
+      // actionColOptions: {
+      //   span: 24,
+      //   style: { textAlign: 'left' }, // 可选，按钮靠左
+      // },
     },
     actionColumn: {
       width: 120,
@@ -123,7 +125,7 @@ function batchHandleDelete() {
   if (!selectedRowKeys.value || selectedRowKeys.value.length === 0) {
     return;
   }
-  
+
   createConfirm({
     title: '是否批量删除选中的数据？',
     content: '删除后数据将不可恢复',

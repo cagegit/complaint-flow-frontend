@@ -9,7 +9,7 @@ import Big from 'big.js';
 export const URL_HASH_TAB = `__AGWE4H__HASH__TAG__PWHRG__`;
 // update-end--author:sunjianlei---date:20220408---for: 【VUEN-656】配置外部网址打不开，原因是带了#号，需要替换一下
 
-export const noop = () => {};
+export const noop = () => { };
 
 /**
  * @description:  Set ui mount node
@@ -105,10 +105,10 @@ export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormal
     ...opt,
     matched: (matched
       ? matched.map((item) => ({
-          meta: item.meta,
-          name: item.name,
-          path: item.path,
-        }))
+        meta: item.meta,
+        name: item.name,
+        path: item.path,
+      }))
       : undefined) as RouteRecordNormalized[],
   };
 }
@@ -365,7 +365,7 @@ export function getRandomColor(index?) {
     'rgb(254, 161, 172)',
     'rgb(194, 163, 205)',
   ];
-  return index && index < 19 ? colors[index] : colors[Math.floor((Math.random()*(colors.length-1)))];
+  return index && index < 19 ? colors[index] : colors[Math.floor((Math.random() * (colors.length - 1)))];
 }
 
 export function getRefPromise(componentRef) {
@@ -389,7 +389,7 @@ export function getRefPromise(componentRef) {
  * 用new Function替换eval
  */
 export function _eval(str: string) {
- return new Function(`return ${str}`)();
+  return new Function(`return ${str}`)();
 }
 
 /**
@@ -468,8 +468,8 @@ export function useConditionFilter() {
 
   // 通用条件
   const commonConditionOptions = [
-    {label: '为空', value: 'empty', val: 'EMPTY'},
-    {label: '不为空', value: 'not_empty', val: 'NOT_EMPTY'},
+    { label: '为空', value: 'empty', val: 'EMPTY' },
+    { label: '不为空', value: 'not_empty', val: 'NOT_EMPTY' },
   ]
 
   // 数值、日期
@@ -585,3 +585,12 @@ export const pageNoToPageNum = (params) => {
   }
   return params;
 };
+
+//params的参数转为query形式
+export const paramsToQuery = (baseUrl, params) => {
+  const query = Object.keys(params)
+    .map(key => `${key}=${params[key]}`) // 直接拼接，不编码
+    .join("&");
+  const url = `${baseUrl}?${query}`
+  return url;
+}

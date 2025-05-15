@@ -1,4 +1,4 @@
-import { getDictItems } from '/@/api/common/api';
+import { getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -6,21 +6,23 @@ import { ref } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict/index';
 import { h } from 'vue';
+import { treeToList } from '/@/utils/helper/treeHelper';
+import { getProcessList } from './manager.api';
 
 // 基于工单接收的列定义，保持一致
 export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
   // 紧急程度
-  { 
-    title: '紧急程度', 
-    dataIndex: 'emergencyLevel', 
+  {
+    title: '紧急程度',
+    dataIndex: 'emergencyLevel',
     width: 100,
-    customRender: ({record}) => {
+    customRender: ({ record }) => {
       let text = '';
       let color = '';
       let array = getDictItemsByCode('biz_time_level') || [];
       let obj = array.filter((item) => {
-        return item.value == record.timeLevel +'';
+        return item.value == record.timeLevel + '';
       });
       if (obj[0]) {
         text = obj[0].text;
@@ -31,9 +33,9 @@ export const columns: BasicColumn[] = [
       }
     },
   },
-  { 
-    title: '数据来源', 
-    dataIndex: 'sourceType', 
+  {
+    title: '数据来源',
+    dataIndex: 'sourceType',
     width: 120,
     customRender: ({ text }) => {
       return render.renderDict(text, 'biz_source_type');
@@ -43,10 +45,10 @@ export const columns: BasicColumn[] = [
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  { 
-    title: '状态', 
-    dataIndex: 'receiveStatus', 
-    width: 120, 
+  {
+    title: '状态',
+    dataIndex: 'receiveStatus',
+    width: 120,
     customRender: ({ text }) => {
       return text === 0 ? '待接收' : '已接收';
     }
@@ -106,6 +108,26 @@ const rangePresets = ref([
 // 根据图片中的搜索条件定义表单
 export const searchFormSchema: FormSchema[] = [
   {
+    label: '案件标签',
+    field: 'labelCode',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_complaint_lavel')
+        console.log(res)
+        if (Array.isArray(res)) {
+          res.unshift({ text: '所有', value: '' })
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value'
+    },
+    colProps: { span: 8 }
+  },
+  {
     label: '数据来源',
     field: 'sourceType',
     component: 'ApiSelect',
@@ -141,7 +163,7 @@ export const searchFormSchema: FormSchema[] = [
   },
   {
     label: '关键字',
-    field: 'keyword',
+    field: 'keywords',
     component: 'Input',
     componentProps: {
       placeholder: '标题\\内容\\来电号码\\发生地址',
@@ -154,7 +176,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: async () => {
-        const res = await getDictItems('biz_complaint_type');
+        const res = await getDictItems('biz_case_type');
         if (Array.isArray(res)) {
           res.unshift({ text: '==请选择==', value: '' });
           return res;
@@ -192,37 +214,55 @@ export const searchFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: async () => {
-        const res = await getDictItems('biz_community_list');
+        const res = await getCommunityChildList('3') // 3表示管区
+        console.log(res)
         if (Array.isArray(res)) {
-          res.unshift({ text: '==请选择==', value: '' });
+          res.unshift({ text: '所有', value: '' })
           return res;
         } else {
           return [];
         }
       },
-      labelField: 'text',
-      valueField: 'value',
-      placeholder: '==请选择==',
+      labelField: 'departName',
+      valueField: 'id'
     },
     colProps: { span: 8 },
   },
   {
     label: '处理科室',
-    field: 'assignDepts',
+    field: 'assignDeptId',
     component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        const res = await getDictItems('biz_dept_list');
-        if (Array.isArray(res)) {
-          res.unshift({ text: '==请选择==', value: '' });
-          return res;
-        } else {
-          return [];
-        }
-      },
-      labelField: 'text',
-      valueField: 'value',
-      placeholder: '==请选择==',
+    // componentProps: {
+    //   api: async () => {
+    //     const res = await getDictItems('biz_dept_list');
+    //     if (Array.isArray(res)) {
+    //       res.unshift({ text: '==请选择==', value: '' });
+    //       return res;
+    //     } else {
+    //       return [];
+    //     }
+    //   },
+    //   labelField: 'text',
+    //   valueField: 'value',
+    //   placeholder: '==请选择==',
+    // },
+    componentProps: ({ formActionType }) => {
+      return {
+        api: async () => {
+          const res = await getCommunityList('2') // 2表示部门
+          console.log(res)
+          if (Array.isArray(res)) {
+            // res.unshift({label: '所有', value: ''})
+            return res;
+          } else {
+            return [];
+          }
+        },
+        labelField: 'departName',
+        valueField: 'id',
+        multiple: true,
+        checkable: true,
+      }
     },
     colProps: { span: 8 },
   },
@@ -230,41 +270,60 @@ export const searchFormSchema: FormSchema[] = [
     label: () => h('span', {}, [
       '处理社区/', h('br'), '居委会'
     ]),
-    field: 'processCommunity',
+    field: 'assignCommunityId',
+    component: 'ApiTreeSelect',
+    componentProps: {
+      checkable: true,
+      multiple: true,
+      api: async () => {
+        const res = await getSecondTreeList('3');
+        console.log(res)
+        if (Array.isArray(res)) {
+          // res.unshift({text: '==请选择==', value: ''})
+          // 把tree格式数据展开
+          const newList = treeToList(res);
+          // console.log(res)
+          // res.unshift({text: '==请选择==', value: ''})
+          // console.log(res)
+          return newList.map(v => {
+            return {
+              id: v.id,
+              pId: v.parentId,
+              title: v.title,
+              value: v.id,
+            }
+          });
+        } else {
+          return [];
+        }
+      },
+      treeDataSimpleMode: true,
+    },
+    colProps: { span: 8 },
+  },
+  {
+    label: '工单状态',
+    field: 'statusCode',
     component: 'ApiSelect',
     componentProps: {
       api: async () => {
-        const res = await getDictItems('biz_community_list');
+        const res = await getProcessList();
         if (Array.isArray(res)) {
-          res.unshift({ text: '==请选择==', value: '' });
+          res.unshift({ valueName: '==请选择==', valueCode: '' });
           return res;
         } else {
           return [];
         }
       },
-      labelField: 'text',
-      valueField: 'value',
-      placeholder: '==请选择==',
-    },
-    colProps: { span: 8 },
-  },
-  {
-    label: '办结状态',
-    field: 'resolveStatus',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '==请选择==', value: '' },
-        { label: '已办结', value: '1' },
-        { label: '未办结', value: '0' },
-      ],
+      labelField: 'valueName',
+      valueField: 'valueCode',
       placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
   {
     label: '办结时间',
-    field: 'resolveTime',
+    field: 'doneTime',
     component: 'RangePicker',
     componentProps: {
       presets: rangePresets,
@@ -284,7 +343,7 @@ export const searchFormSchema: FormSchema[] = [
   },
   {
     label: '回复审核时间',
-    field: 'auditTime',
+    field: 'replyAuditTime',
     component: 'RangePicker',
     componentProps: {
       presets: rangePresets,
@@ -332,7 +391,7 @@ export const searchFormSchema: FormSchema[] = [
   },
   {
     label: '是否解决',
-    field: 'isResolved',
+    field: 'resolveFlag',
     component: 'Select',
     componentProps: {
       options: [
@@ -346,7 +405,7 @@ export const searchFormSchema: FormSchema[] = [
   },
   {
     label: '是否满意',
-    field: 'isSatisfied',
+    field: 'satisfyFlag',
     component: 'Select',
     componentProps: {
       options: [
@@ -360,7 +419,7 @@ export const searchFormSchema: FormSchema[] = [
   },
   {
     label: '是否属实',
-    field: 'isReal',
+    field: 'factFlag',
     component: 'Select',
     componentProps: {
       options: [
@@ -372,43 +431,55 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 8 },
   },
-  {
-    label: '突发案件',
-    field: 'isCompleted',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '==请选择==', value: '' },
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-      placeholder: '==请选择==',
-    },
-    colProps: { span: 8 },
-  },
+  // {
+  //   label: '突发案件',
+  //   field: 'suddenCase',
+  //   component: 'Select',
+  //   componentProps: {
+  //     api: async () => {
+  //       const res = await getDictItems('biz_sudden_case');
+  //       if (Array.isArray(res)) {
+  //         res.unshift({ text: '==请选择==', value: '' });
+  //         return res;
+  //       } else {
+  //         return [];
+  //       }
+  //     },
+  //     labelField: 'text',
+  //     valueField: 'value',
+  //     placeholder: '==请选择==',
+  //   },
+  //   colProps: { span: 8 },
+  // },
   {
     label: '重点对象',
-    field: 'keyPerson',
-    component: 'Select',
+    field: 'monitorType',
+    component: 'ApiSelect',
     componentProps: {
-      options: [
-        { label: '==请选择==', value: '' },
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-      placeholder: '==请选择==',
+      api: async () => {
+        const res = await getDictItems('biz_monitor_type')
+        if (Array.isArray(res)) {
+          res.unshift({ text: '==请选择==', value: '' })
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+
     },
     colProps: { span: 8 },
   },
   {
     label: '二次办理',
-    field: 'secondProcess',
+    field: 'resolveCount',
     component: 'Select',
     componentProps: {
       options: [
         { label: '==请选择==', value: '' },
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
+        { label: '一次办理', value: '1' },
+        { label: '二次办理', value: '2' },
       ],
       placeholder: '==请选择==',
     },
@@ -416,7 +487,7 @@ export const searchFormSchema: FormSchema[] = [
   },
   {
     label: '录音已倾听',
-    field: 'isAudited',
+    field: 'fileRead',
     component: 'Select',
     componentProps: {
       options: [
