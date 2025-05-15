@@ -6,7 +6,8 @@
       <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button>
       <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls"> 导出</a-button>
       <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入</j-upload-button>
-      <a-button type="primary" @click="handlerRefreshCache" preIcon="ant-design:sync-outlined"> 刷新缓存</a-button>
+      <a-button type="primary" @click="handlerRefreshCache" preIcon="ant-design:sync-outlined"> 刷新字典缓存</a-button>
+      <a-button type="primary" @click="handlerDistrictRefreshCache" preIcon="ant-design:sync-outlined"> 刷新区级字典缓存</a-button>
       <a-button type="primary" @click="openRecycleModal(true)" preIcon="ant-design:hdd-outlined"> 回收站</a-button>
 
       <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -49,7 +50,7 @@
   import { useMessage } from '/src/hooks/web/useMessage';
   import { removeAuthCache, setAuthCache } from '/src/utils/auth';
   import { columns, searchFormSchema } from './dict.data';
-  import { list, deleteDict, batchDeleteDict, getExportUrl, getImportUrl, refreshCache, queryAllDictItems } from './dict.api';
+  import { list, deleteDict, batchDeleteDict, getExportUrl, getImportUrl, refreshCache, queryAllDictItems, queryAllDistrictDictItems } from './dict.api';
   import { DB_DICT_DATA_KEY } from '/src/enums/cacheEnum';
   import { useUserStore } from '/@/store/modules/user';
 
@@ -59,6 +60,7 @@
   //字典配置drawer
   const [registerDrawer, { openDrawer }] = useDrawer();
   import { useListPage } from '/@/hooks/system/useListPage';
+import { DISTRICT_DICT_DATA_KEY } from '/@/enums/cacheEnum';
 
   //回收站model
   const [registerModal1, { openModal: openRecycleModal }] = useModal();
@@ -161,6 +163,26 @@
     } else {
       createMessage.error('刷新缓存失败！');
     }
+  }
+
+  /**
+   * 刷新区级缓存
+   */
+  async function handlerDistrictRefreshCache() {
+    try {
+      const res = await queryAllDistrictDictItems();
+      console.log(res);
+      removeAuthCache(DISTRICT_DICT_DATA_KEY);
+      // update-begin--author:liaozhiyang---date:20230908---for：【QQYUN-6417】生产环境字典慢的问题
+      const userStore = useUserStore();
+      userStore.setAllDistrictItems(res.result);
+      // update-end--author:liaozhiyang---date:20230908---for：【QQYUN-6417】生产环境字典慢的问题
+      createMessage.success('刷新区级字典缓存完成！');
+    } catch (error) {
+      console.error('刷新缓存失败', error);
+      createMessage.error('刷新区级字典缓存失败！');
+    }
+   
   }
   /**
    * 字典配置

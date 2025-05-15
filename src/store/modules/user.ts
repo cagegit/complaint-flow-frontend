@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import { store } from '/@/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { PageEnum } from '/@/enums/pageEnum';
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, LOGIN_INFO_KEY, DB_DICT_DATA_KEY, TENANT_ID, OAUTH2_THIRD_LOGIN_TENANT_ID } from '/@/enums/cacheEnum';
+import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, LOGIN_INFO_KEY, DB_DICT_DATA_KEY, TENANT_ID, OAUTH2_THIRD_LOGIN_TENANT_ID, DISTRICT_DICT_DATA_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache, removeAuthCache } from '/@/utils/auth';
 import { GetUserInfoModel, LoginParams, ThirdLoginParams } from '/@/api/sys/model/userModel';
 import { doLogout, getUserInfo, loginApi, phoneLoginApi, thirdLogin } from '/@/api/sys/user';
@@ -77,6 +77,10 @@ export const useUserStore = defineStore({
     getAllDictItems(): any {
       return this.dictItems || getAuthCache(DB_DICT_DATA_KEY);
     },
+    // 区级基础字典
+    getAllDistrictItems(): any {
+      return this.districtItems || getAuthCache(DISTRICT_DICT_DATA_KEY);
+    },
     getRoleList(): RoleEnum[] {
       return this.roleList.length > 0 ? this.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY);
     },
@@ -112,9 +116,15 @@ export const useUserStore = defineStore({
       this.loginInfo = info;
       setAuthCache(LOGIN_INFO_KEY, info);
     },
+    // jeecg 字典
     setAllDictItems(dictItems) {
       this.dictItems = dictItems;
       setAuthCache(DB_DICT_DATA_KEY, dictItems);
+    },
+    // 区级基础字典
+    setAllDistrictItems(dictItems) {
+      this.districtItems = dictItems;
+      setAuthCache(DISTRICT_DICT_DATA_KEY, dictItems);
     },
     setAllDictItemsByLocal() {
       // update-begin--author:liaozhiyang---date:20240321---for：【QQYUN-8572】表格行选择卡顿问题（customRender中字典引起的）

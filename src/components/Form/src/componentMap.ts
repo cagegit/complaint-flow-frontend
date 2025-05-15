@@ -31,6 +31,7 @@ import {
 import ApiRadioGroup from './components/ApiRadioGroup.vue';
 import RadioButtonGroup from './components/RadioButtonGroup.vue';
 import ApiSelect from './components/ApiSelect.vue';
+import ApiCascader from './components/ApiCascader.vue';
 import ApiTreeSelect from './components/ApiTreeSelect.vue';
 import { BasicUpload } from '/@/components/Upload';
 import { StrengthMeter } from '/@/components/StrengthMeter';
@@ -98,6 +99,7 @@ componentMap.set('RadioGroup', Radio.Group);
 componentMap.set('Checkbox', Checkbox);
 componentMap.set('CheckboxGroup', Checkbox.Group);
 componentMap.set('Cascader', Cascader);
+componentMap.set('ApiCascader', ApiCascader);
 componentMap.set('Slider', Slider);
 componentMap.set('Rate', Rate);
 

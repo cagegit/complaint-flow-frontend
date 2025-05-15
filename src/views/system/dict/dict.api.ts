@@ -21,6 +21,7 @@ enum Api {
   dictItemCheck = '/sys/dictItem/dictItemCheck',
   refreshCache = '/sys/dict/refleshCache',
   queryAllDictItems = '/sys/dict/queryAllDictItems',
+  queryAllDistrictDictItems = '/biz/upDict/getAllBaseDict',
 }
 /**
  * 导出api
@@ -154,3 +155,10 @@ export const refreshCache = () => defHttp.get({ url: Api.refreshCache }, { isTra
  * @param params
  */
 export const queryAllDictItems = () => defHttp.get({ url: Api.queryAllDictItems }, { isTransformResponse: false });
+
+/**
+ * 获取区级基础全部字典项
+ * @param params
+ */
+
+export const queryAllDistrictDictItems = () => defHttp.get({ url: Api.queryAllDistrictDictItems }, { isTransformResponse: false });

@@ -100,6 +100,7 @@ export type ComponentType =
   | 'CheckboxGroup'
   | 'AutoComplete'
   | 'Cascader'
+  | 'ApiCascader'
   | 'DatePicker'
   | 'MonthPicker'
   | 'RangePicker'

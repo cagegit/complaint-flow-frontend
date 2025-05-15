@@ -16,13 +16,41 @@ export const getDictItemsByCode = (code) => {
   }
   //update-begin-author:liusq---date:2023-10-13--for: 【issues/777】列表 分类字典不显示
   //兼容以前的旧写法
-  if (getAuthCache(DB_DICT_DATA_KEY) && getAuthCache(DB_DICT_DATA_KEY)[code]) {
-    return getAuthCache(DB_DICT_DATA_KEY)[code];
+  const cacheInfo = getAuthCache(DB_DICT_DATA_KEY);
+  if (cacheInfo && cacheInfo[code]) {
+    return cacheInfo[code];
   }
-  //update-end-author:liusq---date:2023-10-13--for:【issues/777】列表 分类字典不显示
+};
 
-  // update-end--author:liaozhiyang---date:20230908---for：【QQYUN-6417】生产环境字典慢的问题
-
+/**
+ * 从缓存中获取区级字典配置
+ * @param code
+ */
+export const getDistrictDictItemsByCode = (code) => {
+  // update-begin--author:liaozhiyang---date:20230908---for：【QQYUN-6417】生产环境字典慢的问题
+  const userStore = useUserStore();
+  const dictItems = userStore.getAllDistrictItems;
+  if (null != dictItems && typeof dictItems === 'object' && dictItems[code]) {
+    return Array.isArray(dictItems[code]) ? dictItems[code].map(v => {
+      return {
+        label: v.name,
+        value: v.id,
+        ...v
+      }
+    }) : [];
+  }
+  //update-begin-author:liusq---date:2023-10-13--for: 【issues/777】列表 分类字典不显示
+  //兼容以前的旧写法
+  const cacheInfo = getAuthCache(DB_DICT_DATA_KEY);
+  if (cacheInfo && cacheInfo[code]) {
+    return Array.isArray(cacheInfo[code]) ? cacheInfo[code].map(v => {
+      return {
+        label: v.name,
+        value: v.id,
+        ...v
+      }
+    }) : [];
+  }
 };
 /**
  * 获取字典数组

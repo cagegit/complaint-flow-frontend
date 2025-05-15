@@ -9,7 +9,7 @@
       destroyOnClose
       :maskClosable="false"
     >
-    <div class="flex">
+    <div class="pl-18">
          <BasicForm @register="registerForm">
            <template #satisfactionTimeSlot="{model, field}">
              <a-space>

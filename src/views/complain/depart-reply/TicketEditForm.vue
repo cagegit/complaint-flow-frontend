@@ -153,6 +153,7 @@
             addFileList.push({
               assignId: assignId,
               fileKey: item.fileKey,
+              fileName: item.name,
               id: ++idx,
               remark: '',
               type: '1' // file
@@ -165,6 +166,7 @@
             addFileList.push({
                 assignId: assignId,
                 fileKey: item,
+                fileName: item,
                 id: ++idx,
                 remark: '',
                 type: '1' // file
@@ -177,6 +179,7 @@
             addFileList.push({
               assignId: assignId,
               fileKey: item.fileKey,
+               fileName: item.name,
               id: ++idx,
               remark: '',
               type: '2' // 2 image
@@ -189,6 +192,7 @@
               addFileList.push({
                   assignId: assignId,
                   fileKey: item,
+                  fileName: item,
                   id: ++idx,
                   remark: '',
                   type: '2' // 2 image
@@ -201,6 +205,7 @@
             addFileList.push({
               assignId: assignId,
               fileKey: item.fileKey,
+              fileName: item.name,
               id: ++idx,
               remark: '',
               type: '3' // 3 audio
@@ -214,6 +219,7 @@
             addFileList.push({
               assignId: assignId,
               fileKey: item,
+              fileName: item,
               id: ++idx,
               remark: '',
               type: '3' // 3 audio

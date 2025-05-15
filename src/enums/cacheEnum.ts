@@ -12,6 +12,9 @@ export const ROLES_KEY = 'ROLES__KEY__';
 // dict info key
 export const DB_DICT_DATA_KEY = 'UI_CACHE_DB_DICT_DATA';
 
+// 区级基础字典
+export const DISTRICT_DICT_DATA_KEY = 'DISTRICT_CACHE_DB_DICT_DATA';
+
 // project config key
 export const PROJ_CFG_KEY = 'PROJ__CFG__KEY__';
 

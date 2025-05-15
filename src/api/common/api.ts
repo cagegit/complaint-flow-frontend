@@ -197,3 +197,131 @@ export const getAllDistrictDict = () => {
 export const getDistrictDictByCode = (dictCode:string) => {
   return defHttp.get({ url: '/biz/upDict/getBaseDictList?dictType=' + dictCode });
 };
+
+/**
+ * 社区/村列表
+ * 
+ * @param params
+ * @returns {name: string, id: string}[]
+ */
+export const getCommunityListByCode = () => {
+  return defHttp.get({ url: '/biz/upDict/getCommunityOfficeList' });
+};
+
+/**
+ * 市问题分类列表
+ * 
+ * @param params
+ * @returns {name: string, id: string, remark: string}[]
+ */
+export const getCityQuestionCategoryList = () => {
+  return defHttp.get({ url: '/biz/upDict/getProblemCategoryList' });
+};
+/**
+ * 吹哨部门列表
+ * 
+ * @param params
+ * @returns {name: string, id: string, parentId:string, remark: string}[]
+ */
+export const getWhistleDepartmentList = () => {
+  return defHttp.get({ url: '/biz/upDict/getWhistleDepartmentList' });
+};
+/**
+ * 最终处置部门列表
+ *
+ * @param params
+ * @returns {name: string, id: string, parentId:string, remark: string}[]
+ */
+export const getDisposeDepartmentList = () => {
+  return new Promise((resolve, reject) => {
+    defHttp.get({ url: '/biz/upDict/getDisposeDepartmentList' })
+      .then((res) => {
+        // res 数据结构为 id:string, name:string, remark?:string, 有remark的属于部门，没有remark的属于社区/村
+        // 有remark的以remark作为key进行分组， 最终结构: 部门包含三级：部门、remark、name, 社区/村包含两级：社区/村、name
+        // 最终需要的数据结构 id 、 parentId、name
+        // 1. 先将数据分为两类：部门和社区/村
+        const departments = res.filter(item => item.remark);
+        const communities = res.filter(item => !item.remark);
+        
+        // 2. 对部门按照remark进行分组
+        const departmentGroups = departments.reduce((groups, item) => {
+          if (!groups[item.remark]) {
+            groups[item.remark] = [];
+          }
+          groups[item.remark].push(item);
+          return groups;
+        }, {});
+        
+        // 3. 构造树形结构
+        const result:any[] = [];
+        
+        // 添加"部门"根节点
+        const departmentRoot = {
+          id: 'department-root',
+          parentId: '0',
+          name: '部门'
+        };
+        result.push(departmentRoot);
+        
+        // 添加remark作为第二级
+        Object.keys(departmentGroups).forEach(remark => {
+          const remarkId = `remark-${remark}`;
+          result.push({
+            id: remarkId,
+            parentId: departmentRoot.id,
+            name: remark
+          });
+          
+          // 添加具体部门作为第三级
+          departmentGroups[remark].forEach(dept => {
+            result.push({
+              id: dept.id,
+              parentId: remarkId,
+              name: dept.name
+            });
+          });
+        });
+        
+        // 添加"社区/村"根节点
+        const communityRoot = {
+          id: 'community-root',
+          parentId: '0',
+          name: '社区/村'
+        };
+        result.push(communityRoot);
+        
+        // 添加社区/村作为第二级
+        communities.forEach(item => {
+          result.push({
+            id: item.id,
+            parentId: communityRoot.id,
+            name: item.name
+          });
+        });
+        resolve(result);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+/**
+ * 剔除挂帐类型列表
+ * 
+ * @param params
+ * @returns {name: string, id: string, parentId:string, remark: string}[]
+ */
+export const getHoldRemoveList = (applyType:string) => {
+  return defHttp.get({ url: '/biz/upDict/getHoldRemoveList' + `?gtApplyType=${applyType}` });
+};
+///biz/upDict/getSevenFiveList
+/**
+ * 区级七有五性列表
+ * 
+ * @param params
+ * @returns {name: string, id: string, parentId:string, remark: string}[]
+ */
+export const getCitySevenFiveList = () => {
+  return defHttp.get({ url: '/biz/upDict/getSevenFiveList' });
+};

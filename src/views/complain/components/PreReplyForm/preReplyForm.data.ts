@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 import { uploadApi } from '/@/api/sys/upload';
 import { FormSchema } from '/@/components/Form';
-
+import { getDistrictDictItemsByCode } from '/@/utils/dict';
+import { getCityQuestionCategoryList, getCitySevenFiveList, getCommunityListByCode, getDisposeDepartmentList, getHoldRemoveList } from '/@/api/common/api';
 
 // 表单字段信息
 export const formSchema: FormSchema[] = [
@@ -31,14 +32,17 @@ export const formSchema: FormSchema[] = [
   // },
   {
     field: 'handleResult',
-    label: '经办结果',
+    label: '承办结果',
     component: 'InputTextArea',
     componentProps: {
-      placeholder: '请填写经办结果',
+      placeholder: '请填写承办结果',
       rows: 6,
     },
     required: true,
     colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'checkType',
@@ -46,7 +50,7 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请选择考核类型',
-      options: [],  // 需要从接口获取
+      options: getDistrictDictItemsByCode('assessment_type'),
       allowClear: true,
     },
     colProps: { span: 12 },
@@ -57,8 +61,24 @@ export const formSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       placeholder: '请选择社区/村',
-      api: () => Promise.resolve([]),  // 替换为实际API
+      api: async () => {
+          try {
+            const res  = await getCommunityListByCode()
+            console.log(res)
+            if(Array.isArray(res)){
+                return res;
+            } else {
+                return [];
+            }
+          } catch (error) {
+            console.error(error);
+            return [];
+          }
+      },
+      labelField: 'name',
+      valueField: 'id',  // 替换为实际API
       allowClear: true,
+      showSearch: true
     },
     required: true,
     colProps: { span: 12 },
@@ -69,11 +89,27 @@ export const formSchema: FormSchema[] = [
   {
     field: 'questionCategory',
     label: '市问题分类',
-    component: 'Select',
+    component: 'ApiCascader',
     componentProps: {
       placeholder: '请选择问题分类',
-      options: [],  // 需要从接口获取
+      api: async () => {
+          try {
+            const res  = await getCityQuestionCategoryList()
+            console.log(res)
+            if(Array.isArray(res)){
+                return res;
+            } else {
+                return [];
+            }
+          } catch (error) {
+            console.error(error);
+            return [];
+          }
+      },
+      labelField: 'name',
+      valueField: 'id', 
       allowClear: true,
+      showSearch: true,
     },
     required: true,
     colProps: { span: 12 },
@@ -99,7 +135,7 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请输入是否联系',
-      options: [],  // 需要从接口获取
+      options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
       allowClear: true,
     },
     required: true,
@@ -111,7 +147,7 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请输入是否解决',
-      options: [],  // 需要从接口获取
+      options: getDistrictDictItemsByCode('is_solved'),  // 需要从接口获取
       allowClear: true,
     },
     required: true,
@@ -123,7 +159,7 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请输入是否满意',
-      options: [],  // 需要从接口获取
+      options: getDistrictDictItemsByCode('is_satisfaction'),  // 需要从接口获取
       allowClear: true,
     },
     required: true,
@@ -135,7 +171,10 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请输入是否属实',
-      options: [],  // 需要从接口获取
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],  // 需要从接口获取
       allowClear: true,
     },
     required: true,
@@ -143,24 +182,52 @@ export const formSchema: FormSchema[] = [
   },
   {
     field: 'isPersonResponsible',
-    label: '是否属于抓整促任务',
+    label: '是否属于疏整促任务',
     component: 'RadioGroup',
-    componentProps: {
+    componentProps:({formActionType, formModel}) => ({
       options: [
-        { label: '是', value: true },
-        { label: '否', value: false },
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
       ],
-    },
+      onChange: (e:any) => {
+        const { updateSchema } = formActionType;
+        const value = e.target.value;
+        console.log(value);
+        if(value == 0) {
+       
+          updateSchema([
+            {
+              field: 'responsibilityType',
+              componentProps: { 
+                options:[
+                  {label: '其他', value: '0'},
+                ] 
+              },
+            },
+          ]);
+        } else {
+          updateSchema([
+            {
+              field: 'responsibilityType',
+              componentProps: { 
+                options: getDistrictDictItemsByCode('carding_type'),  // 需要从接口获取
+              },
+            },
+          ]);
+        }
+        formModel['responsibilityType'] = null;
+      }
+    }),
     required: true,
     colProps: { span: 12 },
   },
   {
     field: 'responsibilityType',
-    label: '抓整促任务类型',
+    label: '疏整促任务类型',
     component: 'Select',
     componentProps: {
       placeholder: '请选择',
-      options: [],  // 需要从接口获取
+      options: getDistrictDictItemsByCode('carding_type'),  // 需要从接口获取
       allowClear: true,
     },
     required: true,
@@ -173,11 +240,14 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请选择归属行业部门',
-      options: [],
+      options: getDistrictDictItemsByCode('industry_office_id'),  // 需要从接口获取
       allowClear: true,
     },
     required: true,
     colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'handleDetail',
@@ -191,6 +261,9 @@ export const formSchema: FormSchema[] = [
     },
     required: true,
     colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'satisfactionTime',
@@ -231,22 +304,54 @@ export const formSchema: FormSchema[] = [
   {
     field: 'sevenFiveAttributes',
     label: '七有五性',
-    component: 'Select',
+    component: 'ApiCascader',
     componentProps: {
       placeholder: '请选择七有五性',
-      options: [],
+      api: async () => {
+          try {
+            const res  = await getCitySevenFiveList()
+            console.log(res)
+            if(Array.isArray(res)){
+                return res;
+            } else {
+                return [];
+            }
+          } catch (error) {
+            console.error(error);
+            return [];
+          }
+      },
+      labelField: 'name',
+      valueField: 'id',
       allowClear: true,
+      showSearch: true,
     },
     colProps: { span: 12 },
   },
   {
     field: 'finalProcessingDepartment',
     label: '最终处置部门',
-    component: 'Select',
+    component: 'ApiCascader',
     componentProps: {
       placeholder: '请选择最终处置部门',
-      options: [],
+      api: async () => {
+          try {
+            const res  = await getDisposeDepartmentList()
+            console.log(res)
+            if(Array.isArray(res)){
+                return res;
+            } else {
+                return [];
+            }
+          } catch (error) {
+            console.error(error);
+            return [];
+          }
+      },
+      labelField: 'name',
+      valueField: 'id', 
       allowClear: true,
+      showSearch: true,
     },
     required: true,
     colProps: { span: 12 },
@@ -287,7 +392,7 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请选择具体承办人职务',
-      options: [],
+      options: getDistrictDictItemsByCode('specific_handle_duty'),  // 需要从接口获取
       allowClear: true,
     },
     required: true,
@@ -297,13 +402,45 @@ export const formSchema: FormSchema[] = [
     field: 'isMeetWithComplainant',
     label: '是否已与诉求人见面',
     component: 'Select',
-    componentProps: {
+    componentProps:() =>({
       placeholder: '请选择是否已与诉求人见面',
-      options: [],
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],
       allowClear: true,
-    },
+    }),
     required: true,
     colProps: { span: 12 },
+  },
+  // 选择是的时候，展示见面时间，见面地点
+  {
+    field: 'meetingTime',
+    label: '见面时间',
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: '请选择见面时间',
+      format: 'YYYY-MM-DD HH:mm:ss',
+      showTime: true,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.isMeetWithComplainant == 1;
+    }
+  },
+  {
+    field: 'meetingPlace',
+    label: '见面地点',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入见面地点',
+      showCount: true,
+      maxlength: 100,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.isMeetWithComplainant == 1;
+    }
   },
   {
     field: 'isVisited',
@@ -311,33 +448,162 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请选择是否吹哨',
-      options: [],
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],
       allowClear: true,
     },
     colProps: { span: 12 },
   },
+  // 选择是的时候，展示吹哨结果、吹哨部门
+  {
+    field: 'whistleblowerResult',
+    label: '吹哨结果',
+    component: 'ApiCascader',
+    componentProps: {
+      placeholder: '请输入吹哨结果',
+      options: [
+        { label: '未解决', value: 1 },
+        { label: '解决', value: 2 },
+      ],
+      allowClear: true,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.isVisited == 1;
+    }
+  },
+  {
+    field: 'whistleblowerDepartment',
+    label: '吹哨部门',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择吹哨部门',
+       api: async () => {
+          try {
+            const res  = await getDisposeDepartmentList()
+            console.log(res)
+            if(Array.isArray(res)){
+                return res;
+            } else {
+                return [];
+            }
+          } catch (error) {
+            console.error(error);
+            return [];
+          }
+      },
+      labelField: 'name',
+      valueField: 'id',
+      allowClear: true,
+      showSearch: true
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.isVisited == 1;
+    }
+  },
+  // {
+  //   field: 'isRevisit',
+  //   label: '是否回访',
+  //   component: 'Select',
+  //   componentProps: {
+  //     placeholder: '请选择是否回访',
+  //     options: [
+  //       { label: '是', value: 1 },
+  //       { label: '否', value: 0 },
+  //     ],
+  //     allowClear: true,
+  //   },
+  //   colProps: { span: 12 },
+  // },
   {
     field: 'promotionLevel',
     label: '是否提级办',
     component: 'Select',
     componentProps: {
       placeholder: '请选择是否提级办',
-      options: [],
+       options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],
       allowClear: true,
     },
     colProps: { span: 12 },
   },
+  // 选择是的时候，展示提级办人员、提级办职务
   {
-    field: 'isComplexCase',
-    label: '是否疑难',
+    field: 'promotionLevelPerson',
+    label: '提级办人员',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入提级办人员',
+      showCount: true,
+      maxlength: 100,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.promotionLevel == 1;
+    }
+  },
+  {
+    field: 'promotionLevelPosition',
+    label: '提级办职务',
     component: 'Select',
     componentProps: {
-      placeholder: '请选择是否疑难',
-      options: [],
+      placeholder: '请选择提级办职务',
+      options: getDistrictDictItemsByCode('mention_type '),  // 需要从接口获取
+      allowClear: true,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.promotionLevel == 1;
+    }
+  },
+  {
+    field: 'isLimit',
+    label: '是否限额',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择是否限额',
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],
       allowClear: true,
     },
     required: true,
     colProps: { span: 12 },
+  },
+  // 选择是的时候，展示工程类别（下拉）、工程具体问题（下拉）
+  {
+    field: 'projectType',
+    label: '工程类别',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择工程类别',
+      options: getDistrictDictItemsByCode('works_category'),  // 需要从接口获取
+      allowClear: true,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.isLimit == 1;
+    }
+  },
+  {
+    field: 'projectProblem',
+    label: '工程具体问题',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择工程具体问题',
+      options: getDistrictDictItemsByCode('works_problem'),  // 需要从接口获取
+      allowClear: true,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.isLimit == 1;
+    }
   },
   {
     field: 'complaintType',
@@ -345,22 +611,103 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请选择不计入诉求总量类别',
-      options: [],
+      options: getDistrictDictItemsByCode('appeal_category'),  // 需要从接口获取
       allowClear: true,
     },
     colProps: { span: 12 },
+  },
+  // 选择2的时候，展示网络平台名称
+  {
+    field: 'networkPlatformName',
+    label: '网络平台名称',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入网络平台名称',
+      allowClear: true,
+    },
+    colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.complaintType == '2';
+    }
   },
   {
     field: 'caseLabel',
     label: '剔挂标签',
     component: 'Select',
-    componentProps: {
+    componentProps: ({formActionType, formModel}) => ({
       placeholder: '请输入剔挂标签',
-      options: [],
-
+      options: getDistrictDictItemsByCode('hanging_accounts_label'),  // 需要从接口获取
+      allowClear: true,
+      onChange: (value) => {
+        const { updateSchema } = formActionType;
+        console.log('caseLabel: ');
+        console.log(value);
+        if(value == '1' || value == '2') {
+          updateSchema([
+            {
+              field: 'hangingAccountsType',
+              component: 'ApiCascader',
+              componentProps: { 
+                 api: async () => {
+                    let finalId = ''
+                    if(value == '1') {
+                      finalId = '3'
+                    } else {
+                      finalId = '2'
+                    }
+                    try {
+                      const res  = await getHoldRemoveList(finalId)
+                      console.log(res)
+                      if(Array.isArray(res)){
+                          return res;
+                      } else {
+                          return [];
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      return [];
+                    }
+                },
+                placeholder: '请选择剔除挂账类型',
+                labelField: 'name',
+                valueField: 'id',
+                allowClear: true,
+                showSearch: true
+              },
+            },
+          ]);
+        } else {
+          updateSchema([
+            {
+              field: 'hangingAccountsType',
+              component: 'Select',
+              componentProps: { 
+                 placeholder: '请选择剔除挂账类型',
+                 options:[],
+                allowClear: true,
+              },
+            },
+          ]);
+        }
+        formModel['hangingAccountsType'] = null;
+      }
+    }),
+    colProps: { span: 12 },
+  },
+  // 选择非3的时候，展示剔除挂账类型
+  {
+    field: 'hangingAccountsType',
+    label: '剔除挂账类型',
+     component: 'Select',
+    componentProps: {
+      placeholder: '请选择剔除挂账类型',
+      options:[],
       allowClear: true,
     },
     colProps: { span: 12 },
+    ifShow: ({values}) => {
+      return values.caseLabel == '1' || values.caseLabel == '2';
+    }
   },
   {
     field: 'attachments',
@@ -377,6 +724,9 @@ export const formSchema: FormSchema[] = [
     },
     required: true,
     colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
     // 可以通过showTable来展示已上传文件列表
     helpMessage: '请上传附件',
   },
