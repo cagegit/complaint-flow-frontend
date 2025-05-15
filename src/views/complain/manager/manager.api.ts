@@ -8,10 +8,15 @@ export enum Api {
   list = '/complain/manage/getManageList',
   // 编辑工单
   editTicket = '/complain/manage/editComplain',
-  // 批量删除工单
-  getTicketProcessList = '/complain/manage/getProcessList',
+  // 工单状态列表
+  getProcessList = '/complain/manage/getProcessList',
   // 获取工单详情
   getTicketInfo = '/complain/manage/getManageDetail',
+  // 删除
+  deleteComplain = '/complain/manage/deleteComplain',
+
+  // 批量删除
+  deleteBatchComplain = '/complain/manage/deleteComplain',
 }
 /**
  * 工单管理列表
@@ -19,7 +24,7 @@ export enum Api {
 export const list = (param) => {
   const params: any = pageNoToPageNum(param);
   console.log(params);
-  
+
   // 导入时间范围处理
   if (params.importTime) {
     let dateList = params.importTime.split(',');
@@ -29,7 +34,7 @@ export const list = (param) => {
     }
     delete params.importTime;
   }
-  
+
   // 派单时间范围处理
   if (params.sendTime) {
     let dateList = params.sendTime.split(',');
@@ -39,17 +44,27 @@ export const list = (param) => {
     }
     delete params.sendTime;
   }
-  
+
   // 办结时间范围处理
-  if (params.resolveTime) {
-    let dateList = params.resolveTime.split(',');
+  if (params.doneTime) {
+    let dateList = params.doneTime.split(',');
     if (dateList.length === 4) {
-      params.startResolveTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
-      params.endResolveTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
+      params.startDoneTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
+      params.endDoneTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
     }
-    delete params.resolveTime;
+    delete params.doneTime;
   }
-  
+
+  // 开始回复审核时间	范围处理
+  if (params.replyAuditTime) {
+    let dateList = params.replyAuditTime.split(',');
+    if (dateList.length === 4) {
+      params.startReplyAuditTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
+      params.endReplyAuditTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
+    }
+    delete params.replyAuditTime;
+  }
+
   return new Promise((resolve, reject) => {
     defHttp
       .get({ url: Api.list, params })
@@ -68,10 +83,10 @@ export const list = (param) => {
 /**
  * 添加工单
  */
-export const addTicket = (params) =>
-  defHttp.post(
-    { url: Api.addTicket, params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } },
-  );
+// export const addTicket = (params) =>
+//   defHttp.post(
+//     { url: Api.addTicket, params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } },
+//   );
 
 /**
  * 编辑工单
@@ -88,7 +103,7 @@ export const editTicket = (params) =>
  */
 export const deleteTicket = (params) =>
   defHttp.post({
-    url: Api.deleteTicket,
+    url: Api.deleteComplain,
     params,
     headers: { ContentType: ContentTypeEnum.FORM_URLENCODED },
   });
@@ -98,7 +113,7 @@ export const deleteTicket = (params) =>
  */
 export const deleteBatchTicket = (params) =>
   defHttp.post({
-    url: Api.deleteBatchTicket,
+    url: Api.deleteBatchComplain,
     params,
     headers: { ContentType: ContentTypeEnum.FORM_URLENCODED },
   });
@@ -106,4 +121,9 @@ export const deleteBatchTicket = (params) =>
 /**
  * 获取工单详情
  */
-export const getTicketInfo = (params) => defHttp.get({ url: Api.getTicketInfo, params }); 
+export const getTicketInfo = (params) => defHttp.get({ url: Api.getTicketInfo, params });
+
+/**
+ * 获取工单状态列表
+ */
+export const getProcessList = () => defHttp.get({ url: Api.getProcessList }); 
