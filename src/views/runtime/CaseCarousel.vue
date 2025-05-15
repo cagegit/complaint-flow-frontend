@@ -39,8 +39,8 @@
           <span class="date">{{ getDate(item.createTime) }}</span>
           <span class="text">{{ getTime(item.createTime) }}</span>
         </div>
-        <div class="department">{{ item.assignDepts }}</div>
-        <div class="community">{{ item.assignCommunitys }}</div>
+        <div class="department">{{ item.assignDepts || '-' }}</div>
+        <div class="community">{{ item.assignCommunitys || '-' }}</div>
       </div>
     </div>
   </div>
