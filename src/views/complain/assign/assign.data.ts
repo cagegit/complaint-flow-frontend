@@ -1,4 +1,4 @@
-import { getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
+import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -593,7 +593,7 @@ export const formSchema: FormSchema[] = [
   { 
     field: 'assignCommunityIdList', 
     label: '处理社区/居委会', 
-    component: 'ApiTreeSelect',
+    component: 'ApiCascader',
     componentProps: {
       checkable:true,
       multiple: true,
@@ -601,17 +601,13 @@ export const formSchema: FormSchema[] = [
         const res  = await getSecondTreeList('3');
           console.log(res)
           if(Array.isArray(res)){
-              // res.unshift({text: '==请选择==', value: ''})
               // 把tree格式数据展开
               const newList = treeToList(res);
-              // console.log(res)
-              // res.unshift({text: '==请选择==', value: ''})
-              // console.log(res)
               return newList.map(v => {
                 return {
                   id: v.id,
-                  pId: v.parentId,
-                  title: v.title,
+                  parentId: v.parentId,
+                  label: v.title,
                   value: v.id,
                 }
               });
@@ -626,25 +622,19 @@ export const formSchema: FormSchema[] = [
   { 
     field: 'sevenFiveId', 
     label: '七有五性', 
-    component: 'ApiTreeSelect',
+    component: 'ApiCascader',
     componentProps: {
       api: async () => {
-        const res  = await getQywxTreeList();
+        const res  = await getCitySevenFiveList();
           console.log(res)
           if(Array.isArray(res)){
-              // res.unshift({text: '==请选择==', value: ''})
-              return res.map(v => {
-                return {
-                  id: v.id,
-                  pId: v.parentId,
-                  title: v.liveHoodIssueNames,
-                  value: v.id,
-                }
-              });
+            return res;
           } else {
-              return [];
+            return [];
           }
       },
+      labelField: 'name',
+      valueField: 'id',
       treeDataSimpleMode: true,
     } 
   },

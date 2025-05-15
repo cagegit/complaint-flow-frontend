@@ -14,6 +14,16 @@
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="回复审核">
+              <!-- 回复列表 -->
+               <div class="pr-4">
+                <ReplyRecord 
+                  :replyData="replyList" 
+                  :total="total" 
+                  :readOnly="false"
+                  @auditChange="handleAuditChange"
+                />
+               </div>
+              <!-- 回复审核表单 -->
               <BasicForm @register="registerAuditForm"/>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
@@ -21,14 +31,12 @@
             </a-tab-pane>
           </a-tabs>
         </div>
-        <div style="width: 300px; padding-left: 30px;">
-            <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
-            <!-- 待补充信息区域 -->
+        <!-- <div style="width: 300px; padding-left: 30px;">
             <BasicForm
                 :schemas="addFormSchema"
                 @register="registerAddForm"
             />
-        </div>
+        </div> -->
       </div>
     </BasicModal>
   </template>
@@ -40,7 +48,11 @@
     
     import { saveReviewReply, getReplyDetail } from './review.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
-  
+
+    const replyList = ref([]);
+    const total = ref(0);
+    // @ts-ignore
+    import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -101,6 +113,8 @@
       let res:any =null;
       try {
         res = await getReplyDetail({ ticketId: data.record.id });
+        replyList.value = res?.replyList || [];
+        total.value = res?.replyList?.length || 0;
       } catch (error) {
         console.error('获取详情失败', error);
       }
@@ -163,5 +177,10 @@
         setModalProps({ confirmLoading: false });
       }
     }
-  </script>
+
+    // 处理审核变更
+    const handleAuditChange = async (res:any) => {
+     console.log(res);
+    };
+</script>
   

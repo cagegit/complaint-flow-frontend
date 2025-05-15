@@ -38,7 +38,7 @@ export const formSchema: FormSchema[] = [
       placeholder: '请填写承办结果',
       rows: 6,
     },
-    required: true,
+    // required: true,
     colProps: { span: 24 },
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
@@ -80,7 +80,7 @@ export const formSchema: FormSchema[] = [
       allowClear: true,
       showSearch: true
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
     helpComponentProps: {
       text: '智能推荐',
@@ -111,7 +111,7 @@ export const formSchema: FormSchema[] = [
       allowClear: true,
       showSearch: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -123,7 +123,7 @@ export const formSchema: FormSchema[] = [
       showCount: true,
       maxlength: 300,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
     helpComponentProps: {
       text: '智能推荐',
@@ -138,7 +138,7 @@ export const formSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -150,7 +150,7 @@ export const formSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('is_solved'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -162,7 +162,7 @@ export const formSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('is_satisfaction'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -177,7 +177,7 @@ export const formSchema: FormSchema[] = [
       ],  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -218,7 +218,7 @@ export const formSchema: FormSchema[] = [
         formModel['responsibilityType'] = null;
       }
     }),
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -230,7 +230,7 @@ export const formSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('carding_type'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   // 以下是新增字段
@@ -243,7 +243,7 @@ export const formSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('industry_office_id'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 24 },
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
@@ -259,7 +259,7 @@ export const formSchema: FormSchema[] = [
       showCount: true,
       maxlength: 1000,
     },
-    required: true,
+    // required: true,
     colProps: { span: 24 },
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
@@ -353,7 +353,7 @@ export const formSchema: FormSchema[] = [
       allowClear: true,
       showSearch: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -363,7 +363,7 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入主管领导姓名',
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -373,7 +373,7 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入部门负责人姓名',
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -383,7 +383,7 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入具体承办人姓名',
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -395,7 +395,7 @@ export const formSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('specific_handle_duty'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -410,7 +410,7 @@ export const formSchema: FormSchema[] = [
       ],
       allowClear: true,
     }),
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   // 选择是的时候，展示见面时间，见面地点
@@ -573,7 +573,7 @@ export const formSchema: FormSchema[] = [
       ],
       allowClear: true,
     },
-    required: true,
+    // required: true,
     colProps: { span: 12 },
   },
   // 选择是的时候，展示工程类别（下拉）、工程具体问题（下拉）
@@ -713,16 +713,7 @@ export const formSchema: FormSchema[] = [
     field: 'attachments',
     label: '附件',
     component: 'Upload',
-    componentProps: {
-      api: uploadApi, // 需要提供上传API
-      multiple: true,
-      maxSize: 20, // 限制大小，单位MB
-      buttonText: '添加',
-      uploadParams: {
-        biz: 'complaint/attachment',
-      },
-    },
-    required: true,
+    slot: 'uploadAttachmentsSlot',
     colProps: { span: 24 },
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },

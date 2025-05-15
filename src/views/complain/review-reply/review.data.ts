@@ -318,9 +318,9 @@ export const formSchema: FormSchema[] = [
       required: true,
       componentProps: {
         options: [
-          { label: '本地录入', value: '0' },
-          { label: '区分转', value: '1' },
-          { label: '直派', value: '2' },
+          { label: '本地录入', value: 0 },
+          { label: '区分转', value: 1 },
+          { label: '直派', value: 2 },
         ],
       },
     },
@@ -745,7 +745,10 @@ export const formAuditSchema: FormSchema[] = [
       label: '督办人',
       component: 'Input',
       required: true,
-      colProps: { span: 24 }
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
     // 最终处理情况文本框
     {
@@ -758,5 +761,8 @@ export const formAuditSchema: FormSchema[] = [
         rows: 4,
       },
       colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
 ];

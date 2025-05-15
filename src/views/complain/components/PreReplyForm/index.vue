@@ -29,17 +29,23 @@
                <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
              </a-space>
            </template>
+           <!-- 附件 -->
+            <template #uploadAttachmentsSlot="{model, field}">
+             <UploadList v-model="model[field]" />
+             </template>
          </BasicForm>
     </div>
 </BasicModal>
 </template>
 <script lang="ts" setup name="PreReplayForm">
-    import { ref, computed, unref, useAttrs } from 'vue';
+    import { ref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema } from './preReplyForm.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     import { savePreReply, getPreReplyDetail } from './preReplyForm.api';
     import { useMessage } from '/@/hooks/web/useMessage';
+    // @ts-ignore
+    import UploadList from '../UploadList/index.vue';
     const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
