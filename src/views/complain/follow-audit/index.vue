@@ -68,9 +68,9 @@
 
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
-        designScope: 'ticket-list',
+        designScope: 'follow-audit-list',
         tableProps: {
-          title: '回复审核列表',
+          title: '回访审核列表',
           api: list,
           columns: columns,
           size: 'small',

@@ -2,12 +2,12 @@ import { pageNoToPageNum } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
 export enum Api {
-  // 获取回复审核列表
-  list = '/complain/replyAudit/getReplyAuditList',
-  // 获取回复审核详情
-  getReviewReplyDetail = '/complain/replyAudit/getReplyAuditDetail',
-  // 保存回复审核
-  saveReviewReply = '/complain/replyAudit/saveReplyAudit',
+  // 获取回访审核列表
+  list = '/complain/visitAudit/getVisitAuditList',
+  // 获取回访审核详情
+  getReviewReplyDetail = '/complain/visitAudit/getVisitAuditDetail',
+  // 保存回访审核
+  saveReviewReply = '/complain/visitAudit/saveVisitAudit',
   // 确认回复
   // confirmReply = '/complain/reply/confirmReply',
 }
@@ -51,14 +51,14 @@ export const list = (param) => {
 
 
 /**
- * 获取回复详情
+ * 获取回访审核详情
  */
 export const getReplyDetail = (param) => {
   return defHttp.get({ url: Api.getReviewReplyDetail, params: param})
 }
 
 /**
- * 保存回复审核
+ * 保存回访审核
  */
 export const saveReviewReply = (param) => {
   return defHttp.post({ url: Api.saveReviewReply, data: param})

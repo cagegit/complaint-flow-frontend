@@ -1,4 +1,4 @@
-import { getDictItems } from '/@/api/common/api';
+import { getCitySevenFiveList, getDictItems } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -523,92 +523,47 @@ export const formSchema: FormSchema[] = [
 //   ];
 // 待补充表单内容（根据截图生成）
 export const addFormSchema: FormSchema[] = [
-  {
-    field: 'department',
-    label: '处理部门',
-    component: 'Input',
-    required: true,
-    componentProps: {
-      placeholder: '请输入处理部门',
+  { field: 'labelCode', 
+    label: '标签', 
+    component: 'RadioGroup', 
+    componentProps: { 
+      options: getDictItemsByCode('biz_complaint_lavel') 
     },
+    defaultValue: '1',
+    required: true
   },
   {
-    field: 'transferTo',
-    label: '转至',
-    component: 'ApiSelect',
+    field: 'responseFlag',
+    label: '是否响应',
+    component: 'Select',
+    required: true,
     componentProps: {
-      api: async () => {
-        // TODO: 替换为实际接口
-        return [
-          { label: '==请选择==', value: '' },
-          // 其他选项...
-        ];
-      },
-      labelField: 'label',
-      valueField: 'value',
+      options:[
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
       placeholder: '==请选择==',
     },
   },
-  {
-    field: 'handler',
-    label: '督办人',
-    component: 'Input',
+  { 
+    field: 'sevenFiveId', 
+    label: '七有五性', 
+    component: 'ApiCascader',
     required: true,
     componentProps: {
-      placeholder: '请输入督办人',
-    },
-  },
-  {
-    field: 'attachment',
-    label: '附件/视频',
-    component: 'Upload',
-    componentProps: {
-      // 具体上传配置
-      multiple: false,
-      accept: '*',
-      // action: '/api/upload', // 上传接口
-      // showDownloadButton: true,
-      // showPreviewButton: true,
-    },
-  },
-  {
-    field: 'image',
-    label: '图片上传',
-    component: 'Upload',
-    componentProps: {
-      multiple: false,
-      accept: 'image/*',
-      // action: '/api/upload',
-    },
-  },
-  {
-    field: 'audio',
-    label: '录音上传',
-    component: 'Upload',
-    componentProps: {
-      multiple: false,
-      accept: 'audio/*',
-      // action: '/api/upload',
-    },
-  },
-  // {
-  //   field: 'audioDuration',
-  //   label: '录音时长',
-  //   component: 'Input',
-  //   componentProps: {
-  //     placeholder: '00分00秒处表明态度',
-  //     addonBefore: ' ',
-  //   },
-  // },
-  {
-    field: 'processStatus',
-    label: '处理情况',
-    component: 'InputTextArea',
-    required: true,
-    componentProps: {
-      placeholder: '请输入处理情况',
-      rows: 4,
-    },
+      api: async () => {
+        const res  = await getCitySevenFiveList();
+          // console.log(res)
+          if(Array.isArray(res)){
+            return res;
+          } else {
+            return [];
+          }
+      },
+      labelField: 'name',
+      valueField: 'id',
+      treeDataSimpleMode: true,
+    } 
   },
   {
     field: 'remark',
@@ -622,23 +577,18 @@ export const addFormSchema: FormSchema[] = [
 
 // 回复审核表单
 export const formAuditSchema: FormSchema[] = [
-  // {
-  //   field: 'status',
-  //   label: '工单状态',
-  //   component: 'Select',
-  //   required: true,
-  //   componentProps: {
-  //     options:[
-  //       { label: '待回复', value: '0' },
-  //       { label: '已回复', value: '1' },
-  //       { label: '待办结', value: '2' },
-  //     ],
-  //     placeholder: '==请选择==',
-  //   },
-  // },
+  { field: 'labelCode', 
+    label: '标签', 
+    component: 'RadioGroup', 
+    componentProps: { 
+      options: getDictItemsByCode('biz_complaint_lavel') 
+    },
+    defaultValue: '1',
+    required: true
+  },
   {
-    field: 'fileRead',
-    label: '录音已倾听',
+    field: 'responseFlag',
+    label: '是否响应',
     component: 'Select',
     required: true,
     componentProps: {
@@ -649,70 +599,32 @@ export const formAuditSchema: FormSchema[] = [
       placeholder: '==请选择==',
     },
   },
-  {
-    field: 'followCode',
-    label: '跟进情况',
-    component: 'ApiSelect',
+  { 
+    field: 'sevenFiveId', 
+    label: '七有五性', 
+    component: 'ApiCascader',
     required: true,
     componentProps: {
       api: async () => {
-        const res  = await getDictItems('biz_follow_code')
-          console.log(res)
+        const res  = await getCitySevenFiveList();
+          // console.log(res)
           if(Array.isArray(res)){
-              return res;
+            return res;
           } else {
-              return [];
+            return [];
           }
       },
-      labelField: 'text',
-      valueField: 'value',
-      placeholder: '==请选择==',
-    },
+      labelField: 'name',
+      valueField: 'id',
+      treeDataSimpleMode: true,
+    } 
   },
-  // {
-  //   field: 'factFlag',
-  //   label: '是否属实',
-  //   component: 'Select',
-  //   required: true,
-  //   componentProps: {
-  //     options:[
-  //       { label: '属实', value: '1' },
-  //       { label: '不属实', value: '0' },
-  //     ],
-  //     placeholder: '==请选择==',
-  //   },
-  // },
-    // {
-    // field: 'needVisit',
-    // label: '区回访',
-    // component: 'Select',
-    // required: true,
-    // componentProps: {
-    //   options:[
-    //     { label: '是', value: '1' },
-    //     { label: '否', value: '0' },
-    //   ],
-    //   placeholder: '==请选择是否需求区回访==',
-    // },
-    // },
-    // 督办人
-    {
-      field: 'overseeUserName',
-      label: '督办人',
-      component: 'Input',
-      required: true,
-      colProps: { span: 24 }
+  {
+    field: 'remark',
+    label: '备注',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入备注',
     },
-    // 最终处理情况文本框
-    {
-      field: 'finalResolveResult',
-      label: '最终处理情况',
-      component: 'InputTextArea',
-      required: true,
-      componentProps: {
-        placeholder: '请输入处理情况',
-        rows: 4,
-      },
-      colProps: { span: 24 },
-    },
+  }
 ];

@@ -10,7 +10,7 @@
       :maskClosable="false"
     >
       <div class="flex px-3">
-        <div style="flex: 1; border-right: 1px solid #ddd;">
+        <div style="flex: 1; border-right: 1px solid #ddd; max-height: 900px; overflow: auto;">
             <BasicForm @register="registerForm"/>
         </div>
         <div style="width: 300px; padding-left: 30px;">
@@ -31,6 +31,7 @@
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
     import { addAssign, getAssignDetail } from './assign.api';
+import { getSecondTreeList } from '/@/api/common/api';
   
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -116,10 +117,31 @@
         // }
         // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
         console.log(params)
+        let shequTreeList:any[] =[];
+        try {
+          shequTreeList = await getSecondTreeList('3');
+        } catch (error) {
+          console.log(error)
+        }
+        
         if(currentData) {
+          // 社区
           if(params.assignCommunityIdList) {
-            params.assignCommunityIdList = params.assignCommunityIdList.split(',');
+            const newCommunityIdList = params.assignCommunityIdList.split(',');
+            shequTreeList.forEach(v => {
+              const index = newCommunityIdList.indexOf(v.id);
+              if(index > -1){
+                // 移除父节点id
+                newCommunityIdList.splice(index, 1);  
+                // 添加全部子节点id
+                v.children?.forEach(item => {
+                  newCommunityIdList.push(item.id)
+                })
+              }
+            })
+            params.assignCommunityIdList = newCommunityIdList;
           }
+          // 科室
           if(params.assignDeptIdList) {
             params.assignDeptIdList = params.assignDeptIdList.split(',');
           }

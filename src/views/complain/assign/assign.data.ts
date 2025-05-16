@@ -512,10 +512,14 @@ export const formSchema: FormSchema[] = [
     component: 'RadioGroup', 
     componentProps: { 
       options: getDictItemsByCode('biz_complaint_lavel') 
-    } },
+    },
+    defaultValue: '1',
+    required: true
+  },
   { field: 'reportDistrictId', 
     label: '反映管区', 
     component: 'ApiSelect',
+    required: true,
     componentProps: ({ formActionType }) => {
       return {
         api: async () => {
@@ -533,7 +537,7 @@ export const formSchema: FormSchema[] = [
           const { updateSchema } = formActionType;
           const { value } = values;
           const res  = await getCommunityChildList(value)
-          console.log(res)
+          // console.log(res)
           if(Array.isArray(res)){
               // res.unshift({label: '所有', value: ''})
               updateSchema({
@@ -564,6 +568,7 @@ export const formSchema: FormSchema[] = [
   { field: 'reportCommunityId', 
     label: '反映社区', 
     component: 'Select',
+    required: true,
     componentProps: {
       options:[]
     }  
@@ -571,35 +576,32 @@ export const formSchema: FormSchema[] = [
   { field: 'assignDeptIdList', 
     label: '处理科室', 
     component: 'ApiSelect',
-    componentProps: ({ formActionType }) => {
-      return {
-        api: async () => {
-          const res  = await getCommunityList('2') // 2表示部门
-            console.log(res)
-            if(Array.isArray(res)){
-                // res.unshift({label: '所有', value: ''})
-              return res;
-            } else {
-              return [];
-            }
-        },
-        labelField: 'departName',
-        valueField: 'id',
-        multiple: true,
-        checkable:true,
-      }
-    } 
+    required: true,
+    componentProps:{
+      api: async () => {
+        const res  = await getCommunityList('2') // 2表示部门
+          if(Array.isArray(res)){
+            return res;
+          } else {
+            return [];
+          }
+      },
+      labelField: 'departName',
+      valueField: 'id',
+      mode: 'multiple'
+    }
   },
   { 
     field: 'assignCommunityIdList', 
     label: '处理社区/居委会', 
     component: 'ApiCascader',
+    required: true,
     componentProps: {
-      checkable:true,
+      checkable: true,
       multiple: true,
       api: async () => {
-        const res  = await getSecondTreeList('3');
-          console.log(res)
+        const res = await getSecondTreeList('3');
+          // console.log(res)
           if(Array.isArray(res)){
               // 把tree格式数据展开
               const newList = treeToList(res);
@@ -616,6 +618,7 @@ export const formSchema: FormSchema[] = [
           }
       },
       treeDataSimpleMode: true,
+      showCheckedStrategy: 'Cascader.SHOW_CHILD',
     },
       // treeDataSimpleMode: true,
   },
@@ -623,10 +626,11 @@ export const formSchema: FormSchema[] = [
     field: 'sevenFiveId', 
     label: '七有五性', 
     component: 'ApiCascader',
+    required: true,
     componentProps: {
       api: async () => {
         const res  = await getCitySevenFiveList();
-          console.log(res)
+          // console.log(res)
           if(Array.isArray(res)){
             return res;
           } else {
@@ -638,9 +642,34 @@ export const formSchema: FormSchema[] = [
       treeDataSimpleMode: true,
     } 
   },
+  // 案件性质
+  { 
+    field: 'caseNature', 
+    label: '案件性质', 
+    component: 'ApiSelect',
+    required: true,
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_case_nature')
+          // console.log(res)
+          if(Array.isArray(res)){
+            return res;
+          } else {
+            return [];
+          }
+      },
+      labelField: 'text',
+      valueField: 'value'
+    } 
+  },
   { field: 'remark', 
     label: '备注', 
-    component: 'InputTextArea'
+    component: 'InputTextArea',
+    componentProps: {
+      rows: 3,
+      placeholder: '请输入备注',
+      style: { width: '100%' },
+    },
   },
   ];
 

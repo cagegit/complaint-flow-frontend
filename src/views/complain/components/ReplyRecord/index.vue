@@ -71,7 +71,11 @@
             :options="auditOptions"
             @change="(value) => handleAuditChange(value, record)"
           />
-          <span v-else>{{ getAuditStatusText(record.auditStatus) }}</span>
+          <span v-else>
+            <a-tag color="cyan">
+              {{ getAuditStatusText(record.auditStatus) }}
+            </a-tag>
+            </span>
         </template>
         
         <!-- 操作列 -->
@@ -309,7 +313,7 @@ const columns = [
 // 审核选项 -2未提交;-1未通过,0待审核,1通过
 const auditOptions = [
   { label: '请选择', value: null },
-  { label: '未提交', value: -2 },
+  // { label: '未提交', value: -2 },
   { label: '拒绝', value: -1 },
   { label: '待审核', value: 0 },
   { label: '通过', value: 1 }

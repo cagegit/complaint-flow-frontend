@@ -3,7 +3,7 @@
       v-bind="$attrs"
       @register="registerDrawer"
       :title="getTitle"
-      :width="900"
+      :width="1000"
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
@@ -14,15 +14,44 @@
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="回访审核">
-                          <!-- 回复列表 -->
-               <div class="pr-4">
-                <ReplyRecord 
-                  :replyData="replyList" 
-                  :total="total" 
-                  :readOnly="false"
-                  @auditChange="handleAuditChange"
-                />
-               </div>
+                
+               <!-- 回复审核内容回显，三行两列，第一行显示：录音已倾听、跟进情况，第二行：督办人，第三行：最终处理情况 -->
+               <a-collapse v-model:activeKey="collapsibleKey">
+                <a-collapse-panel key="1" header="回复记录">
+                  <!-- 回复列表 -->
+                  <div class="pr-4">
+                    <ReplyRecord 
+                      :replyData="replyList" 
+                      :total="total" 
+                      :readOnly="true"
+                      @auditChange="handleAuditChange"
+                    />
+                  </div>
+                </a-collapse-panel>
+                <a-collapse-panel key="2" header="回访审核结果">
+                    <div class="grid grid-cols-2 gap-4">
+                      <div class="flex">
+                        <p class="font-bold">录音已倾听：</p>
+                        <p class="text-gray-600">{{ replyDetailRef.value?.fileRead === 1? '是' : '否' }}</p>
+                      </div>
+                      <div class="flex">
+                        <p class="font-bold">跟进情况：</p>
+                        <p class="text-gray-600">{{ replyDetailRef.value?.followCode || '-' }}</p>
+                      </div>
+                      <div class="flex">
+                        <p class="font-bold">督办人：</p>
+                        <p class="text-gray-600">{{ replyDetailRef.value?.overseeUserName || '-' }}</p>
+                      </div>
+                      <div class="flex">
+                        <p class="font-bold">最终处理情况：</p>
+                        <p class="text-gray-600">{{ replyDetailRef.value?.finalResolveResult || '-' }}</p>
+                      </div>
+                  </div>
+                </a-collapse-panel>
+               </a-collapse>
+              <!-- 分割线 -->
+              <a-divider></a-divider> 
+              <!-- 回复审核表单 -->
               <BasicForm @register="registerAuditForm"/>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
@@ -42,7 +71,7 @@
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema, addFormSchema, formAuditSchema } from './follow-up.data';
+    import { formSchema, formAuditSchema } from './follow-up.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
     import { saveReviewReply, getReplyDetail } from './follow-up.api';
@@ -60,12 +89,16 @@
     const rowId = ref('');
     const departOptions = ref([]);
     let isFormDepartUser = false;
-    // 当前key
+    // tab当前key
     const activeKey = ref('1');
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
+    // 回复详情
+    const replyDetailRef = ref<any>({});
+    // 折叠面板key
+    const collapsibleKey = ref<string | null>('2');
     //回复审核表单配置
-    const [registerAuditForm] = useForm({
+    const [registerAuditForm, { validate }] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -77,7 +110,7 @@
       baseRowStyle: { width: '100%', }
     });
     //基础信息表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerForm, { setProps, resetFields, setFieldsValue, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -90,15 +123,15 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm] = useForm({
-      labelWidth: 150,
-      schemas: addFormSchema,
-      showActionButtonGroup: false,
-      layout: 'vertical',
-      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
-      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      //row行的样式
-    });
+    // const [registerAddForm] = useForm({
+    //   labelWidth: 150,
+    //   schemas: addFormSchema,
+    //   showActionButtonGroup: false,
+    //   layout: 'vertical',
+    //   rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+    //   //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+    //   //row行的样式
+    // });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
     //表单赋值
@@ -110,8 +143,18 @@
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
       // 查询详情数据
-      const res = await getReplyDetail({ assignId: data.record.assignId });
-      console.log(res);
+      try {
+        const res = await getReplyDetail({ ticketId: data.record.id });
+        console.log(res);
+        replyDetailRef.value = res;
+        // 回复列表
+        replyList.value = res?.replyList || [];
+        total.value = res?.replyList?.length || 0;
+        finalReplyList.value = res?.replyList || [];
+      } catch (error) {
+        console.error('Error fetching reply detail:', error);
+      }
+
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
         setFieldsValue({
@@ -145,19 +188,10 @@
         let params = values;
         const ticketId = currentEditRecordRef.value?.id;
         const newParams = {
-          "auditList": [
-            // {
-            //   "assignId": 0,
-            //   "auditStatus": 0,
-            //   "rejectReason": ""
-            // }
-          ],
-          "fileRead": params.fileRead,
-          "finalResolveResult": params.finalResolveResult,
-          "followCode": params.followCode,
-          "needVisit": params.needVisit,
-          "overseeUserName": params.overseeUserName,
-          "overseeUserPhone": '',
+          "labelCode": params.labelCode,
+          "remark": params.remark,
+          "responseFlag": params.responseFlag,
+          "sevenFiveId": params.sevenFiveId,
           "ticketId": ticketId
         };
         //提交表单

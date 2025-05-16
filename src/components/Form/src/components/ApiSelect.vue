@@ -50,7 +50,7 @@
       resultField: propTypes.string.def(''),
       labelField: propTypes.string.def('label'),
       valueField: propTypes.string.def('value'),
-      immediate: propTypes.bool.def(true),
+      immediate: propTypes.bool.def(true)
     },
     emits: ['options-change', 'change'],
     setup(props, { emit }) {

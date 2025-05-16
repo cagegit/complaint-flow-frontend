@@ -98,7 +98,7 @@
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
       // 查询详情数据
-      const res = await getReplyDetail({ assignId: data.record.assignId });
+      const res = await getReplyDetail({ ticketId: data.record.id });
       console.log(res);
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
@@ -113,13 +113,7 @@
     });
     //获取标题
     const getTitle = computed(() => {
-      // update-begin--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
-      if (!unref(isUpdate)) {
-        return '回复审核';
-      } else {
-        return '回复';
-      }
-      // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
+      return '回访审核';
     });
     const { adaptiveWidth } = useDrawerAdaptiveWidth();
   
