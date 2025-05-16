@@ -65,6 +65,11 @@ export const previewProps = {
     type: Array as PropType<string[]>,
     default: () => [],
   },
+  // 是否显示删除按钮
+  showDelete: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  },
 };
 
 export const fileListProps = {

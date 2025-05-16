@@ -10,7 +10,7 @@
       :maskClosable="false"
     >
       <div class="flex px-3">
-        <div style="flex: 1; border-right: 1px solid #ddd;">
+        <div style="flex: 1">
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="回复审核">
@@ -49,7 +49,8 @@
     import { saveReviewReply, getReplyDetail } from './review.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
 
-    const replyList = ref([]);
+    const replyList = ref<any[]>([]);
+    const finalReplyList = ref<any[]>([]);
     const total = ref(0);
     // @ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
@@ -115,6 +116,7 @@
         res = await getReplyDetail({ ticketId: data.record.id });
         replyList.value = res?.replyList || [];
         total.value = res?.replyList?.length || 0;
+        finalReplyList.value = res?.replyList || [];
       } catch (error) {
         console.error('获取详情失败', error);
       }
@@ -151,14 +153,21 @@
         let isUpdateVal = unref(isUpdate);
         let params = values;
         const ticketId = currentEditRecordRef.value?.id;
+        console.log(params);
+        console.log(finalReplyList.value);
         const newParams = {
-          "auditList": [
+          "auditList": finalReplyList.value.map(item => ({
+            assignId: item.id,
+            auditStatus: item.auditStatus,
+            rejectReason: item.rejectReason
+          })),
+          // [
             // {
             //   "assignId": 0,
             //   "auditStatus": 0,
             //   "rejectReason": ""
             // }
-          ],
+          // ],
           "fileRead": params.fileRead,
           "finalResolveResult": params.finalResolveResult,
           "followCode": params.followCode,
@@ -167,12 +176,17 @@
           "overseeUserPhone": '',
           "ticketId": ticketId
         };
-        //提交表单
-        await saveReviewReply(newParams);
+        console.log(newParams);
+        try {
+          //提交表单
+          await saveReviewReply(newParams);
+          //刷新列表
+          emit('success',{isUpdateVal ,values});
+        } catch (error) {
+          console.error('获取详情失败', error);
+        }
         //关闭弹窗
         closeModal();
-        //刷新列表
-        emit('success',{isUpdateVal ,values});
       } finally {
         setModalProps({ confirmLoading: false });
       }
@@ -180,7 +194,11 @@
 
     // 处理审核变更
     const handleAuditChange = async (res:any) => {
-     console.log(res);
+      // const currentReplyId = res.reply
+     const reply = finalReplyList.value.find(item => item.id === res.id);
+     if (reply) {
+       reply.auditStatus = res.status;
+       reply.rejectReason = res.reason;
+     }
     };
 </script>
-  

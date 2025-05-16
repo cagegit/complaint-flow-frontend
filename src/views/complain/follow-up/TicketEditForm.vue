@@ -13,7 +13,16 @@
         <div style="flex: 1; border-right: 1px solid #ddd;">
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
-            <a-tab-pane key="1" tab="回复审核">
+            <a-tab-pane key="1" tab="回访审核">
+                          <!-- 回复列表 -->
+               <div class="pr-4">
+                <ReplyRecord 
+                  :replyData="replyList" 
+                  :total="total" 
+                  :readOnly="false"
+                  @auditChange="handleAuditChange"
+                />
+               </div>
               <BasicForm @register="registerAuditForm"/>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
@@ -21,14 +30,12 @@
             </a-tab-pane>
           </a-tabs>
         </div>
-        <div style="width: 300px; padding-left: 30px;">
-            <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
-            <!-- 待补充信息区域 -->
+        <!-- <div style="width: 300px; padding-left: 30px;">
             <BasicForm
                 :schemas="addFormSchema"
                 @register="registerAddForm"
             />
-        </div>
+        </div> -->
       </div>
     </BasicModal>
   </template>
@@ -40,7 +47,12 @@
     
     import { saveReviewReply, getReplyDetail } from './follow-up.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
-  
+    //@ts-ignore
+    import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
+    const replyList = ref<any[]>([]);
+    const finalReplyList = ref<any[]>([]);
+    const total = ref(0);
+    // @ts-ignore
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -158,5 +170,15 @@
         setModalProps({ confirmLoading: false });
       }
     }
+
+    // 处理审核变更
+    const handleAuditChange = async (res:any) => {
+      // const currentReplyId = res.reply
+     const reply = finalReplyList.value.find(item => item.id === res.id);
+     if (reply) {
+       reply.auditStatus = res.status;
+       reply.rejectReason = res.reason;
+     }
+    };
   </script>
   

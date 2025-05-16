@@ -82,7 +82,7 @@
     </a-table>
     
     <!-- 文件列表弹窗 -->
-    <a-modal
+    <!-- <a-modal
       v-model:visible="fileModalVisible"
       :title="getFileModalTitle"
       :width="700"
@@ -90,7 +90,7 @@
       @cancel="handleFileModalCancel"
     >
       <UploadList :value="currentFileList" readOnly />
-    </a-modal>
+    </a-modal> -->
     
     <!-- 拒绝原因弹窗 -->
     <a-modal
@@ -172,19 +172,19 @@
       </a-descriptions>
     </a-modal>
     
-    <!-- 图片预览 -->
-    <a-image-preview-group>
-      <a-image v-for="(url, index) in previewImageList" :key="index" :src="url" style="display: none" />
-    </a-image-preview-group>
+    <!-- 文件预览 -->
+    <UploadPreviewModal :value="previewFileList" @register="registerPreviewModal" />
   </div>
 </template>
 
 <script setup lang="ts" name="reply-record">
 import { ref, computed, watch, PropType } from 'vue';
+  import { useModal } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
 // @ts-ignore
 import UploadList from '../../components/UploadList/index.vue';
 import { BasicUpload } from '/@/components/Upload';
+import UploadPreviewModal from '/@/components/Upload/src/UploadPreviewModal.vue';
 
 // 定义回复列表项类型
 interface ReplyItem {
@@ -234,7 +234,10 @@ const emit = defineEmits(['auditChange', 'pageChange']);
 
 // 消息实例
 const { createMessage } = useMessage();
-
+// 预览modal
+const [registerPreviewModal, { openModal: openPreviewModal }] = useModal();
+// 预览文件列表
+const previewFileList = ref<any[]>([]);
 // 数据状态
 const loading = ref(false);
 const localReplyList = ref<ReplyItem[]>([]);
@@ -381,13 +384,14 @@ const handleViewFiles = (record, type) => {
       currentFileList.value = [];
   }
   
-  fileModalVisible.value = true;
+  // fileModalVisible.value = true;
+  previewFileList.value = currentFileList.value.map(item => item.url);
+  openPreviewModal();
 };
 
 // 文件弹窗取消
 const handleFileModalCancel = () => {
-  fileModalVisible.value = false;
-  currentFileList.value = [];
+  previewFileList.value = [];
 };
 
 // 审核状态变化
