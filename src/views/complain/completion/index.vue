@@ -98,7 +98,7 @@
       function getTableAction(record): ActionItem[] {
         return [
           {
-            label: '审核回访内容',
+            label: '下载录音',
             onClick: handleEdit.bind(null, record),
             // ifShow: () => hasPermission('system:user:edit'),
           },
@@ -106,11 +106,11 @@
       }
     
       async function handleEdit(record: Recordable) {
-        openModal(true, {
-          record,
-          isUpdate: true,
-          showFooter: true,
-        });
+        // openModal(true, {
+        //   record,
+        //   isUpdate: true,
+        //   showFooter: true,
+        // });
       }
     
     //   async function handleDelete(record: Recordable) {

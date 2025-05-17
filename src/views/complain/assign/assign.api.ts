@@ -10,6 +10,10 @@ export enum Api {
   assignOther = '/complain/assign/assignOther',
   // 分派详情
   getAssignDetail = '/complain/assign/getAssignDetail',
+  // 书记建议
+  shujiList = '/complain/assign/shujiSuggest',
+  // 主任建议
+  zhurenList = '/complain/assign/zhurenSuggest',
 }
 /**
  * 分派列表
@@ -63,4 +67,13 @@ export const assignOther = (params) => defHttp.post({ url: Api.assignOther, para
  * 分派详情
  */
 export const getAssignDetail = (ticketId:string) => defHttp.get({ url: Api.getAssignDetail + '?ticketId='+ticketId});
+
+/**
+ * 书记建议
+ */
+export const shujiSuggest = (params) => defHttp.post({ url: Api.shujiList, params});
+/**
+ * 主任建议
+ */
+export const zhurenSuggest = (params) => defHttp.post({ url: Api.zhurenList, params});
 

@@ -460,7 +460,7 @@ export const formSchema: FormSchema[] = [
   {
     field: 'whistleblowerResult',
     label: '吹哨结果',
-    component: 'ApiCascader',
+    component: 'Select',
     componentProps: {
       placeholder: '请输入吹哨结果',
       options: [
@@ -477,7 +477,7 @@ export const formSchema: FormSchema[] = [
   {
     field: 'whistleblowerDepartment',
     label: '吹哨部门',
-    component: 'Select',
+    component: 'ApiCascader',
     componentProps: {
       placeholder: '请选择吹哨部门',
        api: async () => {

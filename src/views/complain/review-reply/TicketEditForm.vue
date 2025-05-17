@@ -134,13 +134,7 @@
     });
     //获取标题
     const getTitle = computed(() => {
-      // update-begin--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
-      if (!unref(isUpdate)) {
-        return '回复审核';
-      } else {
-        return '回复';
-      }
-      // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
+      return '回复审核';
     });
     const { adaptiveWidth } = useDrawerAdaptiveWidth();
   
