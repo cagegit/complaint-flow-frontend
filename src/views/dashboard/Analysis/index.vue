@@ -4,7 +4,7 @@
   <IndexBdc v-if="indexStyle == 2"></IndexBdc>
   <IndexTask v-if="indexStyle == 3"></IndexTask>
   <div style="width: 100%; text-align: right; margin-top: 20px">
-    首页主题：
+    首页主`题：
     <a-radio-group v-model:value="indexStyle">
       <a-radio :value="0">默认</a-radio>
       <a-radio :value="1">销量统计</a-radio>
