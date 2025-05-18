@@ -195,7 +195,8 @@ export const columns: BasicColumn[] = [
             options: [
                 { label: '待分派', value: '0' },
                 { label: '已分派', value: '1' },
-            ]
+            ],
+            allowClear: false
         },
         colProps: { span: 6 },
         defaultValue: '0',

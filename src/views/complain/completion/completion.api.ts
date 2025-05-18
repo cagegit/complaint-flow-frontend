@@ -10,6 +10,8 @@ export enum Api {
   saveReviewReply = '/complain/upAudit/finalReply',
   // 最终驳回
   confirmReply = '/complain/upAudit/confirmReply',
+  // 下载录音
+  downloadAudio = '/complain/complete/downloadAudio',
 }
 /**
  * 已接收列表
@@ -69,4 +71,11 @@ export const saveReviewReply = (param) => {
  */
 export const confirmReply = (param) => {
   return defHttp.post({ url: Api.confirmReply, data: param})
+}
+
+/**
+ * 下载录音
+ */
+export const downloadAudio = (param) => {
+  return defHttp.post({ url: Api.downloadAudio+ '?ticketIds=' + param.ticketIds  });
 }

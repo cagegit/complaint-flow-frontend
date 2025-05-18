@@ -191,14 +191,14 @@ export const columns: BasicColumn[] = [
         component: 'Select',
         componentProps: {
             options: [
-                { label: '待回复', value: '0' },
-                { label: '已回复', value: '1' },
-                { label: '回复已审核', value: '2' },
+                { label: '待回复', value: 0 },
+                { label: '已回复', value: 1 },
+                { label: '回复已审核', value: 2 },
             ],
-            
+            allowClear: false  
         },
         colProps: { span: 6 },
-        defaultValue: '0',
+        defaultValue: 0,
     },
     {
         label: '数据来源',

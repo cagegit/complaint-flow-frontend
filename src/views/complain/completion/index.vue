@@ -38,14 +38,16 @@
         <TicketEdit @register="registerModal" @success="handleSuccess" />
         <!-- 预回复 -->
         <pre-reply-form @register="registerReplyModal" @success="handleReplySuccess" />
+        <!-- 文件预览 -->
+         <UploadPreviewModal :value="previewFileList" @register="registerPreviewModal" />
     </template>
     <script lang="ts" setup name="completion">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
-    import { list} from './completion.api'
+    import { downloadAudio, list} from './completion.api'
     import { columns, searchFormSchema } from './completion.data'
     import { useModal } from '/@/components/Modal';
-    // import { useMessage } from '/@/hooks/web/useMessage';
+    import { ref } from 'vue';
     //@ts-ignore
     import TicketEdit from './TicketEditForm.vue';
      //@ts-ignore
@@ -54,7 +56,10 @@
 
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
     // const { createMessage, createConfirm } = useMessage();
-
+    // 预览modal
+    const [registerPreviewModal, { openModal: openPreviewModal }] = useModal();
+    // 预览文件列表
+    const previewFileList = ref<any[]>([]);
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
         designScope: 'ticket-list',
@@ -106,11 +111,16 @@
       }
     
       async function handleEdit(record: Recordable) {
-        // openModal(true, {
-        //   record,
-        //   isUpdate: true,
-        //   showFooter: true,
-        // });
+        downloadAudio({ticketIds: record.id}).then(res => {
+           console.log(res);
+        }).catch(err => {
+          console.log(err);
+        })
+        openPreviewModal(true, {
+          record,
+          isUpdate: true,
+          showFooter: true,
+        });
       }
     
     //   async function handleDelete(record: Recordable) {

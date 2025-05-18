@@ -193,7 +193,7 @@ export const columns: BasicColumn[] = [
                 { label: '待回复', value: '0' },
                 { label: '已回复', value: '1' },
             ],
-            
+            allowClear: false
         },
         colProps: { span: 6 },
         defaultValue: '0',

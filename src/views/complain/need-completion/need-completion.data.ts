@@ -189,7 +189,7 @@ export const columns: BasicColumn[] = [
                 { label: '待区级审核', value: '1' },
                 { label: '已办结', value: '2' },
             ],
-            
+            allowClear: false  
         },
         colProps: { span: 6 },
         defaultValue: '0',

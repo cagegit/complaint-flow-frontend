@@ -585,3 +585,15 @@ export const pageNoToPageNum = (params) => {
   }
   return params;
 };
+// 将树形结构转换为列表
+export function treeToList(tree:any[]) {
+  const list:any[] = [];
+  function traverse(node) {
+    list.push(node);
+    if (node.children) {
+      node.children.forEach(traverse);
+    }
+  }
+  tree.forEach(traverse);
+  return list;
+}

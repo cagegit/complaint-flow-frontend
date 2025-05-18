@@ -1,10 +1,11 @@
-import { getDictItems } from '/@/api/common/api';
+import { getDictItems, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
-import dayjs, { Dayjs } from 'dayjs';
-import { ref } from 'vue';
+import dayjs from 'dayjs';
+import { ref, h } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict';
+import { treeToList } from '/@/utils';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -189,7 +190,7 @@ export const columns: BasicColumn[] = [
                 { label: '待区级审核', value: '1' },
                 { label: '已办结', value: '2' },
             ],
-            
+            allowClear: false
         },
         colProps: { span: 6 },
         defaultValue: '0',
@@ -252,6 +253,26 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
     },
     {
+        label: '案件类型',
+        field: 'caseType',
+        component: 'ApiSelect',
+        componentProps: {
+            api: async () => {
+                const res  = await getDictItems('biz_case_category')
+                console.log(res)
+                if(Array.isArray(res)){
+                    return res;
+                } else {
+                    return [];
+                }
+            },
+            labelField: 'text',
+            valueField: 'value',
+            placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+    },
+    {
         label: '案件编号',
         field: 'caseNumber',
         component: 'Input',
@@ -260,6 +281,149 @@ export const columns: BasicColumn[] = [
     {
         label: '工单编号',
         field: 'workOrderNumber',
+        component: 'Input',
+        colProps: { span: 6 },
+    },
+    {
+        label: '反映社区',
+        field: 'reportCommunityId',
+        component: 'ApiCascader',
+        componentProps: {
+          api: async () => {
+            const res = await getSecondTreeList('3'); // 3表示管区、社区
+            if (Array.isArray(res)) {
+              const newList = treeToList(res);
+              return newList.map(v => {
+                return {
+                  id: v.id,
+                  parentId: v.parentId,
+                  label: v.title,
+                  value: v.id,
+                }
+              });
+            } else {
+              return [];
+            }
+          },
+          labelField: 'label',
+          valueField: 'value',
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: '处理科室',
+        field: 'reportDistrictId',
+        component: 'ApiCascader',
+        componentProps: {
+          api: async () => {
+            const res = await getSecondTreeList('2'); // 2表示科室、部门
+            if (Array.isArray(res)) {
+              const newList = treeToList(res);
+              return newList.map(v => {
+                return {
+                  id: v.id,
+                  parentId: v.parentId,
+                  label: v.title,
+                  value: v.id,
+                }
+              });
+            } else {
+              return [];
+            }
+          },
+          labelField: 'label',
+          valueField: 'value',
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: () => h('span', {}, [
+          '处理社区/', h('br'), '居委会'
+        ]),
+        field: 'assignCommunityId',
+        component: 'ApiCascader',
+        componentProps: {
+          api: async () => {
+            const res = await getSecondTreeList('3'); // 3表示管区、社区
+            if (Array.isArray(res)) {
+              const newList = treeToList(res);
+              return newList.map(v => {
+                return {
+                  id: v.id,
+                  parentId: v.parentId,
+                  label: v.title,
+                  value: v.id,
+                }
+              });
+            } else {
+              return [];
+            }
+          },
+          labelField: 'label',
+          valueField: 'value',
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: '办结状态',
+        field: 'resolveStatus',
+        component: 'Select',
+        componentProps: {
+          options: [
+            { label: '==请选择==', value: '' },
+            { label: '已办结', value: '1' },
+            { label: '未办结', value: '0' },
+          ],
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: '办结时间',
+        field: 'resolveTime',
+        component: 'RangePicker',
+        componentProps: {
+          presets: rangePresets,
+          placeholder: ['开始日期', '结束日期'],
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: '派单时间',
+        field: 'sendTime',
+        component: 'RangePicker',
+        componentProps: {
+          presets: rangePresets,
+          placeholder: ['开始日期', '结束日期'],
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: '反映居委会',
+        field: 'reportCommittee',
+        component: 'ApiSelect',
+        componentProps: {
+          api: async () => {
+            const res = await getDictItems('biz_committee_list');
+            if (Array.isArray(res)) {
+              res.unshift({ text: '==请选择==', value: '' });
+              return res;
+            } else {
+              return [];
+            }
+          },
+          labelField: 'text',
+          valueField: 'value',
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+    },
+    {
+        label: '发生地址',
+        field: 'occurrenceAddress',
         component: 'Input',
         colProps: { span: 6 },
     },
@@ -275,32 +439,90 @@ export const columns: BasicColumn[] = [
         component: 'Input',
         colProps: { span: 6 },
     },
-    // {
-    //     label: '重点对象',
-    //     field: 'monitorType',
-    //     component: 'ApiSelect',
-    //     componentProps: {
-    //       // options: [
-    //       //     { label: '==请选择==', value: '' },
-    //       //     { label: '红名单', value: '0' },
-    //       //     { label: '黑名单', value: '1' },
-    //       //     { label: '失信名单', value: '3' },
-    //       // ],
-    //       api: async () => {
-    //         const res  = await getDictItems('biz_monitor_type')
-    //           console.log(res)
-    //           if(Array.isArray(res)){
-    //               res.unshift({text: '==请选择==', value: ''})
-    //               return res;
-    //           } else {
-    //               return [];
-    //           }
-    //       },
-    //       labelField: 'text',
-    //       valueField: 'value',
-    //     },
-    //     colProps: { span: 6 },
-    // }
+    {
+      label: '是否解决',
+      field: 'isResolved',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '==请选择==', value: '' },
+          { label: '已解决', value: '1' },
+          { label: '未解决', value: '0' },
+        ],
+        placeholder: '==请选择==',
+      },
+      colProps: { span: 6 },
+    },
+    {
+      label: '是否满意',
+      field: 'isSatisfied',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '==请选择==', value: '' },
+          { label: '满意', value: '1' },
+          { label: '不满意', value: '0' },
+        ],
+        placeholder: '==请选择==',
+      },
+      colProps: { span: 6 },
+    },
+    {
+      label: '是否属实',
+      field: 'isReal',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '==请选择==', value: '' },
+          { label: '属实', value: '1' },
+          { label: '不属实', value: '0' },
+        ],
+        placeholder: '==请选择==',
+      },
+      colProps: { span: 6 },
+    },
+    {
+      label: '突发案件',
+      field: 'isCompleted',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '==请选择==', value: '' },
+          { label: '是', value: '1' },
+          { label: '否', value: '0' },
+        ],
+        placeholder: '==请选择==',
+      },
+      colProps: { span: 6 },
+    },
+    {
+      label: '重点对象',
+      field: 'keyPerson',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '==请选择==', value: '' },
+          { label: '是', value: '1' },
+          { label: '否', value: '0' },
+        ],
+        placeholder: '==请选择==',
+      },
+      colProps: { span: 6 },
+    },
+    {
+      label: '二次办理',
+      field: 'secondProcess',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '==请选择==', value: '' },
+          { label: '是', value: '1' },
+          { label: '否', value: '0' },
+        ],
+        placeholder: '==请选择==',
+      },
+      colProps: { span: 6 },
+    },
 ];
 
 // 新增或者编辑表单项

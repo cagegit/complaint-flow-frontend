@@ -195,7 +195,7 @@ export const columns: BasicColumn[] = [
                 { label: '待转出', value: '0' },
                 { label: '已转出', value: '1' },
             ],
-            
+            allowClear: false
         },
         colProps: { span: 6 },
         defaultValue: '0',

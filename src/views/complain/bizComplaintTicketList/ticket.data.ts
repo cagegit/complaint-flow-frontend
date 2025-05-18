@@ -209,7 +209,8 @@ export const columns: BasicColumn[] = [
             options: [
                 { label: '待接收', value: '0' },
                 { label: '已接收', value: '1' },
-            ]
+            ],
+            allowClear: false
         },
         colProps: { span: 6 },
         defaultValue: '0',
@@ -501,7 +502,7 @@ export const formSchema: FormSchema[] = [
       label: '处理情况',
       field: 'finalResolveResult',
       component: 'InputTextArea',
-      required: true,
+      // required: true,
       componentProps: {
         rows: 6,
         placeholder: '请输入处理情况',
