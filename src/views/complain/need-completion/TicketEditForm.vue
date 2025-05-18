@@ -10,25 +10,48 @@
       :maskClosable="false"
     >
       <div class="flex px-3">
-        <div style="flex: 1; border-right: 1px solid #ddd;">
+        <div style="flex: 1">
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
-            <a-tab-pane key="1" tab="回复审核">
-              <BasicForm @register="registerAuditForm"/>
+            <a-tab-pane key="1" tab="预回复">
+            <div class="pl-20">
+                 <BasicForm @register="registerPreReplyForm">
+                  <template #satisfactionTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <template #contactTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                    <template #resolutionTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <!-- 附件 -->
+                    <template #uploadAttachmentsSlot="{model, field}">
+                    <UploadList v-model="model[field]" />
+                    </template>
+                </BasicForm>
+              </div>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
                <BasicForm @register="registerForm"/>
             </a-tab-pane>
           </a-tabs>
         </div>
-        <div style="width: 300px; padding-left: 30px;">
-            <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
-            <!-- 待补充信息区域 -->
+        <!-- <div style="width: 300px; padding-left: 30px;">
             <BasicForm
                 :schemas="addFormSchema"
                 @register="registerAddForm"
             />
-        </div>
+        </div> -->
       </div>
     </BasicModal>
   </template>
@@ -40,7 +63,10 @@
     
     import { saveReviewReply, getReplyDetail } from './need-completion.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
-  
+    // @ts-ignore
+    import UploadList from '../components/UploadList/index.vue';
+    // @ts-ignore
+    import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -53,7 +79,7 @@
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
     //回复审核表单配置
-    const [registerAuditForm] = useForm({
+    const [registerPreReplyForm] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -77,16 +103,16 @@
       baseRowStyle: { width: '100%', },
       disabled: true
     });
-    //待补充表单配置
-    const [registerAddForm] = useForm({
-      labelWidth: 150,
-      schemas: addFormSchema,
-      showActionButtonGroup: false,
-      layout: 'vertical',
-      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
-      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      //row行的样式
-    });
+    // //待补充表单配置
+    // const [registerAddForm] = useForm({
+    //   labelWidth: 150,
+    //   schemas: addFormSchema,
+    //   showActionButtonGroup: false,
+    //   layout: 'vertical',
+    //   rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+    //   //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+    //   //row行的样式
+    // });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
     //表单赋值
@@ -108,7 +134,7 @@
       }
       // 隐藏底部时禁用整个表单
       //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      setProps({ disabled: !showFooter.value });
+      // setProps({ disabled: !showFooter.value });
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题

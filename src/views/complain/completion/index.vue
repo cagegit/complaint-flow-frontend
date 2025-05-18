@@ -52,6 +52,8 @@
     import TicketEdit from './TicketEditForm.vue';
      //@ts-ignore
     import PreReplyForm from '../components/PreReplyForm/index.vue';
+    //@ts-ignore
+    import UploadPreviewModal from '/@/components/Upload/src/UploadPreviewModal.vue';
     const [registerModal, { openModal }] = useModal();
 
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
@@ -113,6 +115,24 @@
       async function handleEdit(record: Recordable) {
         downloadAudio({ticketIds: record.id}).then(res => {
            console.log(res);
+           if(res) {
+             previewFileList.value = [{
+                name: res.fileName,
+                url: '/citizen-voice/' +res.fileKey,
+                type: res.fileKey.split('.').pop(),
+              }];
+           } else if(Array.isArray(res) && res.length > 0) {
+            previewFileList.value = res.map(item => {
+              return {
+                name: item.fileName,
+                url: '/citizen-voice/' +item.fileKey,
+                type: item.fileKey.split('.').pop(),
+              };
+            });
+           } else {
+            previewFileList.value = [];
+
+           }
         }).catch(err => {
           console.log(err);
         })
