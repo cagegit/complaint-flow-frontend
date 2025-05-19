@@ -1,38 +1,28 @@
-import { getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList } from '/@/api/common/api';
+import { getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
 import { ref } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
-import { getDictItemsByCode } from '/@/utils/dict/index';
 import { h } from 'vue';
-import { treeToList } from '/@/utils/helper/treeHelper';
 import { getProcessList } from './manager.api';
+import { getDictItemsByCode } from '/@/utils/dict';
+
+function treeToList(tree: any[]) {
+  const list: any[] = [];
+  function traverse(node) {
+    list.push(node);
+    if (node.children) {
+      node.children.forEach(traverse);
+    }
+  }
+  tree.forEach(traverse);
+  return list;
+}
 
 // 基于工单接收的列定义，保持一致
 export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
-  // 紧急程度
-  {
-    title: '紧急程度',
-    dataIndex: 'emergencyLevel',
-    width: 100,
-    customRender: ({ record }) => {
-      let text = '';
-      let color = '';
-      let array = getDictItemsByCode('biz_time_level') || [];
-      let obj = array.filter((item) => {
-        return item.value == record.timeLevel + '';
-      });
-      if (obj[0]) {
-        text = obj[0].text;
-        color = obj[0].color;
-        return render.renderTag(text, color);
-      } else {
-        return text;
-      }
-    },
-  },
   {
     title: '数据来源',
     dataIndex: 'sourceType',
@@ -41,60 +31,121 @@ export const columns: BasicColumn[] = [
       return render.renderDict(text, 'biz_source_type');
     },
   },
+  {
+    title: '案件标签',
+    dataIndex: 'labelCode',
+    width: 120,
+    customRender: ({ text }) => {
+      return render.renderDict(text, 'biz_complaint_lavel');
+    },
+  },
   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  {
-    title: '状态',
-    dataIndex: 'receiveStatus',
-    width: 120,
-    customRender: ({ text }) => {
-      return text === 0 ? '待接收' : '已接收';
-    }
-  },
+  // {
+  //   title: '状态',
+  //   dataIndex: 'receiveStatus',
+  //   width: 120,
+  //   customRender: ({ text }) => {
+  //     return text === 0 ? '待接收' : '已接收';
+  //   }
+  // },
+  { title: '反映管区', dataIndex: 'reportDistrictId', width: 150 },
+  { title: '反映社区', dataIndex: 'reportCommunityId', width: 150 },
   { title: '月次', dataIndex: 'monthCount', width: 80 },
   { title: '年次', dataIndex: 'yearCount', width: 80 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
-  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
-  { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
-  { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
-  { title: '来电时间', dataIndex: 'callTime', width: 150 },
-  { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
+  { title: '派单时间', dataIndex: 'sendTime', width: 200 },
   { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
   { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
   { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
-  { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
-  { title: '创建人名称', dataIndex: 'createBy', width: 120 },
-  { title: '创建时间', dataIndex: 'createTime', width: 150 },
-  { title: '截止时间', dataIndex: 'deadline', width: 150 },
-  { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
+  { title: '处理科室', dataIndex: 'assignDepts', width: 200 },
+  { title: '处理社区/居委会', dataIndex: 'assignCommunitys', width: 200 },
+  { title: '办结时间', dataIndex: 'doneTime', width: 200 },
+  // { title: '回复内容', dataIndex: '', width: 150 }, 去掉
+  { title: '截止时间', dataIndex: 'deadline', width: 200 },
+  { title: '督办人', dataIndex: 'overseeUserName', width: 120 },
+  {
+    title: '是否解决', dataIndex: 'resolveFlag', width: 120, customRender: ({ text }) => {
+      // 是否解决(-1默认;0否;1是)
+      return text === -1 ? '' : (text === 0 ? '否' : '是');
+    }
+  },
+  {
+    title: '是否满意', dataIndex: 'satisfyFlag', width: 120, customRender: ({ text }) => {
+      // 是否满意(-1默认;0否;1是)
+      return text === -1 ? '' : (text === 0 ? '否' : '是');
+    }
+  },
+  {
+    title: '是否响应', dataIndex: 'responseFlag', width: 120, customRender: ({ text }) => {
+      // 	是否响应（0否;1是）
+      return text === -1 ? '' : (text === 0 ? '否' : '是');
+    }
+  },
+  {
+    title: '是否接收', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
+      // 是否已接收（0否;1是;-1已转出）
+      return text === -1 ? '已转出' : (text === 0 ? '待接收' : '已接收');
+    }
+  },
+  { title: '跟进情况', dataIndex: 'followCode', width: 120 },
+  {
+    title: '案件性质', dataIndex: 'caseNature', width: 120, customRender: ({ text }) => {
+      return render.renderDict(text, 'biz_case_nature');
+    },
+  },
+  { title: '导入时间', dataIndex: 'importTime', width: 200 },
+  { title: '来电时间', dataIndex: 'callTime', width: 200 },
   { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
-  { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
-  { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
-  { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
-  { title: '所属部门', dataIndex: 'orgId', width: 150 },
-  { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
-  { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
-  { title: '流程节点名称', dataIndex: 'processName', width: 150 },
-  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
+  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+  { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
+  { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
   { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
-  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
-  { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-  { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
-  { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
-  { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
-  { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+  { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+  { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
+  // { title: '被反映单位', dataIndex: '', width: 120 },去掉
+  { title: '派单人员', dataIndex: 'sendUser', width: 120 },
   { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
   { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
-  { title: '派单时间', dataIndex: 'sendTime', width: 150 },
-  { title: '派单人员', dataIndex: 'sendUser', width: 120 },
-  { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
-  { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
-  { title: '修改时间', dataIndex: 'updateTime', width: 150 },
-  { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-  { title: '备注', dataIndex: 'remark', width: 180 },
+  { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+  { title: '办理次数', dataIndex: 'resolveCount', width: 120 },
+  { title: '审核时间', dataIndex: 'replyAuditTime', width: 200 },
+  { title: '回访时间', dataIndex: 'visitTime', width: 200 },
+  {
+    title: '已倾听', dataIndex: 'fileRead', width: 120, customRender: ({ text }) => {
+      // 录音是否已倾听(0否;1是)
+      return text === -1 ? '' : (text === 0 ? '否' : '是');
+    }
+  },
+  { title: '最终处理情况', dataIndex: 'finalResolveResult', width: 180 },
+  { title: '修改人', dataIndex: 'updateBy', width: 120 },
+  { title: '修改时间', dataIndex: 'updateTime', width: 200 },
+
+  // { title: '创建人名称', dataIndex: 'createBy', width: 120 },
+  // { title: '创建时间', dataIndex: 'createTime', width: 150 },
+  // { title: '截止时间', dataIndex: 'deadline', width: 150 },
+  // { title: '最终处理情况', dataIndex: 'finalResolveResult', width: 180 },
+  // { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
+  // { title: '所属部门', dataIndex: 'orgId', width: 150 },
+  // { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
+  // { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
+  // { title: '流程节点名称', dataIndex: 'processName', width: 150 },
+  // { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
+  // { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
+  // { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
+  // { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
+  // { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+  // { title: '派单时间', dataIndex: 'sendTime', width: 150 },
+  // { title: '派单人员', dataIndex: 'sendUser', width: 120 },
+  // { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
+  // { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
+  // { title: '修改时间', dataIndex: 'updateTime', width: 150 },
+  // { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+  // { title: '主任建议', dataIndex: 'zhurenSuggest', width: 150 },
+  // { title: '备注', dataIndex: 'remark', width: 180 },
 ];
 
 // 日期范围预设
@@ -114,7 +165,7 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       api: async () => {
         const res = await getDictItems('biz_complaint_lavel')
-        console.log(res)
+        // console.log(res)
         if (Array.isArray(res)) {
           res.unshift({ text: '所有', value: '' })
           return res;
@@ -135,7 +186,7 @@ export const searchFormSchema: FormSchema[] = [
       api: async () => {
         const res = await getDictItems('biz_source_type');
         if (Array.isArray(res)) {
-          res.unshift({ text: '==所有==', value: '' });
+          // res.unshift({ text: '==所有==', value: '' });
           return res;
         } else {
           return [];
@@ -143,7 +194,7 @@ export const searchFormSchema: FormSchema[] = [
       },
       labelField: 'text',
       valueField: 'value',
-      placeholder: '==请选择==',
+      // placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -176,9 +227,9 @@ export const searchFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: async () => {
-        const res = await getDictItems('biz_case_type');
+        const res = await getDictItems('biz_case_category');
         if (Array.isArray(res)) {
-          res.unshift({ text: '==请选择==', value: '' });
+          // res.unshift({ text: '==请选择==', value: '' });
           return res;
         } else {
           return [];
@@ -186,7 +237,7 @@ export const searchFormSchema: FormSchema[] = [
       },
       labelField: 'text',
       valueField: 'value',
-      placeholder: '==请选择==',
+      // placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -209,22 +260,65 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 8 },
   },
   {
+    label: '反映管区',
+    field: 'reportDistrictId',
+    component: 'ApiSelect',
+    componentProps: ({ formActionType }) => {
+      return {
+        api: async () => {
+          const res = await getCommunityList('3') // 3表示管区
+          console.log(res)
+          if (Array.isArray(res)) {
+            // res.unshift({label: '所有', value: ''})
+            return res;
+          } else {
+            return [];
+          }
+        },
+        onSelect: async (options, values) => {
+          // console.log('onSelect', options, values, formActionType);
+          const { updateSchema, setFieldsValue } = formActionType;
+          const { value } = values;
+          const res = await getCommunityChildList(value)
+          // console.log(res)
+          // 切换时清空社区数据
+          setFieldsValue({
+            reportCommunityId: ''
+          });
+          if (Array.isArray(res)) {
+            // res.unshift({label: '所有', value: ''})
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: res.map(v => {
+                  return {
+                    label: v.departName,
+                    value: v.id
+                  }
+                }),
+              }
+            });
+          } else {
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: [],
+              }
+            });
+          }
+        },
+        labelField: 'departName',
+        valueField: 'id'
+      }
+    },
+    colProps: { span: 8 },
+  },
+  {
     label: '反映社区',
     field: 'reportCommunityId',
-    component: 'ApiSelect',
+    component: 'Select',
     componentProps: {
-      api: async () => {
-        const res = await getCommunityChildList('3') // 3表示管区
-        console.log(res)
-        if (Array.isArray(res)) {
-          res.unshift({ text: '所有', value: '' })
-          return res;
-        } else {
-          return [];
-        }
-      },
-      labelField: 'departName',
-      valueField: 'id'
+      options: []
     },
     colProps: { span: 8 },
   },
@@ -246,7 +340,7 @@ export const searchFormSchema: FormSchema[] = [
     //   valueField: 'value',
     //   placeholder: '==请选择==',
     // },
-    componentProps: ({ formActionType }) => {
+    componentProps: () => {
       return {
         api: async () => {
           const res = await getCommunityList('2') // 2表示部门
@@ -298,6 +392,7 @@ export const searchFormSchema: FormSchema[] = [
         }
       },
       treeDataSimpleMode: true,
+      placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -309,7 +404,7 @@ export const searchFormSchema: FormSchema[] = [
       api: async () => {
         const res = await getProcessList();
         if (Array.isArray(res)) {
-          res.unshift({ valueName: '==请选择==', valueCode: '' });
+          // res.unshift({ valueName: '==请选择==', valueCode: '' });
           return res;
         } else {
           return [];
@@ -317,7 +412,7 @@ export const searchFormSchema: FormSchema[] = [
       },
       labelField: 'valueName',
       valueField: 'valueCode',
-      placeholder: '==请选择==',
+      // placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -351,26 +446,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 8 },
   },
-  {
-    label: '反映居委会',
-    field: 'reportCommittee',
-    component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        const res = await getDictItems('biz_committee_list');
-        if (Array.isArray(res)) {
-          res.unshift({ text: '==请选择==', value: '' });
-          return res;
-        } else {
-          return [];
-        }
-      },
-      labelField: 'text',
-      valueField: 'value',
-      placeholder: '==请选择==',
-    },
-    colProps: { span: 8 },
-  },
+
   {
     label: '标题',
     field: 'title',
@@ -395,11 +471,9 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '==请选择==', value: '' },
         { label: '已解决', value: '1' },
         { label: '未解决', value: '0' },
       ],
-      placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -409,11 +483,9 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '==请选择==', value: '' },
         { label: '满意', value: '1' },
         { label: '不满意', value: '0' },
       ],
-      placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -423,11 +495,9 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '==请选择==', value: '' },
         { label: '属实', value: '1' },
         { label: '不属实', value: '0' },
       ],
-      placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -472,16 +542,14 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 8 },
   },
   {
-    label: '二次办理',
+    label: '需要二次办理',
     field: 'resolveCount',
     component: 'Select',
     componentProps: {
       options: [
-        { label: '==请选择==', value: '' },
         { label: '一次办理', value: '1' },
         { label: '二次办理', value: '2' },
       ],
-      placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
@@ -491,31 +559,35 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '==请选择==', value: '' },
         { label: '是', value: '1' },
         { label: '否', value: '0' },
       ],
-      placeholder: '==请选择==',
     },
     colProps: { span: 8 },
   },
   {
     label: '七有五性',
     field: 'sevenFiveId',
-    component: 'ApiSelect',
+    component: 'ApiTreeSelect',
     componentProps: {
       api: async () => {
-        const res = await getDictItems('biz_seven_five');
+        const res = await getQywxTreeList();
+        console.log(res)
         if (Array.isArray(res)) {
-          res.unshift({ text: '==请选择==', value: '' });
-          return res;
+          // res.unshift({text: '==请选择==', value: ''})
+          return res.map(v => {
+            return {
+              id: v.id,
+              pId: v.parentId,
+              title: v.liveHoodIssueNames,
+              value: v.id,
+            }
+          });
         } else {
           return [];
         }
       },
-      labelField: 'text',
-      valueField: 'value',
-      placeholder: '==请选择==',
+      treeDataSimpleMode: true,
     },
     colProps: { span: 8 },
   },
@@ -568,8 +640,8 @@ export const formSchema: FormSchema[] = [
         if (Array.isArray(res)) {
           return res.map(v => {
             return {
-               ...v,
-               value : +v.value, // 确保value是数字类型
+              ...v,
+              value: +v.value, // 确保value是数字类型
             };
           });
         } else {
@@ -587,14 +659,125 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
+    field: 'importTime',
+    label: '导入时间',
+    component: 'DatePicker',
+    required: true,
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+    },
+    colProps: { span: 12 },
+  },
+  {
     field: 'workOrderNumber',
     label: '工单编号',
     component: 'Input',
+
     required: true,
     colProps: { span: 24 },
     itemProps: {
       wrapperCol: { span: 24, sm: { span: 21 } },
     }
+  },
+  {
+    field: 'callTime',
+    label: '来电时间',
+    component: 'DatePicker',
+    required: true,
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'hotlineNumber',
+    label: '热线号码',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+
+  {
+    field: 'acceptDepartment',
+    label: '受理单位',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'callUserName',
+    label: '来电人',
+    required: true,
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入来电人',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'callPhoneNumber',
+    label: '来电号码',
+    component: 'Input',
+    // rules: [{ required: true, pattern: /^1[3456789]\d{9}$/, message: '手机号码格式有误' }],
+    required: true,
+    componentProps: {
+      placeholder: '请输入来电号码',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'callUserAddress',
+    label: '来电人地址',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入来电人地址',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'workOrderCategory',
+    label: '工单分类',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入工单分类',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'questionCategory',
+    label: '问题分类',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入问题分类',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'occurrenceAddress',
+    label: '发生地址',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入发生地址',
+    },
+    colProps: { span: 12 },
+  },
+  {
+    field: 'categoryOne',
+    label: '一级分类',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'categoryTwo',
+    label: '二级分类',
+    component: 'Input',
+    colProps: { span: 12 },
+  },
+  {
+    field: 'categoryThree',
+    label: '三级分类',
+    component: 'Input',
+    colProps: { span: 12 },
   },
   {
     field: 'title',
@@ -624,127 +807,19 @@ export const formSchema: FormSchema[] = [
       wrapperCol: { span: 24, sm: { span: 21 } },
     }
   },
-  {
-    field: 'callUserName',
-    label: '来电人',
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入来电人',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'callPhoneNumber',
-    label: '来电号码',
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入来电号码',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'callTime',
-    label: '来电时间',
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'callUserAddress',
-    label: '来电人地址',
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入来电人地址',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'receiveStatus',
-    label: '状态',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '待接收', value: 0 },
-        { label: '已接收', value: 1 },
-      ],
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'assignDepts',
-    label: '处理科室',
-    component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        return await getDictItems('biz_dept_list');
-      },
-      labelField: 'text',
-      valueField: 'value',
-      mode: 'multiple',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'assignCommunitys',
-    label: '处理社区',
-    component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        return await getDictItems('biz_community_list');
-      },
-      labelField: 'text',
-      valueField: 'value',
-      mode: 'multiple',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'reportCommunityId',
-    label: '反映社区',
-    component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        return await getDictItems('biz_community_list');
-      },
-      labelField: 'text',
-      valueField: 'value',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'reportDistrictId',
-    label: '反映管区',
-    component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        return await getDictItems('biz_district_list');
-      },
-      labelField: 'text',
-      valueField: 'value',
-    },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'categoryOne',
-    label: '一级分类',
-    component: 'Input',
-    colProps: { span: 12 },
-  },
-  {
-    field: 'categoryTwo',
-    label: '二级分类',
-    component: 'Input',
-    colProps: { span: 12 },
-  },
-  {
-    field: 'categoryThree',
-    label: '三级分类',
-    component: 'Input',
-    colProps: { span: 12 },
-  },
+  // {
+  //   field: 'receiveStatus',
+  //   label: '状态',
+  //   component: 'Select',
+  //   componentProps: {
+  //     options: [
+  //       { label: '待接收', value: 0 },
+  //       { label: '已接收', value: 1 },
+  //     ],
+  //   },
+  //   colProps: { span: 12 },
+  // },
+
   {
     field: 'sendUser',
     label: '派单人员',
@@ -755,6 +830,7 @@ export const formSchema: FormSchema[] = [
     field: 'sendTime',
     label: '派单时间',
     component: 'DatePicker',
+    required: true,
     componentProps: {
       showTime: true,
       format: 'YYYY-MM-DD HH:mm:ss',
@@ -778,6 +854,7 @@ export const formSchema: FormSchema[] = [
     field: 'deadline',
     label: '截止时间',
     component: 'DatePicker',
+    required: true,
     componentProps: {
       showTime: true,
       format: 'YYYY-MM-DD HH:mm:ss',
@@ -814,29 +891,351 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'sevenFiveId',
-    label: '七有五性',
-    component: 'ApiSelect',
+    field: 'finalResolveResult',
+    label: '最终处理情况',
+    // label: () => h('span', {}, [
+    //   '最终处理情况/', h('br'), '居委会'
+    // ]),
+    component: 'InputTextArea',
+    required: true,
+    componentProps: {
+      rows: 4,
+      placeholder: '请输入最终处理情况',
+    },
+    colProps: { span: 24 },
+  },
+];
+
+// 待补充表单
+export const addFormSchema: FormSchema[] = [
+  {
+    field: 'labelCode',
+    label: '案件标签',
+    component: 'RadioGroup',
     componentProps: {
       api: async () => {
-        return await getDictItems('biz_seven_five');
+        const res = await getDictItems('biz_complaint_lavel');
+        if (Array.isArray(res)) {
+          // res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
       },
       labelField: 'text',
       valueField: 'value',
+      // placeholder: '==请选择==',
     },
-    colProps: { span: 12 },
+    // componentProps: {
+    //   options: getDictItemsByCode('biz_complaint_lavel')
+    // }
   },
+  {
+    field: 'reportDistrictId',
+    label: '反映管区',
+    component: 'ApiSelect',
+    componentProps: ({ formActionType }) => {
+      return {
+        api: async () => {
+          const res = await getCommunityList('3') // 3表示管区
+          console.log(res)
+          if (Array.isArray(res)) {
+            // res.unshift({label: '所有', value: ''})
+            return res;
+          } else {
+            return [];
+          }
+        },
+        onSelect: async (options, values) => {
+          // console.log(options, values);
+          const { updateSchema, setFieldsValue } = formActionType;
+          const { value } = values;
+          const res = await getCommunityChildList(value)
+          // console.log(res)
+          // 切换时清空社区数据
+          setFieldsValue({
+            reportCommunityId: ''
+          });
+          if (Array.isArray(res)) {
+            // res.unshift({label: '所有', value: ''})
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: res.map(v => {
+                  return {
+                    label: v.departName,
+                    value: v.id
+                  }
+                }),
+              }
+            });
+          } else {
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: [],
+              }
+            });
+          }
+        },
+        labelField: 'departName',
+        valueField: 'id'
+      }
+    }
+  },
+  {
+    field: 'reportCommunityId',
+    label: '反映社区',
+    component: 'Select',
+    componentProps: {
+      options: []
+    }
+  },
+  {
+    field: 'assignDeptIdList',
+    label: '处理科室',
+    component: 'ApiSelect',
+    componentProps: ({ formActionType }) => {
+      return {
+        api: async () => {
+          const res = await getCommunityList('2') // 2表示部门
+          console.log(res)
+          if (Array.isArray(res)) {
+            // res.unshift({label: '所有', value: ''})
+            return res;
+          } else {
+            return [];
+          }
+        },
+        labelField: 'departName',
+        valueField: 'id',
+        multiple: true,
+        checkable: true,
+      }
+    }
+  },
+  {
+    field: 'assignCommunityIdList',
+    label: '处理社区/居委会',
+    component: 'ApiTreeSelect',
+    componentProps: {
+      checkable: true,
+      multiple: true,
+      api: async () => {
+        const res = await getSecondTreeList('3');
+        console.log(res)
+        if (Array.isArray(res)) {
+          // res.unshift({text: '==请选择==', value: ''})
+          // 把tree格式数据展开
+          const newList = treeToList(res);
+          // console.log(res)
+          // res.unshift({text: '==请选择==', value: ''})
+          // console.log(res)
+          return newList.map(v => {
+            return {
+              id: v.id,
+              pId: v.parentId,
+              title: v.title,
+              value: v.id,
+            }
+          });
+        } else {
+          return [];
+        }
+      },
+      treeDataSimpleMode: true,
+    },
+    // treeDataSimpleMode: true,
+  },
+  {
+    label: '案件类型',
+    field: 'caseType',
+    component: 'ApiSelect',
+    required: true,
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_case_category');
+        if (Array.isArray(res)) {
+          // res.unshift({ text: '==请选择==', value: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      // placeholder: '==请选择==',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '是否响应',
+    field: 'responseFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '工单状态',
+    field: 'statusCode',
+    component: 'ApiSelect',
+    required: true,
+    componentProps: {
+      api: async () => {
+        const res = await getProcessList();
+        if (Array.isArray(res)) {
+          // res.unshift({ valueName: '==请选择==', valueCode: '' });
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'valueName',
+      valueField: 'valueCode',
+      // placeholder: '==请选择==',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '办结时间',
+    field: 'doneTime',
+    component: 'DatePicker',
+    required: true,
+    componentProps: {
+      // presets: rangePresets,
+      // placeholder: ['开始日期', '结束日期'],
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '督办人',
+    field: 'overseeUserName',
+    component: 'Input',
+    required: true,
+    componentProps: {
+      placeholder: '请输入督办人',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    field: 'followCode',
+    label: '跟进情况',
+    component: 'ApiSelect',
+    required: true,
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_follow_code')
+        console.log(res)
+        if (Array.isArray(res)) {
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '是否解决',
+    field: 'resolveFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '已解决', value: '1' },
+        { label: '未解决', value: '0' },
+      ],
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '是否满意',
+    field: 'satisfyFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '满意', value: '1' },
+        { label: '不满意', value: '0' },
+      ],
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '是否属实',
+    field: 'factFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '属实', value: '1' },
+        { label: '不属实', value: '0' },
+      ],
+    },
+    colProps: { span: 24 },
+  },
+  {
+    field: 'sevenFiveId',
+    label: '七有五性',
+    component: 'ApiTreeSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getQywxTreeList();
+        console.log(res)
+        if (Array.isArray(res)) {
+          // res.unshift({text: '==请选择==', value: ''})
+          return res.map(v => {
+            return {
+              id: v.id,
+              pId: v.parentId,
+              title: v.liveHoodIssueNames,
+              value: v.id,
+            }
+          });
+        } else {
+          return [];
+        }
+      },
+      treeDataSimpleMode: true,
+    }
+  },
+  {
+    label: '已倾听',
+    field: 'fileRead',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+    },
+    colProps: { span: 24 },
+  },
+  {
+    label: '需要二次办理',
+    field: 'resolveCount',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '一次办理', value: '1' },
+        { label: '二次办理', value: '2' },
+      ],
+    },
+    colProps: { span: 24 },
+  },
+
   {
     field: 'remark',
     label: '备注',
     component: 'InputTextArea',
-    componentProps: {
-      rows: 4,
-      placeholder: '请输入备注',
-    },
     colProps: { span: 24 },
     itemProps: {
       wrapperCol: { span: 24, sm: { span: 21 } },
     }
   },
-]; 
+];

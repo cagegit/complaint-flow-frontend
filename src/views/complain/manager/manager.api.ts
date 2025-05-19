@@ -1,5 +1,5 @@
 import { ContentTypeEnum } from '/@/enums/httpEnum';
-import { pageNoToPageNum } from '/@/utils';
+import { pageNoToPageNum, paramsToQuery } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
 
@@ -7,17 +7,25 @@ export enum Api {
   // 获取工单列表
   list = '/complain/manage/getManageList',
   // 编辑工单
-  editTicket = '/complain/manage/editComplain',
+  editComplain = '/complain/manage/editComplain',
   // 工单状态列表
   getProcessList = '/complain/manage/getProcessList',
   // 获取工单详情
-  getTicketInfo = '/complain/manage/getManageDetail',
+  getManageInfo = '/complain/manage/getManageDetail',
   // 删除
   deleteComplain = '/complain/manage/deleteComplain',
 
   // 批量删除
   deleteBatchComplain = '/complain/manage/deleteComplain',
+
+  //导出word工单
+  exportTicketWord = '/complain/manage/exportTicketWord',
+
+  // 导出剔除统计表
+  exportKickOut = 'complain/manage/exportKickOut',
 }
+
+
 /**
  * 工单管理列表
  */
@@ -91,9 +99,9 @@ export const list = (param) => {
 /**
  * 编辑工单
  */
-export const editTicket = (params) =>
+export const editComplain = (params) =>
   defHttp.post({
-    url: Api.editTicket,
+    url: Api.editComplain,
     params,
     headers: { ContentType: ContentTypeEnum.FORM_URLENCODED },
   });
@@ -121,9 +129,20 @@ export const deleteBatchTicket = (params) =>
 /**
  * 获取工单详情
  */
-export const getTicketInfo = (params) => defHttp.get({ url: Api.getTicketInfo, params });
+export const getManageInfo = (ticketId: string) => defHttp.get({ url: Api.getManageInfo + '?ticketId=' + ticketId });
 
 /**
  * 获取工单状态列表
  */
-export const getProcessList = () => defHttp.get({ url: Api.getProcessList }); 
+export const getProcessList = () => defHttp.get({ url: Api.getProcessList });
+
+/**
+ * 导出word工单
+ */
+export const exportTicketWord = (params) => defHttp.post({ url: paramsToQuery(Api.exportTicketWord, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
+
+/**
+ * 导出剔除统计表
+ */
+export const exportKickOut = (params) => defHttp.post({ url: paramsToQuery(Api.exportKickOut, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
+

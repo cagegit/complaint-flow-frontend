@@ -60,486 +60,615 @@ import { getDictItemsByCode } from '/@/utils/dict';
 //根据上面的内容生成表格的columns和搜索表单的schema
 export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
-    // 紧急程度
-    { title: '紧急程度', dataIndex: 'emergencyLevel', width: 100,
-      customRender: ({record}) => {
-        let text = '';
-        let color = '';
-        let array = getDictItemsByCode('biz_time_level') || [];
-        let obj = array.filter((item) => {
-          return item.value == record.timeLevel +'';
-        });
-        if (obj[0]) {
-          text = obj[0].text;
-          color = obj[0].color;
-           return render.renderTag(text, color);
+  // 紧急程度
+  {
+    title: '紧急程度', dataIndex: 'emergencyLevel', width: 100,
+    customRender: ({ record }) => {
+      let text = '';
+      let color = '';
+      let array = getDictItemsByCode('biz_time_level') || [];
+      let obj = array.filter((item) => {
+        return item.value == record.timeLevel + '';
+      });
+      if (obj[0]) {
+        text = obj[0].text;
+        color = obj[0].color;
+        return render.renderTag(text, color);
+      } else {
+        return text;
+      }
+    },
+  },
+  {
+    title: '数据来源', dataIndex: 'sourceType', width: 120,
+    customRender: ({ text }) => {
+      return render.renderDict(text, 'biz_source_type');
+    }
+  },
+  { title: '标签code', dataIndex: 'labelCode', width: 120 },
+  { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '来电人', dataIndex: 'callUserName', width: 120 },
+  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
+  {
+    title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
+      return text === 0 ? '待分派' : '已分派';
+    }
+  },
+  { title: '月次', dataIndex: 'monthCount', width: 80 },
+  { title: '年次', dataIndex: 'yearCount', width: 80 },
+  { title: '标题', dataIndex: 'title', width: 180 },
+  { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+
+  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+  { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
+  { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
+  { title: '来电时间', dataIndex: 'callTime', width: 150 },
+  { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
+  { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
+  { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
+  { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
+  { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
+  { title: '创建人名称', dataIndex: 'createBy', width: 120 },
+  { title: '创建时间', dataIndex: 'createTime', width: 150 },
+  { title: '创建人id', dataIndex: 'createUserId', width: 120 },
+  { title: '截止时间', dataIndex: 'deadline', width: 150 },
+  { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
+  { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
+  { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
+  { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
+  { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
+  { title: '所属部门', dataIndex: 'orgId', width: 150 },
+  { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
+  { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
+  { title: '流程节点名称', dataIndex: 'processName', width: 150 },
+  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
+  { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
+  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
+  { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
+  { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
+  { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
+  { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
+  { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+  { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
+  { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
+  { title: '派单时间', dataIndex: 'sendTime', width: 150 },
+  { title: '派单人员', dataIndex: 'sendUser', width: 120 },
+  { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
+  { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
+  { title: '修改时间', dataIndex: 'updateTime', width: 150 },
+  { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
+  { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+  { title: '备注', dataIndex: 'remark', width: 180 },
+
+];
+
+const rangePresets = ref([
+  { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+  { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
+  { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
+  { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
+]);
+
+export const searchFormSchema: FormSchema[] = [
+  //   {
+  //     label: '姓名',
+  //     field: 'realname',
+  //     component: 'Input',
+  //     colProps: { span: 6 },
+  //   },
+  //   {
+  //     label: '工号',
+  //     field: 'workNo',
+  //     component: 'Input',
+  //     colProps: { span: 6 },
+  //   },
+  {
+    label: '案件标签',
+    field: 'labelCode',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_complaint_lavel')
+        console.log(res)
+        if (Array.isArray(res)) {
+          res.unshift({ text: '所有', value: '' })
+          return res;
         } else {
-          return text;
+          return [];
         }
       },
-     },
-   { title: '数据来源', dataIndex: 'sourceType', width: 120,
-      customRender: ({ text }) => {
-        return render.renderDict(text, 'biz_source_type');
-      }
- },
-   { title: '标签code', dataIndex: 'labelCode', width: 120 },
-   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
-   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
-   { title: '来电人', dataIndex: 'callUserName', width: 120 },
-   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-   { title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
-    return text === 0 ? '待分派' : '已分派';
-   }},
-   { title: '月次', dataIndex: 'monthCount', width: 80, 
-          slots:{
-            customRender: 'monthCount',
-          }
     },
-   { title: '年次', dataIndex: 'yearCount', width: 80,
-          slots:{
-            customRender: 'yearCount',
-          }
-    },
-   { title: '标题', dataIndex: 'title', width: 180 },
-   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
-
-    { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
-    { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
-    { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
-    { title: '来电时间', dataIndex: 'callTime', width: 150 },
-    { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
-    { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
-    { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
-    { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
-    { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
-    { title: '创建人名称', dataIndex: 'createBy', width: 120 },
-    { title: '创建时间', dataIndex: 'createTime', width: 150 },
-    { title: '创建人id', dataIndex: 'createUserId', width: 120 },
-    { title: '截止时间', dataIndex: 'deadline', width: 150 },
-    { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
-    { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
-    { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
-    { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
-    { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
-    { title: '所属部门', dataIndex: 'orgId', width: 150 },
-    { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
-    { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
-    { title: '流程节点名称', dataIndex: 'processName', width: 150 },
-    { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
-    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
-    { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
-    { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-    { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
-    { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
-    { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
-    { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
-    { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
-    { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
-    { title: '派单时间', dataIndex: 'sendTime', width: 150 },
-    { title: '派单人员', dataIndex: 'sendUser', width: 120 },
-    { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
-    { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
-    { title: '修改时间', dataIndex: 'updateTime', width: 150 },
-    { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
-    { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-    { title: '备注', dataIndex: 'remark', width: 180 },
-
-  ];
-
-   const rangePresets = ref([
-    { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
-    { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
-      { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
-      { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
-  ]);
-
-    export const searchFormSchema: FormSchema[] = [
-    //   {
-    //     label: '姓名',
-    //     field: 'realname',
-    //     component: 'Input',
-    //     colProps: { span: 6 },
-    //   },
-    //   {
-    //     label: '工号',
-    //     field: 'workNo',
-    //     component: 'Input',
-    //     colProps: { span: 6 },
-    //   },
-    {
-        label: '案件标签',
-        field: 'labelCode',
-        component: 'ApiSelect',
-        componentProps: {
-            api: async () => {
-                const res  = await getDictItems('biz_complaint_lavel')
-                console.log(res)
-                if(Array.isArray(res)){
-                    res.unshift({text: '所有', value: ''})
-                    return res;
-                } else {
-                    return [];
-                }
-            },
-            labelField: 'text',
-            valueField: 'value'
-        },
-        colProps: { span: 6 }
-    },
-    {
-        label: '状态',
-        field: 'assignStatus',
-        component: 'Select',
-        componentProps: {
-            options: [
-                { label: '待分派', value: '0' },
-                { label: '已分派', value: '1' },
-            ],
-            allowClear: false
-        },
-        colProps: { span: 6 },
-        defaultValue: '0',
-    },
-    {
-        label: '数据来源',
-        field: 'sourceType',
-        component: 'ApiSelect',
-        componentProps: {
-          // options: [
-          //     { label: '所有', value: '' },
-          //     { label: '本地录入', value: '0' },
-          //     { label: '区分转', value: '1' },
-          //     { label: '直派', value: '2' },
-          // ],
-          api: async () => {
-            const res  = await getDictItems('biz_source_type')
-              console.log(res)
-              if(Array.isArray(res)){
-                  res.unshift({text: '所有', value: ''})
-                  return res;
-              } else {
-                  return [];
-              }
-          },
-          labelField: 'text',
-          valueField: 'value'
-        },
-        colProps: { span: 6 },
-    },
-    {
-        label: '导入时间',
-        field: 'importTime',
-        component: 'RangePicker',
-        colProps: { span: 6 },
-        componentProps: {
-          presets: rangePresets,
-        },
-        defaultValue: [
-          dayjs().add(-3, 'M'),
-          dayjs()
-        ]
-    },
-    {
-        label: '派单时间',
-        field: 'sendTime',
-        component: 'RangePicker',
-        colProps: { span: 6 },
-        componentProps: {
-          presets: rangePresets,
-        }
-    },
-    {
-        label: '关键字',
-        field: 'keyword',
-        component: 'Input',
-        componentProps: {
-        placeholder: '标题\\内容\\来电号码\\发生地址',
-        },
-        colProps: { span: 6 },
-    },
-    {
-        label: '案件编号',
-        field: 'caseNumber',
-        component: 'Input',
-        colProps: { span: 6 },
-    },
-    {
-        label: '工单编号',
-        field: 'workOrderNumber',
-        component: 'Input',
-        colProps: { span: 6 },
-    },
-    {
-        label: '标题',
-        field: 'title',
-        component: 'Input',
-        colProps: { span: 6 },
-    },
-    {
-        label: '主要内容',
-        field: 'mainContent',
-        component: 'Input',
-        colProps: { span: 6 },
-    },
-    {
-        label: '重点对象',
-        field: 'monitorType',
-        component: 'ApiSelect',
-        componentProps: {
-          // options: [
-          //     { label: '==请选择==', value: '' },
-          //     { label: '红名单', value: '0' },
-          //     { label: '黑名单', value: '1' },
-          //     { label: '失信名单', value: '3' },
-          // ],
-          api: async () => {
-            const res  = await getDictItems('biz_monitor_type')
-              console.log(res)
-              if(Array.isArray(res)){
-                  res.unshift({text: '==请选择==', value: ''})
-                  return res;
-              } else {
-                  return [];
-              }
-          },
-          labelField: 'text',
-          valueField: 'value',
-        },
-        colProps: { span: 6 },
+   {
+    title: '数据来源', dataIndex: 'sourceType', width: 120,
+    customRender: ({ text }) => {
+      return render.renderDict(text, 'biz_source_type');
     }
+  },
+  { title: '标签code', dataIndex: 'labelCode', width: 120 },
+  { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '来电人', dataIndex: 'callUserName', width: 120 },
+  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
+  {
+    title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
+      return text === 0 ? '待分派' : '已分派';
+    }
+  },
+  {
+    title: '月次', dataIndex: 'monthCount', width: 80,
+    slots: {
+      customRender: 'monthCount',
+    }
+  },
+  {
+    title: '年次', dataIndex: 'yearCount', width: 80,
+    slots: {
+      customRender: 'yearCount',
+    }
+  },
+  { title: '标题', dataIndex: 'title', width: 180 },
+  { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+
+  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+  { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
+  { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
+  { title: '来电时间', dataIndex: 'callTime', width: 150 },
+  { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
+  { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
+  { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
+  { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
+  { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
+  { title: '创建人名称', dataIndex: 'createBy', width: 120 },
+  { title: '创建时间', dataIndex: 'createTime', width: 150 },
+  { title: '创建人id', dataIndex: 'createUserId', width: 120 },
+  { title: '截止时间', dataIndex: 'deadline', width: 150 },
+  { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
+  { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
+  { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
+  { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
+  { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
+  { title: '所属部门', dataIndex: 'orgId', width: 150 },
+  { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
+  { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
+  { title: '流程节点名称', dataIndex: 'processName', width: 150 },
+  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
+  { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
+  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
+  { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
+  { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
+  { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
+  { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
+  { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+  { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
+  { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
+  { title: '派单时间', dataIndex: 'sendTime', width: 150 },
+  { title: '派单人员', dataIndex: 'sendUser', width: 120 },
+  { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
+  { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
+  { title: '修改时间', dataIndex: 'updateTime', width: 150 },
+  { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
+  { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+  { title: '备注', dataIndex: 'remark', width: 180 },
+
+];
+
+const rangePresets = ref([
+  { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+  { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
+  { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
+  { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
+]);
+
+export const searchFormSchema: FormSchema[] = [
+  //   {
+  //     label: '姓名',
+  //     field: 'realname',
+  //     component: 'Input',
+  //     colProps: { span: 6 },
+  //   },
+  //   {
+  //     label: '工号',
+  //     field: 'workNo',
+  //     component: 'Input',
+  //     colProps: { span: 6 },
+  //   },
+  {
+    label: '案件标签',
+    field: 'labelCode',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_complaint_lavel')
+        console.log(res)
+        if (Array.isArray(res)) {
+          res.unshift({ text: '所有', value: '' })
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value'
+    },
+    colProps: { span: 6 }
+  },
+  {
+    label: '状态',
+    field: 'assignStatus',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '待分派', value: '0' },
+        { label: '已分派', value: '1' },
+      ],
+      allowClear: false
+    },
+    colProps: { span: 6 },
+    defaultValue: '0',
+  },
+  colProps: { span: 6 },
+  defaultValue: '0',
+  },
+{
+  label: '数据来源',
+    field: 'sourceType',
+      component: 'ApiSelect',
+        componentProps: {
+    // options: [
+    //     { label: '所有', value: '' },
+    //     { label: '本地录入', value: '0' },
+    //     { label: '区分转', value: '1' },
+    //     { label: '直派', value: '2' },
+    // ],
+    api: async () => {
+      const res = await getDictItems('biz_source_type')
+      console.log(res)
+      if (Array.isArray(res)) {
+        res.unshift({ text: '所有', value: '' })
+        return res;
+      } else {
+        return [];
+      }
+    },
+      labelField: 'text',
+        valueField: 'value'
+  },
+  colProps: { span: 6 },
+},
+{
+  label: '导入时间',
+    field: 'importTime',
+      component: 'RangePicker',
+        colProps: { span: 6 },
+  componentProps: {
+    presets: rangePresets,
+    },
+  defaultValue: [
+    dayjs().add(-3, 'M'),
+    dayjs()
+  ]
+},
+{
+  label: '派单时间',
+    field: 'sendTime',
+      component: 'RangePicker',
+        colProps: { span: 6 },
+  componentProps: {
+    presets: rangePresets,
+    }
+},
+{
+  label: '关键字',
+    field: 'keyword',
+      component: 'Input',
+        componentProps: {
+    placeholder: '标题\\内容\\来电号码\\发生地址',
+    },
+  colProps: { span: 6 },
+},
+{
+  label: '案件编号',
+    field: 'caseNumber',
+      component: 'Input',
+        colProps: { span: 6 },
+},
+{
+  label: '工单编号',
+    field: 'workOrderNumber',
+      component: 'Input',
+        colProps: { span: 6 },
+},
+{
+  label: '标题',
+    field: 'title',
+      component: 'Input',
+        colProps: { span: 6 },
+},
+{
+  label: '主要内容',
+    field: 'mainContent',
+      component: 'Input',
+        colProps: { span: 6 },
+},
+{
+  label: '重点对象',
+    field: 'monitorType',
+      component: 'ApiSelect',
+        componentProps: {
+    // options: [
+    //     { label: '==请选择==', value: '' },
+    //     { label: '红名单', value: '0' },
+    //     { label: '黑名单', value: '1' },
+    //     { label: '失信名单', value: '3' },
+    // ],
+    api: async () => {
+      const res = await getDictItems('biz_monitor_type')
+      console.log(res)
+      if (Array.isArray(res)) {
+        res.unshift({ text: '==请选择==', value: '' })
+        return res;
+      } else {
+        return [];
+      }
+    },
+      labelField: 'text',
+        valueField: 'value',
+    },
+  colProps: { span: 6 },
+}
 ];
 
 // 新增或者编辑表单项
 export const formSchema: FormSchema[] = [
-    {
-      label: '数据来源',
-      field: 'sourceType',
-      component: 'Select',
-      required: true,
-      componentProps: {
-        options: [
-          { label: '本地录入', value: 0 },
-          { label: '区分转', value: 1 },
-          { label: '直派', value: 2 },
-        ],
-      },
-      colProps: { span: 12 },
+  {
+    label: '数据来源',
+    field: 'sourceType',
+    component: 'Select',
+    required: true,
+    componentProps: {
+      options: [
+        { label: '本地录入', value: 0 },
+        { label: '区分转', value: 1 },
+        { label: '直派', value: 2 },
+      ],
     },
-    {
-      label: '工单编号',
-      field: 'workOrderNumber',
+    colProps: { span: 12 },
+  },
+  colProps: { span: 12 },
+  },
+{
+  label: '工单编号',
+    field: 'workOrderNumber',
       component: 'Input',
-      colProps: { span: 12 },
-      required: true,
-    },
-    {
-      label: '案件编号',
-      field: 'caseNumber',
+        colProps: { span: 12 },
+  required: true,
+  },
+{
+  label: '案件编号',
+    field: 'caseNumber',
       component: 'Input',
-      colProps: { span: 12 },
-      required: true,
-    },
-    {
-      label: '导入时间',
-      field: 'importTime',
+        colProps: { span: 12 },
+  required: true,
+  },
+{
+  label: '导入时间',
+    field: 'importTime',
       component: 'RangePicker',
-      colProps: { span: 12 },
-      componentProps: {
-        presets: rangePresets,
+        colProps: { span: 12 },
+  componentProps: {
+    presets: rangePresets,
+      style: { width: '100%' },
+  },
+  {
+    label: '案件编号',
+      field: 'caseNumber',
+        component: 'Input',
+          colProps: { span: 12 },
+    required: true,
+    },
+  {
+    label: '导入时间',
+      field: 'importTime',
+        component: 'RangePicker',
+          colProps: { span: 12 },
+    componentProps: {
+      presets: rangePresets,
         style: { width: '100%' },
+    },
+    required: true
+  },
+  {
+    label: '来电时间',
+      field: 'callTime',
+        component: 'DatePicker',
+          componentProps: {
+      showTime: true,
+        format: 'YYYY-MM-DD HH:mm:ss',
       },
+  },
+  {
+    label: '热线号码',
+      field: 'hotlineNumber',
+        component: 'Input',
+    },
+  {
+    label: '受理单位',
+      field: 'acceptDepartment',
+        component: 'Input',
+    },
+  {
+    label: '来电人',
+      field: 'callUserName',
+        component: 'Input',
+          required: true,
+    },
+  {
+    label: '来电号码',
+      field: 'callPhoneNumber',
+        component: 'Input',
+          required: true,
+    },
+  {
+    label: '联系方式',
+      field: 'contactInfo',
+        component: 'Input',
+    },
+  {
+    label: '来电人地址',
+      field: 'callUserAddress',
+        component: 'Input',
+    },
+  {
+    label: '发生地址',
+      field: 'occurrenceAddress',
+        component: 'Input',
+    },
+  {
+    label: '问题分类',
+      field: 'questionCategory',
+        component: 'Input',
+    },
+  {
+    label: '工单分类',
+      field: 'workOrderCategory',
+        component: 'Input',
+          required: true,
+    },
+  {
+    label: '一级分类',
+      field: 'categoryOne',
+        component: 'Input',
+          required: true,
+    },
+  {
+    label: '二级分类',
+      field: 'categoryTwo',
+        component: 'Input',
+    },
+  {
+    label: '三级分类',
+      field: 'categoryThree',
+        component: 'Input',
+          colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
+  },
+  {
+    label: '标题',
+      field: 'title',
+        component: 'InputTextArea',
+          required: true,
+            componentProps: {
+      rows: 3,
+        placeholder: '请输入标题',
+          style: { width: '100%' },
+    },
+    colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
+  },
+  {
+    label: '主要内容',
+      field: 'mainContent',
+        component: 'InputTextArea',
+          required: true,
+            componentProps: {
+      rows: 6,
+        placeholder: '请输入主要内容',
+          style: { width: '100%' },
+    },
+    colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
+  },
+  {
+    label: '派单人员',
+      field: 'sendUser',
+        component: 'Input',
+    },
+  {
+    label: '派单时间',
+      field: 'sendTime',
+        component: 'DatePicker',
+          required: true,
+    },
+  {
+    label: '处理意见',
+      field: 'resolveOpinion',
+        component: 'Input',
+    },
+  {
+    label: '截止时间',
+      field: 'deadline',
+        component: 'DatePicker',
+          required: true,
+    },
+  {
+    label: '处理时限',
+      field: 'resolveTimeLimit',
+        component: 'Input',
+    },
+  {
+    label: '承办单位',
+      field: 'resolveDepartment',
+        component: 'Input'
+  },
+  {
+    label: '处理情况',
+      field: 'finalResolveResult',
+        component: 'InputTextArea',
+          required: true,
+            componentProps: {
+      rows: 6,
+        placeholder: '请输入处理情况',
+          style: { width: '100%' },
+    },
+    colProps: { span: 24, sm: { span: 24 } },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
+  },
+  ];
+
+  // 待补充表单
+  export const addFormSchema: FormSchema[] = [
+    {
+      field: 'labelCode', label: '标签',
+      component: 'RadioGroup',
+      componentProps: {
+        options: getDictItemsByCode('biz_complaint_lavel')
+      },
+      defaultValue: '1',
       required: true
     },
     {
-      label: '来电时间',
-      field: 'callTime',
-      component: 'DatePicker',
-      componentProps: {
-        showTime: true,
-        format: 'YYYY-MM-DD HH:mm:ss',
-      },
-    },
-    {
-      label: '热线号码',
-      field: 'hotlineNumber',
-      component: 'Input',
-    },
-    {
-      label: '受理单位',
-      field: 'acceptDepartment',
-      component: 'Input',
-    },
-    {
-      label: '来电人',
-      field: 'callUserName',
-      component: 'Input',
+      field: 'reportDistrictId',
+      label: '反映管区',
+      component: 'ApiSelect',
       required: true,
-    },
-    {
-      label: '来电号码',
-      field: 'callPhoneNumber',
-      component: 'Input',
-      required: true,
-    },
-    {
-      label: '联系方式',
-      field: 'contactInfo',
-      component: 'Input',
-    },
-    {
-      label: '来电人地址',
-      field: 'callUserAddress',
-      component: 'Input',
-    },
-    {
-      label: '发生地址',
-      field: 'occurrenceAddress',
-      component: 'Input',
-    },
-    {
-      label: '问题分类',
-      field: 'questionCategory',
-      component: 'Input',
-    },
-    {
-      label: '工单分类',
-      field: 'workOrderCategory',
-      component: 'Input',
-      required: true,
-    },
-    {
-      label: '一级分类',
-      field: 'categoryOne',
-      component: 'Input',
-      required: true,
-    },
-    {
-      label: '二级分类',
-      field: 'categoryTwo',
-      component: 'Input',
-    },
-    {
-      label: '三级分类',
-      field: 'categoryThree',
-      component: 'Input',
-      colProps: { span: 24 },
-      itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
-      }
-    },
-    {
-      label: '标题',
-      field: 'title',
-      component: 'InputTextArea',
-      required: true,
-      componentProps: {
-        rows: 3,
-        placeholder: '请输入标题',
-        style: { width: '100%' },
-      },
-      colProps: { span: 24 },
-      itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
-      }
-    },
-    {
-      label: '主要内容',
-      field: 'mainContent',
-      component: 'InputTextArea',
-      required: true,
-      componentProps: {
-        rows: 6,
-        placeholder: '请输入主要内容',
-        style: { width: '100%' },
-      },
-      colProps: { span: 24 },
-      itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
-      }
-    },
-    {
-      label: '派单人员',
-      field: 'sendUser',
-      component: 'Input',
-    },
-    {
-      label: '派单时间',
-      field: 'sendTime',
-      component: 'DatePicker',
-      required: true,
-    },
-    {
-      label: '处理意见',
-      field: 'resolveOpinion',
-      component: 'Input',
-    },
-    {
-      label: '截止时间',
-      field: 'deadline',
-      component: 'DatePicker',
-      required: true,
-    },
-    {
-      label: '处理时限',
-      field: 'resolveTimeLimit',
-      component: 'Input',
-    },
-    {
-      label: '承办单位',
-      field: 'resolveDepartment',
-      component: 'Input'
-    },
-     {
-      label: '处理情况',
-      field: 'finalResolveResult',
-      component: 'InputTextArea',
-      required: true,
-      componentProps: {
-        rows: 6,
-        placeholder: '请输入处理情况',
-        style: { width: '100%' },
-      },
-      colProps: { span: 24, sm: { span: 24 } },
-      itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
-      }
-    },
-  ];
-
- // 待补充表单
- export const addFormSchema: FormSchema[] = [
-  { field: 'labelCode', label: '标签', 
-    component: 'RadioGroup', 
-    componentProps: { 
-      options: getDictItemsByCode('biz_complaint_lavel') 
-    },
-    defaultValue: '1',
-    required: true
-  },
-  { field: 'reportDistrictId', 
-    label: '反映管区', 
-    component: 'ApiSelect',
-    required: true,
-    componentProps: ({ formActionType }) => {
-      return {
-        api: async () => {
-          const res  = await getCommunityList('3') // 3表示管区
+      componentProps: ({ formActionType }) => {
+        return {
+          api: async () => {
+            const res = await getCommunityList('3') // 3表示管区
             console.log(res)
-            if(Array.isArray(res)){
-                // res.unshift({label: '所有', value: ''})
+            if (Array.isArray(res)) {
+              // res.unshift({label: '所有', value: ''})
               return res;
             } else {
               return [];
             }
-        },
-        onSelect: async (options, values) => {
-          console.log(options, values);
-          const { updateSchema } = formActionType;
-          const { value } = values;
-          const res  = await getCommunityChildList(value)
-          // console.log(res)
-          if(Array.isArray(res)){
+          },
+          onSelect: async (options, values) => {
+            console.log(options, values);
+            const { updateSchema, setFieldsValue } = formActionType;
+            const { value } = values;
+            const res = await getCommunityChildList(value)
+            // console.log(res)
+            if (Array.isArray(res)) {
               // res.unshift({label: '所有', value: ''})
               updateSchema({
                 field: 'reportCommunityId',
@@ -552,131 +681,134 @@ export const formSchema: FormSchema[] = [
                   }),
                 }
               });
-          } else {
+            } else {
               updateSchema({
                 field: 'reportCommunityId',
                 componentProps: {
                   options: [],
                 }
               });
+            }
+          },
+          labelField: 'departName',
+          valueField: 'id'
+        }
+      }
+    },
+    {
+      field: 'reportCommunityId',
+      label: '反映社区',
+      component: 'Select',
+      required: true,
+      componentProps: {
+        options: []
+      }
+    },
+    {
+      field: 'assignDeptIdList',
+      label: '处理科室',
+      component: 'ApiSelect',
+      required: true,
+      componentProps: {
+        api: async () => {
+          const res = await getCommunityList('2') // 2表示部门
+          if (Array.isArray(res)) {
+            return res;
+          } else {
+            return [];
           }
         },
         labelField: 'departName',
-        valueField: 'id'
+        valueField: 'id',
+        mode: 'multiple'
       }
-    } 
-  },
-  { field: 'reportCommunityId', 
-    label: '反映社区', 
-    component: 'Select',
-    required: true,
-    componentProps: {
-      options:[]
-    }  
-  },
-  { field: 'assignDeptIdList', 
-    label: '处理科室', 
-    component: 'ApiSelect',
-    required: true,
-    componentProps:{
-      api: async () => {
-        const res  = await getCommunityList('2') // 2表示部门
-          if(Array.isArray(res)){
-            return res;
+    },
+    {
+      field: 'assignCommunityIdList',
+      label: '处理社区/居委会',
+      component: 'ApiCascader',
+      required: true,
+      componentProps: {
+        checkable: true,
+        multiple: true,
+        api: async () => {
+          const res = await getSecondTreeList('3');
+          // console.log(res)
+          if (Array.isArray(res)) {
+            // 把tree格式数据展开
+            const newList = treeToList(res);
+            return newList.map(v => {
+              return {
+                id: v.id,
+                parentId: v.parentId,
+                label: v.title,
+                value: v.id,
+              }
+            });
           } else {
             return [];
           }
+        },
+        treeDataSimpleMode: true,
+        showCheckedStrategy: 'Cascader.SHOW_CHILD',
       },
-      labelField: 'departName',
-      valueField: 'id',
-      mode: 'multiple'
-    }
-  },
-  { 
-    field: 'assignCommunityIdList', 
-    label: '处理社区/居委会', 
-    component: 'ApiCascader',
-    required: true,
-    componentProps: {
-      checkable: true,
-      multiple: true,
-      api: async () => {
-        const res = await getSecondTreeList('3');
-          // console.log(res)
-          if(Array.isArray(res)){
-              // 把tree格式数据展开
-              const newList = treeToList(res);
-              return newList.map(v => {
-                return {
-                  id: v.id,
-                  parentId: v.parentId,
-                  label: v.title,
-                  value: v.id,
-                }
-              });
-          } else {
-              return [];
-          }
-      },
-      treeDataSimpleMode: true,
-      showCheckedStrategy: 'Cascader.SHOW_CHILD',
-    },
       // treeDataSimpleMode: true,
-  },
-  { 
-    field: 'sevenFiveId', 
-    label: '七有五性', 
-    component: 'ApiCascader',
-    required: true,
-    componentProps: {
-      api: async () => {
-        const res  = await getCitySevenFiveList();
-          // console.log(res)
-          if(Array.isArray(res)){
-            return res;
-          } else {
-            return [];
-          }
-      },
-      labelField: 'name',
-      valueField: 'id',
-      treeDataSimpleMode: true,
-    } 
-  },
-  // 案件性质
-  { 
-    field: 'caseNature', 
-    label: '案件性质', 
-    component: 'ApiSelect',
-    required: true,
-    componentProps: {
-      api: async () => {
-        const res = await getDictItems('biz_case_nature')
-          // console.log(res)
-          if(Array.isArray(res)){
-            return res;
-          } else {
-            return [];
-          }
-      },
-      labelField: 'text',
-      valueField: 'value'
-    } 
-  },
-  { field: 'remark', 
-    label: '备注', 
-    component: 'InputTextArea',
-    componentProps: {
-      rows: 3,
-      placeholder: '请输入备注',
-      style: { width: '100%' },
     },
-  },
+    {
+      field: 'sevenFiveId',
+      label: '七有五性',
+      component: 'ApiCascader',
+      required: true,
+      componentProps: {
+        api: async () => {
+          const res = await getCitySevenFiveList();
+          // console.log(res)
+          if (Array.isArray(res)) {
+            return res;
+          } else {
+            return [];
+          }
+        },
+        labelField: 'name',
+        valueField: 'id',
+        treeDataSimpleMode: true,
+      }
+    },
+    // 案件性质
+    {
+      field: 'caseNature',
+      label: '案件性质',
+      component: 'ApiSelect',
+      required: true,
+      componentProps: {
+        api: async () => {
+          const res = await getDictItems('biz_case_nature')
+          // console.log(res)
+          if (Array.isArray(res)) {
+            return res;
+          } else {
+            return [];
+          }
+        },
+        labelField: 'text',
+        valueField: 'value'
+      }
+    },
+    {
+      field: 'remark',
+      label: '备注',
+      component: 'InputTextArea',
+      componentProps: {
+        rows: 3,
+        placeholder: '请输入备注',
+        style: { width: '100%' },
+      },
+    },
   ];
 
 
-  function treeToList(tree:any[]) {
-    const list:any[] = [];
+  function treeToList(tree: any[]) {
+    const list: any[] = [];
     function traverse(node) {
       list.push(node);
       if (node.children) {
