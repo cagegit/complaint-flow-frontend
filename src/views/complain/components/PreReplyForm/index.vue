@@ -72,17 +72,43 @@
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
-      // 查询详情数据
-      const res = await getPreReplyDetail({ assignId: data.record.assignId });
-      console.log(res);
-
+      // 查询区级回复详情数据
+      try {
+        const res = await getPreReplyDetail({ ticketId: data.record.id });
+        console.log(res);
+        if(res) {
+          let fileList:any = [];
+          // 附件列表
+          if (Array.isArray(res.handleFileList)) {
+            fileList = res.handleFileList.map((item:any) => {
+              return {
+                uid: item.id,
+                name: item.fileName,
+                status: 'done',
+                url: item.fileKey,
+                response: item, // 保留原始数据
+              };
+            });
+          }
+          // 表单内容
+          if(res.upReply) {
+            setFieldsValue({
+              ...res,
+              attachments: fileList,
+            });
+          }
+        }
+      } catch (error) {
+        console.error('获取预回复详情失败:', error);
+      }
+    
       //update-end---author:wangshuai ---date:20230522  for：【issues/4935】租户用户编辑界面中租户下拉框未过滤，显示当前系统所有的租户------------
       // 无论新增还是编辑，都可以设置表单值
-      if (typeof data.record === 'object') {
-        setFieldsValue({
-          ...data.record,
-        });
-      }
+      // if (typeof data.record === 'object') {
+      //   setFieldsValue({
+      //     ...data.record,
+      //   });
+      // }
     }); 
     //表单提交
     async function handleSubmit() {
@@ -96,10 +122,11 @@
           createMessage.success('操作成功');
           closeModal();
           emit('success', res);
-        } else {
-          setModalProps({ confirmLoading: false });
         }
-        }
+        setModalProps({ confirmLoading: false });
+      } else {
+        createMessage.error('请填写完整信息!');
+      }
     }
     // 关闭弹窗
     function handleClose() {

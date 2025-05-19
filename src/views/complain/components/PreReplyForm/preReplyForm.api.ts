@@ -3,7 +3,7 @@ import { defHttp } from '/@/utils/http/axios';
 
 export enum Api {
   // 获取回复详情
-  getReplyDetail = '/complain/reply/getReplyDetail',
+  getReplyDetail = '/complain/upReply/getUpReplyDetail',
   // 保存回复
   saveReply = '/complain/upReply/saveUpReply'
 }
