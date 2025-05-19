@@ -7,23 +7,9 @@
           <h1 class="text-2xl font-bold mb-2">
             {{ welcomeTime }}，{{ userInfo?.username }}
           </h1>
-          <p class="text-gray-600">欢迎使用投诉工单管理系统</p>
         </div>
       </div>
     </a-card>
-
-    <!-- 快速访问区域 -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <a-card v-for="(item, index) in quickLinks" :key="index" hoverable @click="handleClick(item.path)">
-        <div class="flex items-center">
-          <component :is="item.icon" class="text-2xl mr-3" :style="{ color: item.color }" />
-          <div>
-            <div class="font-medium">{{ item.title }}</div>
-            <div class="text-gray-500 text-sm">{{ item.description }}</div>
-          </div>
-        </div>
-      </a-card>
-    </div>
   </div>
 </template>
 
@@ -51,35 +37,6 @@ const welcomeTime = computed(() => {
   return '晚上好'
 })
 
-
-// 快速访问链接
-const quickLinks = [
-  {
-    title: '工单处理',
-    description: '处理投诉工单',
-    icon: FileTextOutlined,
-    color: '#52c41a',
-    path: '/complain/bizComplaintTicketList'
-  },
-  {
-    title: '运行事态',
-    description: '运行事态数据大屏',
-    icon: DashboardOutlined,
-    color: '#faad14',
-    path: '/runtime'
-  },
-  {
-    title: '综合事态',
-    description: '综合事态数据大屏',
-    icon: DashboardOutlined,
-    color: '#ff4d4f',
-    path: '/composite'
-  }
-]
-
-const handleClick = (path: string) => {
-  router.push(path);
-};
 </script>
 
 <style scoped>
