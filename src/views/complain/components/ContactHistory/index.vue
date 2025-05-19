@@ -4,13 +4,13 @@
       @register="registerModal"
       :title="'来电记录'"
       :width="1000"
-      :showFooter="true"
+      :footer="null"
       :maskClosable="false"
     >
-      <div style="min-height: 350px">
-         <BasicTable @register="registerTable" />
-      </div>
-    </BasicModal>
+  <div style="min-height: 350px">
+      <BasicTable @register="registerTable" />
+  </div>
+</BasicModal>
 </template>
 <script lang="ts" setup name="contact-history-list">
     import { ref, useAttrs } from 'vue';
@@ -62,9 +62,15 @@
       const [registerModal] = useModalInner(async (data) => {
         console.log(data);
         if(data.record) {
+          let hasChange = false;
+          if(data.record.timeType !== timeType.value || data.record.callPhoneNumber !== phoneNumber.value) {
+              hasChange = true;
+          }
           timeType.value = data.record.timeType;
           phoneNumber.value = data.record.callPhoneNumber;
-          // reload();
+          if(hasChange) {
+            reload();
+          }
         }
       }); 
 </script>

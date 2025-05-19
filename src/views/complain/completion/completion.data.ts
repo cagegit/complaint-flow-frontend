@@ -534,9 +534,9 @@ export const formSchema: FormSchema[] = [
       required: true,
       componentProps: {
         options: [
-          { label: '本地录入', value: '0' },
-          { label: '区分转', value: '1' },
-          { label: '直派', value: '2' },
+          { label: '本地录入', value: 0 },
+          { label: '区分转', value: 1 },
+          { label: '直派', value: 2 },
         ],
       },
     },

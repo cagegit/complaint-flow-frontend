@@ -14,8 +14,8 @@
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="预回复">
-            <div class="pl-20">
-                 <BasicForm @register="registerPreReplyForm">
+              <div class="pl-20">
+                <BasicForm @register="registerPreReplyForm">
                   <template #satisfactionTimeSlot="{model, field}">
                     <a-space>
                       <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
@@ -44,29 +44,34 @@
             <a-tab-pane key="2" tab="基础信息" force-render>
                <BasicForm @register="registerForm"/>
             </a-tab-pane>
+            <a-tab-pane key="3" tab="回复记录" force-render>
+              <div class="pr-4">
+                  <ReplyRecord 
+                    :replyData="replyList" 
+                    :total="total" 
+                    :readOnly="true"
+                  />
+                </div>
+             </a-tab-pane>
           </a-tabs>
         </div>
-        <!-- <div style="width: 300px; padding-left: 30px;">
-            <BasicForm
-                :schemas="addFormSchema"
-                @register="registerAddForm"
-            />
-        </div> -->
       </div>
     </BasicModal>
   </template>
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema, addFormSchema, formAuditSchema } from './need-completion.data';
+    import { formSchema } from './need-completion.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
-    import { saveReviewReply, getReplyDetail } from './need-completion.api';
+    import { saveReviewReply, getReplyDetail, confirmReply } from './need-completion.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
     import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+     //@ts-ignore
+    import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -78,10 +83,51 @@
     const activeKey = ref('1');
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
+    // 回复列表
+    const replyList = ref<any[]>([]);
+    const total = ref(0);
     //回复审核表单配置
-    const [registerPreReplyForm] = useForm({
+    const [registerPreReplyForm, { validate }] = useForm({
       labelWidth: 150,
-      schemas: formAuditSchema,
+      schemas: [
+      // 驳回
+      {
+        field: 'responseFlag',
+        label: '是否驳回',
+        component: 'Select',
+        required: true,
+        componentProps: {
+          options:[
+            { label: '是', value: '1' },
+            { label: '否', value: '0' },
+          ],
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 24 },
+      },
+      // 驳回原因
+      {
+        field: 'rejectReason',
+        label: '驳回原因',
+        component: 'InputTextArea',
+        required: true,
+        componentProps: {
+          placeholder: '请输入驳回原因',
+          rows: 3,
+        },
+        colProps: { span: 24 },
+        ifShow: ({ values }) => {
+          return values.responseFlag === '1';
+        },
+      },
+      // 分割线
+      {
+        field: 'splitLine',
+        component: 'Divider',
+        label: '',
+        colProps: { span: 24 },
+      },
+      ...preReplyFormSchema],
       showActionButtonGroup: false,
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
@@ -91,7 +137,7 @@
       baseRowStyle: { width: '100%', }
     });
     //基础信息表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerForm, { setProps, resetFields, setFieldsValue, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -124,28 +170,26 @@
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
       // 查询详情数据
-      const res = await getReplyDetail({ assignId: data.record.assignId });
-      console.log(res);
+      try {
+        const res = await getReplyDetail({ ticketId: data.record.id });
+        console.log(res);
+       if (res) {
+          replyList.value = res.replyList || [];
+          total.value = res.total || 0;
+        }
+      } catch (error) {
+        console.error('Error fetching reply list:', error);
+      }
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
         setFieldsValue({
           ...data.record,
         });
       }
-      // 隐藏底部时禁用整个表单
-      //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      // setProps({ disabled: !showFooter.value });
-      //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题
     const getTitle = computed(() => {
-      // update-begin--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
-      if (!unref(isUpdate)) {
-        return '回复审核';
-      } else {
-        return '回复';
-      }
-      // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
+      return '最终审核';
     });
     const { adaptiveWidth } = useDrawerAdaptiveWidth();
   
@@ -154,28 +198,31 @@
       try {
         let values = await validate();
         setModalProps({ confirmLoading: true });
-        values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
         let params = values;
         const ticketId = currentEditRecordRef.value?.id;
-        const newParams = {
-          "auditList": [
-            // {
-            //   "assignId": 0,
-            //   "auditStatus": 0,
-            //   "rejectReason": ""
-            // }
-          ],
-          "fileRead": params.fileRead,
-          "finalResolveResult": params.finalResolveResult,
-          "followCode": params.followCode,
-          "needVisit": params.needVisit,
-          "overseeUserName": params.overseeUserName,
-          "overseeUserPhone": '',
-          "ticketId": ticketId
-        };
-        //提交表单
-        await saveReviewReply(newParams);
+        // 如果审核状态拒绝
+        if (params.responseFlag === '1') {
+          params.rejectReason = values.rejectReason;
+          //提交驳回表单
+          await confirmReply({
+            "ticketId": ticketId,
+            "rejectReason": params.rejectReason
+          });
+        } else {
+          const { _responseFlag, _rejectReason, ...rest } = params;
+          // 最终回复
+          const newParams = {
+            "replyFileList": [...replyList.value],
+            "ticketReplyDataVo": {
+              ...rest,
+            },
+            "ticketId": ticketId
+          };
+          //提交表单
+          await saveReviewReply(newParams);
+        }
+        
         //关闭弹窗
         closeModal();
         //刷新列表

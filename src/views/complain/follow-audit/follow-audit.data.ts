@@ -1,4 +1,4 @@
-import { getDictItems, getSecondTreeList } from '/@/api/common/api';
+import { getCitySevenFiveList, getDictItems, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -536,9 +536,9 @@ export const formSchema: FormSchema[] = [
       required: true,
       componentProps: {
         options: [
-          { label: '本地录入', value: '0' },
-          { label: '区分转', value: '1' },
-          { label: '直派', value: '2' },
+          { label: '本地录入', value: 0 },
+          { label: '区分转', value: 1 },
+          { label: '直派', value: 2 },
         ],
       },
     },
@@ -843,33 +843,17 @@ export const addFormSchema: FormSchema[] = [
 ];
 
 // 回复审核表单
-export const formAuditSchema: FormSchema[] = [
-  // {
-  //   field: 'status',
-  //   label: '工单状态',
-  //   component: 'Select',
-  //   required: true,
-  //   componentProps: {
-  //     options:[
-  //       { label: '待回复', value: '0' },
-  //       { label: '已回复', value: '1' },
-  //       { label: '待办结', value: '2' },
-  //     ],
-  //     placeholder: '==请选择==',
-  //   },
-  // },
+export const auditFormSchema: FormSchema[] = [
   {
-    field: 'fileRead',
-    label: '录音已倾听',
-    component: 'Select',
+    field: 'labelCode',
+    label: '标签',
+    component: 'RadioGroup',
     required: true,
-    componentProps: {
-      options:[
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-      placeholder: '==请选择==',
+    componentProps: { 
+      options: getDictItemsByCode('biz_complaint_lavel') 
     },
+    defaultValue: '1',
+    colProps: { span: 12 },
   },
   {
     field: 'followCode',
@@ -890,6 +874,7 @@ export const formAuditSchema: FormSchema[] = [
       valueField: 'value',
       placeholder: '==请选择==',
     },
+    colProps: { span: 12 },
   },
   // {
   //   field: 'factFlag',
@@ -904,26 +889,78 @@ export const formAuditSchema: FormSchema[] = [
   //     placeholder: '==请选择==',
   //   },
   // },
-    // {
-    // field: 'needVisit',
-    // label: '区回访',
-    // component: 'Select',
-    // required: true,
-    // componentProps: {
-    //   options:[
-    //     { label: '是', value: '1' },
-    //     { label: '否', value: '0' },
-    //   ],
-    //   placeholder: '==请选择是否需求区回访==',
-    // },
-    // },
-    // 督办人
+    // 是否需要区回访
     {
-      field: 'overseeUserName',
-      label: '督办人',
-      component: 'Input',
+    field: 'needVisit',
+    label: '区回访',
+    component: 'Select',
+    required: true,
+    componentProps: {
+      options:[
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+      placeholder: '==请选择是否需求区回访==',
+    },
+    colProps: { span: 12 },
+    },
+    // 七有五性
+    { 
+     field: 'sevenFiveId', 
+     label: '七有五性', 
+     component: 'ApiCascader',
+     required: true,
+     componentProps: {
+       api: async () => {
+         const res  = await getCitySevenFiveList();
+           // console.log(res)
+           if(Array.isArray(res)){
+             return res;
+           } else {
+             return [];
+           }
+       },
+       labelField: 'name',
+       valueField: 'id',
+       treeDataSimpleMode: true,
+     },
+     colProps: { span: 12 },
+   },
+   // 审核状态 auditStatus
+    {
+      field: 'auditStatus',
+      label: '审核状态',
+      component: 'Select',
       required: true,
-      colProps: { span: 24 }
+      componentProps: {
+        options: [
+          { label: '通过', value: 1 },
+          // { label: '审核通过', value: 1 },
+          { label: '不通过', value: -1 },
+        ],
+        placeholder: '==请选择==',
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
+    },
+   // 驳回原因
+    {
+      field: 'rejectReason',
+      label: '驳回原因',
+      component: 'InputTextArea',
+      componentProps: {
+        placeholder: '请输入驳回原因',
+        rows: 4,
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      },
+      ifShow: ({ values }) => {
+        return values.auditStatus === -1; // 仅在审核不通过时显示
+      }
     },
     // 最终处理情况文本框
     {
@@ -936,5 +973,22 @@ export const formAuditSchema: FormSchema[] = [
         rows: 4,
       },
       colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
+    },
+    // 备注
+    {
+      field: 'remark',
+      label: '备注',
+      component: 'InputTextArea',
+      componentProps: {
+        placeholder: '请输入备注',
+        rows: 4,
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
 ];

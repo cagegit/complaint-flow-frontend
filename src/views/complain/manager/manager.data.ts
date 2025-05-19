@@ -492,10 +492,19 @@ export const formSchema: FormSchema[] = [
     required: true,
     componentProps: {
       api: async () => {
-        return await getDictItems('biz_source_type');
-      },
-      labelField: 'text',
-      valueField: 'value',
+        const res = await getDictItems('biz_source_type');
+        console.log(res);
+        if (Array.isArray(res)) {
+          return res.map(v => {
+            return {
+               ...v,
+               value : +v.value, // 确保value是数字类型
+            };
+          });
+        } else {
+          return [];
+        }
+      }
     },
     colProps: { span: 12 },
   },
@@ -511,7 +520,10 @@ export const formSchema: FormSchema[] = [
     label: '工单编号',
     component: 'Input',
     required: true,
-    colProps: { span: 12 },
+    colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'title',
@@ -523,6 +535,9 @@ export const formSchema: FormSchema[] = [
       placeholder: '请输入标题',
     },
     colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'mainContent',
@@ -534,6 +549,9 @@ export const formSchema: FormSchema[] = [
       placeholder: '请输入主要内容',
     },
     colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'callUserName',
@@ -681,6 +699,9 @@ export const formSchema: FormSchema[] = [
       placeholder: '请输入处理意见',
     },
     colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'deadline',
@@ -711,6 +732,9 @@ export const formSchema: FormSchema[] = [
       placeholder: '请输入处理情况',
     },
     colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'resolveDepartment',
@@ -740,5 +764,8 @@ export const formSchema: FormSchema[] = [
       placeholder: '请输入备注',
     },
     colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
 ]; 

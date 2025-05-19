@@ -12,8 +12,11 @@
       <div class="flex px-3">
         <div style="flex: 1">
             <a-tabs v-model:activeKey="activeKey">
-            <a-tab-pane key="1" tab="预回复" force-render>
+            <a-tab-pane key="1" tab="回访审核" force-render>
               <div class="pl-20">
+                 <a-divider orientation="left">审核内容</a-divider>
+                  <BasicForm @register="registerAuditForm"/>
+                 <a-divider orientation="left">预回复</a-divider>
                  <BasicForm @register="registerPreReplyForm">
                   <template #satisfactionTimeSlot="{model, field}">
                     <a-space>
@@ -43,6 +46,15 @@
             <a-tab-pane key="2" tab="基础信息" force-render>
                <BasicForm @register="registerForm"/>
             </a-tab-pane>
+            <a-tab-pane key="3" tab="回复记录" force-render>
+              <div class="pr-4">
+                  <ReplyRecord 
+                    :replyData="replyList" 
+                    :total="total" 
+                    :readOnly="true"
+                  />
+                </div>
+             </a-tab-pane>
           </a-tabs>
         </div>
       </div>
@@ -51,7 +63,7 @@
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema } from './follow-audit.data';
+    import { formSchema, auditFormSchema } from './follow-audit.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
     import { saveReviewReply, getReplyDetail } from './follow-audit.api';
@@ -60,13 +72,17 @@
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
     import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    //@ts-ignore
+    import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
     const isUpdate = ref(true);
     const rowId = ref('');
     const departOptions = ref([]);
-    let isFormDepartUser = false;
+    // let isFormDepartUser = false;
+    const replyList = ref<any[]>([]);
+    const total = ref(0);
     // 当前key
     const activeKey = ref('1');
     // 当前编辑工单
@@ -96,16 +112,16 @@
       baseRowStyle: { width: '100%', },
       disabled: true
     });
-    //待补充表单配置
-    // const [registerAddForm] = useForm({
-    //   labelWidth: 150,
-    //   schemas: addFormSchema,
-    //   showActionButtonGroup: false,
-    //   layout: 'vertical',
-    //   rowProps: { gutter: 24, justify: 'center', align: 'middle' },
-    //   //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-    //   //row行的样式
-    // });
+    //回访审核表单配置
+    const [registerAuditForm, { validate:validateAuditForm }] = useForm({
+      labelWidth: 150,
+      schemas: auditFormSchema,
+      showActionButtonGroup: false,
+      layout: 'vertical',
+      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+      //row行的样式
+    });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
     //表单赋值
@@ -117,8 +133,17 @@
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
       // 查询详情数据
-      const res = await getReplyDetail({ ticketId: data.record.id });
-      console.log(res);
+      try {
+        const res = await getReplyDetail({ ticketId: data.record.id });
+        console.log(res);
+        if(res) {
+         replyList.value = res.replyList || [];
+         total.value = res.replyList?.length || 0;
+        }
+      } catch (error) {
+        console.error('Error fetching reply list:', error);
+      }
+  
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
         setFieldsValue({
@@ -127,7 +152,7 @@
       }
       // 隐藏底部时禁用整个表单
       //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      // setProps({ disabled: !showFooter.value });
+      // setProps({ disabled: true });
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题
@@ -139,26 +164,30 @@
     //提交事件
     async function handleSubmit() {
       try {
+        // 审核表单
+        let auditValues = await validateAuditForm();
+        // 先验证回访审核表单
         let values = await validate();
         setModalProps({ confirmLoading: true });
-        values.userIdentity === 1 && (values.departIds = '');
+        // values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
         let params = values;
         const ticketId = currentEditRecordRef.value?.id;
         const newParams = {
-          "auditList": [
-            // {
-            //   "assignId": 0,
-            //   "auditStatus": 0,
-            //   "rejectReason": ""
-            // }
-          ],
-          "fileRead": params.fileRead,
-          "finalResolveResult": params.finalResolveResult,
-          "followCode": params.followCode,
-          "needVisit": params.needVisit,
-          "overseeUserName": params.overseeUserName,
-          "overseeUserPhone": '',
+          "auditStatus": auditValues.auditStatus,
+          "deleteFileIdList": [],
+          "finalResolveResult": auditValues.finalResolveResult,
+          "followCode": auditValues.followCode,
+          "labelCode": params.labelCode,
+          "needVisit":  auditValues.needVisit,
+          "rejectReason": auditValues.rejectReason,
+          "remark": auditValues.remark,
+          "replyFileList": [...replyList.value],
+          "sevenFiveId": params.sevenFiveId,
+          // "ticketId": 0,
+          "ticketReplyDataVo": {
+            ...params 
+          },
           "ticketId": ticketId
         };
         //提交表单

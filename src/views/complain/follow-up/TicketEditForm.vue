@@ -88,7 +88,7 @@
     const isUpdate = ref(true);
     const rowId = ref('');
     const departOptions = ref([]);
-    let isFormDepartUser = false;
+    // let isFormDepartUser = false;
     // tab当前key
     const activeKey = ref('1');
     // 当前编辑工单
@@ -163,7 +163,7 @@
       }
       // 隐藏底部时禁用整个表单
       //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      setProps({ disabled: !showFooter.value });
+      // setProps({ disabled: !showFooter.value });
       //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题

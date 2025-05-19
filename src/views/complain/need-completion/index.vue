@@ -52,7 +52,7 @@
     import PreReplyForm from '../components/PreReplyForm/index.vue';
     const [registerModal, { openModal }] = useModal();
 
-    const [registerReplyModal, { openModal:openReplyModal }] = useModal();
+    const [registerReplyModal] = useModal();
     // const { createMessage, createConfirm } = useMessage();
 
     // 列表页面公共参数、方法
