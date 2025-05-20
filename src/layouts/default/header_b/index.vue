@@ -1,6 +1,6 @@
 <template>
-    <div class="screen-header"  :class="getHeaderClass">
-      <Header />
+    <div class="screen-header" :class="getHeaderClass">
+      <Header :showAvatar="true"/>
     </div>
 </template>
 <script setup lang="ts">

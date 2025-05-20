@@ -224,13 +224,15 @@
 
     &--dark {
       &:hover {
-        background-color: @header-dark-bg-hover-color;
+        // background-color: @header-dark-bg-hover-color;
+        background-color: #0c3c3a;
       }
     }
 
     &--light {
       &:hover {
-        background-color: @header-light-bg-hover-color;
+        // background-color: @header-light-bg-hover-color;
+        background-color: #0c3c3a;
       }
 
       .@{prefix-cls}__name {

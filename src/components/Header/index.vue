@@ -22,6 +22,9 @@
         <div class="week">{{ week }}</div>
         <div class="date">{{ date }}</div>
       </div>
+      <div v-if="showAvatar" class="avatar-box">
+        <UserDropDown :theme="getHeaderTheme" />
+      </div>
     </div>
   </header>
 </template>
@@ -29,13 +32,21 @@
 <script setup>
   import { ref, onMounted, onBeforeUnmount } from 'vue';
   import dayjs from 'dayjs';
-
+  import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
+  import { UserDropDown } from '/@/layouts/default/header/components';
   const props = defineProps({
     index: {
       type: Number,
       required: false,
     },
+    // 展示头像区域
+    showAvatar: {
+      type: Boolean,
+      default: false,
+    },
   });
+
+  const { getHeaderTheme } = useHeaderSetting();
 
   const platformName = '城北街道诉求管理平台';
   const currentTime = ref('');
@@ -103,7 +114,7 @@
   .time-box {
     display: flex;
     align-items: center;
-    padding-right: 30px;
+    padding-right: 10px;
 
     .current-time {
       height: 46px;
@@ -130,6 +141,18 @@
       align-items: flex-start;
       font-size: 12px;
       color: #b9eed9;
+    }
+    // 头像区域
+    .avatar-box {
+      margin-left: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      // width: 45px;
+      // height: 45px;
+      // border-radius: 50%;
+      // background-color: #fff;
+      // box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
   }
 
@@ -180,5 +203,7 @@
       text-decoration: none;
       margin-top: 7px;
     }
+
+    
   }
 </style>

@@ -87,7 +87,7 @@ const setting: ProjectConfig = {
   // 菜单配置
   menuSetting: {
     // 背景色
-    bgColor: SIDE_BAR_BG_COLOR_LIST[0],
+    bgColor: SIDE_BAR_BG_COLOR_LIST[3],
     // 是否固定住左侧菜单
     fixed: true,
     // 菜单折叠
@@ -108,7 +108,7 @@ const setting: ProjectConfig = {
     // 菜单类型
     type: MenuTypeEnum.MIX,
     // 菜单主题
-    theme: ThemeEnum.DARK,
+    theme: ThemeEnum.LIGHT,
     // update-begin--author:liaozhiyang---date:20241203---for：【issues/7522】解决menuSetting ts警告
     // 左侧导航栏文字颜色调整区分彩色和暗黑 (不对应配置)
     isThemeBright: false,
