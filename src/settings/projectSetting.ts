@@ -106,7 +106,7 @@ const setting: ProjectConfig = {
     // 菜单模式
     mode: MenuModeEnum.INLINE,
     // 菜单类型
-    type: MenuTypeEnum.SIDEBAR,
+    type: MenuTypeEnum.MIX,
     // 菜单主题
     theme: ThemeEnum.DARK,
     // update-begin--author:liaozhiyang---date:20241203---for：【issues/7522】解决menuSetting ts警告
