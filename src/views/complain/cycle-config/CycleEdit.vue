@@ -1,6 +1,8 @@
 <template>
-  <div class="cycle-box">
-    <BasicForm @register="registerForm" />
+  <div class="p-3">
+    <div class="bg-white pt-6">
+      <BasicForm @register="registerForm" />
+    </div>
   </div>
 </template>
   <script lang="ts" setup>
@@ -22,7 +24,7 @@ const departOptions = ref([]);
 let isFormDepartUser = false;
 //表单配置
 const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
-  labelWidth: 150,
+  labelWidth: 100,
   schemas: formSchema,
   submitButtonOptions: {
     loading: false,
@@ -32,7 +34,7 @@ const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSc
     onClick: handleSubmit,
   },
   resetButtonOptions: {
-    text: '取消',
+    text: '重置',
     onClick: () => {
       resetFields();
     },
@@ -41,11 +43,15 @@ const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSc
   showSubmitButton: true,
   showResetButton: true,
   // layout: 'vertical',
-  rowProps: { gutter: 24, justify: 'end', align: 'middle' },
+  // rowProps: { justify: 'end', align: 'middle' },
   //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
   baseColProps: { span: 12 },
   //row行的样式
-  baseRowStyle: { width: '100%' },
+  // baseRowStyle: { width: '100%' },
+  actionColOptions: {
+    span: 24,
+    offset: 19,
+  },
 });
 // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
 // const showFooter = ref(true);
@@ -64,12 +70,4 @@ async function handleSubmit() {
   }
 }
 </script>
-
-<style lang="less" scoped>
-.cycle-box {
-  background: #fff;
-  padding: 10px;
-  margin: 10px;
-}
-</style>
   

@@ -281,6 +281,7 @@ export const usePermissionStore = defineStore({
           // update-begin--author:liaozhiyang---date:20240529---for：【TV360X-522】ai助手路由写死在前端
           routes = [PAGE_NOT_FOUND_ROUTE, ...routeList, ...staticRoutesList];
           // update-end--author:liaozhiyang---date:20240529---for：【TV360X-522】ai助手路由写死在前端
+          console.log(routes);
           break;
       }
 

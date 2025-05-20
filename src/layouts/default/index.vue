@@ -14,11 +14,13 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, unref, ref } from 'vue';
+  import { defineComponent, computed, unref} from 'vue';
   import { Layout } from 'ant-design-vue';
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
 
-  import LayoutHeader from './header/index.vue';
+  // import LayoutHeader from './header/index.vue';
+  //@ts-ignore
+  import LayoutHeader from './header_b/index.vue';
   import LayoutContent from './content/index.vue';
   import LayoutSideBar from './sider/index.vue';
   import LayoutMultipleHeader from './header/MultipleHeader.vue';

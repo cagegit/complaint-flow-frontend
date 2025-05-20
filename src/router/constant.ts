@@ -25,3 +25,8 @@ export const getParentLayout = (_name?: string) => {
       });
     });
 };
+
+/**
+ * @description: web layout
+ */
+export const WEB_LAYOUT = () => import('/@/layouts/web/index.vue');

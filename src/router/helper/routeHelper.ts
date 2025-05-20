@@ -1,7 +1,7 @@
 import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
 import type { Router, RouteRecordNormalized } from 'vue-router';
 
-import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '/@/router/constant';
+import { getParentLayout, LAYOUT, WEB_LAYOUT, EXCEPTION_COMPONENT } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
@@ -19,6 +19,7 @@ const LayoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 
 LayoutMap.set('LAYOUT', LAYOUT);
 LayoutMap.set('IFRAME', IFRAME);
+LayoutMap.set('WEB_LAYOUT', WEB_LAYOUT);
 //微前端qiankun
 LayoutMap.set('LayoutsContent', LayoutContent);
 
@@ -132,13 +133,15 @@ function dynamicImport(dynamicViewsModules: Record<string, () => Promise<Recorda
 // Turn background objects into routing objects
 export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
   routeList.forEach((route) => {
+    console.log('route:'+ route.component)
+    // console.log(route)
     const component = route.component as string;
     if (component) {
       if (component.toUpperCase() === 'LAYOUT') {
         route.component = LayoutMap.get(component.toUpperCase());
       } else {
         route.children = [cloneDeep(route)];
-        route.component = LAYOUT;
+        route.component = component === '/layouts/web/index' ?  WEB_LAYOUT: LAYOUT;
         route.name = `${route.name}Parent`;
         route.path = '';
         const meta = route.meta || {};

@@ -24,7 +24,7 @@
   import { MenuTypeEnum } from '/@/enums/menuEnum';
 
   // update-begin--author:liaozhiyang---date:20240407---for：【QQYUN-8774】网站header区域加高
-  const HEADER_HEIGHT = 60;
+  const HEADER_HEIGHT = 72;
   // update-begin--author:liaozhiyang---date:20240407---for：【【QQYUN-8774】网站header区域加高
 
   // updateBy:sunjianlei---updateDate:2021-09-03---修改tab切换栏样式：更改高度
@@ -106,6 +106,9 @@
         // update-end--author:liaozhiyang---date:20241216---for：【issues/7561】主题切换为顶部混合模式时，页面顶部内容显示不出来，被遮盖
         if (unref(getShowTabs) && !unref(getFullContent)) {
           height += unref(getTabsThemeHeight);
+        }
+        if(height < 72){
+          height = 72;
         }
         setHeaderHeight(height);
         return {
