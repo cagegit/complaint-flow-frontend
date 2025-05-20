@@ -24,6 +24,7 @@ export const mainOutRoutes: AppRouteModule[] = [
     meta: {
       title: '城北街道述求管理平台',
       ignoreAuth: true,
+      hideTab: true,
     },
   },
   {
@@ -33,6 +34,7 @@ export const mainOutRoutes: AppRouteModule[] = [
     meta: {
       title: '城北街道述求管理平台',
       ignoreAuth: true,
+      hideTab: true,
     },
   },
 ];

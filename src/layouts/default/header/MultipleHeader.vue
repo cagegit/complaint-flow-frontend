@@ -7,8 +7,10 @@
 </template>
 <script lang="ts">
   import { defineComponent, unref, computed, CSSProperties } from 'vue';
-
-  import LayoutHeader from './index.vue';
+  
+  // import LayoutHeader from './index.vue';
+  //@ts-ignore
+  import LayoutHeader from '../header_b/index.vue';
   import MultipleTabs from '../tabs/index.vue';
 
   import { useAppStore } from "@/store/modules/app";
