@@ -508,23 +508,23 @@ export const addFormSchema: FormSchema[] = [
       disabled: true
     },
   },
-  {
-    field: 'transferTo',
-    label: '转至',
-    component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        // TODO: 替换为实际接口
-        return [
-          { label: '==请选择==', value: '' },
-          // 其他选项...
-        ];
-      },
-      labelField: 'label',
-      valueField: 'value',
-      placeholder: '==请选择==',
-    },
-  },
+  // {
+  //   field: 'transferTo',
+  //   label: '转至',
+  //   component: 'ApiSelect',
+  //   componentProps: {
+  //     api: async () => {
+  //       // TODO: 替换为实际接口
+  //       return [
+  //         { label: '==请选择==', value: '' },
+  //         // 其他选项...
+  //       ];
+  //     },
+  //     labelField: 'label',
+  //     valueField: 'value',
+  //     placeholder: '==请选择==',
+  //   },
+  // },
   // {
   //   field: 'labelCode',
   //   label: '标签',

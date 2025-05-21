@@ -31,23 +31,17 @@
             </a-tab-pane>
           </a-tabs>
         </div>
-        <!-- <div style="width: 300px; padding-left: 30px;">
-            <BasicForm
-                :schemas="addFormSchema"
-                @register="registerAddForm"
-            />
-        </div> -->
       </div>
     </BasicModal>
   </template>
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema, addFormSchema, formAuditSchema } from './review.data';
+    import { formSchema, formAuditSchema } from './review.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
     import { saveReviewReply, getReplyDetail } from './review.api';
-    import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
+    // import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
 
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
@@ -65,8 +59,10 @@
     const activeKey = ref('1');
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
+    // 是否包含拒绝
+    const isReject = ref(false);
     //回复审核表单配置
-    const [registerAuditForm] = useForm({
+    const [registerAuditForm, {setProps: setAuditFormProps}] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -78,7 +74,7 @@
       baseRowStyle: { width: '100%', }
     });
     //基础信息表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -91,15 +87,15 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm] = useForm({
-      labelWidth: 150,
-      schemas: addFormSchema,
-      showActionButtonGroup: false,
-      layout: 'vertical',
-      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
-      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      //row行的样式
-    });
+    // const [registerAddForm] = useForm({
+    //   labelWidth: 150,
+    //   schemas: addFormSchema,
+    //   showActionButtonGroup: false,
+    //   layout: 'vertical',
+    //   rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+    //   //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+    //   //row行的样式
+    // });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
     //表单赋值
@@ -136,7 +132,7 @@
     const getTitle = computed(() => {
       return '回复审核';
     });
-    const { adaptiveWidth } = useDrawerAdaptiveWidth();
+    // const { adaptiveWidth } = useDrawerAdaptiveWidth();
   
     //提交事件
     async function handleSubmit() {
@@ -162,8 +158,8 @@
             //   "rejectReason": ""
             // }
           // ],
-          "fileRead": params.fileRead,
-          "finalResolveResult": params.finalResolveResult,
+          "fileRead": params.fileRead || '',
+          "finalResolveResult": params.finalResolveResult || '',
           "followCode": params.followCode,
           "needVisit": params.needVisit,
           "overseeUserName": params.overseeUserName,
@@ -190,9 +186,16 @@
     const handleAuditChange = async (res:any) => {
       // const currentReplyId = res.reply
      const reply = finalReplyList.value.find(item => item.id === res.id);
+     console.log(reply);
+     console.log(res);
      if (reply) {
        reply.auditStatus = res.status;
        reply.rejectReason = res.reason;
+       if (res.status === -1) {
+         setAuditFormProps({disabled: true});
+       } else {
+          setAuditFormProps({disabled: false});
+       }
      }
     };
 </script>

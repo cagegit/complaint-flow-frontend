@@ -21,6 +21,7 @@
   const appStore = useAppStore();
   // 解决日期时间国际化问题
   import 'dayjs/locale/zh-cn';
+  import { MenuModeEnum, MenuTypeEnum } from './enums/menuEnum';
   // support Multi-language
   const { getAntdLocale } = useLocale();
 
@@ -94,6 +95,16 @@
     appStore.getProjectConfig?.themeColor && changeTheme(appStore.getProjectConfig.themeColor);
   }, 300);
   // update-end--author:liaozhiyang---date:20231218---for：【QQYUN-6366】升级到antd4.x
+  // 重置appStore设置，防止页面自适应过程恢复不过来此默认设置
+  appStore.setProjectConfig({
+    menuSetting: {
+      type: MenuTypeEnum.MIX,
+      mode: MenuModeEnum.INLINE,
+      collapsed: false,
+      split: false,
+      topMenuAlign: 'center',
+    },
+  });
 
 </script>
 <style lang="less">

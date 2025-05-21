@@ -116,7 +116,7 @@ export const columns: BasicColumn[] = [
     { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
     { title: '创建人名称', dataIndex: 'createBy', width: 120 },
     { title: '创建时间', dataIndex: 'createTime', width: 150 },
-    { title: '创建人id', dataIndex: 'createUserId', width: 120 },
+    // { title: '创建人id', dataIndex: 'createUserId', width: 120 },
     { title: '截止时间', dataIndex: 'deadline', width: 150 },
     { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
     { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
@@ -140,10 +140,18 @@ export const columns: BasicColumn[] = [
     { title: '派单时间', dataIndex: 'sendTime', width: 150 },
     { title: '派单人员', dataIndex: 'sendUser', width: 120 },
     { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
+    { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+    { title: '主任建议', dataIndex: 'zhurenSuggest', width: 150 },
+    { title: '书记建议', dataIndex: 'shujiSuggest', width: 150 },
+    //caseNature（案件性质）
+    { title: '案件性质', dataIndex: 'caseNature', width: 120 },
+    // caseType（案件类型）
+    { title: '案件类型', dataIndex: 'caseType', width: 120 },
+    // suddenCase（突发案件）
+    { title: '突发案件', dataIndex: 'suddenCase', width: 120 },
     { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
     { title: '修改时间', dataIndex: 'updateTime', width: 150 },
-    { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
-    { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+    // { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
     { title: '备注', dataIndex: 'remark', width: 180 },
 
   ];
@@ -330,14 +338,23 @@ export const formSchema: FormSchema[] = [
     {
       label: '数据来源',
       field: 'sourceType',
-      component: 'Select',
+      component: 'ApiSelect',
       required: true,
       componentProps: {
-        options: [
-          { label: '本地录入', value: 0 },
-          { label: '区分转', value: 1 },
-          { label: '直派', value: 2 },
-        ],
+        api: async () => {
+          const res  = await getDictItems('biz_source_type')
+            console.log(res)
+            if(Array.isArray(res)){
+                return res.map(item => {
+                    return {
+                        label: item.text,
+                        value: +item.value
+                    }
+                });
+            } else {
+                return [];
+            }
+        }
       },
     },
     {
@@ -519,7 +536,17 @@ export const formSchema: FormSchema[] = [
       component: 'Input',
       componentProps: {
         style: {display: 'none'}
-      }
+      },
+      show: false,
+    },
+    {
+      label: '',
+      field: 'id',
+      component: 'Input',
+      componentProps: {
+        style: {display: 'none'}
+      },
+     show: false,
     },
     // 缺失的字段
   // {

@@ -56,22 +56,22 @@ export const list = (param) => {
 /**
  * 添加工单
  */
-export const addTicket = (params) => defHttp.post({ url: Api.addTicket, params , headers: {ContentType: ContentTypeEnum.FORM_URLENCODED}},);
+export const addTicket = (params) => defHttp.post({ url: Api.addTicket, params },);
 
 /**
  * 编辑工单
  */
-export const editTicket = (params) => defHttp.post({ url: Api.editTicket, params, headers: {ContentType: ContentTypeEnum.FORM_URLENCODED} });
+export const editTicket = (params) => defHttp.post({ url: Api.editTicket, params });
 
 /**
  * 通过id删除工单
  */
-export const deleteTicket = (params) => defHttp.post({ url: Api.deleteTicket, params, headers: {ContentType: ContentTypeEnum.FORM_URLENCODED} });
+export const deleteTicket = (params) => defHttp.post({ url: Api.deleteTicket, data:params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
 
 /**
  * 批量删除工单
  */
-export const deleteBatchTicket = (params) => defHttp.post({ url: Api.deleteBatchTicket, params, headers: {ContentType: ContentTypeEnum.FORM_URLENCODED} });
+export const deleteBatchTicket = (params) => defHttp.post({ url: Api.deleteBatchTicket, data:params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
 
 /**
  * 获取工单详情

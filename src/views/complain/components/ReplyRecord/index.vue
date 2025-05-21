@@ -447,17 +447,18 @@ const handleRejectSubmit = async () => {
     return;
   }
   // 更新到 localReplyList
-    const reply = localReplyList.value.find(item => item.id === currentReplyId.value);
-    if (reply) {
-      reply.auditStatus = -1;
-      reply.rejectReason = rejectForm.value.reason;
-      emit('auditChange', { 
-        id: currentReplyId.value, 
-        status: -1, 
-        reason: rejectForm.value.reason,
-        record: reply 
-      });
-    }
+  const reply = localReplyList.value.find(item => item.id === currentReplyId.value);
+  if (reply) {
+    reply.auditStatus = -1;
+    reply.rejectReason = rejectForm.value.reason;
+    emit('auditChange', { 
+      id: currentReplyId.value, 
+      status: -1, 
+      reason: rejectForm.value.reason,
+      record: reply 
+    });
+  }
+  rejectModalVisible.value = false;
 };
 
 // 取消拒绝

@@ -50,7 +50,7 @@
     import { ref, h, onMounted } from 'vue';
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
-    import { list, forwardTicket, forwardTicketBatch } from './out.api'
+    import { list, forwardTicket } from './out.api'
     import { columns, searchFormSchema } from './out.data'
     import { useModal } from '/@/components/Modal';
     import { useMessage } from '/@/hooks/web/useMessage';

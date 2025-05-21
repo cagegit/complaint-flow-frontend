@@ -5,6 +5,7 @@
       :title="'预回复'"
       :width="900"
       @ok="handleSubmit"
+      @cancel="handleClose"
       :showFooter="showFooter"
       destroyOnClose
       :maskClosable="false"
@@ -65,13 +66,16 @@
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
       //row行的样式
     });
+    // 区级promise resolve方法
+    let qjResolve:any = null;
     //表单赋值
     const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
-      console.log(data);
+      // console.log(data);
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
+      qjResolve = data.resolve;
       // 查询区级回复详情数据
       try {
         const res = await getPreReplyDetail({ ticketId: data.record.id });
@@ -127,9 +131,12 @@
       } else {
         createMessage.error('请填写完整信息!');
       }
+      // 区级回调
+      qjResolve?.('submit');
     }
     // 关闭弹窗
     function handleClose() {
+      qjResolve?.('close');
       closeModal();
     }
 </script>

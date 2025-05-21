@@ -45,6 +45,7 @@
     });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
+    let currentRecord:any = null;
     //表单赋值
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
@@ -52,6 +53,8 @@
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
       inTurnOut.value = !!data?.inTurnOut;
+      console.log(data);
+      currentRecord = data.record;
       // 无论新增还是编辑，都可以设置表单值
       if(data.inTurnOut) {
         try {
@@ -119,9 +122,9 @@
 
         if(isUpdate.value) { // 编辑
           //提交表单
-          await editTicket(params);
+          await editTicket({...params, id: currentRecord?.id});
         } else { // 新增
-          params.id = rowId.value;
+          // params.id = rowId.value;
           await addTicket(params);
         }
         //关闭弹窗

@@ -10,7 +10,7 @@
       :maskClosable="false"
     >
       <div class="flex px-3">
-        <div style="flex: 1; border-right: 1px solid #ddd; max-height: 900px; overflow: auto;">
+        <div style="flex: 1; border-right: 1px solid #ddd; max-height: 700px; overflow: auto;">
             <BasicForm @register="registerForm"/>
         </div>
         <div style="width: 300px; padding-left: 30px;">
@@ -29,9 +29,8 @@
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema, addFormSchema } from './assign.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
-    
     import { addAssign, getAssignDetail } from './assign.api';
-import { getSecondTreeList } from '/@/api/common/api';
+    import { getSecondTreeList } from '/@/api/common/api';
   
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -44,7 +43,7 @@ import { getSecondTreeList } from '/@/api/common/api';
     let currentData:any = {};
     //表单配置
     const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
-      labelWidth: 150,
+      labelWidth: 100,
       schemas: formSchema,
       showActionButtonGroup: false,
       layout: 'vertical',

@@ -42,7 +42,7 @@
         </BasicTable>
     
         <!--工单编辑-->
-        <TicketEdit @register="registerModal" @success="handleSuccess" />
+        <TicketEdit @register="registerModal" @success="handleSuccess"  @qjForm="showQjForm"/>
         <!-- 预回复 -->
         <PreReplyForm @register="registerReplyModal" @success="handleReplySuccess" />
         <!-- 联系历史 -->
@@ -105,11 +105,11 @@
             onClick: handleEdit.bind(null, record),
             // ifShow: () => hasPermission('system:user:edit'),
           },
-          {
-            label: '预回复',
-            onClick: handlePreReply.bind(null, record),
-            // ifShow: () => hasPermission('system:user:edit'),
-          },
+          // {
+          //   label: '预回复',
+          //   onClick: handlePreReply.bind(null, record),
+          //   // ifShow: () => hasPermission('system:user:edit'),
+          // },
         ];
       }
     
@@ -121,13 +121,13 @@
         });
       }
 
-       function handlePreReply(record: Recordable) {
-        openReplyModal(true, {
-          record,
-          isUpdate: false,
-          showFooter: false,
-        });
-      }
+      //  function handlePreReply(record: Recordable) {
+      //   openReplyModal(true, {
+      //     record,
+      //     isUpdate: false,
+      //     showFooter: false,
+      //   });
+      // }
   
     
       function batchHandleDelete() {
@@ -159,6 +159,15 @@
       function showHistoryModal(tp: string, record: Recordable) {
         openHistoryModal(true, {
           record: { timeType: tp, ...record },
+          isUpdate: false,
+          showFooter: false,
+        });
+      }
+      // 预回复
+      function showQjForm(data:any) {
+        openReplyModal(true, {
+          record: data.record,
+          resolve: data.resolve,
           isUpdate: false,
           showFooter: false,
         });

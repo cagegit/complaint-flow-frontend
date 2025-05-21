@@ -88,13 +88,13 @@
         field: 'id',
         label: 'ID',
         component: 'Input',
-        ifShow: false,
+        show: false,
       },
       {
         field: 'type',
         label: '类型',
         component: 'Input',
-        ifShow: false,
+        show: false,
       },
       {
         field: 'suggestionContent',

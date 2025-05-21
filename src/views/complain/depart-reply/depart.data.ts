@@ -215,7 +215,7 @@ export const columns: BasicColumn[] = [
             const res  = await getDictItems('biz_source_type')
               console.log(res)
               if(Array.isArray(res)){
-                  res.unshift({text: '所有', value: ''})
+                  // res.unshift({text: '所有', value: ''})
                   return res;
               } else {
                   return [];
@@ -314,14 +314,24 @@ export const formSchema: FormSchema[] = [
     {
       label: '数据来源',
       field: 'sourceType',
-      component: 'Select',
+      component: 'ApiSelect',
       required: true,
       componentProps: {
-        options: [
-          { label: '本地录入', value: 0 },
-          { label: '区分转', value: 1 },
-          { label: '直派', value: 2 },
-        ],
+        api: async () => {
+          const res  = await getDictItems('biz_source_type')
+            if(Array.isArray(res)){
+                return res.map(item => {
+                    return {
+                        text: item.text,
+                        value: +item.value
+                    }
+                })
+            } else {
+                return [];
+            }
+        },
+        labelField: 'text',
+        valueField: 'value'
       },
     },
     {
@@ -575,23 +585,23 @@ export const addFormSchema: FormSchema[] = [
       disabled: true
     },
   },
-  {
-    field: 'transferTo',
-    label: '转至',
-    component: 'ApiSelect',
-    componentProps: {
-      api: async () => {
-        // TODO: 替换为实际接口
-        return [
-          { label: '==请选择==', value: '' },
-          // 其他选项...
-        ];
-      },
-      labelField: 'label',
-      valueField: 'value',
-      placeholder: '==请选择==',
-    },
-  },
+  // {
+  //   field: 'transferTo',
+  //   label: '转至',
+  //   component: 'ApiSelect',
+  //   componentProps: {
+  //     api: async () => {
+  //       // TODO: 替换为实际接口
+  //       return [
+  //         { label: '==请选择==', value: '' },
+  //         // 其他选项...
+  //       ];
+  //     },
+  //     labelField: 'label',
+  //     valueField: 'value',
+  //     placeholder: '==请选择==',
+  //   },
+  // },
   {
     field: 'overseeUserName',
     label: '督办人',
@@ -672,9 +682,10 @@ export const addFormSchema: FormSchema[] = [
   {
     field: 'remark',
     label: '备注',
-    component: 'Input',
+    component: 'InputTextArea',
     componentProps: {
       placeholder: '请输入备注',
+      rows: 3,
     },
   },
 ];

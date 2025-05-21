@@ -1,3 +1,4 @@
+import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { pageNoToPageNum } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
@@ -71,9 +72,9 @@ export const getAssignDetail = (ticketId:string) => defHttp.get({ url: Api.getAs
 /**
  * 书记建议
  */
-export const shujiSuggest = (params) => defHttp.post({ url: Api.shujiList, params});
+export const shujiSuggest = (params) => defHttp.post({ url: Api.shujiList, data:params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
 /**
  * 主任建议
  */
-export const zhurenSuggest = (params) => defHttp.post({ url: Api.zhurenList, params});
+export const zhurenSuggest = (params) => defHttp.post({ url: Api.zhurenList, data:params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
 

@@ -5,12 +5,13 @@
       :title="getTitle"
       :width="1000"
       @ok="handleSubmit"
+      @cancel="closeTheModal"
       :showFooter="showFooter"
       destroyOnClose
       :maskClosable="false"
     >
       <div class="flex px-3">
-        <div style="flex: 1; border-right: 1px solid #ddd;">
+        <div style="flex: 1; border-right: 1px solid #ddd; max-height: 700px; overflow: auto;">
             <BasicForm @register="registerForm"/>
         </div>
         <div style="width: 400px; padding-left: 30px;">
@@ -41,12 +42,17 @@
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema, addFormSchema } from './community.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
-    
     import { addCommunityReploy, getReplyDetail } from './community.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
-  
+    import { useMessage } from '/@/hooks/web/useMessage';
+    import {useConfirm} from '../hooks/useConfirm';
+
+    const { showQuReplyConfirm } = useConfirm();
+
+    const { createMessage } = useMessage();
     // 声明Emits
-    const emit = defineEmits(['success', 'register']);
+    const emit = defineEmits(['success', 'register', 'qjForm']);
+    // 声明Props
     const attrs = useAttrs();
     const isUpdate = ref(true);
     const rowId = ref('');
@@ -80,6 +86,8 @@
     });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
+    // 区级表单直接被关闭
+    let isQjFormCloseDirect = false;
     //表单赋值
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
@@ -219,6 +227,24 @@
           "replyAudioNote": "",
           "resolveResult": params.resolveResult,
         };
+        // 判断文件列表是否为空
+        if(addFileList.length === 0) {
+          createMessage.error('上传附件不能为空，必选上传其中任意一种！');
+          return;
+        }
+        // 弹出区级回复确认对话框
+        if(!isQjFormCloseDirect) {
+          const res = await showQuReplyConfirm((resolve:any) => {
+            emit('qjForm', {
+              record: currentEditRecordRef.value,
+              resolve
+            });
+          });
+          if(res === 'close') {
+            isQjFormCloseDirect = true;
+            return;
+          }
+        }
         //提交表单
         await addCommunityReploy(newParams);
         //关闭弹窗
@@ -228,6 +254,10 @@
       } finally {
         setModalProps({ confirmLoading: false });
       }
+    }
+    //关闭弹窗
+    function closeTheModal() {
+      isQjFormCloseDirect = false;
     }
   </script>
   

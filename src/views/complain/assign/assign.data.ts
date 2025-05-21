@@ -311,14 +311,24 @@ export const formSchema: FormSchema[] = [
   {
     label: '数据来源',
     field: 'sourceType',
-    component: 'Select',
-    required: true,
-    componentProps: {
-      options: [
-        { label: '本地录入', value: 0 },
-        { label: '区分转', value: 1 },
-        { label: '直派', value: 2 },
-      ],
+      component: 'ApiSelect',
+      required: true,
+      componentProps: {
+        api: async () => {
+          const res  = await getDictItems('biz_source_type')
+            if(Array.isArray(res)){
+                return res.map(item => {
+                    return {
+                        text: item.text,
+                        value: +item.value
+                    }
+                })
+            } else {
+                return [];
+            }
+        },
+        labelField: 'text',
+        valueField: 'value'
     },
     colProps: { span: 12 },
   },
