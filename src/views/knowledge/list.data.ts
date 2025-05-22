@@ -1,66 +1,59 @@
-import { BasicColumn, FormSchema } from "/@/components/Table";
+import { BasicColumn, FormSchema } from '/@/components/Table';
 
 export const columns: BasicColumn[] = [
-    {
-        title: '类别',
-        dataIndex: 'name',
-        width: 200,
-    },
-    {
-        title: '诉求事项',
-        dataIndex: 'category',
-        width: 100,
-    },
-    {
-        title: '标题',
-        dataIndex: 'title',
-        width: 100,
-        slots: { customRender: 'title' },
-    },
-    {
-        title: '创建时间',
-        dataIndex: 'createdAt',
-        width: 180,
-    }
-]
+  {
+    title: '类别',
+    dataIndex: 'name',
+    width: 200,
+  },
+  {
+    title: '诉求事项',
+    dataIndex: 'category',
+    width: 100,
+  },
+  {
+    title: '标题',
+    dataIndex: 'title',
+    width: 100,
+    slots: { customRender: 'title' },
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'createdAt',
+    width: 180,
+  },
+];
 
-export const searchFormSchema: FormSchema[] = [
-  {
-    label: '类别',
-    field: 'category',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '经典案例', value: '0' },
-        { label: '政策文件', value: '1' },
-        { label: '政策解读', value: '2' },
-        { label: '法律法规', value: '3' },
-      ],
-      allowClear: true
-    },
-    colProps: { span: 6 },
+export const departmentConfig = {
+  label: '部门',
+  field: 'deptName',
+  component: 'Select',
+  componentProps: {
+    options: [],
+    allowClear: true,
   },
-  {
-    label: '诉求事项',
-    field: 'subCategory',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: 'a', value: '0' },
-        { label: 'b', value: '1' },
-        { label: 'c', value: '2' },
-      ],
-      allowClear: true
-    },
-    colProps: { span: 6 },
+  colProps: { span: 6 },
+  slot: 'department',
+};
+
+export const optionsTextConfig = {
+  label: '诉求事项',
+  field: 'optionText',
+  component: 'Select',
+  componentProps: {
+    options: [],
+    allowClear: true,
   },
-  {
-    label: '关键词',
-    field: 'keywords',
-    component: 'Input',
-    colProps: { span: 6 },
-  },
-]
+  colProps: { span: 6 },
+  slot: 'options',
+};
+
+export const keywordsConfig = {
+  label: '关键词',
+  field: 'keyword',
+  component: 'Input',
+  colProps: { span: 6 },
+};
 
 export const formSchema: FormSchema[] = [
   {
@@ -70,19 +63,15 @@ export const formSchema: FormSchema[] = [
     show: false,
   },
   {
-    label: '类别',
-    field: 'category',
+    label: '部门',
+    field: 'department',
     component: 'Select',
     componentProps: {
-        options: [
-            { label: '经典案例', value: '0' },
-            { label: '政策文件', value: '1' },
-            { label: '政策解读', value: '2' },
-            { label: '法律法规', value: '3' },
-        ],
-        allowClear: true
+      options: [],
+      allowClear: true,
+      showSearch: true,
     },
-    required: true,
+    required: false,
   },
   // 诉求事项
   {
@@ -90,14 +79,11 @@ export const formSchema: FormSchema[] = [
     field: 'subCategory',
     component: 'Select',
     componentProps: {
-      options: [
-        { label: 'a', value: '0' },
-        { label: 'b', value: '1' },
-        { label: 'c', value: '2' },
-      ],
-      allowClear: true
+      options: [],
+      allowClear: true,
+      showSearch: true,
     },
-    required: true,
+    required: false,
   },
   // 标题
   {
@@ -116,11 +102,7 @@ export const formSchema: FormSchema[] = [
   // 附件
   {
     label: '附件',
-    field: 'attachments',
-    component: 'Upload',
-    componentProps: {
-    mode: 'multiple',
-    allowClear: true,
-    },
- },
-]
+    field: 'addFileIdList',
+    component: 'JUpload',
+  },
+];
