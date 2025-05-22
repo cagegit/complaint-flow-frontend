@@ -1058,14 +1058,46 @@ export const addFormSchema: FormSchema[] = [
       mode: 'multiple'
     }
   },
+  // {
+  //   field: 'assignCommunityIdList',
+  //   label: '处理社区/居委会',
+  //   component: 'ApiTreeSelect',
+  //   componentProps: {
+  //     checkable: true,
+  //     multiple: true,
+  //     api: async () => {
+  //       const res = await getSecondTreeList('3');
+  //       console.log(res)
+  //       if (Array.isArray(res)) {
+  //         // res.unshift({text: '==请选择==', value: ''})
+  //         // 把tree格式数据展开
+  //         const newList = treeToList(res);
+  //         // console.log(res)
+  //         // res.unshift({text: '==请选择==', value: ''})
+  //         // console.log(res)
+  //         return newList.map(v => {
+  //           return {
+  //             id: v.id,
+  //             pId: v.parentId,
+  //             title: v.title,
+  //             value: v.id,
+  //           }
+  //         });
+  //       } else {
+  //         return [];
+  //       }
+  //     },
+  //     treeDataSimpleMode: true,
+  //   },
+  //   // treeDataSimpleMode: true,
+  // },
   {
-    field: 'assignCommunityIdList',
-    label: '处理社区/居委会',
+    label: () => h('span', {}, [
+      '处理社区/', h('br'), '居委会'
+    ]),
+    field: 'assignCommunityId',
     component: 'ApiCascader',
-    required: true,
     componentProps: {
-      checkable: true,
-      multiple: true,
       api: async () => {
         const res = await getSecondTreeList('3');
         // console.log(res)
@@ -1087,7 +1119,7 @@ export const addFormSchema: FormSchema[] = [
       treeDataSimpleMode: true,
       showCheckedStrategy: 'Cascader.SHOW_CHILD',
     },
-    // treeDataSimpleMode: true,
+    colProps: { span: 24 },
   },
   {
     field: 'sevenFiveId',
