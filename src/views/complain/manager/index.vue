@@ -1,11 +1,13 @@
 <template>
   <!--引用表格-->
-  <BasicTable @register="registerTable" :rowSelection="rowSelection">
+  <BasicTable @register="registerTable" :rowSelection="rowSelection" @ref="basicTable">
     <!--插槽:table标题-->
     <template #tableTitle>
       <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
       <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportTicketWords"> 导出word工单</a-button>
       <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportKickOut"> 导出剔除统计表</a-button>
+      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportExcelStatis">导出Excel统计表</a-button>
+      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportDayExcel">导出日报表</a-button>
     </template>
     <!--插槽:表格内容-->
     <template #bodyCell="{ text, column, record }">
@@ -19,30 +21,60 @@
     </template>
   </BasicTable>
 
+  <!--导出日报表-->
+  <ExportDayExcel @register="registerExportDayModal" @success="handleSuccessExportDay" />
+
   <!--工单编辑-->
   <ManagerEdit @register="registerModal" @success="handleSuccess" />
 </template>
 <script lang="ts" setup>
 import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
 import { useListPage } from '/@/hooks/system/useListPage';
-import { list, deleteTicket, deleteBatchTicket, exportTicketWord, exportKickOut } from './manager.api';
+import { list, deleteTicket, deleteBatchTicket, exportTicketWord, exportKickOut, exportExcelStatis, Api, getDayExcelColumns } from './manager.api';
 import { columns, searchFormSchema } from './manager.data';
-import { useModal } from '/@/components/Modal';
+import { useModal, useModalInner } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
+
+//@ts-ignore
+import ExportDayExcel from './ExportDay.vue';
 //@ts-ignore
 import ManagerEdit from './ManagerEdit.vue';
 import { usePermission } from '/@/hooks/web/usePermission';
 import { getExportUrl } from '../../system/dict/dict.api';
 import { downloadByUrl } from '/@/utils/file/download';
+import { ref } from 'vue';
+import { JCheckbox } from '/@/components/Form';
+import { reactive } from 'vue';
 
 //注册modal
 const [registerModal, { openModal }] = useModal();
+const [registerExportDayModal, { openModal: openExportModal }] = useModal();
 
 const { createMessage, createConfirm } = useMessage();
 const { isDisabledAuth } = usePermission();
+const columnNames = ref({});
+const form = reactive({
+  sex: '1',
+  sport: '1,3',
+});
+
+const sportOptions = [
+  {
+    label: '足球',
+    value: '1',
+  },
+  {
+    label: '篮球',
+    value: '2',
+  },
+  {
+    label: '乒乓球',
+    value: '3',
+  },
+];
 
 // 列表页面公共参数、方法
-const { prefixCls, tableContext, onImportXls } = useListPage({
+const { prefixCls, tableContext, onExportXls } = useListPage({
   designScope: 'ticket-manager',
   tableProps: {
     title: '工单管理列表',
@@ -84,7 +116,7 @@ const { prefixCls, tableContext, onImportXls } = useListPage({
 });
 
 //@ts-ignore 注册table数据
-const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+const [registerTable, { reload, getForm }, { rowSelection, selectedRowKeys }] = tableContext;
 
 function getTableAction(record): ActionItem[] {
   return [
@@ -182,6 +214,55 @@ function onExportKickOut() {
     if (res) {
       handleDownload(res);
     }
+  });
+}
+
+/**
+ * 导出Excel统计表
+ */
+async function onExportExcelStatis() {
+  const paramsForm = await getForm().validate();
+  // console.log('paramsForm', paramsForm);
+  exportExcelStatis({ ...paramsForm, ids: selectedRowKeys.value.join(',') }).then((res) => {
+    if (res) {
+      // console.log('res', res);
+      handleDownload(res);
+    }
+  });
+}
+/**
+ * 导出日报表
+ */
+async function onExportDayExcel() {
+  const columns = await getDayExcelColumns();
+  // console.log('columns', columns.allColumns);
+  // 将字符串转换为数组
+  const aArray = columns.allColumns.split(',');
+  const bArray = columns.userColumns.split(',');
+
+  // 按照b的顺序过滤出a中存在的字段，并保留原始顺序
+  const orderedPart = bArray.filter((item) => aArray.includes(item));
+
+  // 获取a中存在但b中不存在的字段，并保留原始顺序
+  const remainingPart = aArray.filter((item) => !bArray.includes(item));
+
+  // 合并两部分
+  const resultArray = [...orderedPart, ...remainingPart];
+  const allColumns = resultArray.map((item) => ({
+    value: item,
+    label: item,
+    selected: bArray.includes(item), // 判断是否在b中存在
+  }));
+  const paramsForm = await getForm().validate();
+  const ids = selectedRowKeys.value.join(',');
+  const params = {
+    ...paramsForm,
+    ids,
+  };
+  openExportModal(true, {
+    showFooterExport: true,
+    allColumns,
+    params,
   });
 }
 

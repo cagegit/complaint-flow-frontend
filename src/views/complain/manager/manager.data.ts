@@ -325,65 +325,17 @@ export const searchFormSchema: FormSchema[] = [
   {
     label: '处理科室',
     field: 'assignDeptId',
-    component: 'ApiSelect',
-    // componentProps: {
-    //   api: async () => {
-    //     const res = await getDictItems('biz_dept_list');
-    //     if (Array.isArray(res)) {
-    //       res.unshift({ text: '==请选择==', value: '' });
-    //       return res;
-    //     } else {
-    //       return [];
-    //     }
-    //   },
-    //   labelField: 'text',
-    //   valueField: 'value',
-    //   placeholder: '==请选择==',
-    // },
-    componentProps: () => {
-      return {
-        api: async () => {
-          const res = await getCommunityList('2') // 2表示部门
-          console.log(res)
-          if (Array.isArray(res)) {
-            // res.unshift({label: '所有', value: ''})
-            return res;
-          } else {
-            return [];
-          }
-        },
-        labelField: 'departName',
-        valueField: 'id',
-        multiple: true,
-        checkable: true,
-      }
-    },
-    colProps: { span: 8 },
-  },
-  {
-    label: () => h('span', {}, [
-      '处理社区/', h('br'), '居委会'
-    ]),
-    field: 'assignCommunityId',
-    component: 'ApiTreeSelect',
+    component: 'ApiCascader',
     componentProps: {
-      checkable: true,
-      multiple: true,
       api: async () => {
-        const res = await getSecondTreeList('3');
-        console.log(res)
+        const res = await getSecondTreeList('2'); // 2表示科室、部门
         if (Array.isArray(res)) {
-          // res.unshift({text: '==请选择==', value: ''})
-          // 把tree格式数据展开
           const newList = treeToList(res);
-          // console.log(res)
-          // res.unshift({text: '==请选择==', value: ''})
-          // console.log(res)
           return newList.map(v => {
             return {
               id: v.id,
-              pId: v.parentId,
-              title: v.title,
+              parentId: v.parentId,
+              label: v.title,
               value: v.id,
             }
           });
@@ -391,7 +343,111 @@ export const searchFormSchema: FormSchema[] = [
           return [];
         }
       },
-      treeDataSimpleMode: true,
+      labelField: 'label',
+      valueField: 'value',
+      placeholder: '==请选择==',
+    },
+    colProps: { span: 8 },
+  },
+  // {
+  //   label: '处理科室',
+  //   field: 'assignDeptId',
+  //   component: 'ApiSelect',
+  //   // componentProps: {
+  //   //   api: async () => {
+  //   //     const res = await getDictItems('biz_dept_list');
+  //   //     if (Array.isArray(res)) {
+  //   //       res.unshift({ text: '==请选择==', value: '' });
+  //   //       return res;
+  //   //     } else {
+  //   //       return [];
+  //   //     }
+  //   //   },
+  //   //   labelField: 'text',
+  //   //   valueField: 'value',
+  //   //   placeholder: '==请选择==',
+  //   // },
+  //   componentProps: () => {
+  //     return {
+  //       api: async () => {
+  //         const res = await getCommunityList('2') // 2表示部门
+  //         console.log(res)
+  //         if (Array.isArray(res)) {
+  //           // res.unshift({label: '所有', value: ''})
+  //           return res;
+  //         } else {
+  //           return [];
+  //         }
+  //       },
+  //       labelField: 'departName',
+  //       valueField: 'id',
+  //       multiple: true,
+  //       checkable: true,
+  //     }
+  //   },
+  //   colProps: { span: 8 },
+  // },
+  // {
+  //   label: () => h('span', {}, [
+  //     '处理社区/', h('br'), '居委会'
+  //   ]),
+  //   field: 'assignCommunityId',
+  //   component: 'ApiTreeSelect',
+  //   componentProps: {
+  //     checkable: true,
+  //     multiple: true,
+  //     api: async () => {
+  //       const res = await getSecondTreeList('3');
+  //       console.log(res)
+  //       if (Array.isArray(res)) {
+  //         // res.unshift({text: '==请选择==', value: ''})
+  //         // 把tree格式数据展开
+  //         const newList = treeToList(res);
+  //         // console.log(res)
+  //         // res.unshift({text: '==请选择==', value: ''})
+  //         // console.log(res)
+  //         return newList.map(v => {
+  //           return {
+  //             id: v.id,
+  //             pId: v.parentId,
+  //             title: v.title,
+  //             value: v.id,
+  //           }
+  //         });
+  //       } else {
+  //         return [];
+  //       }
+  //     },
+  //     treeDataSimpleMode: true,
+  //     placeholder: '==请选择==',
+  //   },
+  //   colProps: { span: 8 },
+  // },
+  {
+    label: () => h('span', {}, [
+      '处理社区/', h('br'), '居委会'
+    ]),
+    field: 'assignCommunityId',
+    component: 'ApiCascader',
+    componentProps: {
+      api: async () => {
+        const res = await getSecondTreeList('3'); // 3表示管区、社区
+        if (Array.isArray(res)) {
+          const newList = treeToList(res);
+          return newList.map(v => {
+            return {
+              id: v.id,
+              parentId: v.parentId,
+              label: v.title,
+              value: v.id,
+            }
+          });
+        } else {
+          return [];
+        }
+      },
+      labelField: 'label',
+      valueField: 'value',
       placeholder: '==请选择==',
     },
     colProps: { span: 8 },
@@ -1014,28 +1070,55 @@ export const addFormSchema: FormSchema[] = [
       }
     }
   },
+  // {
+  //   field: 'assignCommunityIdList',
+  //   label: '处理社区/居委会',
+  //   component: 'ApiTreeSelect',
+  //   componentProps: {
+  //     checkable: true,
+  //     multiple: true,
+  //     api: async () => {
+  //       const res = await getSecondTreeList('3');
+  //       console.log(res)
+  //       if (Array.isArray(res)) {
+  //         // res.unshift({text: '==请选择==', value: ''})
+  //         // 把tree格式数据展开
+  //         const newList = treeToList(res);
+  //         // console.log(res)
+  //         // res.unshift({text: '==请选择==', value: ''})
+  //         // console.log(res)
+  //         return newList.map(v => {
+  //           return {
+  //             id: v.id,
+  //             pId: v.parentId,
+  //             title: v.title,
+  //             value: v.id,
+  //           }
+  //         });
+  //       } else {
+  //         return [];
+  //       }
+  //     },
+  //     treeDataSimpleMode: true,
+  //   },
+  //   // treeDataSimpleMode: true,
+  // },
   {
-    field: 'assignCommunityIdList',
-    label: '处理社区/居委会',
-    component: 'ApiTreeSelect',
+    label: () => h('span', {}, [
+      '处理社区/', h('br'), '居委会'
+    ]),
+    field: 'assignCommunityId',
+    component: 'ApiCascader',
     componentProps: {
-      checkable: true,
-      multiple: true,
       api: async () => {
-        const res = await getSecondTreeList('3');
-        console.log(res)
+        const res = await getSecondTreeList('3'); // 3表示管区、社区
         if (Array.isArray(res)) {
-          // res.unshift({text: '==请选择==', value: ''})
-          // 把tree格式数据展开
           const newList = treeToList(res);
-          // console.log(res)
-          // res.unshift({text: '==请选择==', value: ''})
-          // console.log(res)
           return newList.map(v => {
             return {
               id: v.id,
-              pId: v.parentId,
-              title: v.title,
+              parentId: v.parentId,
+              label: v.title,
               value: v.id,
             }
           });
@@ -1043,9 +1126,11 @@ export const addFormSchema: FormSchema[] = [
           return [];
         }
       },
-      treeDataSimpleMode: true,
+      labelField: 'label',
+      valueField: 'value',
+      placeholder: '==请选择==',
     },
-    // treeDataSimpleMode: true,
+    colProps: { span: 24 },
   },
   {
     label: '案件类型',
@@ -1239,3 +1324,4 @@ export const addFormSchema: FormSchema[] = [
     }
   },
 ];
+

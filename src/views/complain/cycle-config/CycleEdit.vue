@@ -6,11 +6,11 @@
   </div>
 </template>
   <script lang="ts" setup>
-import { ref, computed, unref, useAttrs } from 'vue';
+import { ref, computed, unref, useAttrs, onMounted } from 'vue';
 import { BasicForm, useForm } from '/@/components/Form/index';
 import { formSchema } from './cycle.data';
 
-import { editPriority, saveCycle } from './cycle.api';
+import { getConfig, saveCycle } from './cycle.api';
 import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
 import { useMessage } from '/@/hooks/web/useMessage';
 const { createMessage } = useMessage();
@@ -33,15 +33,15 @@ const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSc
     preIcon: 'ant-design:check-circle-outlined',
     onClick: handleSubmit,
   },
-  resetButtonOptions: {
-    text: '重置',
-    onClick: () => {
-      resetFields();
-    },
-  },
+  // resetButtonOptions: {
+  //   text: '取消',
+  //   onClick: () => {
+  //     resetFields();
+  //   },
+  // },
   showActionButtonGroup: true,
   showSubmitButton: true,
-  showResetButton: true,
+  showResetButton: false,
   // layout: 'vertical',
   // rowProps: { justify: 'end', align: 'middle' },
   //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
@@ -53,6 +53,21 @@ const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSc
     offset: 19,
   },
 });
+
+onMounted(() => {
+  getConfigFun();
+});
+
+async function getConfigFun() {
+  try {
+    let values = await getConfig();
+    let params = values;
+    console.log('params', params);
+    setFieldsValue({ cycleTime: params.cycleTime, cycleDayNumber: params.cycleDayNumber });
+  } finally {
+  }
+}
+
 // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
 // const showFooter = ref(true);
 const { adaptiveWidth } = useDrawerAdaptiveWidth();
@@ -65,6 +80,7 @@ async function handleSubmit() {
     params.cycleTime = params.cycleTime ? params.cycleTime.format('HH:mm:ss') : '';
     await saveCycle(params);
     createMessage.success(`保存成功！`);
+    getConfigFun();
   } finally {
     resetFields();
   }

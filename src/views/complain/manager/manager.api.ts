@@ -22,14 +22,19 @@ export enum Api {
   exportTicketWord = '/complain/manage/exportTicketWord',
 
   // 导出剔除统计表
-  exportKickOut = 'complain/manage/exportKickOut',
+  exportKickOut = '/complain/manage/exportKickOut',
+  //导出统计表
+  exportExcelStatis = '/complain/manage/exportExcelStatis',
+  //获取日报表字段
+  getDayExcelColumns = '/complain/manage/getDayExcelColumns',
+  //获取日报表字段
+  exportDayExcel = '/complain/manage/exportDayExcel',
 }
 
-
 /**
- * 工单管理列表
+ * 处理参数
  */
-export const list = (param) => {
+const formatParams = (param) => {
   const params: any = pageNoToPageNum(param);
   console.log(params);
 
@@ -72,7 +77,15 @@ export const list = (param) => {
     }
     delete params.replyAuditTime;
   }
+  return params;
+}
 
+
+/**
+ * 工单管理列表
+ */
+export const list = (param) => {
+  const params = formatParams(param);
   return new Promise((resolve, reject) => {
     defHttp
       .get({ url: Api.list, params })
@@ -137,6 +150,11 @@ export const getManageInfo = (ticketId: string) => defHttp.get({ url: Api.getMan
 export const getProcessList = () => defHttp.get({ url: Api.getProcessList });
 
 /**
+ * 获取日报表字段
+ */
+export const getDayExcelColumns = () => defHttp.get({ url: Api.getDayExcelColumns });
+
+/**
  * 导出word工单
  */
 export const exportTicketWord = (params) => defHttp.post({ url: paramsToQuery(Api.exportTicketWord, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
@@ -145,4 +163,43 @@ export const exportTicketWord = (params) => defHttp.post({ url: paramsToQuery(Ap
  * 导出剔除统计表
  */
 export const exportKickOut = (params) => defHttp.post({ url: paramsToQuery(Api.exportKickOut, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
+
+
+/**
+ * 导出统计表
+ */
+export const exportExcelStatis = (param) => {
+  const params = formatParams(param);
+  return new Promise((resolve, reject) => {
+    defHttp
+      .post({ url: Api.exportExcelStatis, params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } })
+      .then((res) => {
+        // res.records = res.list;
+        // delete res.list;
+        resolve(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 导出日报表
+ */
+export const getExportDayExcel = (param) => {
+  const params = formatParams(param);
+  return new Promise((resolve, reject) => {
+    defHttp
+      .post({ url: Api.exportDayExcel, params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(err);
+      });
+  });
+};
 
