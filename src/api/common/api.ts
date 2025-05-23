@@ -325,3 +325,12 @@ export const getHoldRemoveList = (applyType:string) => {
 export const getCitySevenFiveList = () => {
   return defHttp.get({ url: '/biz/upDict/getSevenFiveList' });
 };
+
+/**
+ * 工单详情接口
+ * 
+ * @param params
+ */
+export const getComplaintDetail = (id: string) => {
+  return defHttp.get({ url: `/complain/receive/queryById?id=${id}` });
+};

@@ -19,9 +19,9 @@
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema } from './ticket.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
-    
     import { addTicket, editTicket } from './ticket.api';
     import { getTicketInfoInTurnOut } from '../turn-out/out.api';
+    import { getComplaintDetail } from '/@/api/common/api';
   
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -56,34 +56,40 @@
       console.log(data);
       currentRecord = data.record;
       // 无论新增还是编辑，都可以设置表单值
-      if(data.inTurnOut) {
-        try {
-          const res = await getTicketInfoInTurnOut({ticketId:data.record.id});
+      try {
+        // 查询工单详情
+        const detailRes = await getTicketInfoInTurnOut({ticketId:data.record.id});
+         if(data.inTurnOut) {
+          const res = await getComplaintDetail(data.record.id);
           console.log(res);
           if(res) {
             setFieldsValue({
               ...data.record,
+              ...detailRes,
               ...res
             });
           } else {
             setFieldsValue({
-              ...data.record
+              ...data.record,
+              ...detailRes
             });
           }
-        } catch (error) {
-          console.error('获取工单详情失败', error);
-        }
-      } else {
-        if (typeof data.record === 'object') {
-          setFieldsValue({
-            ...data.record
-          });
         } else {
-          setFieldsValue({
-            sourceType: 0,
-          });
+          if (typeof data.record === 'object') {
+            setFieldsValue({
+              ...data.record,
+              ...detailRes
+            });
+          } else {
+            setFieldsValue({
+              sourceType: 0,
+            });
+          }
         }
+      } catch (error) {
+        console.error('获取工单详情失败', error);
       }
+     
      
       // 判断是否禁用数据来源下拉
       updateSchema(

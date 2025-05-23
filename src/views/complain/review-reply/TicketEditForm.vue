@@ -110,6 +110,7 @@
       let res:any =null;
       try {
         res = await getReplyDetail({ ticketId: data.record.id });
+        console.log(res);
         replyList.value = res?.replyList || [];
         total.value = res?.replyList?.length || 0;
         finalReplyList.value = res?.replyList || [];
