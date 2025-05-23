@@ -36,7 +36,7 @@ const isUpdate = ref(true);
 const showFooter = ref(true);
 
 //表单配置
-const [registerForm, { setFieldsValue: setBasicFieldsValue, validate: BasicValidate, resetFields, setProps }] = useForm({
+const [registerForm, { setFieldsValue: setBasicFieldsValue, validate, resetFields, setProps }] = useForm({
   labelWidth: 100,
   schemas: formSchema,
   showActionButtonGroup: false,
@@ -91,7 +91,7 @@ const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (dat
     // 无论新增还是编辑，都可以设置表单值
     setBasicFieldsValue({
       ...data.record,
-      sourceType: '' + data.record.sourceType,
+      sourceType: data.record.sourceType,
     });
     // setFieldsValue({
     //   ...data.record,
@@ -115,7 +115,7 @@ const { adaptiveWidth } = useDrawerAdaptiveWidth();
 //提交事件
 async function handleSubmit() {
   try {
-    let values = await BasicValidate();
+    let values = await validate();
     setModalProps({ confirmLoading: true });
     let isUpdateVal = unref(isUpdate);
     let params = values;

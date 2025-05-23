@@ -77,6 +77,13 @@ const formatParams = (param) => {
     }
     delete params.replyAuditTime;
   }
+  // 处理社区、委员也 也是传参这里 只穿最后一个id
+  if (params.assignCommunityId) {
+    params.assignCommunityId = params.assignCommunityId.split(',').pop();
+  }
+  if (params.sevenFiveId) {
+    params.sevenFiveId = params.sevenFiveId.split(',').pop();
+  }
   return params;
 }
 

@@ -1,4 +1,4 @@
-import { getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
+import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -70,25 +70,25 @@ export const columns: BasicColumn[] = [
   {
     title: '是否解决', dataIndex: 'resolveFlag', width: 120, customRender: ({ text }) => {
       // 是否解决(-1默认;0否;1是)
-      return text === -1 ? '' : (text === 0 ? '否' : '是');
+      return text === 1 ? '已解决' : (text === 0 ? '未解决' : '-');
     }
   },
   {
     title: '是否满意', dataIndex: 'satisfyFlag', width: 120, customRender: ({ text }) => {
       // 是否满意(-1默认;0否;1是)
-      return text === -1 ? '' : (text === 0 ? '否' : '是');
+      return text === 1 ? '满意' : (text === 0 ? '不满意' : '-');
     }
   },
   {
     title: '是否响应', dataIndex: 'responseFlag', width: 120, customRender: ({ text }) => {
       // 	是否响应（0否;1是）
-      return text === -1 ? '' : (text === 0 ? '否' : '是');
+      return text === 1 ? '响应' : (text === 0 ? '未响应' : '-');
     }
   },
   {
     title: '是否接收', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
       // 是否已接收（0否;1是;-1已转出）
-      return text === -1 ? '已转出' : (text === 0 ? '待接收' : '已接收');
+      return text === 1 ? '已接收' : (text === 0 ? '待接收' : '-');
     }
   },
   { title: '跟进情况', dataIndex: 'followCode', width: 120 },
@@ -117,7 +117,7 @@ export const columns: BasicColumn[] = [
   {
     title: '已倾听', dataIndex: 'fileRead', width: 120, customRender: ({ text }) => {
       // 录音是否已倾听(0否;1是)
-      return text === -1 ? '' : (text === 0 ? '否' : '是');
+      return text === 1 ? '已倾听' : (text === 0 ? '未倾听' : '-');
     }
   },
   { title: '最终处理情况', dataIndex: 'finalResolveResult', width: 180 },
@@ -493,7 +493,9 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 8 },
   },
   {
-    label: '回复审核时间',
+    label: () => h('span', {}, [
+      '回复审核', h('br'), '时间'
+    ]),
     field: 'replyAuditTime',
     component: 'RangePicker',
     componentProps: {
@@ -598,7 +600,7 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 8 },
   },
   {
-    label: '需要二次办理',
+    label: '二次办理',
     field: 'resolveCount',
     component: 'Select',
     componentProps: {
@@ -621,28 +623,48 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 8 },
   },
+  // {
+  //   label: '七有五性',
+  //   field: 'sevenFiveId',
+  //   component: 'ApiTreeSelect',
+  //   componentProps: {
+  //     api: async () => {
+  //       const res = await getQywxTreeList();
+  //       console.log(res)
+  //       if (Array.isArray(res)) {
+  //         // res.unshift({text: '==请选择==', value: ''})
+  //         return res.map(v => {
+  //           return {
+  //             id: v.id,
+  //             pId: v.parentId,
+  //             title: v.liveHoodIssueNames,
+  //             value: v.id,
+  //           }
+  //         });
+  //       } else {
+  //         return [];
+  //       }
+  //     },
+  //     treeDataSimpleMode: true,
+  //   },
+  //   colProps: { span: 8 },
+  // },
   {
-    label: '七有五性',
     field: 'sevenFiveId',
-    component: 'ApiTreeSelect',
+    label: '七有五性',
+    component: 'ApiCascader',
     componentProps: {
       api: async () => {
-        const res = await getQywxTreeList();
-        console.log(res)
+        const res = await getCitySevenFiveList();
+        // console.log(res)
         if (Array.isArray(res)) {
-          // res.unshift({text: '==请选择==', value: ''})
-          return res.map(v => {
-            return {
-              id: v.id,
-              pId: v.parentId,
-              title: v.liveHoodIssueNames,
-              value: v.id,
-            }
-          });
+          return res;
         } else {
           return [];
         }
       },
+      labelField: 'name',
+      valueField: 'id',
       treeDataSimpleMode: true,
     },
     colProps: { span: 8 },
@@ -731,10 +753,7 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
 
     required: true,
-    colProps: { span: 24 },
-    itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
-    }
+    colProps: { span: 12 },
   },
   {
     field: 'callTime',
@@ -928,19 +947,6 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'finalResolveResult',
-    label: '处理情况',
-    component: 'InputTextArea',
-    componentProps: {
-      rows: 4,
-      placeholder: '请输入处理情况',
-    },
-    colProps: { span: 24 },
-    itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
-    }
-  },
-  {
     field: 'resolveDepartment',
     label: '承办单位',
     component: 'Input',
@@ -962,34 +968,23 @@ export const formSchema: FormSchema[] = [
   },
 ];
 
+
 // 待补充表单
 export const addFormSchema: FormSchema[] = [
   {
-    field: 'labelCode',
-    label: '案件标签',
+    field: 'labelCode', label: '标签',
     component: 'RadioGroup',
     componentProps: {
-      api: async () => {
-        const res = await getDictItems('biz_complaint_lavel');
-        if (Array.isArray(res)) {
-          // res.unshift({ text: '==请选择==', value: '' });
-          return res;
-        } else {
-          return [];
-        }
-      },
-      labelField: 'text',
-      valueField: 'value',
-      // placeholder: '==请选择==',
+      options: getDictItemsByCode('biz_complaint_lavel')
     },
-    // componentProps: {
-    //   options: getDictItemsByCode('biz_complaint_lavel')
-    // }
+    defaultValue: '1',
+    required: true
   },
   {
     field: 'reportDistrictId',
     label: '反映管区',
     component: 'ApiSelect',
+    required: true,
     componentProps: ({ formActionType }) => {
       return {
         api: async () => {
@@ -1003,15 +998,11 @@ export const addFormSchema: FormSchema[] = [
           }
         },
         onSelect: async (options, values) => {
-          // console.log(options, values);
+          console.log(options, values);
           const { updateSchema, setFieldsValue } = formActionType;
           const { value } = values;
           const res = await getCommunityChildList(value)
           // console.log(res)
-          // 切换时清空社区数据
-          setFieldsValue({
-            reportCommunityId: ''
-          });
           if (Array.isArray(res)) {
             // res.unshift({label: '所有', value: ''})
             updateSchema({
@@ -1043,6 +1034,7 @@ export const addFormSchema: FormSchema[] = [
     field: 'reportCommunityId',
     label: '反映社区',
     component: 'Select',
+    required: true,
     componentProps: {
       options: []
     }
@@ -1051,68 +1043,34 @@ export const addFormSchema: FormSchema[] = [
     field: 'assignDeptIdList',
     label: '处理科室',
     component: 'ApiSelect',
-    componentProps: ({ formActionType }) => {
-      return {
-        api: async () => {
-          const res = await getCommunityList('2') // 2表示部门
-          console.log(res)
-          if (Array.isArray(res)) {
-            // res.unshift({label: '所有', value: ''})
-            return res;
-          } else {
-            return [];
-          }
-        },
-        labelField: 'departName',
-        valueField: 'id',
-        multiple: true,
-        checkable: true,
-      }
-    }
-  },
-  // {
-  //   field: 'assignCommunityIdList',
-  //   label: '处理社区/居委会',
-  //   component: 'ApiTreeSelect',
-  //   componentProps: {
-  //     checkable: true,
-  //     multiple: true,
-  //     api: async () => {
-  //       const res = await getSecondTreeList('3');
-  //       console.log(res)
-  //       if (Array.isArray(res)) {
-  //         // res.unshift({text: '==请选择==', value: ''})
-  //         // 把tree格式数据展开
-  //         const newList = treeToList(res);
-  //         // console.log(res)
-  //         // res.unshift({text: '==请选择==', value: ''})
-  //         // console.log(res)
-  //         return newList.map(v => {
-  //           return {
-  //             id: v.id,
-  //             pId: v.parentId,
-  //             title: v.title,
-  //             value: v.id,
-  //           }
-  //         });
-  //       } else {
-  //         return [];
-  //       }
-  //     },
-  //     treeDataSimpleMode: true,
-  //   },
-  //   // treeDataSimpleMode: true,
-  // },
-  {
-    label: () => h('span', {}, [
-      '处理社区/', h('br'), '居委会'
-    ]),
-    field: 'assignCommunityId',
-    component: 'ApiCascader',
+    required: true,
     componentProps: {
       api: async () => {
-        const res = await getSecondTreeList('3'); // 3表示管区、社区
+        const res = await getCommunityList('2') // 2表示部门
         if (Array.isArray(res)) {
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'departName',
+      valueField: 'id',
+      mode: 'multiple'
+    }
+  },
+  {
+    field: 'assignCommunityIdList',
+    label: '处理社区/居委会',
+    component: 'ApiCascader',
+    required: true,
+    componentProps: {
+      checkable: true,
+      multiple: true,
+      api: async () => {
+        const res = await getSecondTreeList('3');
+        // console.log(res)
+        if (Array.isArray(res)) {
+          // 把tree格式数据展开
           const newList = treeToList(res);
           return newList.map(v => {
             return {
@@ -1126,202 +1084,60 @@ export const addFormSchema: FormSchema[] = [
           return [];
         }
       },
-      labelField: 'label',
-      valueField: 'value',
-      placeholder: '==请选择==',
+      treeDataSimpleMode: true,
+      showCheckedStrategy: 'Cascader.SHOW_CHILD',
     },
-    colProps: { span: 24 },
-  },
-  {
-    label: '案件类型',
-    field: 'caseType',
-    component: 'ApiSelect',
-    required: true,
-    componentProps: {
-      api: async () => {
-        const res = await getDictItems('biz_case_category');
-        if (Array.isArray(res)) {
-          // res.unshift({ text: '==请选择==', value: '' });
-          return res;
-        } else {
-          return [];
-        }
-      },
-      labelField: 'text',
-      valueField: 'value',
-      // placeholder: '==请选择==',
-    },
-    colProps: { span: 24 },
-  },
-  {
-    label: '是否响应',
-    field: 'responseFlag',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-    },
-    colProps: { span: 24 },
-  },
-  {
-    label: '工单状态',
-    field: 'statusCode',
-    component: 'ApiSelect',
-    required: true,
-    componentProps: {
-      api: async () => {
-        const res = await getProcessList();
-        if (Array.isArray(res)) {
-          // res.unshift({ valueName: '==请选择==', valueCode: '' });
-          return res;
-        } else {
-          return [];
-        }
-      },
-      labelField: 'valueName',
-      valueField: 'valueCode',
-      // placeholder: '==请选择==',
-    },
-    colProps: { span: 24 },
-  },
-  {
-    label: '办结时间',
-    field: 'doneTime',
-    component: 'DatePicker',
-    required: true,
-    componentProps: {
-      // presets: rangePresets,
-      // placeholder: ['开始日期', '结束日期'],
-    },
-    colProps: { span: 24 },
-  },
-  {
-    label: '督办人',
-    field: 'overseeUserName',
-    component: 'Input',
-    required: true,
-    componentProps: {
-      placeholder: '请输入督办人',
-    },
-    colProps: { span: 24 },
-  },
-  {
-    field: 'followCode',
-    label: '跟进情况',
-    component: 'ApiSelect',
-    required: true,
-    componentProps: {
-      api: async () => {
-        const res = await getDictItems('biz_follow_code')
-        console.log(res)
-        if (Array.isArray(res)) {
-          return res;
-        } else {
-          return [];
-        }
-      },
-      labelField: 'text',
-      valueField: 'value',
-      placeholder: '==请选择==',
-    },
-    colProps: { span: 24 },
-  },
-  {
-    label: '是否解决',
-    field: 'resolveFlag',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '已解决', value: '1' },
-        { label: '未解决', value: '0' },
-      ],
-    },
-    colProps: { span: 24 },
-  },
-  {
-    label: '是否满意',
-    field: 'satisfyFlag',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '满意', value: '1' },
-        { label: '不满意', value: '0' },
-      ],
-    },
-    colProps: { span: 24 },
-  },
-  {
-    label: '是否属实',
-    field: 'factFlag',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '属实', value: '1' },
-        { label: '不属实', value: '0' },
-      ],
-    },
-    colProps: { span: 24 },
+    // treeDataSimpleMode: true,
   },
   {
     field: 'sevenFiveId',
     label: '七有五性',
-    component: 'ApiTreeSelect',
+    component: 'ApiCascader',
+    required: true,
     componentProps: {
       api: async () => {
-        const res = await getQywxTreeList();
-        console.log(res)
+        const res = await getCitySevenFiveList();
+        // console.log(res)
         if (Array.isArray(res)) {
-          // res.unshift({text: '==请选择==', value: ''})
-          return res.map(v => {
-            return {
-              id: v.id,
-              pId: v.parentId,
-              title: v.liveHoodIssueNames,
-              value: v.id,
-            }
-          });
+          return res;
         } else {
           return [];
         }
       },
+      labelField: 'name',
+      valueField: 'id',
       treeDataSimpleMode: true,
     }
   },
+  // 案件性质
   {
-    label: '已倾听',
-    field: 'fileRead',
-    component: 'Select',
+    field: 'caseNature',
+    label: '案件性质',
+    component: 'ApiSelect',
+    required: true,
     componentProps: {
-      options: [
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-    },
-    colProps: { span: 24 },
+      api: async () => {
+        const res = await getDictItems('biz_case_nature')
+        // console.log(res)
+        if (Array.isArray(res)) {
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value'
+    }
   },
-  {
-    label: '需要二次办理',
-    field: 'resolveCount',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '一次办理', value: '1' },
-        { label: '二次办理', value: '2' },
-      ],
-    },
-    colProps: { span: 24 },
-  },
-
   {
     field: 'remark',
     label: '备注',
     component: 'InputTextArea',
-    colProps: { span: 24 },
-    itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
-    }
+    componentProps: {
+      rows: 3,
+      placeholder: '请输入备注',
+      style: { width: '100%' },
+    },
   },
 ];
 
