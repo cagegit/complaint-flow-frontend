@@ -59,7 +59,7 @@
 <script lang="ts" setup name="KnowledgeDetail">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getKnowledgeDetail } from './list.api';
+import { getDetail } from'/@/api/complaint/knowledge';
 
 const route = useRoute();
 const router = useRouter();
@@ -103,7 +103,7 @@ onMounted(() => {
   // 可以通过路由参数获取文档ID，然后请求详细数据
   const documentId = route.query.id;
   if (documentId) {
-    getKnowledgeDetail(documentId).then((response) => {
+    getDetail({id:documentId}).then((response) => {
       // 处理获取到的文档详情数据
       console.log('文档详情数据：', response);
       // 如果API返回附件数据，可以更新attachments
