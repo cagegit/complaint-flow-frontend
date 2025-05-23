@@ -3,6 +3,11 @@
     <div class="py-4">
       <a-button type="link" style="color: #0c3c3a" @click="goBack" preIcon="ant-design:arrow-left-outlined">返回知识库</a-button>
     </div>
+    <div class="py-4">
+      <a-radio-group size="large" v-model:value="type" :style="{ marginBottom: '8px' }" @change="handleTypeChange">
+        <a-radio-button v-for="item in typeList" :key="item.value" :value="item.value">{{ item.label }}</a-radio-button>
+      </a-radio-group>
+    </div>
     <BasicTable @register="registerTable" :columns="columns">
       <template #form-department="{ model, field }">
         <a-select show-search v-model:value="model[field]" :options="deptList" placeholder="请选择部门" allowClear />
@@ -24,26 +29,35 @@
       </template>
     </BasicTable>
     <!-- 新增/编辑表单 -->
-    <EditModal @register="registerFormModal" @success="reload" :deptList="deptList" :optionTextList="optionTextList" />
+    <EditModal @register="registerFormModal" @success="reload" :type="type" :deptList="deptList" :optionTextList="optionTextList" />
   </div>
 </template>
 <script lang="ts" setup>
-  // import { onMounted } from 'vue';
-  import { ActionItem, BasicTable, FormSchema } from '/@/components/Table/index';
-  import { getPageList, getOptionTextList, getDeptList } from '/@/api/complaint/knowledge';
+  import { ActionItem, BasicTable, FormSchema, TableAction } from '/@/components/Table/index';
+  import { getPageList, getOptionTextList, getDeptList, deleteKnowledge } from '/@/api/complaint/knowledge';
   import { columns, departmentConfig, keywordsConfig, optionsTextConfig } from './list.data';
   import { useListPage } from '/@/hooks/system/useListPage';
   //@ts-ignore
   import EditModal from './EditModal.vue';
   import { useModal } from '/@/components/Modal';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRouter } from 'vue-router';
   import { onMounted, ref } from 'vue';
+  import { message, Modal } from 'ant-design-vue';
 
   const [registerFormModal, { openModal }] = useModal();
   // 获取router query
-  const route = useRoute();
   const router = useRouter();
 
+  let query = router.currentRoute.value.query;
+  //   类型
+  const type = ref((query.type as string) || '1');
+  //   类型选项
+  const typeList = ref([
+    { label: '单派科室', value: '1' },
+    { label: '单派管区', value: '2' },
+    { label: '经典案例', value: '3' },
+    { label: '法律法规', value: '4' },
+  ]);
   // 诉求事项选项
   const optionTextList = ref<any[]>([]);
   // 部门列表
@@ -62,9 +76,7 @@
       title: '知识库列表',
       api: getPageList,
       columns: columns,
-      size: 'small',
       formConfig: {
-        // labelWidth: 200,
         schemas: newSearchFormSchema.value,
         actionColOptions: {
           xs: 24,
@@ -82,13 +94,11 @@
       },
       beforeFetch: (params) => {
         console.log(params);
-        if (route.query.category) {
-          params.category = route.query.category;
-        }
+        params.type = type.value;
         return Object.assign(params, { pageNum: params.pageNo });
       },
     },
-  });
+  } as any);
 
   //注册table数据
   const [registerTable, { reload }] = tableContext;
@@ -129,6 +139,12 @@
     reload();
   });
 
+  const handleTypeChange = (e: any) => {
+    console.log('handleTypeChange', e);
+    type.value = e.target.value;
+    reload();
+  };
+
   function getTableAction(record): ActionItem[] {
     return [
       {
@@ -152,7 +168,16 @@
   }
   function handleDelete(record) {
     console.log('handleDelete', record);
-    // router.push({ name: 'knowledge-delete', params: { id: record.id } });
+    // 二次确认
+    Modal.confirm({
+      title: '确定删除吗？',
+      onOk: () => {
+        deleteKnowledge({ id: record.id }).then(() => {
+          message.success('删除成功');
+          reload();
+        });
+      },
+    });
   }
 
   function handleCreate() {

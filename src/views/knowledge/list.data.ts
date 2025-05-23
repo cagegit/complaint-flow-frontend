@@ -2,24 +2,33 @@ import { BasicColumn, FormSchema } from '/@/components/Table';
 
 export const columns: BasicColumn[] = [
   {
-    title: '类别',
-    dataIndex: 'name',
+    title: '部门',
+    dataIndex: 'deptName',
+    key: 'deptName',
     width: 200,
+    customRender: ({ text }) => {
+      return text || '-';
+    },
   },
   {
     title: '诉求事项',
-    dataIndex: 'category',
+    dataIndex: 'optionText',
+    key: 'optionText',
     width: 100,
+    customRender: ({ text }) => {
+      return text || '-';
+    },
   },
   {
     title: '标题',
     dataIndex: 'title',
+    key: 'title',
     width: 100,
-    slots: { customRender: 'title' },
   },
   {
     title: '创建时间',
-    dataIndex: 'createdAt',
+    dataIndex: 'createTime',
+    key: 'createTime',
     width: 180,
   },
 ];
@@ -64,7 +73,7 @@ export const formSchema: FormSchema[] = [
   },
   {
     label: '部门',
-    field: 'department',
+    field: 'deptName',
     component: 'Select',
     componentProps: {
       options: [],
@@ -76,7 +85,7 @@ export const formSchema: FormSchema[] = [
   // 诉求事项
   {
     label: '诉求事项',
-    field: 'subCategory',
+    field: 'optionText',
     component: 'Select',
     componentProps: {
       options: [],
@@ -104,5 +113,10 @@ export const formSchema: FormSchema[] = [
     label: '附件',
     field: 'addFileIdList',
     component: 'JUpload',
+    componentProps: {
+      bizPath: 'knowledge/upload',
+      returnUrl: false,
+      multiple: true,
+    },
   },
 ];

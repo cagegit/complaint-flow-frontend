@@ -12,10 +12,10 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref } from 'vue';
+  import { ref, computed, unref, onMounted } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { formSchema } from './list.data';
-  import { saveKnowledge } from '/@/api/complaint/knowledge';
+  import { getDetail, saveKnowledge } from '/@/api/complaint/knowledge';
   import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { watch, nextTick } from 'vue';
@@ -28,6 +28,10 @@
     optionTextList: {
       type: Array,
       default: () => [],
+    },
+    type: {
+      type: String,
+      default: '1',
     },
   });
 
@@ -44,7 +48,7 @@
     labelWidth: 90,
     schemas: formSchemaData.value,
     showActionButtonGroup: false,
-  });
+  } as any);
 
   // 标记当前是否正在更新表单，避免循环更新
   let isUpdating = false;
@@ -52,14 +56,28 @@
   //表单赋值
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
+    let res: any = null;
+    if (data?.isUpdate) {
+      try {
+        res = await getDetail({ id: data.record.id });
+      } catch (error) {
+        console.error('获取详情失败:', error);
+      }
+    }
     showFooter.value = data?.showFooter ?? true;
     setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
     // 无论新增还是编辑，都可以设置表单值
     if (typeof data.record === 'object') {
-      setFieldsValue({
+      const newValue = {
         ...data.record,
-      });
+        addFileIdList: []
+      };
+      if (data.isUpdate) {
+        newValue.content = res.knowledgeLibrary.content;
+        // newValue.addFileIdList = res.fileList.join(',');
+      }
+      setFieldsValue(newValue);
     }
     // 隐藏底部时禁用整个表单
     setProps({ disabled: !showFooter.value });
@@ -92,7 +110,7 @@
 
       // 延迟更新表单配置，避免Vue渲染循环中更新引起的问题
       nextTick(() => {
-        if (updateSchema) updateSchema(formSchemaData.value);
+        if (updateSchema) updateSchema(formSchemaData.value as any);
         isUpdating = false;
       });
     } catch (error) {
@@ -110,6 +128,8 @@
     { immediate: true, deep: true }
   );
 
+  onMounted(() => {});
+
   const showFooter = ref(true);
 
   //提交事件
@@ -123,6 +143,13 @@
       if (isFormDepartUser) {
         params = { ...params, updateFromPage: 'deptUsers' };
       }
+      params.type = props.type;
+      if (params.addFileIdList) {
+        const list = JSON.parse(params.addFileIdList);
+        const fileList = list.map((item: any) => item.filePath);
+        params.addFileIdList = JSON.stringify(fileList);
+      }
+      console.log('params', params);
       await saveKnowledge(params);
       //提交表单
       //关闭弹窗

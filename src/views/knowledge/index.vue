@@ -12,7 +12,7 @@
             >
               {{ tabItem.name }}
             </div>
-            <div class="policy-more" @click="viewMore(tabList1[activeTab1].key)">
+            <div class="policy-more" @click="viewMore(tabList1[activeTab1].type)">
               <div class="policy-more-text">更多</div>
               <div class="arrow-right"></div>
             </div>
@@ -47,7 +47,7 @@
             <div v-for="(tabItem, index) in tabs" :key="index" :class="['tab-item', { active: activeTab === index }]" @click="setActiveTab(index)">
               {{ tabItem.name }}
             </div>
-            <div class="policy-more" @click="viewMore(tabs[activeTab].key)">
+            <div class="policy-more" @click="viewMore(tabs[activeTab].type)">
               <div class="policy-more-text">更多</div>
               <div class="arrow-right"></div>
             </div>
@@ -181,11 +181,10 @@
   };
 
   // 添加查看更多方法
-  const viewMore = (category: string) => {
-    console.log(`查看更多 ${category} 内容`);
+  const viewMore = (type: string) => {
     router.push({
       path: `/knowledge/manager`,
-      query: { category },
+      query: { type },
     });
   };
 

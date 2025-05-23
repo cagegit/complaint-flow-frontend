@@ -1,3 +1,4 @@
+import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { defHttp } from '/@/utils/http/axios';
 
 const Api = {
@@ -12,6 +13,8 @@ const Api = {
 export const getPageList = (params) => {
   return new Promise((resolve) => {
     defHttp.get({ url: Api.getPageList, params }).then((res) => {
+      res.records = res.list;
+      delete res.list;
       resolve(res);
     });
   });
@@ -27,7 +30,7 @@ export const saveKnowledge = (params) => {
 // 删除
 export const deleteKnowledge = (params) => {
   return new Promise((resolve) => {
-    defHttp.post({ url: Api.deleteKnowledge, params }).then((res) => {
+    defHttp.post({ url: Api.deleteKnowledge, params, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } }).then((res) => {
       resolve(res);
     });
   });
