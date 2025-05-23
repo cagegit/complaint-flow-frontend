@@ -25,19 +25,19 @@ export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
   {
     title: '数据来源',
-    dataIndex: 'sourceType',
+    dataIndex: 'sourceType_dictText',
     width: 120,
-    customRender: ({ text }) => {
-      return render.renderDict(text, 'biz_source_type');
-    },
+    // customRender: ({ text }) => {
+    //   return render.renderDict(text, 'biz_source_type');
+    // },
   },
   {
     title: '案件标签',
-    dataIndex: 'labelCode',
+    dataIndex: 'labelCode_dictText',
     width: 120,
-    customRender: ({ text }) => {
-      return render.renderDict(text, 'biz_complaint_lavel');
-    },
+    // customRender: ({ text }) => {
+    //   return render.renderDict(text, 'biz_complaint_lavel');
+    // },
   },
   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
@@ -51,8 +51,8 @@ export const columns: BasicColumn[] = [
   //     return text === 0 ? '待接收' : '已接收';
   //   }
   // },
-  { title: '反映管区', dataIndex: 'reportDistrictId', width: 150 },
-  { title: '反映社区', dataIndex: 'reportCommunityId', width: 150 },
+  { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
+  { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
   { title: '月次', dataIndex: 'monthCount', width: 80 },
   { title: '年次', dataIndex: 'yearCount', width: 80 },
   { title: '标题', dataIndex: 'title', width: 180 },
@@ -86,16 +86,24 @@ export const columns: BasicColumn[] = [
     }
   },
   {
-    title: '是否接收', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
-      // 是否已接收（0否;1是;-1已转出）
-      return text === 1 ? '已接收' : (text === 0 ? '待接收' : '-');
-    }
+    title: '是否接收', dataIndex: 'receiveStatus_dictText', width: 120,
+    //  customRender: ({ text }) => {
+    //   // 是否已接收（0否;1是;-1已转出）
+    //   return text === 1 ? '已接收' : (text === 0 ? '待接收' : '-');
+    // }
   },
   { title: '跟进情况', dataIndex: 'followCode', width: 120 },
   {
-    title: '案件性质', dataIndex: 'caseNature', width: 120, customRender: ({ text }) => {
-      return render.renderDict(text, 'biz_case_nature');
-    },
+    title: '案件性质', dataIndex: 'caseNature_dictText', width: 120,
+    //  customRender: ({ text }) => {
+    //   return render.renderDict(text, 'biz_case_nature');
+    // },
+  },
+  {
+    title: '案件类型', dataIndex: 'caseType_dictText', width: 120,
+    //  customRender: ({ text }) => {
+    //   return render.renderDict(text, 'biz_case_nature');
+    // },
   },
   { title: '导入时间', dataIndex: 'importTime', width: 200 },
   { title: '来电时间', dataIndex: 'callTime', width: 200 },
