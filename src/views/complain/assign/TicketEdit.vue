@@ -11,6 +11,9 @@
     >
       <div class="flex px-3">
         <div style="flex: 1; border-right: 1px solid #ddd; max-height: 700px; overflow: auto;">
+             <!-- 拒绝信息 -->
+            <RejectInfo :detailInfo="ticketDetail" />
+            <!-- 基本信息区域 -->
             <BasicForm @register="registerForm"/>
         </div>
         <div style="width: 300px; padding-left: 30px;">
@@ -30,7 +33,9 @@
     import { formSchema, addFormSchema } from './assign.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     import { addAssign, getAssignDetail } from './assign.api';
-    import { getSecondTreeList } from '/@/api/common/api';
+    import { getComplaintDetail, getSecondTreeList } from '/@/api/common/api';
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
   
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -41,6 +46,8 @@
     let isFormDepartUser = false;
     // 当前表单内容
     let currentData:any = {};
+    // 表单详情
+    const ticketDetail = ref<any>({});
     //表单配置
     const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
       labelWidth: 100,
@@ -85,8 +92,17 @@
       }
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
+        // 从详情接口查询
+        let res:any = {};
+        try {
+          res = await getComplaintDetail(data.record.id);
+          ticketDetail.value = res;
+        } catch (error) {
+          console.log(error);
+        }
         setBasicFieldsValue({
           ...data.record,
+          ...res
         });
       }
     });

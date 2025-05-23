@@ -12,7 +12,10 @@
     >
       <div class="flex px-3">
         <div style="flex: 1; border-right: 1px solid #ddd; max-height: 700px; overflow: auto;">
-            <BasicForm @register="registerForm"/>
+          <!-- 拒绝信息 -->
+          <RejectInfo :detailInfo="ticketDetail" />
+          <!-- 基本信息区域 -->    
+          <BasicForm @register="registerForm"/>
         </div>
         <div style="width: 400px; padding-left: 30px;">
             <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
@@ -46,7 +49,9 @@
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
     import { useMessage } from '/@/hooks/web/useMessage';
     import {useConfirm} from '../hooks/useConfirm';
-
+    import { getComplaintDetail } from '/@/api/common/api';
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
     const { showQuReplyConfirm } = useConfirm();
 
     const { createMessage } = useMessage();
@@ -88,6 +93,8 @@
     const showFooter = ref(true);
     // 区级表单直接被关闭
     let isQjFormCloseDirect = false;
+    // 表单详情
+    const ticketDetail = ref<any>({});
     //表单赋值
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
@@ -106,8 +113,17 @@
       console.log(res);
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
+           // 从详情接口查询
+        let detailRes:any = {};
+        try {
+          detailRes = await getComplaintDetail(data.record.id);
+          ticketDetail.value = detailRes;
+        } catch (error) {
+          console.log(error);
+        }
         setBasicFieldsValue({
           ...data.record,
+          ...detailRes
         });
       }
        if(res) {

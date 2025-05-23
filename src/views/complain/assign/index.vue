@@ -75,13 +75,14 @@
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
     import { useMessage } from '/@/hooks/web/useMessage';
+    import { usePermission } from '/@/hooks/web/usePermission';
     // 创建消息实例
     const { createMessage } = useMessage();
     //注册 modal
     const [registerModal, { openModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     const [registerSuggestModal, { openModal:openSuggestModal, closeModal }] = useModal();
-
+    const { hasPermission } = usePermission();
     // 建议表单schema
     const suggestSchemas: FormSchema[] = [  
       {
@@ -157,17 +158,17 @@
         {
           label: '分派',
           onClick: handleEdit.bind(null, record),
-          // ifShow: () => hasPermission('system:user:edit'),
+          ifShow: () => hasPermission('complain:assign:add'),
         },
         {
           label: '书记建议',
           onClick: handleSuggest.bind(null, record, 'shuji'),
-          // ifShow: () => hasPermission('system:user:edit'),
+          // ifShow: () => hasPermission('complain:assign:shuji_suggest'),
         },
         {
           label: '主任建议',
           onClick: handleSuggest.bind(null, record, 'zhuren'),
-          // ifShow: () => hasPermission('system:user:edit'),
+          // ifShow: () => hasPermission('complain:assign:zhuren_suggest'),
         }
       ];
     }

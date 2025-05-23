@@ -55,16 +55,13 @@
               <BasicForm @register="registerAuditForm"/>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
+              <!-- 拒绝信息 -->
+               <RejectInfo :detailInfo="ticketDetail" />
+              <!-- 基本信息区域 -->   
                <BasicForm @register="registerForm"/>
             </a-tab-pane>
           </a-tabs>
         </div>
-        <!-- <div style="width: 300px; padding-left: 30px;">
-            <BasicForm
-                :schemas="addFormSchema"
-                @register="registerAddForm"
-            />
-        </div> -->
       </div>
     </BasicModal>
   </template>
@@ -78,6 +75,9 @@
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
     //@ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
+    import { getComplaintDetail } from '/@/api/common/api';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
@@ -97,6 +97,8 @@
     const replyDetailRef = ref<any>({});
     // 折叠面板key
     const collapsibleKey = ref<string | null>('2');
+    // 表单详情
+    const ticketDetail = ref<any>({});
     //回复审核表单配置
     const [registerAuditForm, { validate }] = useForm({
       labelWidth: 150,
@@ -157,8 +159,16 @@
 
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
+        let detailRes:any = {};
+        try {
+          detailRes = await getComplaintDetail(data.record.id);
+          ticketDetail.value = detailRes;
+        } catch (error) {
+          console.log(error);
+        }
         setFieldsValue({
           ...data.record,
+          ...detailRes
         });
       }
       // 隐藏底部时禁用整个表单

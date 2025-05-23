@@ -20,6 +20,7 @@ import { JDragConfigEnum } from '/@/enums/jeecgEnum';
 import { useSso } from '/@/hooks/web/useSso';
 import { isOAuth2AppEnv } from "/@/views/sys/login/useLogin";
 import { getUrlParam } from "@/utils";
+import { queryAllDistrictDictItems } from '/@/views/system/dict/dict.api';
 interface dictType {
   [key: string]: any;
 }
@@ -299,6 +300,17 @@ export const useUserStore = defineStore({
        */
       if (sysAllDictItems) {
         this.setAllDictItems(sysAllDictItems);
+      }
+      // 添加区级字典信息到缓存
+      try {
+        const res = await queryAllDistrictDictItems();
+        console.log(res);
+        if(res?.result){ 
+          removeAuthCache(DISTRICT_DICT_DATA_KEY);
+          this.setAllDistrictItems(res.result);
+        }
+      } catch (error) {
+        console.error('刷新区级缓存失败', error);
       }
       return userInfo;
     },

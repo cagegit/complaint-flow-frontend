@@ -43,23 +43,20 @@
               </BasicForm>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
+               <!-- 拒绝信息 -->
+               <RejectInfo :detailInfo="ticketDetail" />
+               <!-- 基本信息区域 -->
                <BasicForm @register="registerForm"/>
             </a-tab-pane>
           </a-tabs>
         </div>
-        <!-- <div style="width: 300px; padding-left: 30px;">
-            <BasicForm
-                :schemas="addFormSchema"
-                @register="registerAddForm"
-            />
-        </div> -->
       </div>
     </BasicModal>
   </template>
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema, addFormSchema, formAuditSchema } from './completion.data';
+    import { formSchema } from './completion.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
     import { saveReviewReply, getReplyDetail } from './completion.api';
@@ -68,6 +65,9 @@
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
     import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
+    import { getComplaintDetail } from '/@/api/common/api';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -79,6 +79,8 @@
     const activeKey = ref('1');
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
+     // 表单详情
+    const ticketDetail = ref<any>({});
     //预回复表单
     const [registerPreReplyForm] = useForm({
       labelWidth: 150,
@@ -129,14 +131,18 @@
       console.log(res);
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
+        let detailRes:any = {};
+        try {
+          detailRes = await getComplaintDetail(data.record.id);
+          ticketDetail.value = detailRes;
+        } catch (error) {
+          console.log(error);
+        }
         setFieldsValue({
           ...data.record,
+          ...detailRes
         });
       }
-      // 隐藏底部时禁用整个表单
-      //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      // setProps({ disabled: !showFooter.value });
-      //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
     });
     //获取标题
     const getTitle = computed(() => {

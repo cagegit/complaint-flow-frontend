@@ -27,6 +27,9 @@
               <BasicForm @register="registerAuditForm"/>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
+                <!-- 拒绝信息 -->
+               <RejectInfo :detailInfo="ticketDetail" />
+                <!-- 基本信息区域 -->   
                <BasicForm @register="registerForm"/>
             </a-tab-pane>
           </a-tabs>
@@ -39,15 +42,16 @@
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema, formAuditSchema } from './review.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
-    
     import { saveReviewReply, getReplyDetail } from './review.api';
     // import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
-
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
     // @ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
+    import { getComplaintDetail } from '/@/api/common/api';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -61,8 +65,10 @@
     const currentEditRecordRef = ref<any>(null);
     // 是否包含拒绝
     const isReject = ref(false);
+    // 表单详情
+    const ticketDetail = ref<any>({});
     //回复审核表单配置
-    const [registerAuditForm, {setProps: setAuditFormProps}] = useForm({
+    const [registerAuditForm, {setProps: setAuditFormProps, validate}] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -74,7 +80,7 @@
       baseRowStyle: { width: '100%', }
     });
     //基础信息表单配置
-    const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
+    const [registerForm, { resetFields, setFieldsValue }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -120,8 +126,16 @@
       console.log(res);
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
+        let detailRes:any = {};
+        try {
+          detailRes = await getComplaintDetail(data.record.id);
+          ticketDetail.value = detailRes;
+        } catch (error) {
+          console.log(error);
+        }
         setFieldsValue({
           ...data.record,
+          ...detailRes
         });
       }
       // 隐藏底部时禁用整个表单

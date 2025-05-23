@@ -11,7 +11,10 @@
     >
       <div class="flex px-3">
         <div style="flex: 1; border-right: 1px solid #ddd; max-height: 700px; overflow: auto;">
-            <BasicForm @register="registerForm"/>
+            <!-- 拒绝信息 -->
+            <RejectInfo :detailInfo="ticketDetail" />
+            <!-- 基本信息区域 -->  
+          <BasicForm @register="registerForm"/>
         </div>
         <div style="width: 400px; padding-left: 30px;">
             <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
@@ -55,7 +58,9 @@
     import { addDepartReply, getReplyDetail, saveSubmitReply } from './depart.api';
     import { useMessage } from '/@/hooks/web/useMessage';
     import {useConfirm} from '../hooks/useConfirm';
-
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
+    import { getComplaintDetail } from '/@/api/common/api';
     const { showQuReplyConfirm } = useConfirm();
 
     const { createMessage } = useMessage();
@@ -95,6 +100,8 @@
     const currentEditRecordRef = ref<any>(null);
     // 表单被关闭
     let isQjFormCloseDirect = false;
+    // 表单详情
+    const ticketDetail = ref<any>({});
     //表单赋值
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
@@ -115,8 +122,17 @@
      
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
+         // 从详情接口查询
+        let detailRes:any = {};
+        try {
+          detailRes = await getComplaintDetail(data.record.id);
+          ticketDetail.value = detailRes;
+        } catch (error) {
+          console.log(error);
+        }
         setBasicFieldsValue({
           ...data.record,
+          ...detailRes
         });
       }
       if(res) {

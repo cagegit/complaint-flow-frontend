@@ -42,6 +42,9 @@
               </div>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
+               <!-- 拒绝信息 -->
+               <RejectInfo :detailInfo="ticketDetail" />
+               <!-- 基本信息区域 --> 
                <BasicForm @register="registerForm"/>
             </a-tab-pane>
             <a-tab-pane key="3" tab="回复记录" force-render>
@@ -72,6 +75,9 @@
     import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
      //@ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
+    import { getComplaintDetail } from '/@/api/common/api';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -86,6 +92,8 @@
     // 回复列表
     const replyList = ref<any[]>([]);
     const total = ref(0);
+    // 表单详情
+    const ticketDetail = ref<any>({});
     //回复审核表单配置
     const [registerPreReplyForm, { validate }] = useForm({
       labelWidth: 150,
@@ -182,8 +190,16 @@
       }
       // 无论新增还是编辑，都可以设置表单值
       if (typeof data.record === 'object') {
+       let detailRes:any = {};
+        try {
+          detailRes = await getComplaintDetail(data.record.id);
+          ticketDetail.value = detailRes;
+        } catch (error) {
+          console.log(error);
+        }
         setFieldsValue({
           ...data.record,
+          ...detailRes
         });
       }
     });
