@@ -546,7 +546,7 @@ export const addFormSchema: FormSchema[] = [
       options: getDictItemsByCode('biz_complaint_lavel')
     },
     defaultValue: '1',
-    required: true
+    // required: true
   },
   {
     field: 'reportDistrictId',
@@ -575,6 +575,7 @@ export const addFormSchema: FormSchema[] = [
             // res.unshift({label: '所有', value: ''})
             updateSchema({
               field: 'reportCommunityId',
+              required: true,
               componentProps: {
                 options: res.map(v => {
                   return {
@@ -586,6 +587,7 @@ export const addFormSchema: FormSchema[] = [
             });
           } else {
             updateSchema({
+              required: true,
               field: 'reportCommunityId',
               componentProps: {
                 options: [],
@@ -602,7 +604,7 @@ export const addFormSchema: FormSchema[] = [
     field: 'reportCommunityId',
     label: '反映社区',
     component: 'Select',
-    required: true,
+    // required: true,
     componentProps: {
       options: []
     }
@@ -630,7 +632,7 @@ export const addFormSchema: FormSchema[] = [
     field: 'assignCommunityIdList',
     label: '处理社区/居委会',
     component: 'ApiCascader',
-    required: true,
+    // required: true,
     componentProps: {
       checkable: true,
       multiple: true,
@@ -661,7 +663,7 @@ export const addFormSchema: FormSchema[] = [
     field: 'sevenFiveId',
     label: '七有五性',
     component: 'ApiCascader',
-    required: true,
+    // required: true,
     componentProps: {
       api: async () => {
         const res = await getCitySevenFiveList();
@@ -674,7 +676,7 @@ export const addFormSchema: FormSchema[] = [
       },
       labelField: 'name',
       valueField: 'id',
-      treeDataSimpleMode: true,
+      changeOnSelect: true,
     }
   },
   // 案件性质
@@ -682,13 +684,15 @@ export const addFormSchema: FormSchema[] = [
     field: 'caseNature',
     label: '案件性质',
     component: 'ApiSelect',
-    required: true,
+    // required: true,
     componentProps: {
       api: async () => {
         const res = await getDictItems('biz_case_nature')
         // console.log(res)
         if (Array.isArray(res)) {
-          return res;
+          return res.filter(item => {
+            return item.text !== '默认';
+          });
         } else {
           return [];
         }

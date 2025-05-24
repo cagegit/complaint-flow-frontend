@@ -85,7 +85,7 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm, { setProps, resetFields, setFieldsValue, validate }] = useForm({
+    const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: addFormSchema,
       showActionButtonGroup: false,
@@ -116,6 +116,55 @@
       try {
         res = await getReplyDetail({ assignId: data.record.assignId });
         console.log(res);
+        if(res) {
+          let audioList:any = [];
+          let fileList:any = [];
+          let imageList:any = [];
+          // 附件列表
+          if (Array.isArray(res.fileList)) {
+            // 分类，图片、音频、其他
+            res.fileList.forEach((item:any) => {
+              // 根据文件后缀名判断类型
+              let fileType = item.fileName.split('.').pop();
+              if (['mp3', 'wav', 'ogg'].includes(fileType)) {
+                audioList.push({
+                  uid: item.id,
+                  name: item.fileName,
+                  status: 'done',
+                  url: item.fileKey,
+                  response: item, // 保留原始数据
+                });
+              } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+                imageList.push({
+                  uid: item.id,
+                  name: item.fileName,
+                  status: 'done',
+                  url: item.fileKey,
+                  response: item, // 保留原始数据
+                });
+              } else {
+                fileList.push({
+                  uid: item.id,
+                  name: item.fileName,
+                  status: 'done',
+                  url: item.fileKey,
+                  response: item, // 保留原始数据
+                });
+              }
+
+            });
+            audioList.length && setFieldsValue({ audio: audioList });
+            imageList.length && setFieldsValue({ image: imageList });
+            fileList.length && setFieldsValue({ file: fileList });
+          }
+          // 表单内容
+          if(res.upReply) {
+            setFieldsValue({
+              ...res,
+              attachments: fileList,
+            });
+          }
+        }
       } catch (error) {
         console.error('获取详情失败', error);
       }

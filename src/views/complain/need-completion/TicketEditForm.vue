@@ -72,7 +72,7 @@
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
-    import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
      //@ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // @ts-ignore

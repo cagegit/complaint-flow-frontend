@@ -33,7 +33,7 @@
     import { formSchema, addFormSchema } from './assign.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     import { addAssign, getAssignDetail } from './assign.api';
-    import { getComplaintDetail, getSecondTreeList } from '/@/api/common/api';
+    import { getCommunityChildList, getComplaintDetail, getSecondTreeList } from '/@/api/common/api';
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
   
@@ -86,7 +86,38 @@
       // 查询分派详情
       try {
         const res = await getAssignDetail(data.record.id);
-        console.log(res);
+        // console.log(res);
+        // 回显数据
+        if(res) {
+          setFieldsValue({
+            ...res,
+            reportDistrictId: res?.assignCommunityList[0]?.parentOrgId || null,
+            reportCommunityId: res?.assignCommunityList[0]?.orgId || null,
+            assignDeptIdList: res?.assignDeptList?.map(v => v.orgId)?.join(',') || null,
+          });
+          try {
+            if(res?.assignCommunityList[0]?.parentOrgId) {
+              const ksData = await getCommunityChildList(res?.assignCommunityList[0]?.parentOrgId)
+              console.log(ksData)
+              if (Array.isArray(ksData)) {
+                updateSchema({
+                  field: 'reportCommunityId',
+                  required: true,
+                  componentProps: {
+                    options: ksData.map(v => {
+                      return {
+                        label: v.departName,
+                        value: v.id
+                      }
+                    }),
+                  }
+                });
+              }
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
       } catch (error) {
         console.log(error);
       }
@@ -132,28 +163,34 @@
         // }
         // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
         console.log(params)
-        let shequTreeList:any[] =[];
-        try {
-          shequTreeList = await getSecondTreeList('3');
-        } catch (error) {
-          console.log(error)
-        }
+        // let shequTreeList:any[] =[];
+        // try {
+        //   shequTreeList = await getSecondTreeList('3');
+        // } catch (error) {
+        //   console.log(error)
+        // }
         
         if(currentData) {
-          // 社区
-          if(params.assignCommunityIdList) {
-            const newCommunityIdList = params.assignCommunityIdList.split(',');
-            shequTreeList.forEach(v => {
-              const index = newCommunityIdList.indexOf(v.id);
-              if(index > -1){
-                // 移除父节点id
-                newCommunityIdList.splice(index, 1);  
-                // 添加全部子节点id
-                v.children?.forEach(item => {
-                  newCommunityIdList.push(item.id)
-                })
-              }
-            })
+          // 反映管区
+          // if(params.assignCommunityIdList) {
+          //   const newCommunityIdList = params.assignCommunityIdList.split(',');
+          //   shequTreeList.forEach(v => {
+          //     const index = newCommunityIdList.indexOf(v.id);
+          //     if(index > -1){
+          //       // 移除父节点id
+          //       newCommunityIdList.splice(index, 1);  
+          //       // 添加全部子节点id
+          //       v.children?.forEach(item => {
+          //         newCommunityIdList.push(item.id)
+          //       })
+          //     }
+          //   })
+          //   // newCommunityIdList 去重
+          //   const uniqueCommunityIdList = Array.from(new Set(newCommunityIdList));
+          //   params.assignCommunityIdList = uniqueCommunityIdList;
+          // }
+          if(params.reportCommunityId) {
+            const newCommunityIdList = params.reportCommunityId.split(',');
             params.assignCommunityIdList = newCommunityIdList;
           }
           // 科室

@@ -119,13 +119,28 @@
       const data = await validate();
       console.log(data);
       if (data) {
-        setModalProps({ confirmLoading: true });
-        const res = await savePreReply(data);
-        console.log(res);
-        if (res.code === 200) {
-          createMessage.success('操作成功');
-          closeModal();
-          emit('success', res);
+       setModalProps({ confirmLoading: true });
+       try{
+          if(data.satisfactionTime === ',') {
+            data.satisfactionTime = '';
+          }
+          if(data.contactTime === ',') {
+            data.contactTime = '';
+          }
+          if(data.resolutionTime === ',') {
+            data.resolutionTime = '';
+          }
+          // 附件
+          delete data.addFileList;
+          const res = await savePreReply(data);
+          console.log(res);
+          if (res.code === 200) {
+            createMessage.success('操作成功');
+            closeModal();
+            emit('success', res);
+          }
+        } catch (error) {
+          console.error('获取预回复详情失败:', error);
         }
         setModalProps({ confirmLoading: false });
       } else {

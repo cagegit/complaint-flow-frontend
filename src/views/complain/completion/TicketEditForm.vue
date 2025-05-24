@@ -64,7 +64,7 @@
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
-    import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
