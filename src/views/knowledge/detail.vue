@@ -60,7 +60,7 @@
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getDetail } from '/@/api/complaint/knowledge';
-  import { downloadByUrl } from '/@/utils/file/download';
+  import { downloadByOnlineUrl, downloadByUrl } from '/@/utils/file/download';
   import { getFileAccessHttpUrl } from '/@/utils/common/compUtils';
 
   const route = useRoute();
@@ -99,14 +99,9 @@
     }
   });
   // 下载
-  function handleDownload(res) {
-    let url = '';
-    let fileName = res.fileName;
-    // 兼容新的上传接口
-    if (url.indexOf('app-data/down/') > -1) {
-      url = `/citizen-voice/sys/common/static/${res.fileKey}`;
-    }
-    downloadByUrl({ url, fileName });
+  function handleDownload(attachment) {
+    downloadByUrl({ url: getFileAccessHttpUrl(attachment.fileKey), fileName: attachment.fileName });
+    // downloadByOnlineUrl(getFileAccessHttpUrl(attachment.fileKey), attachment.fileName);
   }
 
   // 返回上一页
