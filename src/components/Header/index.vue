@@ -5,7 +5,7 @@
         v-for="item in navItems"
         :key="item.path"
         :to="item.path"
-        :class="{ 'nav-item-select': currentPath === item.path, 'nav-item': currentPath !== item.path }"
+        :class="{ 'nav-item-select': currentPath === item.path, 'nav-item': true }"
         active-class="active"
       >
         {{ item.title }}
@@ -210,8 +210,6 @@ onBeforeUnmount(() => {
 
   .nav-item-select {
     // margin-left: -42px; // Base margin
-    width: 175px; // Base width
-    height: 85px; // Base height
     display: flex;
     justify-content: center;
     align-items: center; // Vertically center text
@@ -225,7 +223,6 @@ onBeforeUnmount(() => {
     font-weight: bold;
     font-family: SourceHanSansCN, SourceHanSansCN;
     text-decoration: none;
-    margin-top: 7px; // Keep this for the raised effect
     flex-shrink: 0; // Prevent individual items from shrinking
     padding: 0 5px; // Add some padding inside the tab for text
     text-align: center;
@@ -253,12 +250,6 @@ onBeforeUnmount(() => {
       height: 40px;
       font-size: 17px;
       margin-left: -28px;
-    }
-    .nav-item-select {
-      width: 150px;
-      height: 75px;
-      font-size: 17px;
-      margin-left: -35px; // Adjusted from base proportionally
     }
   }
 }
@@ -294,13 +285,6 @@ onBeforeUnmount(() => {
       height: 38px;
       font-size: 15px;
       margin-left: -25px;
-    }
-    .nav-item-select {
-      width: 130px;
-      height: 70px;
-      font-size: 15px;
-      margin-left: -30px; // Adjusted
-      margin-top: 5px;
     }
   }
 }
@@ -341,14 +325,6 @@ onBeforeUnmount(() => {
       margin-left: -20px; // Adjust overlap
       padding: 0 3px;
     }
-    .nav-item-select {
-      width: 110px; // Significantly smaller
-      height: 65px;
-      font-size: 13px;
-      margin-left: -25px; // Adjust overlap
-      margin-top: 4px;
-      padding: 0 3px;
-    }
   }
 }
 
@@ -386,13 +362,6 @@ onBeforeUnmount(() => {
       height: 32px;
       font-size: 12px;
       margin-left: -18px;
-    }
-    .nav-item-select {
-      width: 95px;
-      height: 60px;
-      font-size: 12px;
-      margin-left: -22px;
-      margin-top: 3px;
     }
   }
 }
@@ -433,12 +402,6 @@ onBeforeUnmount(() => {
       height: 30px;
       font-size: 11px;
       margin-left: -15px;
-    }
-    .nav-item-select {
-      width: 80px;
-      height: 55px;
-      font-size: 11px;
-      margin-left: -18px;
     }
   }
 }

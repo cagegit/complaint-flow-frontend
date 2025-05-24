@@ -114,7 +114,7 @@ export const formSchema: FormSchema[] = [
   // 附件
   {
     label: '附件',
-    field: 'addFileIdList',
+    field: 'fileKeyList',
     component: 'JUpload',
     componentProps: {
       bizPath: 'knowledge/upload',

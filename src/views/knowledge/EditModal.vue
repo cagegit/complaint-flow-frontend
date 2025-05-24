@@ -71,11 +71,10 @@
     if (typeof data.record === 'object') {
       const newValue = {
         ...data.record,
-        addFileIdList: []
       };
       if (data.isUpdate) {
         newValue.content = res.knowledgeLibrary.content;
-        // newValue.addFileIdList = res.fileList.join(',');
+        newValue.fileKeyList = JSON.stringify(res.fileList.map((item: any) => ({ ...item, filePath: item.fileKey })));
       }
       setFieldsValue(newValue);
     }
@@ -144,10 +143,10 @@
         params = { ...params, updateFromPage: 'deptUsers' };
       }
       params.type = props.type;
-      if (params.addFileIdList) {
-        const list = JSON.parse(params.addFileIdList);
-        const fileList = list.map((item: any) => item.filePath);
-        params.addFileIdList = JSON.stringify(fileList);
+      if (params.fileKeyList) {
+        const list = JSON.parse(params.fileKeyList);
+        const newFileKeyList = list.map((item: any) => item.filePath);
+        params.fileKeyList = newFileKeyList;
       }
       console.log('params', params);
       await saveKnowledge(params);
