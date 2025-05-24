@@ -182,7 +182,7 @@
 </template>
 
 <script setup lang="ts" name="reply-record">
-import { ref, computed, watch, PropType } from 'vue';
+import { ref, computed, watch, PropType, h } from 'vue';
   import { useModal } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
 // @ts-ignore
@@ -298,7 +298,11 @@ const columns = [
     width: '10%'
   },
   {
-    title: '审核',
+    // 红色星号表示必选
+    title: h('span', [
+      '审核状态',
+      h('span', { class: 'text-red-500' }, '*')
+    ]),
     dataIndex: 'auditStatus',
     key: 'audit',
     width: '15%'
