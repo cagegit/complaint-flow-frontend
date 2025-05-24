@@ -73,8 +73,6 @@ let timer = null;
 
 onMounted(() => {
   updateTime();
-  timer = setInterval(updateTime, 1000);
-  //用路径去匹配当前的页面
   const pathname = window.location.pathname;
   currentPath.value = pathname;
 });
@@ -200,9 +198,9 @@ onBeforeUnmount(() => {
     padding: 0 5px; // Add some padding inside the tab for text
     text-align: center;
     white-space: nowrap; // Prevent text wrapping inside tabs
-    &:first-child {
-      margin-left: 0; // First item doesn't need negative margin
-    }
+    // &:first-child {
+    //   margin-left: 0; // First item doesn't need negative margin
+    // }
     &:hover {
       color: #ffffff;
       background-image: url(@/assets/images/runtime/header/tab-hover.png);
