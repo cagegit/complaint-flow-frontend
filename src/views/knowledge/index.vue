@@ -22,7 +22,7 @@
               <div v-show="true">
                 <div class="policy-list" :key="activeTab1">
                   <template v-if="!isLegacyEmpty">
-                    <div v-for="(item, index) in policiesData.legacy" :key="index" class="policy-item" @click="toDetailPage(item)">
+                    <div v-for="(item, index) in policiesData.classic_cases" :key="index" class="policy-item" @click="toDetailPage(item)">
                       <div class="policy-title">{{ item.title }}</div>
                       <div class="policy-date">{{ item.date }}</div>
                     </div>
@@ -122,6 +122,7 @@
 
   // 获取知识库列表数据
   const fetchKnowledgeData = async (type = '3', category = 'classic_cases') => {
+    console.log('fetchKnowledgeData', type, category);
     try {
       const params = {
         type,
@@ -130,17 +131,16 @@
         sort: '1', // 倒序
       };
       const res: any = await getPageList(params);
-      if (res.success && res.result?.list) {
-        // 格式化数据
-        const formattedData = res.result.list.map((item) => ({
-          id: item.id,
-          title: item.title,
-          date: item.createTime ? new Date(item.createTime as any).toLocaleDateString() : '',
-          content: item.content,
-          type: item.type,
-        }));
-        policiesData.value[category] = formattedData;
-      }
+      console.log('res', res);
+      // 格式化数据
+      const formattedData = res.records.map((item) => ({
+        id: item.id,
+        title: item.title,
+        date: item.createTime ? new Date(item.createTime as any).toLocaleDateString() : '',
+        content: item.content,
+        type: item.type,
+      }));
+      policiesData.value[category] = formattedData;
     } catch (error) {
       console.error('获取知识库数据失败:', error);
     }
@@ -205,7 +205,7 @@
   });
 
   // Add computed properties for empty states
-  const isLegacyEmpty = computed(() => !policiesData.value.legacy?.length);
+  const isLegacyEmpty = computed(() => !policiesData.value.classic_cases?.length);
   const isCurrentPolicyEmpty = computed(() => !currentPolicyList.value?.length);
 </script>
 <style lang="less" scoped>
@@ -291,6 +291,7 @@
 
               &:hover {
                 background-color: #f9f9f9;
+                cursor: pointer;
               }
 
               .policy-title {

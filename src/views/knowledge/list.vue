@@ -4,7 +4,7 @@
       <a-button type="link" style="color: #0c3c3a" @click="goBack" preIcon="ant-design:arrow-left-outlined">返回知识库</a-button>
     </div>
     <div class="py-4">
-      <a-radio-group size="large" v-model:value="type" :style="{ marginBottom: '8px' }" @change="handleTypeChange">
+      <a-radio-group button-style="solid" size="large" v-model:value="type" :style="{ marginBottom: '8px' }" @change="handleTypeChange">
         <a-radio-button v-for="item in typeList" :key="item.value" :value="item.value">{{ item.label }}</a-radio-button>
       </a-radio-group>
     </div>
@@ -53,9 +53,9 @@
   const type = ref((query.type as string) || '1');
   //   类型选项
   const typeList = ref([
+    { label: '经典案例', value: '3' },
     { label: '单派科室', value: '1' },
     { label: '单派管区', value: '2' },
-    { label: '经典案例', value: '3' },
     { label: '法律法规', value: '4' },
   ]);
   // 诉求事项选项
@@ -142,6 +142,12 @@
   const handleTypeChange = (e: any) => {
     console.log('handleTypeChange', e);
     type.value = e.target.value;
+    // 修改query中的参数，替换
+    router.replace({
+      query: {
+        type: e.target.value,
+      },
+    });
     reload();
   };
 

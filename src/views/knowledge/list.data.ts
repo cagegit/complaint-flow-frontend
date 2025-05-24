@@ -24,6 +24,9 @@ export const columns: BasicColumn[] = [
     dataIndex: 'title',
     key: 'title',
     width: 100,
+    slots: {
+      customRender: 'title',
+    },
   },
   {
     title: '创建时间',

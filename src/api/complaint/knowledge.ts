@@ -38,7 +38,7 @@ export const deleteKnowledge = (params) => {
 // 获取详情
 export const getDetail = (params) => {
   return new Promise((resolve) => {
-    defHttp.get({ url: Api.getDetail, data:params, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } }).then((res) => {
+    defHttp.get({ url: Api.getDetail, params }).then((res) => {
       resolve(res);
     });
   });
