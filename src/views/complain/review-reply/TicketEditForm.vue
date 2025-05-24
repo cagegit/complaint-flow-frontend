@@ -223,14 +223,16 @@
       // const currentReplyId = res.reply
      const reply = finalReplyList.value.find(item => item.id === res.id);
      console.log(reply);
-     console.log(res);
+     console.log(finalReplyList);
      if (reply) {
        reply.auditStatus = res.status;
        reply.rejectReason = res.reason;
        if (res.status === -1) {
          setAuditFormProps({disabled: true});
        } else {
-          setAuditFormProps({disabled: false});
+         // auditStatus 只要有一个为-1时，禁用表单
+          const hadRejected = finalReplyList.value.some(item => item.auditStatus === -1);
+          setAuditFormProps({disabled: hadRejected});
        }
      }
     };

@@ -892,7 +892,7 @@ export const auditFormSchema: FormSchema[] = [
     // 是否需要区回访
     {
     field: 'needVisit',
-    label: '区回访',
+    label: '是否需要区回访',
     component: 'Select',
     required: true,
     componentProps: {
@@ -909,7 +909,7 @@ export const auditFormSchema: FormSchema[] = [
      field: 'sevenFiveId', 
      label: '七有五性', 
      component: 'ApiCascader',
-     required: true,
+    //  required: true,
      componentProps: {
        api: async () => {
          const res  = await getCitySevenFiveList();
@@ -923,6 +923,7 @@ export const auditFormSchema: FormSchema[] = [
        labelField: 'name',
        valueField: 'id',
        treeDataSimpleMode: true,
+       changeOnSelect: true,
      },
      colProps: { span: 12 },
    },

@@ -835,7 +835,7 @@ export const formAuditSchema: FormSchema[] = [
     field: 'sevenFiveId', 
     label: '七有五性', 
     component: 'ApiCascader',
-    required: true,
+    // required: true,
     componentProps: {
       api: async () => {
         const res  = await getCitySevenFiveList();
@@ -849,6 +849,7 @@ export const formAuditSchema: FormSchema[] = [
       labelField: 'name',
       valueField: 'id',
       treeDataSimpleMode: true,
+      changeOnSelect: true,
     } 
   },
   {

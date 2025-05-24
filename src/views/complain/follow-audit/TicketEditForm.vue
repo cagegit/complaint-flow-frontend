@@ -216,7 +216,7 @@
           "rejectReason": auditValues.rejectReason,
           "remark": auditValues.remark,
           "replyFileList": [...replyList.value],
-          "sevenFiveId": params.sevenFiveId,
+          "sevenFiveId": params.sevenFiveId ? params.sevenFiveId.split(',').pop() : '',
           // "ticketId": 0,
           "ticketReplyDataVo": {
             ...params 

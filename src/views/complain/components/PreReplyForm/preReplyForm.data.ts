@@ -45,7 +45,7 @@ export const formSchema: FormSchema[] = [
   //   }
   // },
   {
-    field: 'checkType',
+    field: 'assessmentType',
     label: '考核类型',
     component: 'Select',
     componentProps: {
@@ -56,7 +56,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'community',
+    field: 'communityId',
     label: '社区/村',
     component: 'ApiSelect',
     componentProps: {
@@ -87,7 +87,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'questionCategory',
+    field: 'replyRequestType',
     label: '市问题分类',
     component: 'ApiCascader',
     componentProps: {
@@ -115,7 +115,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'minorPoint',
+    field: 'communityAddress',
     label: '小区点位',
     component: 'Input',
     componentProps: {
@@ -130,7 +130,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'isConnection',
+    field: 'isContact',
     label: '是否联系',
     component: 'Select',
     componentProps: {
@@ -142,7 +142,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isResolved',
+    field: 'isSolved',
     label: '是否解决',
     component: 'Select',
     componentProps: {
@@ -154,7 +154,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isSatisfied',
+    field: 'isSatisfaction',
     label: '是否满意',
     component: 'Select',
     componentProps: {
@@ -166,7 +166,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isFact',
+    field: 'isTrue',
     label: '是否属实',
     component: 'Select',
     componentProps: {
@@ -181,7 +181,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isPersonResponsible',
+    field: 'isBelong',
     label: '是否属于疏整促任务',
     component: 'RadioGroup',
     componentProps:({formActionType, formModel}) => ({
@@ -222,7 +222,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'responsibilityType',
+    field: 'taskType',
     label: '疏整促任务类型',
     component: 'Select',
     componentProps: {
@@ -235,7 +235,7 @@ export const formSchema: FormSchema[] = [
   },
   // 以下是新增字段
   {
-    field: 'returnDepartment',
+    field: 'industryOfficeId',
     label: '归属行业部门',
     component: 'Select',
     componentProps: {
@@ -250,7 +250,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'handleDetail',
+    field: 'handleBasisPolicy',
     label: '办理依据',
     component: 'InputTextArea',
     componentProps: {
@@ -266,7 +266,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'satisfactionTime',
+    field: 'replySatisfiedTime',
     label: '满意时间',
     component: 'InputGroup',
     componentProps: {},
@@ -278,7 +278,7 @@ export const formSchema: FormSchema[] = [
     ]
   },
   {
-    field: 'contactTime',
+    field: 'replyContactTime',
     label: '联系时间',
     component: 'InputGroup',
     componentProps: {},
@@ -290,7 +290,7 @@ export const formSchema: FormSchema[] = [
     ]
   },
   {
-    field: 'resolutionTime',
+    field: 'replyResolveTime',
     label: '解决时间',
     component: 'InputGroup',
     componentProps: {},
@@ -302,7 +302,7 @@ export const formSchema: FormSchema[] = [
     ]
   },
   {
-    field: 'sevenFiveAttributes',
+    field: 'liveHoodIssueId',
     label: '七有五性',
     component: 'ApiCascader',
     componentProps: {
@@ -329,7 +329,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'finalProcessingDepartment',
+    field: 'lastOfficeId',
     label: '最终处置部门',
     component: 'ApiCascader',
     componentProps: {
@@ -357,7 +357,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'mainLeaderName',
+    field: 'competentLeader',
     label: '主管领导姓名',
     component: 'Input',
     componentProps: {
@@ -367,7 +367,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'departmentResponsiblePersonName',
+    field: 'departmentHead',
     label: '部门负责人姓名',
     component: 'Input',
     componentProps: {
@@ -377,7 +377,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'specificExecutorName',
+    field: 'specificHandleName',
     label: '具体承办人姓名',
     component: 'Input',
     componentProps: {
@@ -387,7 +387,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'specificExecutorPosition',
+    field: 'specificHandleDuty',
     label: '具体承办人职务',
     component: 'Select',
     componentProps: {
@@ -399,7 +399,7 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isMeetWithComplainant',
+    field: 'isAppealMeet',
     label: '是否已与诉求人见面',
     component: 'Select',
     componentProps:() =>({
@@ -415,7 +415,7 @@ export const formSchema: FormSchema[] = [
   },
   // 选择是的时候，展示见面时间，见面地点
   {
-    field: 'meetingTime',
+    field: 'meetTime',
     label: '见面时间',
     component: 'DatePicker',
     componentProps: {
@@ -429,7 +429,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'meetingPlace',
+    field: 'meetPlace',
     label: '见面地点',
     component: 'Input',
     componentProps: {
@@ -443,7 +443,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'isVisited',
+    field: 'isWhistle',
     label: '是否吹哨',
     component: 'Select',
     componentProps: {
@@ -458,7 +458,7 @@ export const formSchema: FormSchema[] = [
   },
   // 选择是的时候，展示吹哨结果、吹哨部门
   {
-    field: 'whistleblowerResult',
+    field: 'whistleResult',
     label: '吹哨结果',
     component: 'Select',
     componentProps: {
@@ -475,7 +475,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'whistleblowerDepartment',
+    field: 'whistleDepartmentId',
     label: '吹哨部门',
     component: 'ApiCascader',
     componentProps: {
@@ -519,7 +519,7 @@ export const formSchema: FormSchema[] = [
   //   colProps: { span: 12 },
   // },
   {
-    field: 'promotionLevel',
+    field: 'mention',
     label: '是否提级办',
     component: 'Select',
     componentProps: {
@@ -534,7 +534,7 @@ export const formSchema: FormSchema[] = [
   },
   // 选择是的时候，展示提级办人员、提级办职务
   {
-    field: 'promotionLevelPerson',
+    field: 'mentionUserName',
     label: '提级办人员',
     component: 'Input',
     componentProps: {
@@ -548,7 +548,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'promotionLevelPosition',
+    field: 'mentionType',
     label: '提级办职务',
     component: 'Select',
     componentProps: {
@@ -562,7 +562,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'isLimit',
+    field: 'isQuota',
     label: '是否限额',
     component: 'Select',
     componentProps: {
@@ -578,7 +578,7 @@ export const formSchema: FormSchema[] = [
   },
   // 选择是的时候，展示工程类别（下拉）、工程具体问题（下拉）
   {
-    field: 'projectType',
+    field: 'worksCategory',
     label: '工程类别',
     component: 'Select',
     componentProps: {
@@ -592,7 +592,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'projectProblem',
+    field: 'worksProblem',
     label: '工程具体问题',
     component: 'Select',
     componentProps: {
@@ -606,7 +606,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'complaintType',
+    field: 'appeal',
     label: '不计入诉求总量类别',
     component: 'Select',
     componentProps: {
@@ -618,7 +618,7 @@ export const formSchema: FormSchema[] = [
   },
   // 选择2的时候，展示网络平台名称
   {
-    field: 'networkPlatformName',
+    field: 'networkPlatform',
     label: '网络平台名称',
     component: 'Input',
     componentProps: {
@@ -631,7 +631,7 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
-    field: 'caseLabel',
+    field: 'hangingAccountsLabel',
     label: '剔挂标签',
     component: 'Select',
     componentProps: ({formActionType, formModel}) => ({
@@ -696,7 +696,7 @@ export const formSchema: FormSchema[] = [
   },
   // 选择非3的时候，展示剔除挂账类型
   {
-    field: 'hangingAccountsType',
+    field: 'removeHangingAccountsTypeId',
     label: '剔除挂账类型',
      component: 'Select',
     componentProps: {
@@ -763,7 +763,7 @@ export const formFinalSchema: FormSchema[] = [
   //   }
   // },
   {
-    field: 'checkType',
+    field: 'assessmentType',
     label: '考核类型',
     component: 'Select',
     componentProps: {
@@ -774,7 +774,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'community',
+    field: 'communityId',
     label: '社区/村',
     component: 'ApiSelect',
     componentProps: {
@@ -805,7 +805,7 @@ export const formFinalSchema: FormSchema[] = [
     },
   },
   {
-    field: 'questionCategory',
+    field: 'replyRequestType',
     label: '市问题分类',
     component: 'ApiCascader',
     componentProps: {
@@ -833,7 +833,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'minorPoint',
+    field: 'communityAddress',
     label: '小区点位',
     component: 'Input',
     componentProps: {
@@ -848,7 +848,7 @@ export const formFinalSchema: FormSchema[] = [
     },
   },
   {
-    field: 'isConnection',
+    field: 'isContact',
     label: '是否联系',
     component: 'Select',
     componentProps: {
@@ -860,7 +860,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isResolved',
+    field: 'isSolved',
     label: '是否解决',
     component: 'Select',
     componentProps: {
@@ -872,7 +872,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isSatisfied',
+    field: 'isSatisfaction',
     label: '是否满意',
     component: 'Select',
     componentProps: {
@@ -884,7 +884,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isFact',
+    field: 'isTrue',
     label: '是否属实',
     component: 'Select',
     componentProps: {
@@ -899,7 +899,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isPersonResponsible',
+    field: 'isBelong',
     label: '是否属于疏整促任务',
     component: 'RadioGroup',
     componentProps:({formActionType, formModel}) => ({
@@ -940,7 +940,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'responsibilityType',
+    field: 'taskType',
     label: '疏整促任务类型',
     component: 'Select',
     componentProps: {
@@ -953,7 +953,7 @@ export const formFinalSchema: FormSchema[] = [
   },
   // 以下是新增字段
   {
-    field: 'returnDepartment',
+    field: 'industryOfficeId',
     label: '归属行业部门',
     component: 'Select',
     componentProps: {
@@ -968,7 +968,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'handleDetail',
+    field: 'handleBasisPolicy',
     label: '办理依据',
     component: 'InputTextArea',
     componentProps: {
@@ -984,7 +984,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'satisfactionTime',
+    field: 'replySatisfiedTime',
     label: '满意时间',
     component: 'InputGroup',
     componentProps: {},
@@ -996,7 +996,7 @@ export const formFinalSchema: FormSchema[] = [
     ]
   },
   {
-    field: 'contactTime',
+    field: 'replyContactTime',
     label: '联系时间',
     component: 'InputGroup',
     componentProps: {},
@@ -1008,7 +1008,7 @@ export const formFinalSchema: FormSchema[] = [
     ]
   },
   {
-    field: 'resolutionTime',
+    field: 'replyResolveTime',
     label: '解决时间',
     component: 'InputGroup',
     componentProps: {},
@@ -1020,7 +1020,7 @@ export const formFinalSchema: FormSchema[] = [
     ]
   },
   {
-    field: 'sevenFiveAttributes',
+    field: 'liveHoodIssueId',
     label: '七有五性',
     component: 'ApiCascader',
     componentProps: {
@@ -1047,7 +1047,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'finalProcessingDepartment',
+    field: 'lastOfficeId',
     label: '最终处置部门',
     component: 'ApiCascader',
     componentProps: {
@@ -1075,7 +1075,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'mainLeaderName',
+    field: 'competentLeader',
     label: '主管领导姓名',
     component: 'Input',
     componentProps: {
@@ -1085,7 +1085,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'departmentResponsiblePersonName',
+    field: 'departmentHead',
     label: '部门负责人姓名',
     component: 'Input',
     componentProps: {
@@ -1095,7 +1095,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'specificExecutorName',
+    field: 'specificHandleName',
     label: '具体承办人姓名',
     component: 'Input',
     componentProps: {
@@ -1105,7 +1105,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'specificExecutorPosition',
+    field: 'specificHandleDuty',
     label: '具体承办人职务',
     component: 'Select',
     componentProps: {
@@ -1117,7 +1117,7 @@ export const formFinalSchema: FormSchema[] = [
     colProps: { span: 12 },
   },
   {
-    field: 'isMeetWithComplainant',
+    field: 'isAppealMeet',
     label: '是否已与诉求人见面',
     component: 'Select',
     componentProps:() =>({
@@ -1133,7 +1133,7 @@ export const formFinalSchema: FormSchema[] = [
   },
   // 选择是的时候，展示见面时间，见面地点
   {
-    field: 'meetingTime',
+    field: 'meetTime',
     label: '见面时间',
     component: 'DatePicker',
     componentProps: {
@@ -1147,7 +1147,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'meetingPlace',
+    field: 'meetPlace',
     label: '见面地点',
     component: 'Input',
     componentProps: {
@@ -1161,7 +1161,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'isVisited',
+    field: 'isWhistle',
     label: '是否吹哨',
     component: 'Select',
     componentProps: {
@@ -1176,7 +1176,7 @@ export const formFinalSchema: FormSchema[] = [
   },
   // 选择是的时候，展示吹哨结果、吹哨部门
   {
-    field: 'whistleblowerResult',
+    field: 'whistleResult',
     label: '吹哨结果',
     component: 'Select',
     componentProps: {
@@ -1193,7 +1193,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'whistleblowerDepartment',
+    field: 'whistleDepartmentId',
     label: '吹哨部门',
     component: 'ApiCascader',
     componentProps: {
@@ -1237,7 +1237,7 @@ export const formFinalSchema: FormSchema[] = [
   //   colProps: { span: 12 },
   // },
   {
-    field: 'promotionLevel',
+    field: 'mention',
     label: '是否提级办',
     component: 'Select',
     componentProps: {
@@ -1252,7 +1252,7 @@ export const formFinalSchema: FormSchema[] = [
   },
   // 选择是的时候，展示提级办人员、提级办职务
   {
-    field: 'promotionLevelPerson',
+    field: 'mentionUserName',
     label: '提级办人员',
     component: 'Input',
     componentProps: {
@@ -1266,7 +1266,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'promotionLevelPosition',
+    field: 'mentionType',
     label: '提级办职务',
     component: 'Select',
     componentProps: {
@@ -1280,7 +1280,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'isLimit',
+    field: 'isQuota',
     label: '是否限额',
     component: 'Select',
     componentProps: {
@@ -1296,7 +1296,7 @@ export const formFinalSchema: FormSchema[] = [
   },
   // 选择是的时候，展示工程类别（下拉）、工程具体问题（下拉）
   {
-    field: 'projectType',
+    field: 'worksCategory',
     label: '工程类别',
     component: 'Select',
     componentProps: {
@@ -1310,7 +1310,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'projectProblem',
+    field: 'worksProblem',
     label: '工程具体问题',
     component: 'Select',
     componentProps: {
@@ -1324,7 +1324,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'complaintType',
+    field: 'appeal',
     label: '不计入诉求总量类别',
     component: 'Select',
     componentProps: {
@@ -1336,7 +1336,7 @@ export const formFinalSchema: FormSchema[] = [
   },
   // 选择2的时候，展示网络平台名称
   {
-    field: 'networkPlatformName',
+    field: 'networkPlatform',
     label: '网络平台名称',
     component: 'Input',
     componentProps: {
@@ -1349,7 +1349,7 @@ export const formFinalSchema: FormSchema[] = [
     }
   },
   {
-    field: 'caseLabel',
+    field: 'hangingAccountsLabel',
     label: '剔挂标签',
     component: 'Select',
     componentProps: ({formActionType, formModel}) => ({
@@ -1414,7 +1414,7 @@ export const formFinalSchema: FormSchema[] = [
   },
   // 选择非3的时候，展示剔除挂账类型
   {
-    field: 'hangingAccountsType',
+    field: 'removeHangingAccountsTypeId',
     label: '剔除挂账类型',
      component: 'Select',
     componentProps: {

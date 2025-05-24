@@ -32,19 +32,19 @@
                     <div class="grid grid-cols-2 gap-4">
                       <div class="flex">
                         <p class="font-bold">录音已倾听：</p>
-                        <p class="text-gray-600">{{ replyDetailRef.value?.fileRead === 1? '是' : '否' }}</p>
+                        <p class="text-gray-600">{{ replyDetailRef?.fileRead === 1? '是' : '否' }}</p>
                       </div>
                       <div class="flex">
                         <p class="font-bold">跟进情况：</p>
-                        <p class="text-gray-600">{{ replyDetailRef.value?.followCode || '-' }}</p>
+                        <p class="text-gray-600">{{ followCodeInfo }}</p>
                       </div>
                       <div class="flex">
                         <p class="font-bold">督办人：</p>
-                        <p class="text-gray-600">{{ replyDetailRef.value?.overseeUserName || '-' }}</p>
+                        <p class="text-gray-600">{{ replyDetailRef?.overseeUserName || '-' }}</p>
                       </div>
                       <div class="flex">
                         <p class="font-bold">最终处理情况：</p>
-                        <p class="text-gray-600">{{ replyDetailRef.value?.finalResolveResult || '-' }}</p>
+                        <p class="text-gray-600">{{ replyDetailRef?.finalResolveResult || '-' }}</p>
                       </div>
                   </div>
                 </a-collapse-panel>
@@ -78,6 +78,7 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
+    import { getDictItemsByCode } from '/@/utils/dict';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
@@ -94,11 +95,22 @@
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
     // 回复详情
-    const replyDetailRef = ref<any>({});
+    const replyDetailRef = ref<any>({
+      fileRead: 0,
+      followCode: '',
+      overseeUserName: '',
+      finalResolveResult: ''
+    });
     // 折叠面板key
     const collapsibleKey = ref<string | null>('2');
     // 表单详情
     const ticketDetail = ref<any>({});
+    // 从字典获取跟进情况
+    const followCodeInfo = computed(() => {
+      const array = getDictItemsByCode('biz_follow_code')
+      console.log('array', array);
+      return array.find(item => item.value == replyDetailRef.value.followCode)?.text || '-'
+    });
     //回复审核表单配置
     const [registerAuditForm, { validate }] = useForm({
       labelWidth: 150,
@@ -217,7 +229,7 @@
           "labelCode": params.labelCode,
           "remark": params.remark,
           "responseFlag": params.responseFlag,
-          "sevenFiveId": params.sevenFiveId,
+          "sevenFiveId": params.sevenFiveId ? params.sevenFiveId.split(',').pop() : '',
           "ticketId": ticketId
         };
         //提交表单

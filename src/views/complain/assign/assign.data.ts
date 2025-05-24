@@ -684,7 +684,7 @@ export const addFormSchema: FormSchema[] = [
     field: 'caseNature',
     label: '案件性质',
     component: 'ApiSelect',
-    // required: true,
+    required: true,
     componentProps: {
       api: async () => {
         const res = await getDictItems('biz_case_nature')

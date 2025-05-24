@@ -102,7 +102,7 @@
               if (Array.isArray(ksData)) {
                 updateSchema({
                   field: 'reportCommunityId',
-                  required: true,
+                  // required: true,
                   componentProps: {
                     options: ksData.map(v => {
                       return {
@@ -163,41 +163,47 @@
         // }
         // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
         console.log(params)
-        // let shequTreeList:any[] =[];
-        // try {
-        //   shequTreeList = await getSecondTreeList('3');
-        // } catch (error) {
-        //   console.log(error)
-        // }
+        let shequTreeList:any[] =[];
+        try {
+          shequTreeList = await getSecondTreeList('3');
+        } catch (error) {
+          console.log(error)
+        }
         
         if(currentData) {
           // 反映管区
-          // if(params.assignCommunityIdList) {
-          //   const newCommunityIdList = params.assignCommunityIdList.split(',');
-          //   shequTreeList.forEach(v => {
-          //     const index = newCommunityIdList.indexOf(v.id);
-          //     if(index > -1){
-          //       // 移除父节点id
-          //       newCommunityIdList.splice(index, 1);  
-          //       // 添加全部子节点id
-          //       v.children?.forEach(item => {
-          //         newCommunityIdList.push(item.id)
-          //       })
-          //     }
-          //   })
-          //   // newCommunityIdList 去重
-          //   const uniqueCommunityIdList = Array.from(new Set(newCommunityIdList));
-          //   params.assignCommunityIdList = uniqueCommunityIdList;
-          // }
-          if(params.reportCommunityId) {
-            const newCommunityIdList = params.reportCommunityId.split(',');
-            params.assignCommunityIdList = newCommunityIdList;
+          if(params.assignCommunityIdList) {
+            const newCommunityIdList = params.assignCommunityIdList.split(',');
+            shequTreeList.forEach(v => {
+              const index = newCommunityIdList.indexOf(v.id);
+              if(index > -1){
+                // 移除父节点id
+                newCommunityIdList.splice(index, 1);  
+                // 添加全部子节点id
+                v.children?.forEach(item => {
+                  newCommunityIdList.push(item.id)
+                })
+              }
+            })
+            // newCommunityIdList 去重
+            const uniqueCommunityIdList = Array.from(new Set(newCommunityIdList));
+            params.assignCommunityIdList = uniqueCommunityIdList;
           }
+          // if(params.reportCommunityId) {
+          //   const newCommunityIdList = params.reportCommunityId.split(',');
+          //   params.assignCommunityIdList = newCommunityIdList;
+          // }
           // 科室
           if(params.assignDeptIdList) {
             params.assignDeptIdList = params.assignDeptIdList.split(',');
           }
-          params = { ...params, id: currentData.record.id, caseNature:0 };
+          // 七有五性
+          let sevenFiveId;
+          if(params.sevenFiveId) {
+             let list  = params.sevenFiveId.split(',');
+             sevenFiveId = list[list.length - 1];
+          }
+          params = { ...params, id: currentData.record.id, sevenFiveId,};
         }
         //提交表单
         await addAssign(params);
