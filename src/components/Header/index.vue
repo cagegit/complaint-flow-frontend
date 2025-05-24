@@ -69,11 +69,10 @@
     date.value = dayjs().format('YYYY.MM.DD');
   };
 
-  let timer = null;
-
+  let timer = ref(null);
   onMounted(() => {
     updateTime();
-    timer = setInterval(() => {
+    timer.value = setInterval(() => {
       updateTime();
     }, 1000);
     const pathname = window.location.pathname;
@@ -81,7 +80,7 @@
   });
 
   onBeforeUnmount(() => {
-    if (timer) clearInterval(timer);
+    if (timer.value) clearInterval(timer.value);
   });
 </script>
 
