@@ -347,6 +347,7 @@ const getAuditStatusText = (status) => {
 
 // 监听外部传入的回复数据变化
 watch(() => props.replyData, (newValue) => {
+  // 统计个类型文件的数量
   localReplyList.value = newValue;
   loading.value = false;
 }, { deep: true, immediate: true });
@@ -370,6 +371,7 @@ const handleTableChange = (pag) => {
 
 // 查看文件
 const handleViewFiles = (record, type) => {
+  console.log(record);
   currentFileType.value = type;
   currentReplyId.value = record.id;
   
@@ -379,10 +381,10 @@ const handleViewFiles = (record, type) => {
       currentFileList.value = record.fileList || [];
       break;
     case 'image':
-      currentFileList.value = record.imageList || [];
+      currentFileList.value = record.fileList || [];
       break;
     case 'audio':
-      currentFileList.value = record.audioList || [];
+      currentFileList.value = record.fileList || [];
       break;
     default:
       currentFileList.value = [];

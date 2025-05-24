@@ -117,7 +117,7 @@
             res.fileList.forEach((item:any) => {
               // 根据文件后缀名判断类型
               let fileType = item.fileName.split('.').pop();
-              if (['mp3', 'wav', 'ogg'].includes(fileType)) {
+              if (['mp3', 'wav','m4a'].includes(fileType)) {
                 audioList.push({
                   uid: item.id,
                   name: item.fileName,
@@ -125,7 +125,7 @@
                   url: item.fileKey,
                   response: item, // 保留原始数据
                 });
-              } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+              } else if (['jpg', 'jpeg', 'png'].includes(fileType)) {
                 imageList.push({
                   uid: item.id,
                   name: item.fileName,

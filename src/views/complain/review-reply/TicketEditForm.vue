@@ -117,7 +117,28 @@
       try {
         res = await getReplyDetail({ ticketId: data.record.id });
         console.log(res);
-        replyList.value = res?.replyList || [];
+        // 处理文件数据
+        let newFileList = res?.replyList?.map((v:any) => {
+            v.fileCount = 0;
+            v.imageCount = 0;
+            v.audioCount = 0;
+            v.fileList?.forEach(item => {
+              // console.log('item', item);
+              // item.fileCount = (item.fileCount || 0) + 1;
+              let fileType = item.fileName.split('.').pop();
+              if (['mp3', 'wav','m4a'].includes(fileType)) {
+                v.audioCount++;
+              } else if (['jpg', 'jpeg', 'png'].includes(fileType)) {
+                v.imageCount++;
+              } else {
+                v.fileCount++;
+              }
+          });
+          return {
+           ...v
+          };
+        }) || [];
+        replyList.value = newFileList;
         total.value = res?.replyList?.length || 0;
         finalReplyList.value = res?.replyList || [];
       } catch (error) {

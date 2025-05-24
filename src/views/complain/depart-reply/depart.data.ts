@@ -650,7 +650,7 @@ export const addFormSchema: FormSchema[] = [
     component: 'Upload',
     componentProps: {
       multiple: true,
-      accept: ['mp3', 'wav'],
+      accept: ['mp3', 'wav','m4a'],
       api: uploadJsFile, // 上传接口
       bizPath: 'complain/audio', // 业务路径
       maxSize: 30, // 限制大小30M
