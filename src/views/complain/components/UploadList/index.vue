@@ -240,7 +240,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:value', 'change']);
+const emit = defineEmits(['update:value', 'change','update:modelValue']);
 
 // 创建消息实例
 const { createMessage } = useMessage();
@@ -368,6 +368,8 @@ watch(
   (newVal) => {
     emit('update:value', newVal);
     emit('change', newVal);
+    const str = JSON.stringify(newVal);
+    emit('update:modelValue', str);
   },
   { deep: true }
 );
@@ -435,14 +437,14 @@ const handleUploadChange = async (info) => {
       });
       console.log(response);
       if (response && response.success) {
-        const fileData = response.result || {};
+        const fileData = response.result || '';
         
         // 构建文件项
         const newFile: FileItem = {
           uid: file.uid,
           fileName: file.name,
           fileSize: file.size,
-          fileKey: fileData.fileKey || '',
+          fileKey: fileData,
           fileTagType: null,
           districtFileTagType: null,
         };
@@ -481,6 +483,9 @@ const handleUploadOk = () => {
   fileList.value = [...fileList.value, ...uploadedFiles.value];
   uploadModalVisible.value = false;
   createMessage.success('文件提交成功');
+  // emit('update:value', fileList.value);
+  // emit('change', fileList.value);
+  // emit('update:modelValue', fileList.value);
 };
 
 // 取消上传

@@ -197,7 +197,7 @@ export const formSchema: FormSchema[] = [
        
           updateSchema([
             {
-              field: 'responsibilityType',
+              field: 'taskType',
               componentProps: { 
                 options:[
                   {label: '其他', value: '0'},
@@ -208,14 +208,14 @@ export const formSchema: FormSchema[] = [
         } else {
           updateSchema([
             {
-              field: 'responsibilityType',
+              field: 'taskType',
               componentProps: { 
                 options: getDistrictDictItemsByCode('carding_type'),  // 需要从接口获取
               },
             },
           ]);
         }
-        formModel['responsibilityType'] = null;
+        formModel['taskType'] = null;
       }
     }),
     // required: true,
@@ -425,7 +425,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isMeetWithComplainant == 1;
+      return values.isAppealMeet == 1;
     }
   },
   {
@@ -439,7 +439,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isMeetWithComplainant == 1;
+      return values.isAppealMeet == 1;
     }
   },
   {
@@ -471,7 +471,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isVisited == 1;
+      return values.isWhistle == 1;
     }
   },
   {
@@ -501,7 +501,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isVisited == 1;
+      return values.isWhistle == 1;
     }
   },
   // {
@@ -544,7 +544,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.promotionLevel == 1;
+      return values.mention == 1;
     }
   },
   {
@@ -558,7 +558,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.promotionLevel == 1;
+      return values.mention == 1;
     }
   },
   {
@@ -588,7 +588,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isLimit == 1;
+      return values.isQuota == 1;
     }
   },
   {
@@ -602,7 +602,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isLimit == 1;
+      return values.isQuota == 1;
     }
   },
   {
@@ -627,7 +627,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.complaintType == '2';
+      return values.appeal == '2';
     }
   },
   {
@@ -645,7 +645,7 @@ export const formSchema: FormSchema[] = [
         if(value == '1' || value == '2') {
           updateSchema([
             {
-              field: 'hangingAccountsType',
+              field: 'removeHangingAccountsTypeId',
               component: 'ApiCascader',
               componentProps: { 
                  api: async () => {
@@ -679,7 +679,7 @@ export const formSchema: FormSchema[] = [
         } else {
           updateSchema([
             {
-              field: 'hangingAccountsType',
+              field: 'removeHangingAccountsTypeId',
               component: 'Select',
               componentProps: { 
                  placeholder: '请选择剔除挂账类型',
@@ -689,7 +689,7 @@ export const formSchema: FormSchema[] = [
             },
           ]);
         }
-        formModel['hangingAccountsType'] = null;
+        formModel['removeHangingAccountsTypeId'] = null;
       }
     }),
     colProps: { span: 12 },
@@ -706,7 +706,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.caseLabel == '1' || values.caseLabel == '2';
+      return values.hangingAccountsLabel == '1' || values.hangingAccountsLabel == '2';
     }
   },
   // {
@@ -915,7 +915,7 @@ export const formFinalSchema: FormSchema[] = [
        
           updateSchema([
             {
-              field: 'responsibilityType',
+              field: 'taskType',
               componentProps: { 
                 options:[
                   {label: '其他', value: '0'},
@@ -926,14 +926,14 @@ export const formFinalSchema: FormSchema[] = [
         } else {
           updateSchema([
             {
-              field: 'responsibilityType',
+              field: 'taskType',
               componentProps: { 
                 options: getDistrictDictItemsByCode('carding_type'),  // 需要从接口获取
               },
             },
           ]);
         }
-        formModel['responsibilityType'] = null;
+        formModel['taskType'] = null;
       }
     }),
     // required: true,
@@ -1143,7 +1143,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isMeetWithComplainant == 1;
+      return values.isAppealMeet == 1;
     }
   },
   {
@@ -1157,7 +1157,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isMeetWithComplainant == 1;
+      return values.isAppealMeet == 1;
     }
   },
   {
@@ -1189,7 +1189,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isVisited == 1;
+      return values.isWhistle == 1;
     }
   },
   {
@@ -1219,7 +1219,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isVisited == 1;
+      return values.isWhistle == 1;
     }
   },
   // {
@@ -1262,7 +1262,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.promotionLevel == 1;
+      return values.mention == 1;
     }
   },
   {
@@ -1276,7 +1276,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.promotionLevel == 1;
+      return values.mention == 1;
     }
   },
   {
@@ -1306,7 +1306,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isLimit == 1;
+      return values.isQuota == 1;
     }
   },
   {
@@ -1320,7 +1320,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isLimit == 1;
+      return values.isQuota == 1;
     }
   },
   {
@@ -1345,7 +1345,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.complaintType == '2';
+      return values.appeal == '2';
     }
   },
   {
@@ -1363,7 +1363,7 @@ export const formFinalSchema: FormSchema[] = [
         if(value == '1' || value == '2') {
           updateSchema([
             {
-              field: 'hangingAccountsType',
+              field: 'removeHangingAccountsTypeId',
               component: 'ApiCascader',
               componentProps: { 
                  api: async () => {
@@ -1397,7 +1397,7 @@ export const formFinalSchema: FormSchema[] = [
         } else {
           updateSchema([
             {
-              field: 'hangingAccountsType',
+              field: 'removeHangingAccountsTypeId',
               component: 'Select',
               componentProps: { 
                  placeholder: '请选择剔除挂账类型',
@@ -1407,7 +1407,7 @@ export const formFinalSchema: FormSchema[] = [
             },
           ]);
         }
-        formModel['hangingAccountsType'] = null;
+        formModel['removeHangingAccountsTypeId'] = null;
       }
     }),
     colProps: { span: 12 },
@@ -1424,7 +1424,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.caseLabel == '1' || values.caseLabel == '2';
+      return values.hangingAccountsLabel == '1' || values.hangingAccountsLabel == '2';
     }
   },
   {
@@ -1439,4 +1439,4 @@ export const formFinalSchema: FormSchema[] = [
     // 可以通过showTable来展示已上传文件列表
     helpMessage: '请上传附件',
   },
-];
+]

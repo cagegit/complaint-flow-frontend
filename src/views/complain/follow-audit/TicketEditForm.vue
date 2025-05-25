@@ -80,6 +80,9 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
+    import { useMessage } from '/@/hooks/web/useMessage';
+
+    const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -96,7 +99,7 @@
     // 表单详情
     const ticketDetail = ref<any>({});
     // 预回复表单
-    const [registerPreReplyForm] = useForm({
+    const [registerPreReplyForm, { validate: validatePreReplyForm }] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -199,10 +202,28 @@
       try {
         // 审核表单
         let auditValues = await validateAuditForm();
+        // 预回复表单
+        let preReplyValues = await validatePreReplyForm();
+        console.log('auditValues', auditValues);
+        console.log('preReplyValues', preReplyValues);
         // 先验证回访审核表单
         let values = await validate();
         setModalProps({ confirmLoading: true });
-        // values.userIdentity === 1 && (values.departIds = '');
+        
+        // 判断附件是否存在
+        let newFileList:any[] = [];
+        if (!preReplyValues?.attachments) {
+          createMessage.error('请上传附件');
+          throw new Error('请上传附件');
+        } else {
+           try{
+             const list = JSON.parse(preReplyValues.attachments);
+             newFileList = list;
+           } catch(err) {
+            console.error('Error uploading attachments:', err);
+           }   
+        }
+
         let isUpdateVal = unref(isUpdate);
         let params = values;
         const ticketId = currentEditRecordRef.value?.id;
@@ -215,11 +236,15 @@
           "needVisit":  auditValues.needVisit,
           "rejectReason": auditValues.rejectReason,
           "remark": auditValues.remark,
-          "replyFileList": [...replyList.value],
+          "replyFileList": [
+            // ...replyList.value,
+            ...newFileList
+          ],
           "sevenFiveId": params.sevenFiveId ? params.sevenFiveId.split(',').pop() : '',
           // "ticketId": 0,
           "ticketReplyDataVo": {
-            ...params 
+            ...preReplyValues,
+            replyRequestName: preReplyValues.replyRequestType
           },
           "ticketId": ticketId
         };
