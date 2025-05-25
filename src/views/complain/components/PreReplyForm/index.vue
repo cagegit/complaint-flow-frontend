@@ -123,7 +123,7 @@
        try{
           if(data.satisfactionTime === ',') {
             data.satisfactionTime = '';
-          }
+          } 
           if(data.contactTime === ',') {
             data.contactTime = '';
           }

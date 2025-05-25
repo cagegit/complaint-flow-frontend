@@ -101,6 +101,7 @@ export const columns: BasicColumn[] = [
       customRender: 'yearCount',
     }
    },
+  { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
   { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
@@ -233,6 +234,7 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
         componentProps: {
           presets: rangePresets,
+          allowClear: false
         },
         defaultValue: [
           dayjs().add(-3, 'M'),
@@ -246,6 +248,7 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
         componentProps: {
           presets: rangePresets,
+          allowClear: false
         }
     },
     {

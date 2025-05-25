@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <div class="search-sidebar">
+      <div class="search-sidebar-1">
         <div class="search-title">政策查询与解读</div>
       </div>
     </div>
@@ -347,13 +347,31 @@
     .fade-leave-to {
       opacity: 0;
     }
+    .search-sidebar-1 {
+      width: 360px;
+      // background-color: #f9f9f9;
+      // border-radius: 4px;
+      overflow: hidden;
+      background: #0c3c3a url('../../assets/images/zhengce.jpg') no-repeat center center;
+      background-size: 100% auto;
+      padding: 0 0.25rem;
+      border: 0.025rem solid #f9f3ea;
+      border-radius: 0.075rem;
+      .search-title {
+        padding: 15px 20px;
+        font-size: 20px;
+        font-weight: bold;
+         display: none;
+        // border-bottom: 1px solid #e8e8e8;
+      }
+    }
 
     .search-sidebar {
       width: 360px;
       // background-color: #f9f9f9;
       // border-radius: 4px;
       overflow: hidden;
-      background: #fffbf6 url('../../assets/images/zccxbg.png') no-repeat top center;
+      background: #0c3c3a url('../../assets/images/jindian.jpg') no-repeat center center;
       background-size: 100% auto;
       padding: 0 0.25rem;
       border: 0.025rem solid #f9f3ea;
@@ -363,7 +381,8 @@
         padding: 15px 20px;
         font-size: 20px;
         font-weight: bold;
-        border-bottom: 1px solid #e8e8e8;
+        display: none;
+        // border-bottom: 1px solid #e8e8e8;
       }
 
       .search-panel {

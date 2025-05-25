@@ -237,6 +237,7 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 6 },
     componentProps: {
       presets: rangePresets,
+      allowClear: false
     },
     defaultValue: [
       dayjs().add(-3, 'M'),
@@ -250,6 +251,7 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 6 },
     componentProps: {
       presets: rangePresets,
+      allowClear: false
     }
   },
   {
@@ -613,7 +615,7 @@ export const addFormSchema: FormSchema[] = [
     field: 'assignDeptIdList',
     label: '处理科室',
     component: 'ApiSelect',
-    required: true,
+    // required: true,
     componentProps: {
       api: async () => {
         const res = await getCommunityList('2') // 2表示部门

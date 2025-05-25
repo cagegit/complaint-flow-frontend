@@ -36,6 +36,9 @@
     import { getCommunityChildList, getComplaintDetail, getSecondTreeList } from '/@/api/common/api';
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
+    import { useMessage } from '/@/hooks/web/useMessage';
+
+    const { createMessage } = useMessage();
   
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -156,12 +159,17 @@
         setModalProps({ confirmLoading: true });
         // values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
-        // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
+
         let params = values;
-        // if (isFormDepartUser) {
-        //   params = { ...params, updateFromPage: 'deptUsers' };
-        // }
-        // -update-end--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
+
+        // 处理科室或者处理社区有一个为空，提示错误
+        if(!params.assignDeptIdList && !params.assignCommunityIdList) {
+          // 提示错误
+          setModalProps({ confirmLoading: false });
+          createMessage.error('请选择处理科室或处理社区!');
+          return;
+        }
+
         console.log(params)
         let shequTreeList:any[] =[];
         try {
@@ -171,7 +179,7 @@
         }
         
         if(currentData) {
-          // 反映管区
+          // 处理社区
           if(params.assignCommunityIdList) {
             const newCommunityIdList = params.assignCommunityIdList.split(',');
             shequTreeList.forEach(v => {

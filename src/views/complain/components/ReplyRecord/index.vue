@@ -177,7 +177,7 @@
     </a-modal>
     
     <!-- 文件预览 -->
-    <UploadPreviewModal :value="previewFileList" @register="registerPreviewModal" />
+    <UploadPreviewModal :value="previewFileList" :showDelete='false' @register="registerPreviewModal" />
   </div>
 </template>
 
@@ -379,23 +379,55 @@ const handleViewFiles = (record, type) => {
   currentFileType.value = type;
   currentReplyId.value = record.id;
   
+  let fileList:any[] = [];
+  let imageList:any[] = [];
+  let audioList:any[] = [];
+   // 分类，图片、音频、其他
+  record.fileList.forEach((item:any) => {
+     let fileType = item.fileName.split('.').pop();
+      if (['mp3', 'wav', 'ogg'].includes(fileType)) {
+        audioList.push({
+          uid: item.id,
+          name: item.fileName,
+          status: 'done',
+          url: item.fileKey,
+          response: item, // 保留原始数据
+        });
+      } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+        imageList.push({
+          uid: item.id,
+          name: item.fileName,
+          status: 'done',
+          url: item.fileKey,
+          response: item, // 保留原始数据
+        });
+      } else {
+        fileList.push({
+          uid: item.id,
+          name: item.fileName,
+          status: 'done',
+          url: item.fileKey,
+          response: item, // 保留原始数据
+        });
+      }
+    });
   // 根据类型获取不同的文件列表
   switch (type) {
-    case 'file':
-      currentFileList.value = record.fileList || [];
+  case 'file':
+
+      currentFileList.value = fileList;
       break;
     case 'image':
-      currentFileList.value = record.fileList || [];
+      currentFileList.value = imageList;
       break;
     case 'audio':
-      currentFileList.value = record.fileList || [];
+      currentFileList.value = audioList;
       break;
     default:
       currentFileList.value = [];
   }
-  
   // fileModalVisible.value = true;
-  previewFileList.value = currentFileList.value.map(item => item.url);
+  previewFileList.value = currentFileList.value
   openPreviewModal();
 };
 

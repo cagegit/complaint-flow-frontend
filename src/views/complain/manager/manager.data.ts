@@ -213,6 +213,7 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       presets: rangePresets,
       placeholder: ['开始日期', '结束日期'],
+      allowClear: false
     },
     colProps: { span: 8 },
     defaultValue: [
