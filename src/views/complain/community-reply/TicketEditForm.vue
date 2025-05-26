@@ -10,32 +10,66 @@
       destroyOnClose
       :maskClosable="false"
     >
-      <div class="flex px-3">
-        <div style="flex: 1; border-right: 1px solid #ddd; max-height: 700px; overflow: auto;">
-          <!-- 拒绝信息 -->
-          <RejectInfo :detailInfo="ticketDetail" />
-          <!-- 基本信息区域 -->    
-          <BasicForm @register="registerForm"/>
-        </div>
-        <div style="width: 400px; padding-left: 30px;">
-            <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
-            <!-- 待补充信息区域 -->
-            <BasicForm
-                :schemas="addFormSchema"
-                @register="registerAddForm"
-                >
-            <template #audioDurationSlot="record">
-              <!-- <a>{{ JSON.stringify(record) }}</a> -->
-              <a-space>
-                <a-time-picker
-                  v-model="record.model.audioDuration[0]"
-                  format="HH:mm:ss"
-                  style="width: 100%"
-                />
-                <a-input v-model="record.model.audioDuration[1]" placeholder="00分00秒处表明态度" />
-              </a-space>
-              </template>
-            </BasicForm>
+    <div style="max-height: 800px; overflow: auto;">
+        <div class="flex px-3 relative ">
+           <!-- 折叠展开icon -->
+          <div style="position: absolute; top: 300px; right: 500px;  width: 24px; z-index: 10; background:#fff;" :style="{...showLeft? {right:'500px'}:{left:'14px'}}">
+            <LeftCircleOutlined style="font-size: 24px;" title="收起" v-if="showLeft"  @click="handleCollapse(false)"/>
+            <RightCircleOutlined style="font-size: 24px;" title="展开" v-if="!showLeft" @click="handleCollapse(true)"/>
+           </div>
+          <div v-if="!showLeft" style="border-right: 1px solid #ddd; padding-right: 15px;"></div>
+          <div style="flex: 1; border-right: 1px solid #ddd; padding-right: 15px; " :style="{display: showLeft ? 'block': 'none'}">
+            <!-- 拒绝信息 -->
+            <RejectInfo :detailInfo="ticketDetail" />
+            <!-- 基本信息区域 -->    
+            <BasicForm @register="registerForm"/>
+          </div>
+          <div style="width: 500px; padding-left: 40px; " :style="{width: showLeft ? '500px': 'auto'}">
+            <a-divider><span class="text-red-500">必填表单区域</span></a-divider>
+              <BasicForm
+                  :schemas="addFormSchema"
+                  @register="registerAddForm"
+                  >
+              <template #audioDurationSlot="record">
+                <!-- <a>{{ JSON.stringify(record) }}</a> -->
+                <a-space>
+                  <a-time-picker
+                    v-model="record.model.audioDuration[0]"
+                    format="HH:mm:ss"
+                    style="width: 100%"
+                  />
+                  <a-input v-model="record.model.audioDuration[1]" placeholder="00分00秒处表明态度" />
+                </a-space>
+                </template>
+              </BasicForm>
+             <a-divider>可选表单区域</a-divider>
+               <a-collapse v-model:activeKey="subActiveKey" ghost>
+                <a-collapse-panel key="1" header="预回复表单">
+                  <BasicForm
+                    @register="registerPreReplyForm"
+                  >
+                   <template #satisfactionTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <template #contactTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                    <template #resolutionTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  </BasicForm>
+                </a-collapse-panel>
+              </a-collapse>
+          </div>
         </div>
       </div>
     </BasicModal>
@@ -52,6 +86,12 @@
     import { getComplaintDetail } from '/@/api/common/api';
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
+     // @ts-ignore
+    import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
+    // 预回复表单
+    import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
+
     const { showQuReplyConfirm } = useConfirm();
 
     const { createMessage } = useMessage();
@@ -63,8 +103,14 @@
     const rowId = ref('');
     const departOptions = ref([]);
     let isFormDepartUser = false;
+    // 折叠面板
+    const showLeft = ref<boolean>(true);
+    // 折叠面板的activeKey
+    const subActiveKey = ref<string>('');
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
+    // 预回复详情
+    const preReplyDetail = ref<any>(null);
     //表单配置
     const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
       labelWidth: 150,
@@ -83,6 +129,16 @@
     const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: addFormSchema,
+      showActionButtonGroup: false,
+      layout: 'vertical',
+      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+      //row行的样式
+    });
+    //预回复表单配置
+    const [registerPreReplyForm, { setProps: setPreReplyProps, validate: preReplyValidate }] = useForm({
+      labelWidth: 150,
+      schemas: preReplyFormSchema,
       showActionButtonGroup: false,
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
@@ -183,6 +239,24 @@
          overseeUserName: res.overseeUserName || null,
         });
       }
+      // 查询预回复详情
+      getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
+        console.log(preRes);
+        if(preRes?.upReply) {
+          preReplyDetail.value = preRes.upReply;
+          // 设置预回复表单值
+          setPreReplyProps({
+            ...preRes.upReply,
+            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
+            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
+            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+          });
+        } else {
+          preReplyDetail.value = null;
+        }
+      }).catch(err => {
+        console.error('查询预回复详情失败', err);
+      });
     });
     //获取标题
     const getTitle = computed(() => {
@@ -195,7 +269,10 @@
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });
     const { adaptiveWidth } = useDrawerAdaptiveWidth();
-  
+    // 折叠左侧面板
+    function handleCollapse(val:boolean) {
+      showLeft.value = val;
+    }
     //提交事件
     async function handleSubmit() {
       try {
@@ -281,6 +358,23 @@
             });
           });
         }
+      // 优先保存区级信息
+      try{
+        if(currentEditRecordRef.value) {
+          const preParams = await preReplyValidate();
+          const resResult = await savePreReply({
+            "deleteFileIdList": [],
+            "replyFileList": [],
+            "ticketId": currentEditRecordRef.value?.id,
+            "ticketReplyDataVo": {
+              ...preParams
+            }
+          });
+          console.log('保存预回复信息成功', resResult);
+        }
+      } catch (error) {
+        console.error('保存区级信息失败', error);
+      }
        const newParams = {
           "addFileList": addFileList,
           "assignId": assignId,

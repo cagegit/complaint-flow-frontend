@@ -151,15 +151,15 @@
           <div class="whitespace-pre-wrap">{{ currentDetail.resolveResult }}</div>
         </a-descriptions-item>
         <a-descriptions-item label="文件/视频">
-          <BasicUpload v-if="currentDetail.fileList?.length > 0" :value="currentDetail.fileList" readOnly />
+          <BasicUpload v-if="currentDetail.fileList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.fileList" readOnly />
           <span v-else>无</span>
         </a-descriptions-item>
         <a-descriptions-item label="图片">
-          <BasicUpload v-if="currentDetail.imageList?.length > 0" :value="currentDetail.imageList" readOnly />
+          <BasicUpload v-if="currentDetail.imageList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.imageList" readOnly />
           <span v-if="!currentDetail.imageList?.length">无</span>
         </a-descriptions-item>
         <a-descriptions-item label="音频">
-          <BasicUpload v-if="currentDetail.audioList?.length > 0" :value="currentDetail.audioList" readOnly />
+          <BasicUpload v-if="currentDetail.audioList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.audioList" readOnly />
           <span v-if="!currentDetail.audioList?.length">无</span>
         </a-descriptions-item>
         <!-- <a-descriptions-item label="督办人">
@@ -514,6 +514,42 @@ const handleViewDetail = (record) => {
   currentDetail.value = { ...record };
   detailModalVisible.value = true;
   
+   let fileList:any[] = [];
+  let imageList:any[] = [];
+  let audioList:any[] = [];
+   // 分类，图片、音频、其他
+  record.fileList.forEach((item:any) => {
+     let fileType = item.fileName.split('.').pop();
+      if (['mp3', 'wav', 'ogg'].includes(fileType)) {
+        audioList.push({
+          uid: item.id,
+          name: item.fileName,
+          status: 'done',
+          url: item.fileKey,
+          response: item, // 保留原始数据
+        });
+      } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+        imageList.push({
+          uid: item.id,
+          name: item.fileName,
+          status: 'done',
+          url: item.fileKey,
+          response: item, // 保留原始数据
+        });
+      } else {
+        fileList.push({
+          uid: item.id,
+          name: item.fileName,
+          status: 'done',
+          url: item.fileKey,
+          response: item, // 保留原始数据
+        });
+      }
+    });
+  // 根据类型获取不同的文件列表
+  currentDetail.value.fileList = fileList;
+  currentDetail.value.imageList = imageList;
+  currentDetail.value.audioList = audioList;
   // 准备图片预览数据
   if (record.imageList && record.imageList.length > 0) {
     previewImageList.value = record.imageList.map(img => img.url);

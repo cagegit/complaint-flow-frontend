@@ -54,13 +54,15 @@
     import { list} from './follow-audit.api'
     import { columns, searchFormSchema } from './follow-audit.data'
     import { useModal } from '/@/components/Modal';
-    // import { useMessage } from '/@/hooks/web/useMessage';
+    import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
     import TicketEdit from './TicketEditForm.vue';
     //@ts-ignore
     import PreReplyForm from '../components/PreReplyForm/index.vue';
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
+
+    const { createMessage } = useMessage();
     const [registerModal, { openModal }] = useModal();
 
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
@@ -117,6 +119,10 @@
       }
     
       async function handleEdit(record: Recordable) {
+        if(record.auditStatus == '1') {
+          createMessage.error('该回访已审核，不能再次编辑!');
+          return;
+        }
         openModal(true, {
           record,
           isUpdate: true,
@@ -149,6 +155,10 @@
     
        
      function showEdit(record: Recordable) {
+        if(record.auditStatus == '1') {
+          createMessage.error('该回访已审核，不能再次编辑!');
+          return;
+        }
         openModal(true, {
           record,
           isUpdate: true,

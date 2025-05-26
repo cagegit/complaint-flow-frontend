@@ -60,6 +60,10 @@
     import PreReplyForm from '../components/PreReplyForm/index.vue';
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
+    import { useMessage } from '/@/hooks/web/useMessage';
+
+    const { createMessage } = useMessage();
+
     const [registerModal, { openModal }] = useModal();
 
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
@@ -116,6 +120,10 @@
       }
     
       async function handleEdit(record: Recordable) {
+        if(record.auditStatus == '1') {
+          createMessage.error('该工单已审核，不能再次审核!');
+          return;
+        }
         openModal(true, {
           record,
           isUpdate: true,
@@ -148,6 +156,10 @@
     
        
      function showEdit(record: Recordable) {
+        if(record.auditStatus == '1') {
+          createMessage.error('该工单已审核，不能再次审核!');
+          return;
+        }
         openModal(true, {
           record,
           isUpdate: true,

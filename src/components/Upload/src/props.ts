@@ -42,6 +42,15 @@ export const basicProps = {
     type: String as PropType<string>,
     default: null,
   },
+  // 是否显示删除按钮
+  showDelete: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  },
+  showUpload: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  }
 };
 
 export const uploadContainerProps = {
@@ -85,4 +94,8 @@ export const fileListProps = {
     type: Array as PropType<any[]>,
     default: null,
   },
+  showDelete: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  }
 };

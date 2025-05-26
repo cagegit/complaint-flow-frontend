@@ -60,10 +60,11 @@
     import PreReplyForm from '../components/PreReplyForm/index.vue';
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
+    import { useMessage } from '/@/hooks/web/useMessage';
     const [registerModal, { openModal }] = useModal();
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
     const [registerHistoryModal, { openModal: openHistoryModal }] = useModal();
-    // const { createMessage, createConfirm } = useMessage();
+    const { createMessage } = useMessage();
 
     // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
@@ -116,6 +117,10 @@
       }
     
       async function handleEdit(record: Recordable) {
+        if(record.visitStatus == '1') {
+          createMessage.error('该工单已回访，不能再次回访!');
+          return;
+        }
         openModal(true, {
           record,
           isUpdate: true,
@@ -148,6 +153,10 @@
     
        
      function showEdit(record: Recordable) {
+        if(record.visitStatus == '1') {
+          createMessage.error('该工单已回访，不能再次回访!');
+          return;
+        }
         openModal(true, {
           record,
           isUpdate: true,

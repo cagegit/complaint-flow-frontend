@@ -19,7 +19,7 @@ export function createTableColumns(): BasicColumn[] {
       title: t('component.upload.legend'),
       width: 100,
       customRender: ({ record }) => {
-        const { thumbUrl } = (record as FileItem) || {};
+        let { thumbUrl } = (record as FileItem) || {};
         return thumbUrl && <ThumbUrl fileUrl={thumbUrl} />;
       },
     },
@@ -110,7 +110,10 @@ export function createPreviewColumns(): BasicColumn[] {
       title: t('component.upload.legend'),
       width: 100,
       customRender: ({ record }) => {
-        const { url } = (record as PreviewFileItem) || {};
+        let { url } = (record as PreviewFileItem) || {};
+        if(url.indexOf('app-data/') === 0) {
+           url = '/citizen-voice/sys/common/static/' +url
+        }
         return isImgTypeByName(url) && <ThumbUrl fileUrl={url} />;
       },
     },

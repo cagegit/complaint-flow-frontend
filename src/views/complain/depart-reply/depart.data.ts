@@ -83,14 +83,12 @@ export const columns: BasicColumn[] = [
       return render.renderDict(text, 'biz_source_type');
     }
   },
-  { title: '标签code', dataIndex: 'labelCode', width: 120 },
+  { title: '标签code', dataIndex: 'labelCode_dictText', width: 120 },
   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  { title: '状态', dataIndex: 'receiveStatus', width: 120, customRender: ({ text }) => {
-   return text === 0 ? '待转出' : '已转出';
-  }},
+  { title: '状态', dataIndex: 'receiveStatus_dictText', width: 120 },
   { title: '月次', dataIndex: 'monthCount', width: 80, 
     slots:{
       customRender: 'monthCount',
@@ -120,18 +118,18 @@ export const columns: BasicColumn[] = [
    { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
    { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
    { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
-   { title: '重点对象类型', dataIndex: 'monitorType', width: 150 },
+   { title: '重点对象类型', dataIndex: 'monitorType_dictText', width: 150 },
    { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
-   { title: '所属部门', dataIndex: 'orgId', width: 150 },
+   { title: '所属部门', dataIndex: 'orgName', width: 150 },
    { title: '原始标签', dataIndex: 'originalLabel', width: 120 },
-   { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
+  //  { title: '流程节点编码', dataIndex: 'processCode', width: 150 },
    { title: '流程节点名称', dataIndex: 'processName', width: 150 },
-   { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
+  //  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
-   { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
+  //  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
    { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-   { title: '反应社区', dataIndex: 'reportCommunityId', width: 150 },
-   { title: '反应管区', dataIndex: 'reportDistrictId', width: 150 },
+   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
+   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
    { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
    { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
    { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
@@ -144,9 +142,9 @@ export const columns: BasicColumn[] = [
   { title: '主任建议', dataIndex: 'zhurenSuggest', width: 150 },
   { title: '书记建议', dataIndex: 'shujiSuggest', width: 150 },
   //caseNature（案件性质）
-  { title: '案件性质', dataIndex: 'caseNature', width: 120 },
+  { title: '案件性质', dataIndex: 'caseNature_dictText', width: 120 },
   // caseType（案件类型）
-  { title: '案件类型', dataIndex: 'caseType', width: 120 },
+  { title: '案件类型', dataIndex: 'caseType_dictText', width: 120 },
   // suddenCase（突发案件）
   { title: '突发案件', dataIndex: 'suddenCase', width: 120 },
   { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
@@ -595,6 +593,9 @@ export const addFormSchema: FormSchema[] = [
       placeholder: '请输入处理部门',
       disabled: true
     },
+    colProps: {
+      span: 12
+    }
   },
   // {
   //   field: 'transferTo',
@@ -621,6 +622,9 @@ export const addFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入督办人',
     },
+    colProps: {
+      span: 12
+    }
   },
   {
     field: 'file',
@@ -639,6 +643,9 @@ export const addFormSchema: FormSchema[] = [
         biz: 'complain/file',
       },
     },
+    colProps: {
+      span: 12
+    }
   },
   {
     field: 'image',
@@ -654,6 +661,9 @@ export const addFormSchema: FormSchema[] = [
         biz: 'complain/image',
       }
     },
+    colProps: {
+      span: 12
+    }
   },
   {
     field: 'audio',
@@ -689,6 +699,10 @@ export const addFormSchema: FormSchema[] = [
       placeholder: '请输入处理情况',
       rows: 6,
     },
+    colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   {
     field: 'remark',
@@ -698,5 +712,9 @@ export const addFormSchema: FormSchema[] = [
       placeholder: '请输入备注',
       rows: 3,
     },
+    colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
 ];
