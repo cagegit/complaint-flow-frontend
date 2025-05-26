@@ -78,6 +78,9 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
+    import { useMessage } from '/@/hooks/web/useMessage';
+
+    const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -227,13 +230,29 @@
           });
         } else {
           const { _responseFlag, _rejectReason, ...rest } = params;
+          // 判断附件是否存在
+          let newFileList:any[] = [];
+          if (!params?.attachments) {
+            createMessage.error('请上传附件');
+            setModalProps({ confirmLoading: false });
+            throw new Error('请上传附件');
+          } else {
+            try{
+              const list = JSON.parse(params.attachments);
+              newFileList = list;
+            } catch(err) {
+              console.error('Error uploading attachments:', err);
+            }   
+          }
           // 最终回复
           const newParams = {
-            "replyFileList": [...replyList.value],
+            "replyFileList": [...newFileList],
             "ticketReplyDataVo": {
               ...rest,
+              replyRequestName: rest.replyRequestType
             },
-            "ticketId": ticketId
+            "ticketId": ticketId,
+            "deleteFileIdList": [],
           };
           //提交表单
           await saveReviewReply(newParams);

@@ -214,6 +214,7 @@
         let newFileList:any[] = [];
         if (!preReplyValues?.attachments) {
           createMessage.error('请上传附件');
+          setModalProps({ confirmLoading: false });
           throw new Error('请上传附件');
         } else {
            try{
