@@ -29,11 +29,9 @@
     <div class="carousel-list">
       <div class="carousel-item" v-for="(item, index) in issuesData" :key="index">
         <div class="label">
-          <div v-if="item.timeLevel === 1" class="status-one"></div>
-          <div v-else-if="item.timeLevel === 2" class="status-two"></div>
-          <div v-else-if="item.timeLevel === 3" class="status-three"></div>
+          <div class="status" :style="{ background: getTimeLevelColor(item.timeLevel) }"></div>
         </div>
-        <div class="type">{{ getSourceTypeText(item.sourceType) }}</div>
+        <div class="type">{{ item.sourceType_dictText || '-' }}</div>
         <div class="table-title">{{ item.title }}</div>
         <div class="time">
           <span class="date">{{ getDate(item.createTime) }}</span>
@@ -52,6 +50,7 @@
   import { message } from 'ant-design-vue';
   import { getScrollPageList } from '@/api/complaint/statistic';
   import { getDictItems } from '/@/api/common/api';
+  import { TimeLevelItem } from '/@/enums/statisticEnum';
 
   interface IssueItem {
     id?: string;
@@ -61,46 +60,41 @@
     createTime?: string;
     assignDepts?: string;
     assignCommunitys?: string;
-  }
-
-  interface DictItem {
-    text: string;
-    value: string;
-    label?: string;
+    sourceType_dictText?: string;
   }
 
   const issuesData = ref<IssueItem[]>([]);
   const currentNum = ref(1);
   const timer = ref<NodeJS.Timeout | null>(null);
-  const sourceTypeDict = ref<DictItem[]>([]);
+  const timeLevelDict = ref<TimeLevelItem[]>([]);
 
-  onMounted(() => {
-    fetchSourceTypeDict();
-    fetchData(currentNum.value);
-    timer.value = setInterval(() => {
-      currentNum.value = currentNum.value + 1;
-      fetchData(currentNum.value);
-    }, 10000);
-  });
-
-  // 获取字典数据
-  const fetchSourceTypeDict = async () => {
+  const fetchTimeLevelDict = async () => {
     try {
-      const res = await getDictItems('biz_source_type');
+      const res = await getDictItems('biz_time_level');
       if (res && Array.isArray(res)) {
-        sourceTypeDict.value = res;
+        timeLevelDict.value = res;
       }
     } catch (error) {
       console.error('获取字典数据失败', error);
     }
   };
 
-  // 根据sourceType获取文本值
-  const getSourceTypeText = (sourceType?: string) => {
-    if (!sourceType) return '';
-    const item = sourceTypeDict.value.find((item) => Number(item.value) === Number(sourceType));
-    return item ? item.text : '';
+  const getTimeLevelText = (timeLevel: number) => {
+    return timeLevelDict.value.find((item) => Number(item.value) === timeLevel)?.text || '-';
   };
+
+  const getTimeLevelColor = (timeLevel: number) => {
+    return timeLevelDict.value.find((item) => Number(item.value) === timeLevel)?.color || '#000000';
+  };
+
+  onMounted(() => {
+    fetchData(currentNum.value);
+    fetchTimeLevelDict();
+    timer.value = setInterval(() => {
+      currentNum.value = currentNum.value + 1;
+      fetchData(currentNum.value);
+    }, 10000);
+  });
 
   const fetchData = async (pageNum) => {
     try {
@@ -290,22 +284,9 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          .status-one {
+          .status {
             width: 6px;
             height: 6px;
-            background: #ff5858;
-            border-radius: 50%;
-          }
-          .status-two {
-            width: 6px;
-            height: 6px;
-            background: #ff8447;
-            border-radius: 50%;
-          }
-          .status-three {
-            width: 6px;
-            height: 6px;
-            background: #ffef6e;
             border-radius: 50%;
           }
         }

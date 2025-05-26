@@ -19,27 +19,44 @@
   </div>
 </template>
 <script setup lang="ts" name="ComplaintRuntime">
-  import { onMounted, onBeforeUnmount } from 'vue';
+  import { onMounted, onBeforeUnmount, ref } from 'vue';
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';
   import CaseCarousel from './CaseCarousel.vue';
   import CaseTypeStatistics from './CaseTypeStatistics.vue';
   import CaseTypeCategory from './CaseTypeCategory.vue';
-
+  import { getDictItems } from '/@/api/common/api';
+  import { DictItem } from '/@/enums/statisticEnum';
   // 处理窗口大小变化，通知所有图表组件重新调整大小
   const handleResize = () => {
     // 创建一个自定义事件，所有组件都可以监听此事件
     window.dispatchEvent(new CustomEvent('dashboard-resize'));
   };
 
+  const sourceTypeDict = ref<DictItem[]>([]);
+
   onMounted(() => {
     window.addEventListener('resize', handleResize);
+    fetchSourceTypeDict();
+
     // 初始加载时也触发一次重绘
     setTimeout(() => {
       handleResize();
     }, 300);
   });
+
+  // 获取字典数据
+  const fetchSourceTypeDict = async () => {
+    try {
+      const res = await getDictItems('biz_source_type');
+      if (res && Array.isArray(res)) {
+        sourceTypeDict.value = res;
+      }
+    } catch (error) {
+      console.error('获取字典数据失败', error);
+    }
+  };
 
   onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize);

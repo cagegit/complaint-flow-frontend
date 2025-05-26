@@ -69,7 +69,7 @@
   import { message } from 'ant-design-vue/lib';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
-  import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
+  import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeDefault } from '/@/enums/statisticEnum';
   import Pagination from '@/components/Pagination/index.vue';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
   import blueShort from '@/assets/images/composite/blue-short.png';
@@ -89,7 +89,7 @@
 
   const currentPage = ref(1);
   const offsetRef = ref(0); // 偏移量
-  const sourceTypeRef = ref(SourceTypeEnum.DIRECT); // 来源类型
+  const sourceTypeRef = ref(SourceTypeDefault); // 来源类型
   const rangeTypeRef = ref(RangeTypeEnum.MONTH); // 时间周期类型
   const startTimeRef = ref(''); // 时间周期类型
   const endTimeRef = ref(''); // 时间周期类型

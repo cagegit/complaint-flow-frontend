@@ -24,14 +24,14 @@
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
   import { getOrderLineCountList, getTimeCycle, getYearCycle } from '@/api/complaint/statistic';
   import { message } from 'ant-design-vue';
-  import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeEnum } from '/@/enums/statisticEnum';
+  import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
 
   const offsetRef = ref(0); // 偏移量
-  const sourceTypeRef = ref(SourceTypeEnum.DIRECT); // 来源类型
+  const sourceTypeRef = ref(SourceTypeDefault); // 来源类型
   const rangeTypeRef = ref(RangeTypeEnum.MONTH); // 时间周期类型
   const startTimeRef = ref(''); // 时间周期类型
   const endTimeRef = ref(''); // 时间周期类型

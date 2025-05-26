@@ -4,8 +4,7 @@
       <div class="left">
         <div class="text">案件类型统计</div>
         <DispatchTabs :onTabChange="onTabChange" />
-        /></div
-      >
+      </div>
       <Pagination :currentPage="currentPage" :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
     </div>
     <div ref="chartRef" class="chart"></div>
@@ -20,6 +19,7 @@
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
   import { message } from 'ant-design-vue';
   import { getQuestionTypeCountList } from '@/api/complaint/statistic';
+  import { SourceTypeDefault } from '/@/enums/statisticEnum';
 
   type CaseStatistics = { caseCount: number; questionName: string; satisfyRate: number };
   const allCaseStatistics = ref<CaseStatistics[]>([]);
@@ -208,7 +208,7 @@
 
   onMounted(() => {
     initChart();
-    fetchData(2);
+    fetchData(SourceTypeDefault);
     window.addEventListener('resize', resizeChart);
     // 监听自定义的dashboard-resize事件
     window.addEventListener('dashboard-resize', resizeChart);
@@ -223,10 +223,7 @@
   });
 
   const fetchData = async (sourceType) => {
-    let parmas = {};
-    if (sourceType > 0) {
-      parmas = { sourceType };
-    }
+    let parmas = { sourceType };
     try {
       const res: any = await getQuestionTypeCountList(parmas);
       console.log('res', res);

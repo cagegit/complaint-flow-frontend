@@ -211,11 +211,11 @@
   const fetchRate = async () => {
     try {
       const directStartRes: any = await getSatisfyRate({
-        sourceType: 2,
+        sourceType: 1,
         offset: -1,
       });
       const directEndRes: any = await getSatisfyRate({
-        sourceType: 2,
+        sourceType: 1,
       });
 
       // 检查直派数据是否全为0

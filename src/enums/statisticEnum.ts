@@ -1,11 +1,13 @@
-// 	数据来源
-export enum SourceTypeEnum {
-  // 本地
-  LOCAL = 0,
-  // 区分转
-  DISTRICT = 1,
-  // 直派
-  DIRECT = 2,
+export interface DictItem {
+  text: string;
+  value: string;
+  label?: string;
+}
+
+export const SourceTypeDefault = 1;
+
+export interface TimeLevelItem {
+  [key: string]: string;
 }
 
 // 时间类型

@@ -26,7 +26,7 @@
   import { message } from 'ant-design-vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
-  import { RomplaintTypeTabs, SourceTypeEnum, RangeTypeEnum } from '/@/enums/statisticEnum';
+  import { RomplaintTypeTabs, RangeTypeEnum, SourceTypeDefault } from '/@/enums/statisticEnum';
 
   interface DissatisfactionData {
     caseCount: number;
@@ -57,7 +57,7 @@
   ];
 
   const dissatisfactionData = ref<DissatisfactionData[]>([]);
-  const sourceType = ref(SourceTypeEnum.DIRECT);
+  const sourceType = ref(SourceTypeDefault);
   const rangeType = ref(RangeTypeEnum.MONTH);
 
   const total = ref(0);
