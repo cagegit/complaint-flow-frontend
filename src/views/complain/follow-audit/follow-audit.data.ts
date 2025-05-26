@@ -198,8 +198,7 @@ export const columns: BasicColumn[] = [
         componentProps: {
             options: [
                 { label: '待审核', value: 0 },
-                { label: '已通过审核', value: 1 },
-                { label: '未通过审核', value: -1 },
+                { label: '已审核', value: 1 },
             ],
             allowClear: false
         },

@@ -189,7 +189,9 @@
                 newCommunityIdList.splice(index, 1);  
                 // 添加全部子节点id
                 v.children?.forEach(item => {
-                  newCommunityIdList.push(item.id)
+                  if(newCommunityIdList.indexOf(item.id) > -1) {
+                   newCommunityIdList.push(item.id)
+                  }
                 })
               }
             })
