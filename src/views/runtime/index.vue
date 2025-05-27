@@ -76,7 +76,7 @@
     flex-direction: column;
 
     .content {
-      flex: 1;
+      height: calc(100vh - 134px);
       display: flex;
       justify-content: space-between;
       padding: 6px 24px;

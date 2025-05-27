@@ -238,8 +238,8 @@
         padding-left: 10px;
       }
       .category-icon {
-        width: 56px;
-        height: 56px;
+        width: 42px;
+        height: 42px;
         display: block;
       }
       .category-info {

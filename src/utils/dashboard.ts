@@ -130,8 +130,7 @@ export const calculateYoY = (current, previous, decimalPlaces = 2) => {
 
   // 处理去年同期为0的情况
   if (previous === 0) {
-    if (current === 0) return NaN; // 两者都为0，无法计算
-    return current > 0 ? Infinity : -Infinity; // 无限增长/下降
+    return current > 0 ? current * 100 : 0;
   }
 
   // 计算并格式化增长率

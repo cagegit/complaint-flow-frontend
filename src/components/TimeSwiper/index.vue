@@ -1,12 +1,6 @@
 <template>
   <div class="range-container" :style="{ top: `${top}px` }">
-    <div
-      class="range-button range-left"
-      :class="{
-        disabled: currentPage === 1,
-      }"
-      @click="prevPage"
-    >
+    <div class="range-button range-left" @click="prevPage">
       <div class="icon"></div>
     </div>
     <div class="range">
@@ -17,7 +11,7 @@
     <div
       class="range-button range-right"
       :class="{
-        disabled: currentPage === totalPages,
+        disabled: isEnd,
       }"
       @click="nextPage"
     >
@@ -26,7 +20,8 @@
   </div>
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
+  import dayjs from 'dayjs';
 
   const props = defineProps({
     top: {
@@ -55,8 +50,23 @@
     },
   });
 
-  // 总页数
-  const totalPages = ref(props.maxPage);
+  // 解析中文日期格式
+  const parseChineseDate = (dateStr) => {
+    const match = dateStr.match(/(\d{4})年(\d{2})月(\d{2})日/);
+    if (match) {
+      const [_, year, month, day] = match;
+      return `${year}-${month}-${day}`;
+    }
+    return dateStr;
+  };
+
+  const isEnd = computed(() => {
+    // 先将中文日期转换为标准格式
+    const standardDate = parseChineseDate(props.endTime);
+    const endOfDay = dayjs(standardDate).endOf('day');
+    const now = dayjs();
+    return endOfDay.isAfter(now);
+  });
 
   // 上一页方法
   const prevPage = () => {

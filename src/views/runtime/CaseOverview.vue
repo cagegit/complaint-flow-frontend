@@ -210,74 +210,67 @@
 
   const fetchRate = async () => {
     try {
-      const directStartRes: any = await getSatisfyRate({
-        sourceType: 1,
-        offset: -1,
-      });
-      const directEndRes: any = await getSatisfyRate({
+      const directRes: any = await getSatisfyRate({
         sourceType: 1,
       });
 
       // 检查直派数据是否全为0
-      isDirectEmpty.value = checkIfAllZero(directEndRes);
+      isDirectEmpty.value = checkIfAllZero(directRes);
 
       directData.value = [
         {
-          value: directEndRes.doubleYes,
+          value: directRes.doubleYes,
           name: '双是',
-          rate: calculateYoY(directEndRes.doubleYes, directStartRes.doubleYes),
+          rate: calculateYoY(directRes.doubleYes, directRes.lastDoubleYes),
           color: '62, 237, 241',
         },
         {
-          value: directEndRes.singleYes,
+          value: directRes.singleYes,
           name: '单是',
-          rate: calculateYoY(directEndRes.singleYes, directStartRes.singleYes),
+          rate: calculateYoY(directRes.singleYes, directRes.lastSingleYes),
           color: '242, 127, 69',
         },
         {
-          value: directEndRes.doubleNo,
+          value: directRes.doubleNo,
           name: '双否',
-          rate: calculateYoY(directEndRes.doubleNo, directStartRes.doubleNo),
+          rate: calculateYoY(directRes.doubleNo, directRes.lastDoubleNo),
           color: '224, 224, 224',
         },
         {
-          value: directEndRes.other,
+          value: directRes.other,
           name: '其他',
-          rate: calculateYoY(directEndRes.other, directStartRes.other),
+          rate: calculateYoY(directRes.other, directRes.lastOther),
           color: '244, 229, 106',
         },
       ];
-      const compositeStartRes: any = await getSatisfyRate({
-        offset: -1,
-      });
-      const compositeEndRes: any = await getSatisfyRate();
+      const compositeRes: any = await getSatisfyRate();
 
       // 检查综合数据是否全为0
-      isCompositeEmpty.value = checkIfAllZero(compositeEndRes);
+      isCompositeEmpty.value = checkIfAllZero(compositeRes);
 
       compositeData.value = [
         {
-          value: compositeEndRes.doubleYes,
+          value: compositeRes.doubleYes,
           name: '双是',
-          rate: calculateYoY(compositeEndRes.doubleYes, compositeStartRes.doubleYes),
+          rate: calculateYoY(compositeRes.doubleYes, compositeRes.lastDoubleYes),
           color: '62, 237, 241',
         },
         {
-          value: compositeEndRes.singleYes,
+          value: compositeRes.singleYes,
           name: '单是',
-          rate: calculateYoY(compositeEndRes.singleYes, compositeStartRes.singleYes),
+          rate: calculateYoY(compositeRes.singleYes, compositeRes.lastSingleYes),
           color: '242, 127, 69',
         },
         {
-          value: compositeEndRes.doubleNo,
+          value: compositeRes.doubleNo,
           name: '双否',
-          rate: calculateYoY(compositeEndRes.doubleNo, compositeStartRes.doubleNo),
+          rate: calculateYoY(compositeRes.doubleNo, compositeRes.lastDoubleNo),
           color: '224, 224, 224',
         },
         {
-          value: compositeEndRes.other,
+          value: compositeRes.other,
           name: '其他',
-          rate: calculateYoY(compositeEndRes.other, compositeStartRes.other),
+          rate: calculateYoY(compositeRes.other, compositeRes.lastOther),
           color: '244, 229, 106',
         },
       ];

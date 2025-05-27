@@ -46,7 +46,8 @@
         },
         color: '200, 200, 200',
         label: { show: false }, // 不显示标签
-        tooltip: { show: false }, // 不显示提示
+        // 这里不想hover时提示
+        hoverAnimation: false,
       });
     }
 
@@ -115,6 +116,7 @@
           label: {
             show: false,
           },
+          tooltip: { show: false }, // 不显示提示
         };
       }
       series.push(targetSerie);

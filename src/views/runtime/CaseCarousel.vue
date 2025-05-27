@@ -79,10 +79,6 @@
     }
   };
 
-  const getTimeLevelText = (timeLevel: number) => {
-    return timeLevelDict.value.find((item) => Number(item.value) === timeLevel)?.text || '-';
-  };
-
   const getTimeLevelColor = (timeLevel: number) => {
     return timeLevelDict.value.find((item) => Number(item.value) === timeLevel)?.color || '#000000';
   };

@@ -9,7 +9,13 @@
       <div style="width: 22px"></div>
       <CustomTabs :data="RomplaintTypeTabs" :onTabChange="onTypeChange" />
       <div style="width: 12px"></div>
-      <Pagination :currentPage="currentPage" :maxPage="2" :onPrevPage="onPrevPage" :onNextPage="onNextPage" />
+      <Pagination
+        v-if="showPagination"
+        :currentPage="currentPage"
+        :maxPage="Math.ceil(allData.length / pageSize)"
+        :onPrevPage="onPrevPage"
+        :onNextPage="onNextPage"
+      />
     </div>
   </div>
   <div class="chart-container">
@@ -20,11 +26,11 @@
         :key="index"
         :style="{
           width: `${item.width}px`,
-          backgroundImage: selectedCategory === item.value ? `url(${item.selectedBg})` : `url(${item.bg})`,
-          backgroundSize: selectedCategory === item.value ? '100% 112%' : '100% 100%',
-          opacity: selectedCategory === item.value ? 1 : 0.8,
+          backgroundImage: selectedCategory === item.label ? `url(${item.selectedBg})` : `url(${item.bg})`,
+          backgroundSize: selectedCategory === item.label ? '100% 112%' : '100% 100%',
+          opacity: selectedCategory === item.label ? 1 : 0.8,
         }"
-        @click="onCategoryClick(item.value)"
+        @click="onCategoryClick(item.label)"
         >{{ item.label }}</div
       >
       <div class="line"></div>
@@ -34,10 +40,10 @@
         :key="index"
         :style="{
           width: `${item.width}px`,
-          backgroundImage: selectedCategory === item.value ? `url(${item.selectedBg})` : `url(${item.bg})`,
-          backgroundSize: selectedCategory === item.value ? '100% 112%' : '100% 100%',
+          backgroundImage: selectedCategory === item.label ? `url(${item.selectedBg})` : `url(${item.bg})`,
+          backgroundSize: selectedCategory === item.label ? '100% 112%' : '100% 100%',
         }"
-        @click="onCategoryClick(item.value)"
+        @click="onCategoryClick(item.label)"
         >{{ item.label }}</div
       >
       <div class="line"></div>
@@ -47,10 +53,10 @@
         :key="index"
         :style="{
           width: `${item.width}px`,
-          backgroundImage: selectedCategory === item.value ? `url(${item.selectedBg})` : `url(${item.bg})`,
-          backgroundSize: selectedCategory === item.value ? '100% 112%' : '100% 100%',
+          backgroundImage: selectedCategory === item.label ? `url(${item.selectedBg})` : `url(${item.bg})`,
+          backgroundSize: selectedCategory === item.label ? '100% 112%' : '100% 100%',
         }"
-        @click="onCategoryClick(item.value)"
+        @click="onCategoryClick(item.label)"
         >{{ item.label }}</div
       >
     </div>
@@ -60,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
   import * as echarts from 'echarts';
   import blockImage from '@/assets/images/dashboard/block.png';
   import { tooltip, YES_PERCENT_COLOR, NO_PERCENT_COLOR, CASE_COLOR, grid, getDayString } from '@/utils/dashboard';
@@ -84,6 +90,7 @@
   import yellowLongSelect from '@/assets/images/composite/yellow-long-s.png';
   import { getDictItems } from '/@/api/common/api';
 
+  const pageSize = 16;
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
 
@@ -99,25 +106,37 @@
   const doubleYesRate = ref<number[]>([]); // 双正
   const doubleNoRate = ref<number[]>([]); // 双负
 
-  const selectedCategory = ref('1');
+  const selectedCategory = ref('');
 
   const greenCategories: any = ref([]);
   const blueCategories: any = ref([]);
   const yellowCategories: any = ref([]);
 
+  const showPagination = ref(false);
+  const allData = ref([]);
+
   const onCategoryClick = (value) => {
-    selectedCategory.value = value;
+    console.log('onCategoryClick', value);
+    if (selectedCategory.value === value) {
+      selectedCategory.value = '';
+    } else {
+      selectedCategory.value = value;
+    }
     fetchData();
   };
 
   const onPrevPage = () => {
     console.log('上一页');
     currentPage.value = 1;
+    getPageData(allData.value);
+    initChart();
   };
 
   const onNextPage = () => {
     console.log('下一页');
     currentPage.value = 2;
+    getPageData(allData.value);
+    initChart();
   };
 
   const onRangePrev = () => {
@@ -412,30 +431,46 @@
     }
   };
 
+  const getPageData = (data: any) => {
+    const newCaseCount: number[] = [];
+    const newDoubleYesRate: number[] = [];
+    const newDoubleNoRate: number[] = [];
+    const newLabelNames: string[] = [];
+    if (currentPage.value === 1) {
+      data = allData.value.slice(0, pageSize);
+    } else {
+      data = allData.value.slice(pageSize * (currentPage.value - 1), pageSize * currentPage.value);
+    }
+    data.forEach((item: any) => {
+      newCaseCount.push(item.caseCount);
+      newDoubleYesRate.push(item.doubleYes);
+      newDoubleNoRate.push(item.doubleNo);
+      newLabelNames.push(item.labelName);
+    });
+    labelNames.value = newLabelNames;
+    caseCount.value = newCaseCount; // 诉件数
+    doubleYesRate.value = newDoubleYesRate; // 双是
+    doubleNoRate.value = newDoubleNoRate; // 双否
+  };
+
   const fetchData = async () => {
     let parmas: any = {
       sourceType: sourceTypeRef.value,
       rangeType: rangeTypeRef.value,
       startTime: startTimeRef.value,
       endTime: endTimeRef.value,
-      caseCategory: selectedCategory.value,
+      categoryName: selectedCategory.value,
     };
     try {
       const res: any = await getCaseCategoryList(parmas);
-      const newCaseCount: number[] = [];
-      const newDoubleYesRate: number[] = [];
-      const newDoubleNoRate: number[] = [];
-      const newLabelNames: string[] = [];
-      res.forEach((item: any) => {
-        newCaseCount.push(item.caseCount);
-        newDoubleYesRate.push(item.doubleYes);
-        newDoubleNoRate.push(item.doubleNo);
-        newLabelNames.push(item.labelName);
-      });
-      labelNames.value = newLabelNames;
-      caseCount.value = newCaseCount; // 诉件数
-      doubleYesRate.value = newDoubleYesRate; // 双是
-      doubleNoRate.value = newDoubleNoRate; // 双否
+      allData.value = res;
+      currentPage.value = 1;
+      if (res.length > pageSize) {
+        showPagination.value = true;
+      } else {
+        showPagination.value = false;
+      }
+      getPageData(res);
       initChart();
     } catch (error) {
       message.error('获取数据失败');
@@ -488,6 +523,14 @@
   onMounted(() => {
     fetchMonthConfig();
     getCaseCategoryEnumList();
+    window.addEventListener('resize', () => {
+      chart?.resize();
+    });
+  });
+
+  onBeforeUnmount(() => {
+    chart?.dispose();
+    window.removeEventListener('resize', () => {});
   });
 </script>
 
