@@ -13,10 +13,13 @@
         <div style="flex: 1">
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
-            <!-- <a-tab-pane key="1" tab="工单办结">
-              <BasicForm @register="registerAuditForm"/>
-            </a-tab-pane> -->
-            <a-tab-pane key="1" tab="预回复" force-render>
+            <a-tab-pane key="1" tab="基础信息" force-render>
+               <!-- 拒绝信息 -->
+               <RejectInfo :detailInfo="ticketDetail" />
+               <!-- 基本信息区域 -->
+               <BasicForm @register="registerForm"/>
+            </a-tab-pane>
+            <a-tab-pane key="2" tab="预回复" force-render>
               <BasicForm @register="registerPreReplyForm">
                 <template #satisfactionTimeSlot="{model, field}">
                   <a-space>
@@ -42,12 +45,7 @@
                   </template>
               </BasicForm>
             </a-tab-pane>
-            <a-tab-pane key="2" tab="基础信息" force-render>
-               <!-- 拒绝信息 -->
-               <RejectInfo :detailInfo="ticketDetail" />
-               <!-- 基本信息区域 -->
-               <BasicForm @register="registerForm"/>
-            </a-tab-pane>
+           
           </a-tabs>
         </div>
       </div>
@@ -68,6 +66,7 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
+    import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -82,7 +81,7 @@
      // 表单详情
     const ticketDetail = ref<any>({});
     //预回复表单
-    const [registerPreReplyForm] = useForm({
+    const [registerPreReplyForm, {setProps, setFieldsValue: setPreReplyFieldValues}] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -94,7 +93,7 @@
       baseRowStyle: { width: '100%', }
     });
     //基础信息表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -143,6 +142,23 @@
           ...detailRes
         });
       }
+      // 查询预回复详情
+      getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
+        console.log(preRes);
+        if(preRes?.upReply) {
+          // 设置预回复表单值
+          setPreReplyFieldValues({
+            ...preRes.upReply,
+            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
+            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
+            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+          });
+        }
+      }).catch(err => {
+        console.error('查询预回复详情失败', err);
+      });
+      // 禁用预回复表单
+      setProps({disabled:true})
     });
     //获取标题
     const getTitle = computed(() => {

@@ -1,31 +1,42 @@
 <template>
 <div v-bind="attrs" v-if="hasDistrictInfo">
-    <a-divider>拒绝信息/区级回复</a-divider>
-    <a-row :gutter="24">
+    <a-divider><span class="text-red-500">拒绝信息\区级回复</span></a-divider>
+    <a-row :gutter="24" class="py-4">
         <a-col :span="12">
-            <a-form-item label="回访结果">
-                {{ visitResult }}
-            </a-form-item>
+            <div class="flex items-center">
+                <div class="text-gray-400">回访结果:</div>
+                <div class="pl-2" :class="{ 'text-green-500': visitResult === '双是', 'text-red-500': visitResult !== '双是' }">{{ visitResult }}</div>
+            </div>
         </a-col>
         <a-col :span="12">
-            <a-form-item label="回访状态">
-                {{ visitStatus }}
-            </a-form-item>
+            <div class="flex items-center">
+                <div class="text-gray-400">回访状态:</div>
+                <div class="pl-2">{{ visitStatus }}</div>
+            </div>
         </a-col>
+    </a-row>
+     <a-row :gutter="24" class="py-4">
         <a-col :span="24">
-            <a-form-item label="最终回复审核内容">
-                 {{ props.detailInfo.upReplyAuditContent || '无' }}
-            </a-form-item>
+            <div class="flex items-center">
+                <div class="text-gray-400">最终回复审核内容:</div>
+                <div class="pl-2">{{ props.detailInfo.upReplyAuditContent || '无' }}</div>
+            </div>
         </a-col>
+    </a-row>
+     <a-row :gutter="24" class="py-4">
         <a-col :span="24">
-            <a-form-item label="区回访内容">
-                {{ props.detailInfo.upRevisitContent || '无' }}
-            </a-form-item>
+            <div class="flex items-center">
+                <div class="text-gray-400">区回访内容:</div>
+                <div class="pl-2">{{ props.detailInfo.upRevisitContent || '无' }}</div>
+            </div>
         </a-col>
+    </a-row>
+    <a-row :gutter="24" class="py-4">
         <a-col :span="12">
-            <a-form-item label="区回访时间">
-                {{ props.detailInfo.upRevisitTime || '无' }}
-            </a-form-item>
+            <div class="flex items-center">
+                <div class="text-gray-400">区回访时间:</div>
+                <div class="pl-2">{{ props.detailInfo.upRevisitTime || '无' }}</div>
+            </div>
         </a-col>
     </a-row>
     <a-divider>基本信息</a-divider>

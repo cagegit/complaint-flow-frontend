@@ -136,7 +136,7 @@
       //row行的样式
     });
     //预回复表单配置
-    const [registerPreReplyForm, { setProps: setPreReplyProps, validate: preReplyValidate }] = useForm({
+    const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldValues, validate: preReplyValidate }] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -245,7 +245,7 @@
         if(preRes?.upReply) {
           preReplyDetail.value = preRes.upReply;
           // 设置预回复表单值
-          setPreReplyProps({
+          setPreReplyFieldValues({
             ...preRes.upReply,
             satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
             contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
