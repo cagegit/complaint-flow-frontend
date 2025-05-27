@@ -161,7 +161,7 @@
         let isUpdateVal = unref(isUpdate);
 
         let params = values;
-
+        console.log(JSON.stringify(params));
         // 处理科室或者处理社区有一个为空，提示错误
         if(!params.assignDeptIdList && !params.assignCommunityIdList) {
           // 提示错误
@@ -182,30 +182,40 @@
           // 处理社区
           if(params.assignCommunityIdList) {
             const newCommunityIdList = params.assignCommunityIdList.split(',');
+            console.log(shequTreeList);
+            const finalList:any[] = [];
             shequTreeList.forEach(v => {
               const index = newCommunityIdList.indexOf(v.id);
               if(index > -1){
                 // 移除父节点id
-                newCommunityIdList.splice(index, 1);  
-                // 添加全部子节点id
+                newCommunityIdList.splice(index, 1); 
+                // 如果newCommunityIdList不包含子节点id，则保存全部的子节点
+                let hasChild = false;
                 v.children?.forEach(item => {
                   if(newCommunityIdList.indexOf(item.id) > -1) {
-                   newCommunityIdList.push(item.id)
+                   hasChild = true;
+                   finalList.push(item.id);
                   }
                 })
+                // 如果没有子节点，则保存父节点下的全部子节点
+                if(!hasChild) {
+                  v.children.forEach(item => {
+                    finalList.push(item.id);
+                  })
+                }
               }
             })
             // newCommunityIdList 去重
-            const uniqueCommunityIdList = Array.from(new Set(newCommunityIdList));
+            const uniqueCommunityIdList = Array.from(new Set(finalList));
             params.assignCommunityIdList = uniqueCommunityIdList;
+          } else {
+            params.assignCommunityIdList = [];
           }
-          // if(params.reportCommunityId) {
-          //   const newCommunityIdList = params.reportCommunityId.split(',');
-          //   params.assignCommunityIdList = newCommunityIdList;
-          // }
           // 科室
           if(params.assignDeptIdList) {
             params.assignDeptIdList = params.assignDeptIdList.split(',');
+          } else {
+            params.assignDeptIdList = [];
           }
           // 七有五性
           let sevenFiveId;

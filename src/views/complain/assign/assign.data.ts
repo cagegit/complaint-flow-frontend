@@ -253,7 +253,7 @@ export const searchFormSchema: FormSchema[] = [
   },
   {
     label: '关键字',
-    field: 'keyword',
+    field: 'keywords',
     component: 'Input',
     componentProps: {
       placeholder: '标题\\内容\\来电号码\\发生地址',
