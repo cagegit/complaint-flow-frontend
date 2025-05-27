@@ -1,5 +1,5 @@
 <template>
-  <Cascader @dropdownVisibleChange="handleFetch" v-bind="attrs_" @change="handleChange" :options="getOptions" v-model:value="state">
+  <Cascader @dropdownVisibleChange="handleFetch" v-bind="attrs_" @change="handleChange" :style="styles" :options="getOptions" v-model:value="state">
     <template #[item]="data" v-for="item in Object.keys($slots)">
       <slot :name="item" v-bind="data || {}"></slot>
     </template>
@@ -58,6 +58,10 @@
       labelField: propTypes.string.def('label'),
       valueField: propTypes.string.def('value'),
       immediate: propTypes.bool.def(true),
+      styles: {
+        type: Object as PropType<Recordable>,
+        default: () => ({}),
+      },
     },
     emits: ['options-change', 'change'],
     setup(props, { emit }) {

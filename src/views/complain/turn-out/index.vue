@@ -59,7 +59,8 @@
     import TicketEdit from '../bizComplaintTicketList/TicketEdit.vue';
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
-    import { getDistrictDictByCode } from '/@/api/common/api';
+    import { getBackDepartList, getDistrictDictByCode } from '/@/api/common/api';
+    import ApiCascader from '/@/components/Form/src/components/ApiCascader.vue';
     const [registerModal, { openModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     const { createMessage, createConfirm } = useMessage();
@@ -130,6 +131,11 @@
       }
     
       async function handleEdit(record: Recordable) {
+        //重置
+        forwardType.value = 'city';
+        forwardReason.value = undefined;
+        backType.value = undefined;
+        backOffice.value = undefined;
         createConfirm({
           title: '是否确认转出选中工单？',
           content: () => {
@@ -153,19 +159,19 @@
               // 退回原因
               h('p', '退回原因：'),
               h(AInputTextArea, {
-                style: 'width: 100%;',
+                style: 'width: 100%; margin-bottom: 15px;',
                 placeholder: '请输入退回原因',
                 value: forwardReason.value,
                 rows: 6,
                 maxLength: 800,
-                onInput: (e:any) => {
+                onChange: (e:any) => {
                   forwardReason.value = e.target.value;
                 },
               }),
               ...forwardType.value === 'city' ? [
-                h('p', '退回类型：'),
+                h('div', '退回类型：'),
                 h(ASelect, {
-                  style: 'width: 100%; margin-bottom: 15px;',
+                  style: 'width: 100%; margin: 15px auto;',
                   value: backType.value,
                   placeholder: '请选择退回类型',
                   onChange: (val:any) => {
@@ -180,15 +186,18 @@
                 }),
               ]: [],
                ...forwardType.value === 'district' ? [
-                h('p', '退回单位：'),
-                h(AInput, {
-                  style: 'width: 100%; margin-bottom: 15px;',
+                h('div', '退回单位：'),
+                h(ApiCascader, {
+                  styles: {width: '100%', margin: '15px auto'},
                   value: backOffice.value,
-                  placeholder: '请输入退回单位',
-                  onInput: (e:any) => {
-                    console.log('val', e.target.value);
-                    backOffice.value = e.target.value;
-                  }
+                  placeholder: '请选择退回单位',
+                  api: getBackDepartList,
+                  labelField: 'name',
+                  valueField: 'id',
+                  onChange: (val:any) => {
+                    console.log('val', val);
+                    backOffice.value = val;
+                  },
                 }),
               ]: [],
               //  选择city时展示，backType 退回类型
@@ -218,12 +227,21 @@
               createMessage.warning('请输入退回原因');
               return Promise.reject('未输入退回原因');
             }
+            if (forwardType.value === 'city' && !backType.value) {
+              createMessage.warning('请选择退回类型');
+              return Promise.reject('未选择退回类型');
+            }
+            if (forwardType.value === 'district' && !backOffice.value) {
+              createMessage.warning('请选择退回单位');
+              return Promise.reject('未选择退回单位');
+            }
+            console.log(backOffice.value);
             try {
               await forwardTicket({ 
                 id: record.id,
                 forwardType: forwardType.value,
                 backReason: forwardReason.value || null,
-                adviceOffice: backOffice.value || null,
+                adviceOffice: Array.isArray(backOffice.value) && backOffice.value.length ? backOffice.value[backOffice.value.length-1] : null,
                 backType: backType.value || null
               });
               reload();

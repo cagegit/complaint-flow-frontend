@@ -334,3 +334,11 @@ export const getCitySevenFiveList = () => {
 export const getComplaintDetail = (id: string) => {
   return defHttp.get({ url: `/complain/receive/queryById?id=${id}` });
 };
+/**
+ * 退回单位接口
+ * 
+ * @param params
+ */
+export const getBackDepartList = () => {
+  return defHttp.get({ url: `/biz/upDict/getBackOfficeList` });
+};
