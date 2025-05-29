@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="case-list">
-      <div class="case-item" v-for="(item, index) in statusData" :key="index">
+      <div class="case-item" v-for="(item, index) in statusData" :key="index" @click="handleClick(item)">
         <img :src="item.bg" class="bg-image" alt="" />
         <div class="case-text">{{ item.label }}</div>
         <div class="case-number">{{ item.value }}</div>
@@ -61,6 +61,7 @@
   import { getOverviewCount, getSatisfyRate } from '@/api/complaint/statistic';
   import { calculateYoY } from '@/utils/dashboard';
   import EmptyState from '@/components/EmptyState/index.vue';
+  import { router } from '/@/router';
 
   const tabs = [{ value: 2, label: '期' }];
   const totalCase = ref(0);
@@ -70,33 +71,46 @@
       label: '待分配',
       value: 0,
       bg: errorbg,
+      href: '/complain/bizComplaintTicketList',
     },
     {
       label: '待回复',
       value: 0,
       bg: waitbg,
+      href: '/complaint/department-reply',
     },
     {
       label: '二次办理',
       value: 0,
       bg: waitbg,
+      href: '/complaint/area-reply',
     },
     {
       label: '待回访',
       value: 0,
       bg: waitbg,
+      href: '/complaint/visit',
     },
     {
       label: '待审核',
       value: 0,
       bg: waitbg,
+      href: '/complaint/need-completion',
     },
     {
       label: '已办结',
       value: 0,
       bg: donebg,
+      href: '/complaint/complet',
     },
   ]);
+
+  const handleClick = (item: any) => {
+    console.log(item);
+    if (item.href) {
+      router.push(item.href);
+    }
+  };
 
   // 判断是否为空状态
   const isDirectEmpty = ref(false);
@@ -168,39 +182,12 @@
       const { completCount, processingCount, receiveCount, twoHandleCount, waitAssignCount, waitAuditCount, waitReplyCount, waitVisitCount } = res;
       totalCase.value = receiveCount;
       doingCase.value = processingCount;
-
-      statusData.value = [
-        {
-          label: '待分配',
-          value: waitAssignCount,
-          bg: errorbg,
-        },
-        {
-          label: '待回复',
-          value: waitReplyCount,
-          bg: waitbg,
-        },
-        {
-          label: '二次办理',
-          value: twoHandleCount,
-          bg: waitbg,
-        },
-        {
-          label: '待回访',
-          value: waitVisitCount,
-          bg: waitbg,
-        },
-        {
-          label: '待审核',
-          value: waitAuditCount,
-          bg: waitbg,
-        },
-        {
-          label: '已办结',
-          value: completCount,
-          bg: donebg,
-        },
-      ];
+      statusData.value[0].value = waitAssignCount;
+      statusData.value[1].value = waitReplyCount;
+      statusData.value[2].value = twoHandleCount;
+      statusData.value[3].value = waitVisitCount;
+      statusData.value[4].value = waitAuditCount;
+      statusData.value[5].value = completCount;
     } catch (error) {
       message.error('获取数据失败');
       console.error(error);

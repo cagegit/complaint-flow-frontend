@@ -44,7 +44,7 @@
        <TicketEdit @register="registerModal" @success="handleSuccess" />
        <!-- 联系历史 -->
        <ContactHistory @register="registerHistoryModal" />
-       <!-- 书记/主任建议弹窗 -->
+       <!-- 书记/主任批示弹窗 -->
       <BasicModal
         v-bind="$attrs"
         @register="registerSuggestModal"
@@ -161,12 +161,12 @@
           ifShow: () => hasPermission('complain:assign:add'),
         },
         {
-          label: '书记建议',
+          label: '书记批示',
           onClick: handleSuggest.bind(null, record, 'shuji'),
           // ifShow: () => hasPermission('complain:assign:shuji_suggest'),
         },
         {
-          label: '主任建议',
+          label: '主任批示',
           onClick: handleSuggest.bind(null, record, 'zhuren'),
           // ifShow: () => hasPermission('complain:assign:zhuren_suggest'),
         }
@@ -185,10 +185,10 @@
   const suggestLoading = ref(false);
   const suggestTitle = ref('');
   
-  // 书记建议、主任建议
+  // 书记批示、主任批示
   async function handleSuggest(record: Recordable, type: string) {
     // 设置弹窗标题
-    suggestTitle.value = type === 'shuji' ? '书记建议' : '主任建议';
+    suggestTitle.value = type === 'shuji' ? '书记批示' : '主任批示';
     console.log(record);
     resetFields();
      await nextTick();

@@ -152,7 +152,7 @@ export const columns: BasicColumn[] = [
   // { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
   // { title: '修改时间', dataIndex: 'updateTime', width: 150 },
   // { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-  // { title: '主任建议', dataIndex: 'zhurenSuggest', width: 150 },
+  // { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
   // { title: '备注', dataIndex: 'remark', width: 180 },
 ];
 
