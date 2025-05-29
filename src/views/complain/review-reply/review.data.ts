@@ -141,8 +141,8 @@ export const columns: BasicColumn[] = [
   //  { title: '修改时间', dataIndex: 'updateTime', width: 150 },
   //  { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
   { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-   { title: '主任建议', dataIndex: 'zhurenSuggest', width: 150 },
-  { title: '书记建议', dataIndex: 'shujiSuggest', width: 150 },
+   { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
+  { title: '书记批示', dataIndex: 'shujiSuggest', width: 150 },
   //caseNature（案件性质）
   { title: '案件性质', dataIndex: 'caseNature_dictText', width: 120 },
   // caseType（案件类型）

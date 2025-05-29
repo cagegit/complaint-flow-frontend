@@ -25,8 +25,8 @@ export const columns: BasicColumn[] =[
   { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
   { title: '办结状态', dataIndex: 'bjStatus', width: 150 },
   { title: '办结时间', dataIndex: 'bjTime', width: 200 },
-  { title: '书记建议', dataIndex: 'shujiSuggest', width: 150 },
-  { title: '主任建议', dataIndex: 'zhurenSuggest', width: 150 },
+  { title: '书记批示', dataIndex: 'shujiSuggest', width: 150 },
+  { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
   { title: '截止时间', dataIndex: 'deadline', width: 150 },
   // { title: '督办人', dataIndex: 'supervisor', width: 150 },
   // 若干字段

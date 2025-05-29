@@ -6,15 +6,15 @@
         <div>预警：</div>
         <div class="warning-one">
           <div class="icon"></div>
-          <div>≤48h</div>
+          <div>≤48小时</div>
         </div>
         <div class="warning-two">
           <div class="icon"></div>
-          <div>≤72h</div>
+          <div>≤72小时</div>
         </div>
         <div class="warning-three">
           <div class="icon"></div>
-          <div>≤96h</div>
+          <div>≤96小时</div>
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@
   };
 
   const getTimeLevelColor = (timeLevel: number) => {
-    return timeLevelDict.value.find((item) => Number(item.value) === timeLevel)?.color || '#000000';
+    return timeLevelDict.value.find((item) => Number(item.value) === timeLevel)?.color || 'rgba(255,255,255,0)';
   };
 
   onMounted(() => {
