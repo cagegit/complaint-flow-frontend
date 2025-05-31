@@ -257,7 +257,7 @@
             // ...replyList.value,
             ...newFileList
           ],
-          "sevenFiveId": params.sevenFiveId ? params.sevenFiveId.split(',').pop() : '',
+          "sevenFiveId": params.sevenFiveId,
           // "ticketId": 0,
           "ticketReplyDataVo": {
             ...preReplyValues,

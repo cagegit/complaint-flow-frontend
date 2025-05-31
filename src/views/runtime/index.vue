@@ -1,6 +1,6 @@
 <template>
   <div class="runtime-box">
-    <Header :index="1" />
+    <Header :index="1" :showAvatar="true"/>
     <Title title="运行事态" />
     <div class="content">
       <div class="left">

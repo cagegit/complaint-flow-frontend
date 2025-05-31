@@ -207,7 +207,7 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 8 },
   },
   {
-    label: '导入时间',
+    label: '案件时间',
     field: 'importTime',
     component: 'RangePicker',
     componentProps: {
@@ -229,6 +229,27 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '标题\\内容\\来电号码\\发生地址',
     },
     colProps: { span: 8 },
+  },
+  {
+    field: 'caseNature',
+    label: '案件性质',
+    component: 'ApiSelect',
+    // required: true,
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_case_nature')
+        // console.log(res)
+        if (Array.isArray(res)) {
+          return res.filter(item => {
+            return item.text !== '默认';
+          });
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value'
+    }
   },
   {
     label: '案件类型',

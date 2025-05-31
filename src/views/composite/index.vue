@@ -1,6 +1,6 @@
 <template>
   <div class="composite-box">
-    <Header :index="0" />
+    <Header :index="0" :showAvatar="true"/>
     <Title title="综合事态" />
     <div class="composite-block">
       <div class="composite-item">
