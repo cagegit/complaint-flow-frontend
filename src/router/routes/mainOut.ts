@@ -4,7 +4,6 @@ It is an independent new page.
 the contents of the file still need to log in to access
  */
 import type { AppRouteModule } from '/@/router/types';
-import CompositePage from '/@/views/composite/index.vue';
 // test
 // http:ip:port/main-out
 export const mainOutRoutes: AppRouteModule[] = [
@@ -30,8 +29,7 @@ export const mainOutRoutes: AppRouteModule[] = [
   {
     path: '/composite',
     name: 'composite',
-    // component: () => import('/@/views/composite/index.vue'),
-    component: CompositePage,
+    component: () => import('/@/views/composite/index.vue'),
     meta: {
       title: '城北街道诉求管理平台',
       ignoreAuth: true,

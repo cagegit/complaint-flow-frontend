@@ -11,7 +11,8 @@
       </div>
     </div>
     <div v-else class="aui-phone-logo">
-      <img :src="logoImg" alt="jeecg" />
+      <!-- <img :src="logoImg" alt="jeecg" /> -->
+      接诉即办平台
     </div>
     <div v-show="type === 'login'">
       <div class="aui-content">
@@ -194,8 +195,8 @@
   //账号登录表单字段
   const formData = reactive<any>({
     inputCode: '',
-    username: 'admin',
-    password: '123456',
+    username: '',
+    password: '',
   });
   //手机登录表单字段
   const phoneFormData = reactive<any>({
