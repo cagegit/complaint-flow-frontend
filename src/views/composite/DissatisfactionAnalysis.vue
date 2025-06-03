@@ -7,6 +7,7 @@
     <CustomTabs :data="RomplaintTypeTabs" :onTabChange="onTypeChange" />
   </div>
   <div class="composite-content">
+    <TimeSwiper :startTime="getDayString(startTimeRef)" :endTime="getDayString(endTimeRef)" :onPrev="onRangePrev" :onNext="onRangeNext" />
     <img class="composite-bg" src="@/assets/images/composite/group-bg.png" alt="" />
     <div class="chart-container">
       <div ref="chartRef" class="chart" style="width: 100%; height: 100%"></div>
@@ -20,13 +21,15 @@
 
 <script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount } from 'vue';
+  import { getDayString } from '@/utils/dashboard';
   import * as echarts from 'echarts';
   import { getCoordinates } from '@/utils/dashboard';
-  import { getDoubleNoList } from '@/api/complaint/statistic';
+  import { getDoubleNoList, getTimeCycle, getYearCycle } from '@/api/complaint/statistic';
   import { message } from 'ant-design-vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
   import { RomplaintTypeTabs, RangeTypeEnum, SourceTypeDefault } from '/@/enums/statisticEnum';
+  import TimeSwiper from '@/components/TimeSwiper/index.vue';
 
   interface DissatisfactionData {
     caseCount: number;
@@ -58,7 +61,10 @@
 
   const dissatisfactionData = ref<DissatisfactionData[]>([]);
   const sourceType = ref(SourceTypeDefault);
-  const rangeType = ref(RangeTypeEnum.MONTH);
+  const rangeTypeRef = ref(RangeTypeEnum.MONTH);
+  const startTimeRef = ref(''); // 时间周期类型
+  const endTimeRef = ref(''); // 时间周期类型
+  const offsetRef = ref(0); // 偏移量
 
   const total = ref(0);
 
@@ -210,14 +216,21 @@
 
   const onTypeChange = ({ value }) => {
     console.log('onTypeChange', value);
-    rangeType.value = value;
-    fetchData();
+    offsetRef.value = 0;
+    rangeTypeRef.value = value;
+    if (value === RangeTypeEnum.MONTH) {
+      fetchMonthConfig();
+    } else if (value === RangeTypeEnum.YEAR) {
+      fetchYearConfig();
+    }
   };
 
   const fetchData = async () => {
     let parmas: any = {
-      rangeType: rangeType.value,
+      rangeType: rangeTypeRef.value,
       sourceType: sourceType.value,
+      startTime: startTimeRef.value,
+      endTime: endTimeRef.value,
     };
     try {
       const res: any = await getDoubleNoList(parmas);
@@ -235,8 +248,54 @@
     }
   };
 
+  const fetchMonthConfig = async () => {
+    try {
+      const { startTime, endTime }: any = await getTimeCycle({ offset: offsetRef.value });
+      startTimeRef.value = startTime;
+      endTimeRef.value = endTime;
+      fetchData();
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
+  //   上一期
+  const onRangePrev = () => {
+    console.log('onRangePrev');
+    offsetRef.value = offsetRef.value - 1;
+    if (rangeTypeRef.value === RangeTypeEnum.MONTH) {
+      fetchMonthConfig();
+    } else if (rangeTypeRef.value === RangeTypeEnum.YEAR) {
+      fetchYearConfig();
+    }
+  };
+
+  // 下一期
+  const onRangeNext = () => {
+    console.log('onRangeNext');
+    offsetRef.value = offsetRef.value + 1;
+    if (rangeTypeRef.value === RangeTypeEnum.MONTH) {
+      fetchMonthConfig();
+    } else if (rangeTypeRef.value === RangeTypeEnum.YEAR) {
+      fetchYearConfig();
+    }
+  };
+
+  const fetchYearConfig = async () => {
+    try {
+      const { startTime, endTime }: any = await getYearCycle({ offset: offsetRef.value });
+      startTimeRef.value = startTime;
+      endTimeRef.value = endTime;
+      fetchData();
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
   onMounted(() => {
-    fetchData();
+    fetchMonthConfig();
     // 添加窗口resize事件监听
     window.addEventListener('resize', resizeChart);
   });
