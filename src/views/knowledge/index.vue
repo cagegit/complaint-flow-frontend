@@ -35,9 +35,9 @@
         </div>
       </div>
 
-      <div class="search-sidebar">
+      <!-- <div class="search-sidebar">
         <div class="search-title">经典案例展示</div>
-      </div>
+      </div> -->
     </div>
     <div class="knowledge-container">
       <!-- 2 -->
@@ -70,9 +70,9 @@
         </div>
       </div>
 
-      <div class="search-sidebar-1">
+      <!-- <div class="search-sidebar-1">
         <div class="search-title">政策查询与解读</div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -215,9 +215,9 @@
   @main-bg-dark: #061c1b;
 
   .knowledge-page {
-    padding: 20px;
-    // min-height: 100vh;
-    padding-top: 82px;
+    padding: 82px 20px 60px;
+    max-width: 1280px;
+    margin: 0 auto;
   }
 
   .knowledge-container {
