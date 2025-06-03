@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
+  import { ref, onMounted, onBeforeUnmount, shallowRef } from 'vue';
   import * as echarts from 'echarts';
   import { calculateDynamicYAxis, tooltip, grid, CASE_COLOR, YES_PERCENT_COLOR } from '@/utils/dashboard';
   import Pagination from '@/components/Pagination/index.vue';
@@ -56,7 +56,7 @@
   const xAxisData = ref<string[]>([]);
 
   const chartRef = ref(null);
-  let chartInstance = ref<echarts.EChartsType | null>(null);
+  let chartInstance = shallowRef<echarts.EChartsType | null>(null);
 
   // 通用 pattern 生成器
   const createPattern = (color) => {
@@ -197,26 +197,30 @@
     chartInstance.value.setOption(option);
   };
 
-  const initChart = () => {
-    chartInstance.value = echarts.init(chartRef.value);
-    setChartOption();
-  };
-
+  // 调整图表大小
   const resizeChart = () => {
-    chartInstance.value && chartInstance.value.resize();
+    setTimeout(() => {
+      if (chartInstance.value) {
+        chartInstance.value.resize();
+      }
+    }, 0);
   };
 
   onMounted(() => {
-    initChart();
+    // 在mounted阶段只初始化DOM元素，不设置options
+    if (chartRef.value && !chartInstance.value) {
+      chartInstance.value = echarts.init(chartRef.value);
+    }
+
+    // 先获取数据
     fetchData(SourceTypeDefault);
+
+    // 添加resize监听
     window.addEventListener('resize', resizeChart);
-    // 监听自定义的dashboard-resize事件
-    window.addEventListener('dashboard-resize', resizeChart);
   });
 
   onBeforeUnmount(() => {
     window.removeEventListener('resize', resizeChart);
-    window.removeEventListener('dashboard-resize', resizeChart);
     if (chartInstance.value) {
       chartInstance.value.dispose();
     }
@@ -252,14 +256,23 @@
         yAxisIndex: 1,
       },
     ];
-    setChartOption();
+    // 确保有数据后再设置图表选项
+    if (seriesData.value.length > 0 && seriesData.value[0].data.length > 0) {
+      // 如果图表实例不存在，先创建
+      if (chartRef.value && !chartInstance.value) {
+        chartInstance.value = echarts.init(chartRef.value);
+      }
+      setChartOption();
+      // 设置选项后调整大小
+      resizeChart();
+    }
   };
 </script>
 
 <style scoped lang="less">
   .chart-container {
-    width: 900px;
-    height: 400px;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -294,8 +307,8 @@
       }
     }
     .chart {
-      flex: 1;
       width: 100%;
+      height: 100%;
     }
   }
 </style>

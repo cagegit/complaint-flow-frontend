@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from 'vue';
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
   import * as echarts from 'echarts';
   import blockImage from '@/assets/images/dashboard/block.png';
   import { CASE_COLOR, YES_PERCENT_COLOR, NO_PERCENT_COLOR, tooltip, calculateDynamicYAxis, grid, getDayString } from '@/utils/dashboard';
@@ -214,6 +214,17 @@
       });
 
       chart.setOption(option);
+      // 初始化后立即调整大小
+      setTimeout(() => {
+        resizeChart();
+      }, 0);
+    }
+  };
+
+  // 添加resize事件处理函数
+  const resizeChart = () => {
+    if (chart) {
+      chart.resize();
     }
   };
 
@@ -314,6 +325,18 @@
 
   onMounted(() => {
     fetchMonthConfig();
+    // 添加窗口resize事件监听
+    window.addEventListener('resize', resizeChart);
+  });
+
+  onBeforeUnmount(() => {
+    // 移除事件监听器
+    window.removeEventListener('resize', resizeChart);
+    // 销毁图表实例
+    if (chart) {
+      chart.dispose();
+      chart = null;
+    }
   });
 </script>
 

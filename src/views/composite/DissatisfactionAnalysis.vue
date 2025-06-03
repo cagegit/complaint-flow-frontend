@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
   import * as echarts from 'echarts';
   import { getCoordinates } from '@/utils/dashboard';
   import { getDoubleNoList } from '@/api/complaint/statistic';
@@ -189,6 +189,17 @@
   const initChart = () => {
     chart = echarts.init(chartRef.value);
     setChartOption();
+    // 初始化后立即调整大小
+    setTimeout(() => {
+      resizeChart();
+    }, 0);
+  };
+
+  // 添加resize事件处理函数
+  const resizeChart = () => {
+    if (chart) {
+      chart.resize();
+    }
   };
 
   const onTabChange = (value) => {
@@ -226,6 +237,19 @@
 
   onMounted(() => {
     fetchData();
+    // 添加窗口resize事件监听
+    window.addEventListener('resize', resizeChart);
+  });
+
+  // 添加组件卸载前的清理
+  onBeforeUnmount(() => {
+    // 移除事件监听器
+    window.removeEventListener('resize', resizeChart);
+    // 销毁图表实例
+    if (chart) {
+      chart.dispose();
+      chart = null;
+    }
   });
 </script>
 
@@ -276,7 +300,7 @@
       width: 356px;
       height: 356px;
       left: 50%;
-      top: 50%;
+      top: 51%;
       transform: translate(-50%, -50%);
     }
   }

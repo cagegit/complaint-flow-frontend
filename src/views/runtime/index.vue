@@ -1,6 +1,6 @@
 <template>
   <div class="runtime-box" id="runtime-screen">
-    <Header :index="1" :showAvatar="true"/>
+    <Header :index="1" :showAvatar="true" />
     <Title title="运行事态" />
     <div class="content">
       <div class="left">
@@ -84,7 +84,8 @@
     flex-direction: column;
 
     .content {
-      height: calc(100vh - 134px);
+      width: 100%;
+      height: 100vh;
       display: flex;
       justify-content: space-between;
       padding: 6px 24px;
@@ -94,7 +95,6 @@
       .left {
         width: 25%; // 使用百分比替代固定像素值
         min-width: 320px;
-        max-width: 446px;
         margin-right: 10px;
         height: 100%;
       }
@@ -102,7 +102,6 @@
       .center {
         width: 50%; // 使用百分比替代固定像素值
         min-width: 600px;
-        max-width: 932px;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -116,7 +115,6 @@
       .right {
         width: 25%; // 使用百分比替代固定像素值
         min-width: 320px;
-        max-width: 446px;
         margin-left: 10px;
         height: 100%;
       }
