@@ -15,7 +15,7 @@
             <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="回访审核">               
                <!-- 回复审核内容回显，三行两列，第一行显示：录音已倾听、跟进情况，第二行：督办人，第三行：最终处理情况 -->
-               <a-collapse v-model:activeKey="collapsibleKey">
+               <a-collapse v-model:activeKey="collapsibleKey" ghost>
                 <a-collapse-panel key="1" header="回复记录">
                   <!-- 回复列表 -->
                   <div class="pr-4">
@@ -27,7 +27,7 @@
                     />
                   </div>
                 </a-collapse-panel>
-                <a-collapse-panel key="2" header="回访审核结果">
+                <a-collapse-panel key="2" header="回复审核结果">
                     <div class="grid grid-cols-2 gap-4">
                       <div class="flex">
                         <p class="font-bold">录音已倾听：</p>
@@ -49,9 +49,34 @@
                 </a-collapse-panel>
                </a-collapse>
               <!-- 分割线 -->
-              <a-divider></a-divider> 
+             <a-divider orientation="left" ><span class="text-red-500">*回访审核(必填表单)</span></a-divider>
               <!-- 回复审核表单 -->
               <BasicForm @register="registerAuditForm"/>
+               <a-divider orientation="left">预回复(可选)</a-divider>
+              <BasicForm @register="registerPreReplyForm">
+                  <template #satisfactionTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <template #contactTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                    <template #resolutionTimeSlot="{model, field}">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <!-- 附件 -->
+                  <template #uploadAttachmentsSlot="{model, field}">
+                    <UploadList v-model="model[field]" />
+                  </template>
+              </BasicForm>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
               <!-- 拒绝信息 -->
@@ -83,10 +108,15 @@
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
+    // @ts-ignore
+    import UploadList from '../components/UploadList/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
     import { getDictItemsByCode } from '/@/utils/dict';
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
+    // @ts-ignore
+    import { formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
@@ -118,6 +148,18 @@
       const array = getDictItemsByCode('biz_follow_code')
       console.log('array', array);
       return array.find(item => item.value == replyDetailRef.value.followCode)?.text || '-'
+    });
+    // 预回复表单
+    const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue }] = useForm({
+      labelWidth: 150,
+      schemas: preReplyFormSchema,
+      showActionButtonGroup: false,
+      layout: 'vertical',
+      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+      baseColProps: { span: 12 },
+      //row行的样式
+      baseRowStyle: { width: '100%', }
     });
     //回复审核表单配置
     const [registerAuditForm, { setProps: setAuditProps, validate }] = useForm({
@@ -215,13 +257,28 @@
       }
       // 隐藏底部时禁用整个表单
       // 根据审核状态，设置是否可以编辑，禁止暂时footer
-      if (data?.record?.receiveStatus == 1) {
+      if (data?.record?.processStatus == 1) {
         setAuditProps({ disabled: true });
         showFooter.value = false;
       } else {
         setAuditProps({ disabled: false });
         showFooter.value = true;
       }
+      // 查询预回复详情
+      getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
+        console.log(preRes);
+        if(preRes?.upReply) {
+          // 设置预回复表单值
+          setPreReplyFieldsValue({
+            ...preRes.upReply,
+            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
+            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
+            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+          });
+        }
+      }).catch(err => {
+        console.error('查询预回复详情失败', err);
+      });
     });
     //获取标题
     const getTitle = computed(() => {
@@ -232,7 +289,25 @@
     //提交事件
     async function handleSubmit() {
       try {
+        // 先校验回复审核表单
         let values = await validate();
+        // 优先保存预回复表单
+        try{
+          if(currentEditRecordRef.value) {
+            const preParams = await validatePreReplyForm();
+            const resResult = await savePreReply({
+              "deleteFileIdList": [],
+              "replyFileList": [],
+              "ticketId": currentEditRecordRef.value?.id,
+              "ticketReplyDataVo": {
+                ...preParams
+              }
+            });
+            console.log('保存预回复信息成功', resResult);
+          }
+        } catch (error) {
+          console.error('保存区级信息失败', error);
+        }
         setModalProps({ confirmLoading: true });
         values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
