@@ -323,7 +323,7 @@
         align-items: center;
         padding-left: 10px;
         padding-right: 24px;
-        width: 207px;
+        width: 50%;
         height: 100%;
         background-image: url(@/assets/images/runtime/overview/long-bg.png);
         background-size: 100% 100%;
