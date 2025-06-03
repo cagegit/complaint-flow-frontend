@@ -78,7 +78,7 @@
             schemas: searchFormSchema,
           },
           actionColumn: {
-            width: 180,
+            width: 120,
             fixed: 'right',
           },
           beforeFetch: (params) => {

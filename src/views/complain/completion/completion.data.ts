@@ -89,7 +89,7 @@ export const columns: BasicColumn[] = [
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  { title: '状态', dataIndex: 'receiveStatus_dictText', width: 120 },
+  { title: '状态', dataIndex: 'processName', width: 120 },
   { title: '月次', dataIndex: 'monthCount', width: 80 },
   { title: '年次', dataIndex: 'yearCount', width: 80 },
     { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
@@ -540,14 +540,24 @@ export const formSchema: FormSchema[] = [
     {
       label: '数据来源',
       field: 'sourceType',
-      component: 'Select',
+      component: 'ApiSelect',
       required: true,
       componentProps: {
-        options: [
-          { label: '本地录入', value: 0 },
-          { label: '区分转', value: 1 },
-          { label: '直派', value: 2 },
-        ],
+        api: async () => {
+          const res  = await getDictItems('biz_source_type')
+            if(Array.isArray(res)){
+                return res.map(item => {
+                    return {
+                        text: item.text,
+                        value: +item.value
+                    }
+                })
+            } else {
+                return [];
+            }
+        },
+        labelField: 'text',
+        valueField: 'value'
       },
     },
     {
@@ -635,14 +645,32 @@ export const formSchema: FormSchema[] = [
     {
       label: '标题',
       field: 'title',
-      component: 'Input',
+      component: 'InputTextArea',
       required: true,
+      componentProps: {
+        rows: 3,
+        placeholder: '请输入标题',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
     {
       label: '主要内容',
       field: 'mainContent',
       component: 'InputTextArea',
       required: true,
+      componentProps: {
+        rows: 6,
+        placeholder: '请输入主要内容',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
     {
       label: '派单人员',
@@ -672,15 +700,24 @@ export const formSchema: FormSchema[] = [
       component: 'Input',
     },
     {
-      label: '处理情况',
-      field: 'finalResolveResult',
-      component: 'Input',
-      required: true,
-    },
-    {
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
+    },
+     {
+      label: '处理情况',
+      field: 'finalResolveResult',
+      component: 'InputTextArea',
+      required: true,
+      componentProps: {
+        rows: 6,
+        placeholder: '请输入处理情况',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24, sm: { span: 24 } },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
   ];
 

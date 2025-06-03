@@ -89,7 +89,7 @@ export const columns: BasicColumn[] = [
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  { title: '状态', dataIndex: 'receiveStatus_dictText', width: 120 },
+  { title: '状态', dataIndex: 'processName', width: 120 },
   { title: '月次', dataIndex: 'monthCount', width: 80,
     slots: { customRender: 'monthCount' },
    },
@@ -647,14 +647,32 @@ export const formSchema: FormSchema[] = [
     {
       label: '标题',
       field: 'title',
-      component: 'Input',
+      component: 'InputTextArea',
       required: true,
+      componentProps: {
+        rows: 3,
+        placeholder: '请输入标题',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
     {
       label: '主要内容',
       field: 'mainContent',
       component: 'InputTextArea',
       required: true,
+      componentProps: {
+        rows: 6,
+        placeholder: '请输入主要内容',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24 },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
     },
     {
       label: '派单人员',
@@ -684,16 +702,26 @@ export const formSchema: FormSchema[] = [
       component: 'Input',
     },
     {
-      label: '处理情况',
-      field: 'finalResolveResult',
-      component: 'Input',
-      required: true,
-    },
-    {
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
     },
+    {
+      label: '处理情况',
+      field: 'finalResolveResult',
+      component: 'InputTextArea',
+      required: true,
+      componentProps: {
+        rows: 6,
+        placeholder: '请输入处理情况',
+        style: { width: '100%' },
+      },
+      colProps: { span: 24, sm: { span: 24 } },
+      itemProps: {
+        wrapperCol: { span: 24, sm: { span: 21 } },
+      }
+    },
+    
   ];
 
 // 待补充表单内容

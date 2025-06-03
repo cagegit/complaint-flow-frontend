@@ -10,7 +10,7 @@
       :maskClosable="false"
     >
       <div class="flex px-3">
-        <div style="flex: 1; border-right: 1px solid #ddd; max-height: 700px; overflow: auto;">
+        <div style="flex: 1; border-right: 1px solid #ddd; max-height: 800px; overflow: auto;">
              <!-- 拒绝信息 -->
             <RejectInfo :detailInfo="ticketDetail" />
             <!-- 基本信息区域 -->
@@ -72,7 +72,7 @@
       //row行的样式
       baseRowStyle: { width: '100%', },
       // 禁用表单
-      disabled: false
+      disabled: true
     });
     //待补充表单配置
     const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
