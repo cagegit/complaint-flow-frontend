@@ -33,6 +33,7 @@
     "@vueuse/core": "^10.11.1",
     "@zxcvbn-ts/core": "^3.0.4",
     "ant-design-vue": "^4.2.6",
+    "autofit.js": "^3.2.8",
     "axios": "^1.7.9",
     "china-area-data": "^5.0.1",
     "clipboard": "^2.0.11",

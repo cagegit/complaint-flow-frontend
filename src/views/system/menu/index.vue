@@ -189,11 +189,11 @@
 
   // --------------- begin 默认首页配置 ------------
 
-  const defIndexStore = useDefIndexStore()
+  // const defIndexStore = useDefIndexStore()
 
   // 设置默认主页
   async function handleSetDefIndex(record: Recordable) {
-    defIndexStore.update(record.url, record.component, record.route)
+    // defIndexStore.update(record.url, record.component, record.route)
   }
 
   /**
@@ -201,16 +201,17 @@
    * @param record
    */
   function checkDefIndex(record: Recordable) {
-    return defIndexStore.check(record.url)
+    // return defIndexStore.check(record.url)
+    return true;
   }
 
   // 重新加载默认首页配置
   function reloadDefIndex() {
-    try {
-      defIndexStore.query();
-    } catch (e) {
-      console.error(e)
-    }
+    // try {
+    //   defIndexStore.query();
+    // } catch (e) {
+    //   console.error(e)
+    // }
   }
 
   reloadDefIndex()

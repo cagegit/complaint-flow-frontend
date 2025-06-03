@@ -34,6 +34,7 @@ export const mainOutRoutes: AppRouteModule[] = [
       title: '城北街道诉求管理平台',
       ignoreAuth: true,
       hideTab: true,
+      hideMenu: true,
     },
   },
 ];

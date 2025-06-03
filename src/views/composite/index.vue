@@ -1,5 +1,5 @@
 <template>
-  <div class="composite-box">
+  <div class="composite-box" id="composite-screen">
     <Header :index="0" :showAvatar="true"/>
     <Title title="综合事态" />
     <div class="composite-block">
@@ -21,12 +21,26 @@
   </div>
 </template>
 <script setup>
+  import { onMounted, onUnmounted } from 'vue';
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import ComplaintStatistics from './ComplaintStatistics.vue';
   import DissatisfactionAnalysis from './DissatisfactionAnalysis.vue';
   import ComplaintTypeStatistics from './ComplaintTypeStatistics.vue';
   import GroupComplaintStatistics from './GroupComplaintStatistics.vue';
+  import autofit from 'autofit.js';
+
+  onMounted(() => {
+    autofit.init({
+      dw: 1920,
+      dh: 1080,
+      resize: true,
+      el: '#composite-screen',
+    });
+  });
+  onUnmounted(() => {
+    autofit?.off?.();
+  });
 </script>
 <style lang="less" scoped>
   .composite-box {
