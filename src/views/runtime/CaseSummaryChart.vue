@@ -153,12 +153,12 @@
             },
             rich: {
               name: {
-                fontSize: 16,
+                fontSize: 14,
                 padding: [0, 0, 10, 0],
                 color: '#fff',
               },
               percent: {
-                fontSize: 24,
+                fontSize: 20,
                 padding: [0, 0, 12, 6],
                 color: '#fff',
               },

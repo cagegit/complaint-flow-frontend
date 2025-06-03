@@ -61,7 +61,7 @@
       align-items: center;
       justify-content: space-between;
       .composite-item {
-        width: 928px;
+        width: 49%;
         height: 444px;
         display: flex;
         flex-direction: column;

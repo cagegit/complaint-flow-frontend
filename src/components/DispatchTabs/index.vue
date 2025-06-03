@@ -5,7 +5,7 @@
         'tab-left': true,
         active: currentValue === 1,
       }"
-      @click="onClick(2)"
+      @click="onClick(1)"
       ><text class="tab-text">直派</text></div
     >
     <div
