@@ -1,21 +1,23 @@
 <template>
   <div class="composite-box" id="composite-screen">
-    <Header :index="0" :showAvatar="true"/>
+    <Header :index="0" :showAvatar="true" />
     <Title title="综合事态" />
-    <div class="composite-block">
-      <div class="composite-item">
-        <ComplaintStatistics />
+    <div class="composite-content">
+      <div class="composite-block">
+        <div class="composite-item">
+          <ComplaintStatistics />
+        </div>
+        <div class="composite-item">
+          <DissatisfactionAnalysis />
+        </div>
       </div>
-      <div class="composite-item">
-        <DissatisfactionAnalysis />
-      </div>
-    </div>
-    <div class="composite-block">
-      <div class="composite-item">
-        <ComplaintTypeStatistics />
-      </div>
-      <div class="composite-item">
-        <GroupComplaintStatistics />
+      <div class="composite-block">
+        <div class="composite-item">
+          <ComplaintTypeStatistics />
+        </div>
+        <div class="composite-item">
+          <GroupComplaintStatistics />
+        </div>
       </div>
     </div>
   </div>
@@ -44,8 +46,8 @@
 </script>
 <style lang="less" scoped>
   .composite-box {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     min-height: 1080px;
     background-image: url(@/assets/images/runtime/bg.png);
     background-size: cover;
@@ -53,18 +55,28 @@
     background-repeat: no-repeat;
     overflow-y: auto;
 
-    .composite-block {
-      padding-left: 22px;
-      padding-right: 22px;
-      margin-top: 15px;
+    .composite-content {
+      width: 100%;
+      height: calc(100% - 190px);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
-      .composite-item {
-        width: 49%;
-        height: 444px;
+
+      .composite-block {
+        padding-left: 22px;
+        padding-right: 22px;
+        margin-top: 15px;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 50%;
+        .composite-item {
+          width: 49%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
       }
     }
   }
