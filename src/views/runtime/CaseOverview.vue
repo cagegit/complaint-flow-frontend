@@ -71,7 +71,7 @@
       label: '待分配',
       value: 0,
       bg: errorbg,
-      href: '/complain/assign',
+      href: '/complaint/assign',
     },
     {
       label: '待回复',
