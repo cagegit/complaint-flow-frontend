@@ -15,6 +15,13 @@
             <RejectInfo :detailInfo="ticketDetail" />
             <!-- 基本信息区域 -->
             <BasicForm @register="registerForm"/>
+            <!-- 领导批示区域 -->
+            <LeaderInstruction
+              :ticketId="ticketDetail.id"
+              :zrContent="ticketDetail.zhurenSuggest"
+              :sjContent="ticketDetail.shujiSuggest"
+              :style="{width: '85%'}"
+            />
         </div>
         <div style="width: 300px; padding-left: 30px;">
             <!-- <a-divider type="vertical" style="height: 60px; background-color: #7cb305" ></a-divider> -->
@@ -37,6 +44,8 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { useMessage } from '/@/hooks/web/useMessage';
+    // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
 
     const { createMessage } = useMessage();
   

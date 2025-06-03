@@ -62,10 +62,11 @@
       </BasicModal>
     </template>
 <script lang="ts" setup name="forward-complain">
-    import { ref, nextTick } from 'vue';
+    import { ref, nextTick, h, onMounted } from 'vue';
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list, shujiSuggest, zhurenSuggest } from './assign.api'
+    import { forwardTicket } from '../turn-out/out.api';
     import { columns, searchFormSchema } from './assign.data'
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { BasicModal, useModal } from '/@/components/Modal';
@@ -76,13 +77,29 @@
     import ContactHistory from '../components/ContactHistory/index.vue';
     import { useMessage } from '/@/hooks/web/useMessage';
     import { usePermission } from '/@/hooks/web/usePermission';
+    import { Select, Input } from 'ant-design-vue';
+    import ApiCascader from '/@/components/Form/src/components/ApiCascader.vue';
+    import { getBackDepartList, getDistrictDictByCode } from '/@/api/common/api';
     // 创建消息实例
-    const { createMessage } = useMessage();
+    const { createMessage, createConfirm } = useMessage();
     //注册 modal
     const [registerModal, { openModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     const [registerSuggestModal, { openModal:openSuggestModal, closeModal }] = useModal();
     const { hasPermission } = usePermission();
+    const ASelect = Select;
+    const AInput = Input;
+    const AInputTextArea = Input.TextArea;
+    // 选择转出位置
+    const forwardType = ref<string|undefined>('city');
+    // 退回原因
+    const forwardReason = ref<string|undefined>(undefined);
+    // 退回类型
+    const backType = ref<string|undefined>(undefined);
+    // 退回类型字典
+    const backTypeDict = ref<any[]>([]);
+    // 退回单位
+    const backOffice = ref<string|undefined>(undefined);
     // 建议表单schema
     const suggestSchemas: FormSchema[] = [  
       {
@@ -125,7 +142,7 @@
             schemas: searchFormSchema,
             },
             actionColumn: {
-              width: 220,
+              width: 120,
               fixed: 'right',
             },
             beforeFetch: (params) => {
@@ -156,23 +173,37 @@
     function getTableAction(record): ActionItem[] {
       return [
         {
+          label: '转出',
+          onClick: handleTransfer.bind(null, record),
+          ifShow: () => hasPermission('complain:assign:add'),
+        },
+         {
           label: '分派',
           onClick: handleEdit.bind(null, record),
           ifShow: () => hasPermission('complain:assign:add'),
         },
-        {
-          label: '书记批示',
-          onClick: handleSuggest.bind(null, record, 'shuji'),
-          // ifShow: () => hasPermission('complain:assign:shuji_suggest'),
-        },
-        {
-          label: '主任批示',
-          onClick: handleSuggest.bind(null, record, 'zhuren'),
-          // ifShow: () => hasPermission('complain:assign:zhuren_suggest'),
-        }
+        // {
+        //   label: '书记批示',
+        //   onClick: handleSuggest.bind(null, record, 'shuji'),
+        //   // ifShow: () => hasPermission('complain:assign:shuji_suggest'),
+        // },
+        // {
+        //   label: '主任批示',
+        //   onClick: handleSuggest.bind(null, record, 'zhuren'),
+        //   // ifShow: () => hasPermission('complain:assign:zhuren_suggest'),
+        // }
       ];
     }
 
+  onMounted(() => {
+    // 获取退回类型字典
+    getDistrictDictByCode('back_type').then((res) => {
+      console.log('res', res);
+      backTypeDict.value = Array.isArray(res) ? res : [];
+    }).catch((err) => {
+      console.error('获取退回类型字典失败', err);
+    });
+  });
   function handleEdit(record: Recordable) {
     openModal(true, {
        record,
@@ -245,19 +276,131 @@
     }
   }
 
-    // 删除
-
-//   async function handleDelete(record: Recordable) {
-
-//     try {
-//       await deleteTicket({ id: record.id });
-//       reload();
-//     } catch (error) {
-//       console.error('删除失败', error);
-//     }
-//   }
-
-
+  // 转出工单
+  async function handleTransfer(record: Recordable) {
+        //重置
+        forwardType.value = 'city';
+        forwardReason.value = undefined;
+        backType.value = undefined;
+        backOffice.value = undefined;
+        createConfirm({
+          title: '是否确认转出选中工单？',
+          content: () => {
+            // 使用 h 渲染函数创建 vnode
+            return h('div', {}, [
+              // h('p', '是否确认转出选中工单？'),
+              h('p', '转出位置：'),
+              h(ASelect, {
+                style: 'width: 100%; margin-bottom: 15px;',
+                value: forwardType.value,
+                placeholder: '请选择',
+                onChange: (val:any) => {
+                  console.log('val', val);
+                  forwardType.value = val;
+                },
+                options: [
+                  { value: 'city', label: '转出到市' },
+                  { value: 'district', label: '转出到区' },
+                ],
+              }),
+              // 退回原因
+              h('p', '退回原因：'),
+              h(AInputTextArea, {
+                style: 'width: 100%; margin-bottom: 15px;',
+                placeholder: '请输入退回原因',
+                value: forwardReason.value,
+                rows: 6,
+                maxLength: 800,
+                onChange: (e:any) => {
+                  forwardReason.value = e.target.value;
+                },
+              }),
+              ...forwardType.value === 'city' ? [
+                h('div', '退回类型：'),
+                h(ASelect, {
+                  style: 'width: 100%; margin: 15px auto;',
+                  value: backType.value,
+                  placeholder: '请选择退回类型',
+                  onChange: (val:any) => {
+                    console.log('val', val);
+                    backType.value = val;
+                  },
+                  options: [
+                    ...backTypeDict.value.map((item) => {
+                      return { value: item.id, label: item.name };
+                    }),
+                  ],
+                }),
+              ]: [],
+               ...forwardType.value === 'district' ? [
+                h('div', '退回单位：'),
+                h(ApiCascader, {
+                  styles: {width: '100%', margin: '15px auto'},
+                  value: backOffice.value,
+                  placeholder: '请选择退回单位',
+                  api: getBackDepartList,
+                  labelField: 'name',
+                  valueField: 'id',
+                  onChange: (val:any) => {
+                    console.log('val', val);
+                    backOffice.value = val;
+                  },
+                }),
+              ]: [],
+              //  选择city时展示，backType 退回类型
+              // h(ASelect, {
+              //   style: 'width: 100%; margin-bottom: 15px;',
+              //   value: forwardType.value,
+              //   placeholder: '请选择',
+              //   onChange: (val:any) => {
+              //     console.log('val', val);
+              //     forwardType.value = val;
+              //   },
+              //   options: [
+              //     { value: 'city', label: '转出到市' },
+              //     { value: 'district', label: '转出到区' },
+              //   ], 
+            ]);
+          },
+          iconType: 'warning',
+          onOk: async () => {
+            console.log(record);
+              // 添加类型参数
+            if (!forwardType.value) {
+              createMessage.warning('请选择转出位置');
+              return Promise.reject('未选择转出位置');
+            }
+            if (!forwardReason.value) {
+              createMessage.warning('请输入退回原因');
+              return Promise.reject('未输入退回原因');
+            }
+            if (forwardType.value === 'city' && !backType.value) {
+              createMessage.warning('请选择退回类型');
+              return Promise.reject('未选择退回类型');
+            }
+            if (forwardType.value === 'district' && !backOffice.value) {
+              createMessage.warning('请选择退回单位');
+              return Promise.reject('未选择退回单位');
+            }
+            console.log(backOffice.value);
+            try {
+              await forwardTicket({ 
+                id: record.id,
+                forwardType: forwardType.value,
+                backReason: forwardReason.value || null,
+                adviceOffice: Array.isArray(backOffice.value) && backOffice.value.length ? backOffice.value[backOffice.value.length-1] : null,
+                backType: backType.value || null
+              });
+              reload();
+              createMessage.success('转出成功');
+            } catch (error) {
+              console.error('转出失败', error);
+              createMessage.error('转出失败');
+            }
+          },
+        });
+      
+      }
     /**
      * 成功回调
      */

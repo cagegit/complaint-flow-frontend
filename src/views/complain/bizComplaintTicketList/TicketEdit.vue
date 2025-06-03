@@ -11,6 +11,12 @@
     >
       <div class="pl-18">
         <BasicForm @register="registerForm"/>
+        <LeaderInstruction 
+          :ticketId="currentUnionRecord?.id" 
+          :sjContent="currentUnionRecord?.shujiSuggest" 
+          :zrContent="currentUnionRecord?.zhurenSuggest"
+          :style="{width: '85%'}"
+          />
       </div>
     </BasicModal>
   </template>
@@ -22,7 +28,8 @@
     import { addTicket, editTicket } from './ticket.api';
     import { getTicketInfoInTurnOut } from '../turn-out/out.api';
     import { getComplaintDetail } from '/@/api/common/api';
-  
+    // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -46,6 +53,7 @@
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);
     let currentRecord:any = null;
+    const currentUnionRecord = ref<any>(null);
     //表单赋值
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
@@ -59,26 +67,25 @@
       try {
         // 查询工单详情
         const detailRes = await getTicketInfoInTurnOut({ticketId:data.record.id});
-         if(data.inTurnOut) {
-          const res = await getComplaintDetail(data.record.id);
+        const res = await getComplaintDetail(data.record.id);
+        currentUnionRecord.value = {
+          ...data.record,
+          ...detailRes,
+          ...(res ? res : {})
+        };
+        if(data.inTurnOut) {
           console.log(res);
-          if(res) {
-            setFieldsValue({
+          setFieldsValue({
               ...data.record,
               ...detailRes,
-              ...res
+              ...(res ? res : {}),
             });
-          } else {
-            setFieldsValue({
-              ...data.record,
-              ...detailRes
-            });
-          }
         } else {
           if (typeof data.record === 'object') {
             setFieldsValue({
               ...data.record,
-              ...detailRes
+              ...detailRes,
+              ... (res ? res : {})
             });
           } else {
             setFieldsValue({

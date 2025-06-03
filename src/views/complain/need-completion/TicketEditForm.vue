@@ -60,6 +60,13 @@
                <RejectInfo :detailInfo="ticketDetail" />
                <!-- 基本信息区域 --> 
                <BasicForm @register="registerForm"/>
+                <!-- 领导批示区域 -->
+               <LeaderInstruction
+                  :ticketId="ticketDetail.id"
+                  :zrContent="ticketDetail.zhurenSuggest"
+                  :sjContent="ticketDetail.shujiSuggest"
+                  :style="{width: '85%'}"
+               />
             </a-tab-pane>
             <a-tab-pane key="3" tab="回复记录" force-render>
               <div class="pr-4">
@@ -94,7 +101,8 @@
     import { getComplaintDetail } from '/@/api/common/api';
     import { useMessage } from '/@/hooks/web/useMessage';
     import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
-
+    // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);

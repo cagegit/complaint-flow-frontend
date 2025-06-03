@@ -21,6 +21,12 @@
           <div >
             <RejectInfo :detailInfo="ticketDetail" />
             <BasicForm @register="registerForm"/>
+            <LeaderInstruction
+              :ticketId="ticketDetail.id"
+              :zrContent="ticketDetail.zhurenSuggest"
+              :sjContent="ticketDetail.shujiSuggest"
+              :style="{width: '85%'}"
+            />
           </div>
         </div>
 
@@ -99,7 +105,8 @@
     // 预回复表单
     import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
-
+    // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
 
     // const { showQuReplyConfirm } = useConfirm();
 

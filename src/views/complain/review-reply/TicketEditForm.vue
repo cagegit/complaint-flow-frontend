@@ -31,6 +31,13 @@
                <RejectInfo :detailInfo="ticketDetail" />
                 <!-- 基本信息区域 -->   
                <BasicForm @register="registerForm"/>
+               <!-- 领导批示区域 -->
+              <LeaderInstruction
+                :ticketId="ticketDetail.id"
+                :zrContent="ticketDetail.zhurenSuggest"
+                :sjContent="ticketDetail.shujiSuggest"
+                :style="{width: '85%'}"
+              />
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -52,6 +59,8 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
+     // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
