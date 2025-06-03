@@ -72,7 +72,7 @@
       //row行的样式
       baseRowStyle: { width: '100%', },
       // 禁用表单
-      disabled: true
+      disabled: false
     });
     //待补充表单配置
     const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({

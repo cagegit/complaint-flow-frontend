@@ -40,8 +40,10 @@
             <a-button type="link" @click="showHistoryModal('2', record)">{{ record.yearCount }}</a-button>
           </template>
         </BasicTable>
-        <!--工单编辑-->
+        <!--工单分派-->
        <TicketEdit @register="registerModal" @success="handleSuccess" />
+        <!-- 工单编辑 -->
+       <TicketEditForm @register="registerEditModal" @success="handleSuccess" />
        <!-- 联系历史 -->
        <ContactHistory @register="registerHistoryModal" />
        <!-- 书记/主任批示弹窗 -->
@@ -80,12 +82,15 @@
     import { Select, Input } from 'ant-design-vue';
     import ApiCascader from '/@/components/Form/src/components/ApiCascader.vue';
     import { getBackDepartList, getDistrictDictByCode } from '/@/api/common/api';
+    //@ts-ignore
+    import TicketEditForm from '../bizComplaintTicketList/TicketEdit.vue';
     // 创建消息实例
     const { createMessage, createConfirm } = useMessage();
     //注册 modal
     const [registerModal, { openModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     const [registerSuggestModal, { openModal:openSuggestModal, closeModal }] = useModal();
+    const [registerEditModal, { openModal:openEditModal }] = useModal();
     const { hasPermission } = usePermission();
     const ASelect = Select;
     const AInput = Input;
@@ -142,7 +147,7 @@
             schemas: searchFormSchema,
             },
             actionColumn: {
-              width: 120,
+              width: 180,
               fixed: 'right',
             },
             beforeFetch: (params) => {
@@ -172,6 +177,11 @@
     
     function getTableAction(record): ActionItem[] {
       return [
+         {
+            label: '编辑',
+            onClick: handleEdit.bind(null, record),
+            // ifShow: () => hasPermission('system:user:edit'),
+          },
         {
           label: '转出',
           onClick: handleTransfer.bind(null, record),
@@ -179,7 +189,7 @@
         },
          {
           label: '分派',
-          onClick: handleEdit.bind(null, record),
+          onClick: handleAssign.bind(null, record),
           ifShow: () => hasPermission('complain:assign:add'),
         },
         // {
@@ -204,11 +214,20 @@
       console.error('获取退回类型字典失败', err);
     });
   });
-  function handleEdit(record: Recordable) {
+  function handleAssign(record: Recordable) {
     openModal(true, {
        record,
        isUpdate: true,
        showFooter: true,
+    });
+  }
+
+  function handleEdit(record: Recordable) {
+    openEditModal(true, {
+      record,
+      isUpdate: true,
+      showFooter: true,
+      inTurnOut: true
     });
   }
     // 表单数据引用

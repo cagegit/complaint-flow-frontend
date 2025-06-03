@@ -57,7 +57,7 @@
   const navItems = [
     { title: '综合事态', path: '/composite' },
     { title: '运行事态', path: '/runtime' },
-    { title: '案件办理', path: '/complain/bizComplaintTicketList' },
+    { title: '案件办理', path: '/complain/assign' },
     { title: '知识库', path: '/knowledge/index' },
   ];
 

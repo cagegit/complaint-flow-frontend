@@ -85,14 +85,15 @@
             // labelWidth: 200,
             schemas: searchFormSchema,
           },
-          actionColumn: {
-            width: 120,
-            fixed: 'right',
-          },
+          // actionColumn: {
+          //   width: 120,
+          //   fixed: 'right',
+          // },
           beforeFetch: (params) => {
             console.log(params);
             return Object.assign(params, { pageNum:  params.pageNo });
           },
+          showIndexColumn: false,
         },
         // exportConfig: {
         //   name: '用户列表',
@@ -108,11 +109,11 @@
        
       function getTableAction(record): ActionItem[] {
         return [
-          {
-            label: '编辑',
-            onClick: handleEdit.bind(null, record),
-            // ifShow: () => hasPermission('system:user:edit'),
-          },
+          // {
+          //   label: '编辑',
+          //   onClick: handleEdit.bind(null, record),
+          //   // ifShow: () => hasPermission('system:user:edit'),
+          // },
         ];
       }
     
