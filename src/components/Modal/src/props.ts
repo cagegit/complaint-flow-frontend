@@ -85,4 +85,6 @@ export const basicProps = Object.assign({}, modalProps, {
   maxHeight: { type: Number },
   // 是否开启评论区域
   enableComment: { type: Boolean, default: false },
+  // 展示底部
+  showFooter: { type: Boolean, default: true },
 });

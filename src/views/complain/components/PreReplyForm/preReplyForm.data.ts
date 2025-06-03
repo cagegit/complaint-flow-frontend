@@ -64,7 +64,7 @@ export const formSchema: FormSchema[] = [
       api: async () => {
           try {
             const res  = await getCommunityListByCode()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -95,7 +95,7 @@ export const formSchema: FormSchema[] = [
       api: async () => {
           try {
             const res  = await getCityQuestionCategoryList()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -172,8 +172,8 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入是否属实',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],  // 需要从接口获取
       allowClear: true,
     },
@@ -186,15 +186,14 @@ export const formSchema: FormSchema[] = [
     component: 'RadioGroup',
     componentProps:({formActionType, formModel}) => ({
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       onChange: (e:any) => {
         const { updateSchema } = formActionType;
         const value = e.target.value;
-        console.log(value);
-        if(value == 0) {
-       
+        // console.log(value);
+        if(value == '0') {
           updateSchema([
             {
               field: 'taskType',
@@ -301,33 +300,33 @@ export const formSchema: FormSchema[] = [
       null
     ]
   },
-  {
-    field: 'liveHoodIssueId',
-    label: '七有五性',
-    component: 'ApiCascader',
-    componentProps: {
-      placeholder: '请选择七有五性',
-      api: async () => {
-          try {
-            const res  = await getCitySevenFiveList()
-            console.log(res)
-            if(Array.isArray(res)){
-                return res;
-            } else {
-                return [];
-            }
-          } catch (error) {
-            console.error(error);
-            return [];
-          }
-      },
-      labelField: 'name',
-      valueField: 'id',
-      allowClear: true,
-      showSearch: true,
-    },
-    colProps: { span: 12 },
-  },
+  // {
+  //   field: 'liveHoodIssueId',
+  //   label: '七有五性',
+  //   component: 'ApiCascader',
+  //   componentProps: {
+  //     placeholder: '请选择七有五性',
+  //     api: async () => {
+  //         try {
+  //           const res  = await getCitySevenFiveList()
+  //           console.log(res)
+  //           if(Array.isArray(res)){
+  //               return res;
+  //           } else {
+  //               return [];
+  //           }
+  //         } catch (error) {
+  //           console.error(error);
+  //           return [];
+  //         }
+  //     },
+  //     labelField: 'name',
+  //     valueField: 'id',
+  //     allowClear: true,
+  //     showSearch: true,
+  //   },
+  //   colProps: { span: 12 },
+  // },
   {
     field: 'lastOfficeId',
     label: '最终处置部门',
@@ -337,7 +336,7 @@ export const formSchema: FormSchema[] = [
       api: async () => {
           try {
             const res  = await getDisposeDepartmentList()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -395,7 +394,6 @@ export const formSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('specific_handle_duty'),  // 需要从接口获取
       allowClear: true,
     },
-    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -405,8 +403,8 @@ export const formSchema: FormSchema[] = [
     componentProps:() =>({
       placeholder: '请选择是否已与诉求人见面',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     }),
@@ -425,7 +423,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isAppealMeet == 1;
+      return values.isAppealMeet == '1';
     }
   },
   {
@@ -439,7 +437,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isAppealMeet == 1;
+      return values.isAppealMeet == '1';
     }
   },
   {
@@ -449,8 +447,8 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请选择是否吹哨',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     },
@@ -464,14 +462,14 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入吹哨结果',
       options: [
-        { label: '未解决', value: 1 },
-        { label: '解决', value: 2 },
+        { label: '未解决', value: '1' },
+        { label: '解决', value: '2' },
       ],
       allowClear: true,
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isWhistle == 1;
+      return values.isWhistle == '1';
     }
   },
   {
@@ -483,7 +481,7 @@ export const formSchema: FormSchema[] = [
        api: async () => {
           try {
             const res  = await getDisposeDepartmentList()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -501,7 +499,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isWhistle == 1;
+      return values.isWhistle == '1';
     }
   },
   // {
@@ -525,8 +523,8 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请选择是否提级办',
        options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     },
@@ -544,7 +542,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.mention == 1;
+      return values.mention == '1';
     }
   },
   {
@@ -558,7 +556,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.mention == 1;
+      return values.mention == '1';
     }
   },
   {
@@ -568,8 +566,8 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请选择是否限额',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     },
@@ -588,7 +586,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isQuota == 1;
+      return values.isQuota == '1';
     }
   },
   {
@@ -602,7 +600,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isQuota == 1;
+      return values.isQuota == '1';
     }
   },
   {
@@ -640,8 +638,8 @@ export const formSchema: FormSchema[] = [
       allowClear: true,
       onChange: (value) => {
         const { updateSchema } = formActionType;
-        console.log('caseLabel: ');
-        console.log(value);
+        // console.log('caseLabel: ');
+        // console.log(value);
         if(value == '1' || value == '2') {
           updateSchema([
             {
@@ -657,7 +655,7 @@ export const formSchema: FormSchema[] = [
                     }
                     try {
                       const res  = await getHoldRemoveList(finalId)
-                      console.log(res)
+                      // console.log(res)
                       if(Array.isArray(res)){
                           return res;
                       } else {
@@ -782,7 +780,7 @@ export const formFinalSchema: FormSchema[] = [
       api: async () => {
           try {
             const res  = await getCommunityListByCode()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -813,7 +811,7 @@ export const formFinalSchema: FormSchema[] = [
       api: async () => {
           try {
             const res  = await getCityQuestionCategoryList()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -890,8 +888,8 @@ export const formFinalSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入是否属实',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],  // 需要从接口获取
       allowClear: true,
     },
@@ -904,15 +902,14 @@ export const formFinalSchema: FormSchema[] = [
     component: 'RadioGroup',
     componentProps:({formActionType, formModel}) => ({
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       onChange: (e:any) => {
         const { updateSchema } = formActionType;
         const value = e.target.value;
-        console.log(value);
-        if(value == 0) {
-       
+        // console.log(value);
+        if(value == '0') {
           updateSchema([
             {
               field: 'taskType',
@@ -1019,33 +1016,33 @@ export const formFinalSchema: FormSchema[] = [
       null
     ]
   },
-  {
-    field: 'liveHoodIssueId',
-    label: '七有五性',
-    component: 'ApiCascader',
-    componentProps: {
-      placeholder: '请选择七有五性',
-      api: async () => {
-          try {
-            const res  = await getCitySevenFiveList()
-            console.log(res)
-            if(Array.isArray(res)){
-                return res;
-            } else {
-                return [];
-            }
-          } catch (error) {
-            console.error(error);
-            return [];
-          }
-      },
-      labelField: 'name',
-      valueField: 'id',
-      allowClear: true,
-      showSearch: true,
-    },
-    colProps: { span: 12 },
-  },
+  // {
+  //   field: 'liveHoodIssueId',
+  //   label: '七有五性',
+  //   component: 'ApiCascader',
+  //   componentProps: {
+  //     placeholder: '请选择七有五性',
+  //     api: async () => {
+  //         try {
+  //           const res  = await getCitySevenFiveList()
+  //           console.log(res)
+  //           if(Array.isArray(res)){
+  //               return res;
+  //           } else {
+  //               return [];
+  //           }
+  //         } catch (error) {
+  //           console.error(error);
+  //           return [];
+  //         }
+  //     },
+  //     labelField: 'name',
+  //     valueField: 'id',
+  //     allowClear: true,
+  //     showSearch: true,
+  //   },
+  //   colProps: { span: 12 },
+  // },
   {
     field: 'lastOfficeId',
     label: '最终处置部门',
@@ -1055,7 +1052,7 @@ export const formFinalSchema: FormSchema[] = [
       api: async () => {
           try {
             const res  = await getDisposeDepartmentList()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -1113,7 +1110,6 @@ export const formFinalSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('specific_handle_duty'),  // 需要从接口获取
       allowClear: true,
     },
-    // required: true,
     colProps: { span: 12 },
   },
   {
@@ -1123,8 +1119,8 @@ export const formFinalSchema: FormSchema[] = [
     componentProps:() =>({
       placeholder: '请选择是否已与诉求人见面',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     }),
@@ -1143,7 +1139,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isAppealMeet == 1;
+      return values.isAppealMeet == '1';
     }
   },
   {
@@ -1157,7 +1153,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isAppealMeet == 1;
+      return values.isAppealMeet == '1';
     }
   },
   {
@@ -1167,8 +1163,8 @@ export const formFinalSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请选择是否吹哨',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     },
@@ -1182,14 +1178,14 @@ export const formFinalSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入吹哨结果',
       options: [
-        { label: '未解决', value: 1 },
-        { label: '解决', value: 2 },
+        { label: '未解决', value: '1' },
+        { label: '解决', value: '2' },
       ],
       allowClear: true,
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isWhistle == 1;
+      return values.isWhistle == '1';
     }
   },
   {
@@ -1201,7 +1197,7 @@ export const formFinalSchema: FormSchema[] = [
        api: async () => {
           try {
             const res  = await getDisposeDepartmentList()
-            console.log(res)
+            // console.log(res)
             if(Array.isArray(res)){
                 return res;
             } else {
@@ -1219,7 +1215,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isWhistle == 1;
+      return values.isWhistle == '1';
     }
   },
   // {
@@ -1243,8 +1239,8 @@ export const formFinalSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请选择是否提级办',
        options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     },
@@ -1262,7 +1258,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.mention == 1;
+      return values.mention == '1';
     }
   },
   {
@@ -1276,7 +1272,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.mention == 1;
+      return values.mention == '1';
     }
   },
   {
@@ -1286,8 +1282,8 @@ export const formFinalSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请选择是否限额',
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
       ],
       allowClear: true,
     },
@@ -1306,7 +1302,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isQuota == 1;
+      return values.isQuota == '1';
     }
   },
   {
@@ -1320,7 +1316,7 @@ export const formFinalSchema: FormSchema[] = [
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
-      return values.isQuota == 1;
+      return values.isQuota == '1';
     }
   },
   {
@@ -1358,8 +1354,8 @@ export const formFinalSchema: FormSchema[] = [
       allowClear: true,
       onChange: (value) => {
         const { updateSchema } = formActionType;
-        console.log('caseLabel: ');
-        console.log(value);
+        // console.log('caseLabel: ');
+        // console.log(value);
         if(value == '1' || value == '2') {
           updateSchema([
             {
@@ -1375,7 +1371,7 @@ export const formFinalSchema: FormSchema[] = [
                     }
                     try {
                       const res  = await getHoldRemoveList(finalId)
-                      console.log(res)
+                      // console.log(res)
                       if(Array.isArray(res)){
                           return res;
                       } else {

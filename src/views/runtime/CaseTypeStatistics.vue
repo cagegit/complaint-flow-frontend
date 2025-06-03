@@ -258,8 +258,8 @@
 
 <style scoped lang="less">
   .chart-container {
-    width: 100%;
-    height: 100%;
+    width: 900px;
+    height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;

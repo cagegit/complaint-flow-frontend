@@ -48,6 +48,13 @@
                <RejectInfo :detailInfo="ticketDetail" />
                <!-- 基本信息区域 -->   
                <BasicForm @register="registerForm"/>
+                <!-- 领导批示区域 -->
+               <LeaderInstruction
+                :ticketId="ticketDetail.id"
+                :zrContent="ticketDetail.zhurenSuggest"
+                :sjContent="ticketDetail.shujiSuggest"
+                :style="{width: '85%'}"
+               />
             </a-tab-pane>
             <a-tab-pane key="3" tab="回复记录" force-render>
               <div class="pr-4">
@@ -81,7 +88,9 @@
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
     import { useMessage } from '/@/hooks/web/useMessage';
-
+    import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
+    // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -99,7 +108,7 @@
     // 表单详情
     const ticketDetail = ref<any>({});
     // 预回复表单
-    const [registerPreReplyForm, { validate: validatePreReplyForm }] = useForm({
+    const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue }] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -111,7 +120,7 @@
       baseRowStyle: { width: '100%', }
     });
     //基础信息表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerForm, { setProps, resetFields, setFieldsValue, validate }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -190,6 +199,21 @@
           ...detailRes
         });
       }
+      // 查询预回复详情
+      getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
+        console.log(preRes);
+        if(preRes?.upReply) {
+          // 设置预回复表单值
+          setPreReplyFieldsValue({
+            ...preRes.upReply,
+            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
+            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
+            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+          });
+        }
+      }).catch(err => {
+        console.error('查询预回复详情失败', err);
+      });
     });
     //获取标题
     const getTitle = computed(() => {
@@ -241,7 +265,7 @@
             // ...replyList.value,
             ...newFileList
           ],
-          "sevenFiveId": params.sevenFiveId ? params.sevenFiveId.split(',').pop() : '',
+          "sevenFiveId": params.sevenFiveId,
           // "ticketId": 0,
           "ticketReplyDataVo": {
             ...preReplyValues,

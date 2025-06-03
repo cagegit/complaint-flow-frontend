@@ -23,6 +23,13 @@
             <RejectInfo :detailInfo="ticketDetail" />
             <!-- 基本信息区域 -->    
             <BasicForm @register="registerForm"/>
+            <!-- 领导批示区域 -->
+            <LeaderInstruction
+              :ticketId="ticketDetail.id"
+              :zrContent="ticketDetail.zhurenSuggest"
+              :sjContent="ticketDetail.shujiSuggest"
+              :style="{width: '85%'}"
+            />
           </div>
           <div style="width: 500px; padding-left: 40px; " :style="{width: showLeft ? '500px': 'auto'}">
             <a-divider><span class="text-red-500">必填表单区域</span></a-divider>
@@ -91,7 +98,8 @@
     // 预回复表单
     import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
-
+    // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     const { showQuReplyConfirm } = useConfirm();
 
     const { createMessage } = useMessage();
@@ -136,7 +144,7 @@
       //row行的样式
     });
     //预回复表单配置
-    const [registerPreReplyForm, { setProps: setPreReplyProps, validate: preReplyValidate }] = useForm({
+    const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldValues, validate: preReplyValidate }] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -245,7 +253,7 @@
         if(preRes?.upReply) {
           preReplyDetail.value = preRes.upReply;
           // 设置预回复表单值
-          setPreReplyProps({
+          setPreReplyFieldValues({
             ...preRes.upReply,
             satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
             contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],

@@ -13,8 +13,7 @@
         <div style="flex: 1; border-right: 1px solid #ddd;">
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
-            <a-tab-pane key="1" tab="回访审核">
-                
+            <a-tab-pane key="1" tab="回访审核">               
                <!-- 回复审核内容回显，三行两列，第一行显示：录音已倾听、跟进情况，第二行：督办人，第三行：最终处理情况 -->
                <a-collapse v-model:activeKey="collapsibleKey">
                 <a-collapse-panel key="1" header="回复记录">
@@ -59,6 +58,13 @@
                <RejectInfo :detailInfo="ticketDetail" />
               <!-- 基本信息区域 -->   
                <BasicForm @register="registerForm"/>
+              <!-- 领导批示区域 -->
+              <LeaderInstruction
+                :ticketId="ticketDetail.id"
+                :zrContent="ticketDetail.zhurenSuggest"
+                :sjContent="ticketDetail.shujiSuggest"
+                :style="{width: '85%'}"
+              />
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -79,6 +85,8 @@
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
     import { getDictItemsByCode } from '/@/utils/dict';
+     // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
@@ -112,7 +120,7 @@
       return array.find(item => item.value == replyDetailRef.value.followCode)?.text || '-'
     });
     //回复审核表单配置
-    const [registerAuditForm, { validate }] = useForm({
+    const [registerAuditForm, { setProps: setAuditProps, validate }] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -206,9 +214,14 @@
         });
       }
       // 隐藏底部时禁用整个表单
-      //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
-      // setProps({ disabled: !showFooter.value });
-      //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
+      // 根据审核状态，设置是否可以编辑，禁止暂时footer
+      if (data?.record?.receiveStatus == 1) {
+        setAuditProps({ disabled: true });
+        showFooter.value = false;
+      } else {
+        setAuditProps({ disabled: false });
+        showFooter.value = true;
+      }
     });
     //获取标题
     const getTitle = computed(() => {

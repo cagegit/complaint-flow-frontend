@@ -101,13 +101,13 @@ function getTableAction(record): ActionItem[] {
       onClick: handleEdit.bind(null, record),
       // ifShow: () => hasPermission('system:user:edit'),
     },
-    {
-      label: '删除',
-      popConfirm: {
-        title: '是否确认删除',
-        confirm: handleDelete.bind(null, record),
-      },
-    },
+    // {
+    //   label: '删除',
+    //   popConfirm: {
+    //     title: '是否确认删除',
+    //     confirm: handleDelete.bind(null, record),
+    //   },
+    // },
   ];
 }
 

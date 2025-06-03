@@ -15,30 +15,44 @@
             <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="预回复">
               <div class="pl-20">
-                <BasicForm @register="registerPreReplyForm">
-                  <template #satisfactionTimeSlot="{model, field}">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                  <template #contactTimeSlot="{model, field}">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                    <template #resolutionTimeSlot="{model, field}">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                  <!-- 附件 -->
-                    <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model="model[field]" />
+                <!-- 二选一 -->
+                <div class="py-4 flex border-b border-gray-200 mb-4">
+                  <div class="text-dark-100">请选择最终回复或驳回终审：</div>
+                  <a-radio-group v-model:value="finalChoice" name="choiceGroup">
+                    <a-radio value="1">最终回复</a-radio>
+                    <a-radio value="0"><span class="text-red-500">驳回终审</span></a-radio>
+                  </a-radio-group>
+                </div>
+                <!-- <a-divider class="mb-4"></a-divider> -->
+                <div v-show="finalChoice == '0'">
+                   <BasicForm @register="registerRejectForm"></BasicForm>
+                </div>
+                <div v-show="finalChoice === '1'">
+                  <BasicForm @register="registerPreReplyForm">
+                    <template #satisfactionTimeSlot="{model, field}">
+                      <a-space>
+                        <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                        <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      </a-space>
                     </template>
-                </BasicForm>
+                    <template #contactTimeSlot="{model, field}">
+                      <a-space>
+                        <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                        <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      </a-space>
+                    </template>
+                      <template #resolutionTimeSlot="{model, field}">
+                      <a-space>
+                        <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                        <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      </a-space>
+                    </template>
+                    <!-- 附件 -->
+                      <template #uploadAttachmentsSlot="{model, field}">
+                      <UploadList v-model="model[field]" />
+                      </template>
+                  </BasicForm>
+                </div>
               </div>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
@@ -46,6 +60,13 @@
                <RejectInfo :detailInfo="ticketDetail" />
                <!-- 基本信息区域 --> 
                <BasicForm @register="registerForm"/>
+                <!-- 领导批示区域 -->
+               <LeaderInstruction
+                  :ticketId="ticketDetail.id"
+                  :zrContent="ticketDetail.zhurenSuggest"
+                  :sjContent="ticketDetail.shujiSuggest"
+                  :style="{width: '85%'}"
+               />
             </a-tab-pane>
             <a-tab-pane key="3" tab="回复记录" force-render>
               <div class="pr-4">
@@ -62,13 +83,13 @@
     </BasicModal>
   </template>
   <script lang="ts" setup>
-    import { ref, computed, unref, useAttrs } from 'vue';
+    import { ref, computed, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema } from './need-completion.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     
     import { saveReviewReply, getReplyDetail, confirmReply } from './need-completion.api';
-    import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
+    // import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
@@ -79,7 +100,9 @@
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
     import { useMessage } from '/@/hooks/web/useMessage';
-
+    import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
+    // @ts-ignore 领导批示组件
+    import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -88,6 +111,8 @@
     const rowId = ref('');
     const departOptions = ref([]);
     let isFormDepartUser = false;
+    // 最终回复选择
+    const finalChoice = ref<string>('1'); // 默认选择最终回复
     // 当前key
     const activeKey = ref('1');
     // 当前编辑工单
@@ -97,25 +122,9 @@
     const total = ref(0);
     // 表单详情
     const ticketDetail = ref<any>({});
-    //回复审核表单配置
-    const [registerPreReplyForm, { validate }] = useForm({
-      labelWidth: 150,
-      schemas: [
-      // 驳回
-      {
-        field: 'responseFlag',
-        label: '是否驳回',
-        component: 'Select',
-        required: true,
-        componentProps: {
-          options:[
-            { label: '是', value: '1' },
-            { label: '否', value: '0' },
-          ],
-          placeholder: '==请选择==',
-        },
-        colProps: { span: 24 },
-      },
+
+    // 拒绝表单
+    const rejectFormSchema:any[] = [
       // 驳回原因
       {
         field: 'rejectReason',
@@ -124,21 +133,28 @@
         required: true,
         componentProps: {
           placeholder: '请输入驳回原因',
-          rows: 3,
+          rows: 6,
         },
-        colProps: { span: 24 },
-        ifShow: ({ values }) => {
-          return values.responseFlag === '1';
-        },
-      },
-      // 分割线
-      {
-        field: 'splitLine',
-        component: 'Divider',
-        label: '',
-        colProps: { span: 24 },
-      },
-      ...preReplyFormSchema],
+        colProps: { span: 24 }
+      }
+    ]
+    //最终驳回表单配置
+    const [registerRejectForm, {  validate: rejectValidate }] = useForm({
+      labelWidth: 150,
+      schemas: [...rejectFormSchema],
+      showActionButtonGroup: false,
+      layout: 'vertical',
+      rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+      //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+      baseColProps: { span: 12 },
+      //row行的样式
+      baseRowStyle: { width: '100%', }
+    });
+
+    //回复审核表单配置
+    const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldsValue,  validate }] = useForm({
+      labelWidth: 150,
+      schemas: [...preReplyFormSchema],
       showActionButtonGroup: false,
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
@@ -148,7 +164,7 @@
       baseRowStyle: { width: '100%', }
     });
     //基础信息表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, updateSchema }] = useForm({
+    const [registerForm, { setProps, resetFields, setFieldsValue }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -176,6 +192,8 @@
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
       console.log(data);
+      activeKey.value = '1'; // 默认选中预回复
+      finalChoice.value = '1'; // 默认选择最终回复
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
@@ -205,30 +223,46 @@
           ...detailRes
         });
       }
+      // 查询预回复详情
+      getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
+        console.log(preRes);
+        if(preRes?.upReply) {
+          // 设置预回复表单值
+          setPreReplyFieldsValue({
+            ...preRes.upReply,
+            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
+            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
+            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+          });
+        }
+      }).catch(err => {
+        console.error('查询预回复详情失败', err);
+      });
     });
     //获取标题
     const getTitle = computed(() => {
       return '最终审核';
     });
-    const { adaptiveWidth } = useDrawerAdaptiveWidth();
+    // const { adaptiveWidth } = useDrawerAdaptiveWidth();
   
     //提交事件
     async function handleSubmit() {
       try {
-        let values = await validate();
         setModalProps({ confirmLoading: true });
-        let isUpdateVal = unref(isUpdate);
-        let params = values;
+        // let isUpdateVal = unref(isUpdate);
         const ticketId = currentEditRecordRef.value?.id;
         // 如果审核状态拒绝
-        if (params.responseFlag === '1') {
-          params.rejectReason = values.rejectReason;
+        if (finalChoice.value === '0') {
+          // params.rejectReason = values.rejectReason;
+          const rejectValues = await rejectValidate();
           //提交驳回表单
           await confirmReply({
             "ticketId": ticketId,
-            "rejectReason": params.rejectReason
+            "rejectReason": rejectValues.rejectReason
           });
         } else {
+          const values = await validate();
+          let params = values;
           const { _responseFlag, _rejectReason, ...rest } = params;
           // 判断附件是否存在
           let newFileList:any[] = [];
@@ -261,7 +295,7 @@
         //关闭弹窗
         closeModal();
         //刷新列表
-        emit('success',{isUpdateVal ,values});
+        emit('success',{});
       } finally {
         setModalProps({ confirmLoading: false });
       }

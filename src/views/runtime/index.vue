@@ -1,6 +1,6 @@
 <template>
-  <div class="runtime-box">
-    <Header :index="1" />
+  <div class="runtime-box" id="runtime-screen">
+    <Header :index="1" :showAvatar="true"/>
     <Title title="运行事态" />
     <div class="content">
       <div class="left">
@@ -19,7 +19,7 @@
   </div>
 </template>
 <script setup lang="ts" name="ComplaintRuntime">
-  import { onMounted, onBeforeUnmount, ref } from 'vue';
+  import { onMounted, onUnmounted, ref } from 'vue';
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';
@@ -28,6 +28,7 @@
   import CaseTypeCategory from './CaseTypeCategory.vue';
   import { getDictItems } from '/@/api/common/api';
   import { DictItem } from '/@/enums/statisticEnum';
+  import autofit from 'autofit.js';
   // 处理窗口大小变化，通知所有图表组件重新调整大小
   const handleResize = () => {
     // 创建一个自定义事件，所有组件都可以监听此事件
@@ -38,6 +39,12 @@
 
   onMounted(() => {
     window.addEventListener('resize', handleResize);
+    autofit.init({
+      dw: 1920,
+      dh: 1080,
+      resize: true,
+      el: '#runtime-screen',
+    });
     fetchSourceTypeDict();
 
     // 初始加载时也触发一次重绘
@@ -58,8 +65,9 @@
     }
   };
 
-  onBeforeUnmount(() => {
+  onUnmounted(() => {
     window.removeEventListener('resize', handleResize);
+    autofit?.off?.();
   });
 </script>
 <style lang="less" scoped>

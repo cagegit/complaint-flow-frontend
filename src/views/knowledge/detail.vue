@@ -225,12 +225,14 @@
       }
       .content-info {
         padding: 20px;
-        background-color: #f9f9f9;
+        // background-color: #f9f9f9;
         border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         word-break: break-all;
         text-indent: 1em;
         text-align: justify;
+        list-style: 200%;
+        min-height: 300px;
       }
 
       .document-attachments {
@@ -308,7 +310,10 @@
               flex: 1;
               color: #0c3c3a;
               text-decoration: none;
-
+              & a {
+                color: inherit;
+                text-decoration: none;
+              }
               &:hover {
                 text-decoration: underline;
               }

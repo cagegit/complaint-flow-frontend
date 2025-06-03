@@ -4,7 +4,6 @@ It is an independent new page.
 the contents of the file still need to log in to access
  */
 import type { AppRouteModule } from '/@/router/types';
-
 // test
 // http:ip:port/main-out
 export const mainOutRoutes: AppRouteModule[] = [
@@ -22,7 +21,7 @@ export const mainOutRoutes: AppRouteModule[] = [
     name: 'runtime',
     component: () => import('/@/views/runtime/index.vue'),
     meta: {
-      title: '城北街道述求管理平台',
+      title: '城北街道诉求管理平台',
       ignoreAuth: true,
       hideTab: true,
     },
@@ -32,9 +31,10 @@ export const mainOutRoutes: AppRouteModule[] = [
     name: 'composite',
     component: () => import('/@/views/composite/index.vue'),
     meta: {
-      title: '城北街道述求管理平台',
+      title: '城北街道诉求管理平台',
       ignoreAuth: true,
       hideTab: true,
+      hideMenu: true,
     },
   },
 ];
