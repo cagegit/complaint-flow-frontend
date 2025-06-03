@@ -205,6 +205,9 @@
       }
     }, 0);
   };
+  const refreshData = () => {
+    fetchData(SourceTypeDefault);
+  };
 
   onMounted(() => {
     // 在mounted阶段只初始化DOM元素，不设置options
@@ -217,10 +220,16 @@
 
     // 添加resize监听
     window.addEventListener('resize', resizeChart);
+
+    // 监听刷新数据事件
+    window.addEventListener('refresh-runtime-data', refreshData);
   });
 
   onBeforeUnmount(() => {
+    // 移除事件监听器
     window.removeEventListener('resize', resizeChart);
+    window.removeEventListener('refresh-runtime-data', refreshData);
+    // 销毁图表实例
     if (chartInstance.value) {
       chartInstance.value.dispose();
     }

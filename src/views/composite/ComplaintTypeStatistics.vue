@@ -520,17 +520,25 @@
     }
   };
 
+  const refreshData = () => {
+    fetchMonthConfig();
+    getCaseCategoryEnumList();
+  };
+
   onMounted(() => {
     fetchMonthConfig();
     getCaseCategoryEnumList();
     window.addEventListener('resize', () => {
       chart?.resize();
     });
+    // 监听刷新数据事件
+    window.addEventListener('refresh-runtime-data', refreshData);
   });
 
   onBeforeUnmount(() => {
     chart?.dispose();
     window.removeEventListener('resize', () => {});
+    window.removeEventListener('refresh-runtime-data', refreshData);
   });
 </script>
 

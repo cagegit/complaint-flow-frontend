@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
   import errorbg from '@/assets/images/runtime/overview/error.png';
   import waitbg from '@/assets/images/runtime/overview/wait.png';
   import donebg from '@/assets/images/runtime/overview/done.png';
@@ -171,11 +171,18 @@
   ]);
 
   onMounted(() => {
-    fetchOverview();
-    fetchRate();
+    fetchData();
+
+    // 监听刷新数据事件
+    window.addEventListener('refresh-runtime-data', fetchData);
   });
 
-  const fetchOverview = async () => {
+  onBeforeUnmount(() => {
+    // 移除事件监听
+    window.removeEventListener('refresh-runtime-data', fetchData);
+  });
+
+  const fetchData = async () => {
     try {
       const res: any = await getOverviewCount();
       console.log(res);
@@ -189,10 +196,11 @@
       statusData.value[4].value = waitAuditCount;
       statusData.value[5].value = completCount;
     } catch (error) {
-      message.error('获取数据失败');
-      console.error(error);
-    } finally {
+      console.error('获取数据失败', error);
     }
+
+    // 调用fetchRate获取比率数据
+    fetchRate();
   };
 
   const fetchRate = async () => {

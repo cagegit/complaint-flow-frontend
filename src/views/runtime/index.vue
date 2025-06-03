@@ -19,7 +19,7 @@
   </div>
 </template>
 <script setup lang="ts" name="ComplaintRuntime">
-  import { onMounted, onUnmounted, ref } from 'vue';
+  import { onMounted, onUnmounted, ref, provide } from 'vue';
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import CaseOverview from './CaseOverview.vue';
@@ -29,16 +29,19 @@
   import { getDictItems } from '/@/api/common/api';
   import { DictItem } from '/@/enums/statisticEnum';
   import autofit from 'autofit.js';
-  // 处理窗口大小变化，通知所有图表组件重新调整大小
-  const handleResize = () => {
-    // 创建一个自定义事件，所有组件都可以监听此事件
-    window.dispatchEvent(new CustomEvent('dashboard-resize'));
+
+  // 创建一个刷新数据的自定义事件
+  const refreshData = () => {
+    window.dispatchEvent(new CustomEvent('refresh-runtime-data'));
+    console.log('触发数据刷新事件');
   };
+
+  // 定时器引用
+  let refreshTimer: number | null = null;
 
   const sourceTypeDict = ref<DictItem[]>([]);
 
   onMounted(() => {
-    window.addEventListener('resize', handleResize);
     autofit.init({
       dw: 1920,
       dh: 1080,
@@ -47,10 +50,13 @@
     });
     fetchSourceTypeDict();
 
-    // 初始加载时也触发一次重绘
-    setTimeout(() => {
-      handleResize();
-    }, 300);
+    // 设置每10分钟刷新一次数据的定时器
+    refreshTimer = window.setInterval(
+      () => {
+        refreshData();
+      },
+      6 * 10 * 60 * 1000
+    ); // 10分钟 = 10 * 60 * 1000毫秒
   });
 
   // 获取字典数据
@@ -66,7 +72,11 @@
   };
 
   onUnmounted(() => {
-    window.removeEventListener('resize', handleResize);
+    // 清除定时器
+    if (refreshTimer !== null) {
+      clearInterval(refreshTimer);
+      refreshTimer = null;
+    }
     autofit?.off?.();
   });
 </script>

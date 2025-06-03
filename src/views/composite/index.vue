@@ -23,7 +23,7 @@
   </div>
 </template>
 <script setup>
-  import { onMounted, onUnmounted } from 'vue';
+  import { onMounted, onUnmounted, onBeforeUnmount } from 'vue';
   import Header from '@/components/Header/index.vue';
   import Title from '@/components/Title/index.vue';
   import ComplaintStatistics from './ComplaintStatistics.vue';
@@ -31,14 +31,30 @@
   import ComplaintTypeStatistics from './ComplaintTypeStatistics.vue';
   import GroupComplaintStatistics from './GroupComplaintStatistics.vue';
   import autofit from 'autofit.js';
-
+  // 定时器引用
+  let refreshTimer = null;
+  // 创建一个刷新数据的自定义事件
+  const refreshData = () => {
+    window.dispatchEvent(new CustomEvent('refresh-runtime-data'));
+    console.log('触发数据刷新事件');
+  };
   onMounted(() => {
     autofit.init({
       dw: 1920,
       dh: 1080,
       resize: true,
       el: '#composite-screen',
-    });
+    }); // 设置每10分钟刷新一次数据的定时器
+    refreshTimer = window.setInterval(
+      () => {
+        refreshData();
+      },
+      6 * 10 * 60 * 1000
+    ); // 10分钟 = 10 * 60 * 1000毫秒
+  });
+  onBeforeUnmount(() => {
+    window.removeEventListener('refresh-runtime-data', refreshData);
+    window.clearInterval(refreshTimer);
   });
   onUnmounted(() => {
     autofit?.off?.();

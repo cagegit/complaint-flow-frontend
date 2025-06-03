@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
   import Progress from '@/components/Progress/index.vue';
   import top1 from '@/assets/images/runtime/ranking/top1.png';
   import top2 from '@/assets/images/runtime/ranking/top2.png';
@@ -133,13 +133,27 @@
       status: 0,
     },
   });
-  console.log(data);
+
+  const refreshData = () => {
+    fetchData();
+    fetchRanking({
+      deptType: currentIndex.value,
+    });
+  };
 
   onMounted(() => {
     fetchData();
     fetchRanking({
       deptType: UnitTypeEnum.DEPT,
     });
+
+    // 监听刷新数据事件
+    window.addEventListener('refresh-runtime-data', refreshData);
+  });
+
+  onBeforeUnmount(() => {
+    // 移除事件监听
+    window.removeEventListener('refresh-runtime-data', refreshData);
   });
 
   const onTabChange = ({ value }) => {

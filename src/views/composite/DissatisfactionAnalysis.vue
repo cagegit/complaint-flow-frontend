@@ -298,12 +298,14 @@
     fetchMonthConfig();
     // 添加窗口resize事件监听
     window.addEventListener('resize', resizeChart);
+    window.addEventListener('refresh-runtime-data', fetchMonthConfig);
   });
 
   // 添加组件卸载前的清理
   onBeforeUnmount(() => {
     // 移除事件监听器
     window.removeEventListener('resize', resizeChart);
+    window.removeEventListener('refresh-runtime-data', fetchMonthConfig);
     // 销毁图表实例
     if (chart) {
       chart.dispose();
