@@ -33,13 +33,19 @@
       >
         <!-- 文件名列 -->
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'fileName'">
+          <!-- <template v-if="column.key === 'fileName'">
             <div class="flex items-center">
               <span>{{ record.fileName }}</span>
               <PaperClipOutlined v-if="record.fileKey" class="ml-1 text-gray-400" />
             </div>
+          </template> -->
+          <!-- 文件名称 -->
+          <template v-if="column.key === 'fileName'">
+            <div class="flex items-center">
+              <a-input v-model:value="record.fileName" />
+              <PaperClipOutlined v-if="record.fileKey" class="ml-1 text-gray-400" />
+            </div>
           </template>
-
           <!-- 市级附件类型列 -->
           <template v-if="column.key === 'fileTagType'">
             <a-select
@@ -48,7 +54,8 @@
               placeholder="请选择市级附件类型"
               :options="cityFileTypeOptions"
               @change="(val) => handleTypeChange(val, record, 'city')"
-            ></a-select>
+            >
+            </a-select>
           </template>
 
           <!-- 区级附件类型列 -->
@@ -63,11 +70,12 @@
           </template>
 
           <template v-if="column.key === 'action'">
-            <div class="flex space-x-2">
-              <a-button type="link" @click="handlePreview(record)" class="text-blue-500">查看</a-button>
-              <a-button v-if="!readOnly" type="link" @click="handleDownload(record)" class="text-blue-500">下载</a-button>
-              <a-button v-if="!readOnly" type="link" @click="handleDelete(record)" class="text-red-500">删除</a-button>
-            </div>
+            <a-space :size="'small'">
+             
+              <a-button type="link" style="padding: 4px 0px" @click="handlePreview(record)" class="text-blue-500">查看</a-button>
+              <a-button v-if="!readOnly" type="link" style="padding: 4px 0px" @click="handleDownload(record)" class="text-blue-500">下载</a-button>
+              <a-button v-if="!readOnly" type="link" style="padding: 4px 0px" @click="handleDelete(record)" class="text-red-500">删除</a-button>
+            </a-space>
           </template>
         </template>
       </a-table>
@@ -93,7 +101,7 @@
           :dataSource="uploadedFiles" 
           :columns="uploadColumns" 
           :pagination="false"
-          :rowKey="record => record.uid || record.id"
+          :rowKey="(record => record.uid || record.id)"
         >
           <!-- 文件名列 -->
           <template #bodyCell="{ column, record }">
@@ -160,7 +168,7 @@
       :width="800"
       :footer="null"
     >
-      <div class="preview-container" style="height: 500px; overflow: auto;">
+      <div class="preview-container flex justify-center" style="height: 500px; overflow: auto;">
         <!-- 图片预览 -->
         <img
           v-if="isImageFile(previewFile)"
@@ -262,13 +270,12 @@ const columns = [
     title: '文件名',
     dataIndex: 'fileName',
     key: 'fileName',
-    width: '25%',
   },
   {
     title: '大小 (kb)',
     dataIndex: 'fileSize',
     key: 'fileSize',
-    width: '15%',
+    width: '100',
     customRender: ({ text }) => {
       return text ? (text / 1024).toFixed(2) : '0';
     }
@@ -277,18 +284,18 @@ const columns = [
     title: '市级附件类型',
     dataIndex: 'fileTagType',
     key: 'fileTagType',
-    width: '20%',
+    width: '100'
   },
   {
     title: '区级附件类型',
     dataIndex: 'districtFileTagType',
     key: 'districtFileTagType',
-    // width: '20%',
+    width: '100',
   },
   {
     title: '操作',
     key: 'action',
-    width: '200',
+    width: '150',
   },
 ];
 
@@ -519,7 +526,7 @@ const handlePreview = (file) => {
   // 在实际应用中，这里应该是通过fileKey获取真实的预览URL
   if (file.fileKey) {
     // 模拟获取预览URL，实际应该调用API
-    previewUrl.value = `/api/file/preview/${file.fileKey}`;
+    previewUrl.value = `/citizen-voice/sys/common/static/${file.fileKey}`;
   } else {
     previewUrl.value = '';
   }
