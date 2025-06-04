@@ -127,7 +127,7 @@ export function createPreviewColumns(): BasicColumn[] {
 
 export function createPreviewActionColumn({ handleRemove, handleDownload, handlePreview, showDelete }: { handleRemove: Fn; handleDownload: Fn; handlePreview: Fn; showDelete: boolean }): BasicColumn {
   return {
-    width: 160,
+    width: 120,
     title: t('component.upload.operating'),
     dataIndex: 'action',
     fixed: false,

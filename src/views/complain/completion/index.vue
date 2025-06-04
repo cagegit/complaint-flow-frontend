@@ -39,7 +39,7 @@
         <!-- 预回复 -->
         <pre-reply-form @register="registerReplyModal" @success="handleReplySuccess" />
         <!-- 文件预览 -->
-         <UploadPreviewModal :value="previewFileList" @register="registerPreviewModal" />
+         <UploadPreviewModal :value="previewFileList" @register="registerPreviewModal" :showDelete="false" />
     </template>
     <script lang="ts" setup name="completion">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';

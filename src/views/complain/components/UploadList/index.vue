@@ -73,7 +73,7 @@
             <a-space :size="'small'">
              
               <a-button type="link" style="padding: 4px 0px" @click="handlePreview(record)" class="text-blue-500">查看</a-button>
-              <a-button v-if="!readOnly" type="link" style="padding: 4px 0px" @click="handleDownload(record)" class="text-blue-500">下载</a-button>
+              <a-button type="link" style="padding: 4px 0px" @click="handleDownload(record)" class="text-blue-500">下载</a-button>
               <a-button v-if="!readOnly" type="link" style="padding: 4px 0px" @click="handleDelete(record)" class="text-red-500">删除</a-button>
             </a-space>
           </template>
@@ -361,8 +361,14 @@ const districtFileTypeOptions = [
 // 监听props变化
 watch(
   () => props.value,
-  (newVal) => {
-    if (newVal) {
+  (newVal, oldVal) => {
+    let hasChanges = false;
+    try {
+      hasChanges = JSON.stringify(newVal) !== JSON.stringify(oldVal);
+    } catch (error) {
+      console.error('Error in watch:', error);
+    }
+    if (hasChanges) {
       fileList.value = [...newVal];
     }
   },
@@ -372,7 +378,14 @@ watch(
 // 监听文件列表变化
 watch(
   fileList,
-  (newVal) => {
+  (newVal, oldVal) => {
+    let hasChanges = false;
+    try {
+      hasChanges = JSON.stringify(newVal) !== JSON.stringify(oldVal);
+    } catch (error) {
+      console.error('Error in watch:', error);
+    }
+    if (!hasChanges) return;
     emit('update:value', newVal);
     emit('change', newVal);
     const str = JSON.stringify(newVal);
@@ -542,7 +555,7 @@ const handleDownload = (file) => {
   }
   
   // 模拟文件下载，实际应该调用API
-  const downloadUrl = `/api/file/download/${file.fileKey}`;
+  const downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey}`;
   window.open(downloadUrl);
 };
 

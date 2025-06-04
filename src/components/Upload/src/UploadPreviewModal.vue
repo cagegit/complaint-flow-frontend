@@ -88,6 +88,8 @@
       let fileUrl = url;
       if(url.indexOf('app-data/complain/') > -1) {
         fileUrl = `/citizen-voice/sys/common/static/${url}`;
+      } else if(url.indexOf('/app-data/tmp/') > -1) {
+        fileUrl = `/citizen-voice/sys/common/static/${url.replace('/citizen-voice/', '')}`;
       }
 
       // 从文件名或URL中获取扩展名
@@ -202,9 +204,12 @@
       // 下载
       function handleDownload(record: PreviewFileItem) {
         let { url = '' } = record;
+        console.log('handleDownload', record);
         // 兼容新的上传接口
         if(url.indexOf('app-data/complain/') > -1) {
            url = `/citizen-voice/sys/common/static/${url}`;
+        } else if(url.indexOf('/app-data/tmp/') > -1) {
+           url = `/citizen-voice/sys/common/static/${url.replace('/citizen-voice/', '')}`;
         }
         console.log('url', url);
         downloadByUrl({ url });

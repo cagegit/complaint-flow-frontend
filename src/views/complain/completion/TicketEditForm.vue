@@ -20,6 +20,7 @@
                <BasicForm @register="registerForm"/>
                 <!-- 领导批示区域 -->
                <LeaderInstruction
+                v-if="ticketDetail.id"
                 :ticketId="ticketDetail.id"
                 :zrContent="ticketDetail.zhurenSuggest"
                 :sjContent="ticketDetail.shujiSuggest"
@@ -47,9 +48,9 @@
                   </a-space>
                 </template>
                 <!-- 附件 -->
-                  <template #uploadAttachmentsSlot="{model, field}">
-                  <UploadList v-model="model[field]" />
-                  </template>
+                <template #uploadAttachmentsSlot="{model, field}">
+                  <UploadList v-model:value="model[field]" :read-only="true" />
+                </template>
               </BasicForm>
             </a-tab-pane>
            
@@ -142,7 +143,10 @@
         let detailRes:any = {};
         try {
           detailRes = await getComplaintDetail(data.record.id);
-          ticketDetail.value = detailRes;
+          ticketDetail.value = {
+            ...res,
+            ...detailRes,
+          };
         } catch (error) {
           console.log(error);
         }
@@ -161,6 +165,7 @@
             satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
             contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
             resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+            attachments: Array.isArray(preRes.handleFileList) ? preRes.handleFileList : []
           });
         }
       }).catch(err => {
