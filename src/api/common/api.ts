@@ -298,6 +298,7 @@ export const getDisposeDepartmentList = () => {
             name: item.name
           });
         });
+        console.log(result)
         resolve(result);
       })
       .catch((error) => {

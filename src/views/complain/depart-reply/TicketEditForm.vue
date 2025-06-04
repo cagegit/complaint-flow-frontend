@@ -104,7 +104,7 @@
     // @ts-ignore
     import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
     // 预回复表单
-    import { formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
@@ -148,7 +148,7 @@
       //row行的样式
     });
     //预回复表单配置
-    const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldValues, validate: preReplyValidate }] = useForm({
+    const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldValues, validate: preReplyValidate, updateSchema: preReplyUpdateSchema }] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -263,10 +263,18 @@
           // 设置预回复表单值
           setPreReplyFieldValues({
             ...preRes.upReply,
-            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
-            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
-            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+             replySatisfiedTime: preRes.upReply.replySatisfiedTime ? preRes.upReply.replySatisfiedTime.split(',') : [],
+            replyContactTime: preRes.upReply.replyContactTime ? preRes.upReply.replyContactTime.split(',') : [],
+            replyResolveTime: preRes.upReply.replyResolveTime ? preRes.upReply.replyResolveTime.split(',') : [],
+            // 增加对级联字段的处理
+            replyRequestType: preRes.upReply.replyRequestType ? preRes.upReply.replyRequestType.split(',') : [],
+            lastOfficeId: preRes.upReply.lastOfficeId ? preRes.upReply.lastOfficeId.split(',') : [],
+            whistleDepartmentId: preRes.upReply.whistleDepartmentId ? preRes.upReply.whistleDepartmentId.split(',') : [],
+            removeHangingAccountsTypeId: preRes.upReply.removeHangingAccountsTypeId ? preRes.upReply.removeHangingAccountsTypeId.split(',') : [],
           });
+          const upReply = preRes.upReply;
+          // 更新组件级联关系
+          preFormLogicHandler(upReply, preReplyUpdateSchema);
         } else {
           preReplyDetail.value = null;
         }

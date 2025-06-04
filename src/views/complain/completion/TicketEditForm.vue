@@ -70,7 +70,7 @@
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
-    import { formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
@@ -91,7 +91,7 @@
      // 表单详情
     const ticketDetail = ref<any>({});
     //预回复表单
-    const [registerPreReplyForm, {setProps, setFieldsValue: setPreReplyFieldValues}] = useForm({
+    const [registerPreReplyForm, {setProps, setFieldsValue: setPreReplyFieldValues, updateSchema: preReplyUpdateSchema}] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -162,11 +162,19 @@
           // 设置预回复表单值
           setPreReplyFieldValues({
             ...preRes.upReply,
-            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
-            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
-            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+            replySatisfiedTime: preRes.upReply.replySatisfiedTime ? preRes.upReply.replySatisfiedTime.split(',') : [],
+            replyContactTime: preRes.upReply.replyContactTime ? preRes.upReply.replyContactTime.split(',') : [],
+            replyResolveTime: preRes.upReply.replyResolveTime ? preRes.upReply.replyResolveTime.split(',') : [],
+            // 增加对级联字段的处理
+            replyRequestType: preRes.upReply.replyRequestType ? preRes.upReply.replyRequestType.split(',') : [],
+            lastOfficeId: preRes.upReply.lastOfficeId ? preRes.upReply.lastOfficeId.split(',') : [],
+            whistleDepartmentId: preRes.upReply.whistleDepartmentId ? preRes.upReply.whistleDepartmentId.split(',') : [],
+            removeHangingAccountsTypeId: preRes.upReply.removeHangingAccountsTypeId ? preRes.upReply.removeHangingAccountsTypeId.split(',') : [],
             attachments: Array.isArray(preRes.handleFileList) ? preRes.handleFileList : []
           });
+          const upReply = preRes.upReply;
+          // 更新组件级联关系
+          preFormLogicHandler(upReply, preReplyUpdateSchema);
         }
       }).catch(err => {
         console.error('查询预回复详情失败', err);

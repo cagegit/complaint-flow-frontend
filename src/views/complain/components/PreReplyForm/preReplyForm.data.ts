@@ -1436,3 +1436,77 @@ export const formFinalSchema: FormSchema[] = [
     helpMessage: '请上传附件',
   },
 ]
+
+// 表单业务逻辑判断方法
+export function preFormLogicHandler(upReply:any,updateSchema:(items:any) => void) {
+  // 疏整任务
+  if(upReply?.isBelong == '0') {
+      updateSchema([
+        {
+          field: 'taskType',
+          componentProps: { 
+            options:[
+              {label: '其他', value: '0'},
+            ] 
+          },
+        },
+      ]);
+    } else {
+      updateSchema([
+        {
+          field: 'taskType',
+          componentProps: { 
+            options: getDistrictDictItemsByCode('carding_type'),  // 需要从接口获取
+          },
+        },
+      ]);
+  }
+  // 剔挂标签
+  if(upReply?.hangingAccountsLabel == '1' || upReply?.hangingAccountsLabel == '2') {
+    updateSchema([
+      {
+        field: 'removeHangingAccountsTypeId',
+        component: 'ApiCascader',
+        componentProps: { 
+            api: async () => {
+              let finalId = ''
+              if(upReply?.hangingAccountsLabel == '1') {
+                finalId = '3'
+              } else {
+                finalId = '2'
+              }
+              try {
+                const res  = await getHoldRemoveList(finalId)
+                // console.log(res)
+                if(Array.isArray(res)){
+                    return res;
+                } else {
+                    return [];
+                }
+              } catch (error) {
+                console.error(error);
+                return [];
+              }
+          },
+          placeholder: '请选择剔除挂账类型',
+          labelField: 'name',
+          valueField: 'id',
+          allowClear: true,
+          showSearch: true
+        },
+      },
+    ]);
+  } else {
+    updateSchema([
+      {
+        field: 'removeHangingAccountsTypeId',
+        component: 'Select',
+        componentProps: { 
+            placeholder: '请选择剔除挂账类型',
+            options:[],
+          allowClear: true,
+        },
+      },
+    ]);
+  }
+}

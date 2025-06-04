@@ -94,7 +94,7 @@
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
-    import { formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { formFinalSchema as preReplyFormSchema, preFormLogicHandler } from '../components/PreReplyForm/preReplyForm.data';
      //@ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // @ts-ignore
@@ -153,7 +153,7 @@
     });
 
     //回复审核表单配置
-    const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldsValue,  validate }] = useForm({
+    const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldsValue,  validate, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: [...preReplyFormSchema],
       showActionButtonGroup: false,
@@ -231,10 +231,19 @@
           // 设置预回复表单值
           setPreReplyFieldsValue({
             ...preRes.upReply,
-            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
-            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
-            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+            replySatisfiedTime: preRes.upReply.replySatisfiedTime ? preRes.upReply.replySatisfiedTime.split(',') : [],
+            replyContactTime: preRes.upReply.replyContactTime ? preRes.upReply.replyContactTime.split(',') : [],
+            replyResolveTime: preRes.upReply.replyResolveTime ? preRes.upReply.replyResolveTime.split(',') : [],
+            attachments: Array.isArray(preRes.handleFileList) ? preRes.handleFileList : [],
+             // 增加对级联字段的处理
+            replyRequestType: preRes.upReply.replyRequestType ? preRes.upReply.replyRequestType.split(',') : [],
+            lastOfficeId: preRes.upReply.lastOfficeId ? preRes.upReply.lastOfficeId.split(',') : [],
+            whistleDepartmentId: preRes.upReply.whistleDepartmentId ? preRes.upReply.whistleDepartmentId.split(',') : [],
+            removeHangingAccountsTypeId: preRes.upReply.removeHangingAccountsTypeId ? preRes.upReply.removeHangingAccountsTypeId.split(',') : [],
           });
+          const upReply = preRes.upReply;
+          // 更新组件级联关系
+          preFormLogicHandler(upReply, updateSchema);
         }
       }).catch(err => {
         console.error('查询预回复详情失败', err);

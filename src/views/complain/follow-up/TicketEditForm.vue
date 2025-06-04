@@ -116,7 +116,7 @@
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // @ts-ignore
-    import { formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
@@ -151,7 +151,7 @@
       return array.find(item => item.value == replyDetailRef.value.followCode)?.text || '-'
     });
     // 预回复表单
-    const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue }] = useForm({
+    const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue, updateSchema: preReplyUpdateSchema }] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -272,10 +272,18 @@
           // 设置预回复表单值
           setPreReplyFieldsValue({
             ...preRes.upReply,
-            satisfactionTime: preRes.satisfactionTime ? preRes.satisfactionTime.split(',') : [],
-            contactTime: preRes.contactTime ? preRes.contactTime.split(',') : [],
-            resolutionTime: preRes.resolutionTime ? preRes.resolutionTime.split(',') : [],
+             replySatisfiedTime: preRes.upReply.replySatisfiedTime ? preRes.upReply.replySatisfiedTime.split(',') : [],
+            replyContactTime: preRes.upReply.replyContactTime ? preRes.upReply.replyContactTime.split(',') : [],
+            replyResolveTime: preRes.upReply.replyResolveTime ? preRes.upReply.replyResolveTime.split(',') : [],
+             // 增加对级联字段的处理
+            replyRequestType: preRes.upReply.replyRequestType ? preRes.upReply.replyRequestType.split(',') : [],
+            lastOfficeId: preRes.upReply.lastOfficeId ? preRes.upReply.lastOfficeId.split(',') : [],
+            whistleDepartmentId: preRes.upReply.whistleDepartmentId ? preRes.upReply.whistleDepartmentId.split(',') : [],
+            removeHangingAccountsTypeId: preRes.upReply.removeHangingAccountsTypeId ? preRes.upReply.removeHangingAccountsTypeId.split(',') : [],
           });
+          const upReply = preRes.upReply;
+          // 更新组件级联关系
+          preFormLogicHandler(upReply, preReplyUpdateSchema);
         }
       }).catch(err => {
         console.error('查询预回复详情失败', err);
@@ -296,9 +304,19 @@
         try{
           if(currentEditRecordRef.value) {
             const preParams = await validatePreReplyForm();
+            // 判断附件是否存在
+            let newFileList:any[] = [];
+            if (preParams?.attachments) {
+               try{
+                const list = JSON.parse(preParams.attachments);
+                newFileList = list;
+              } catch(err) {
+                console.error('Error uploading attachments:', err);
+              } 
+            }
             const resResult = await savePreReply({
               "deleteFileIdList": [],
-              "replyFileList": [],
+              "replyFileList": newFileList,
               "ticketId": currentEditRecordRef.value?.id,
               "ticketReplyDataVo": {
                 ...preParams
