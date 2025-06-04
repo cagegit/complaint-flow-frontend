@@ -8,7 +8,7 @@
         <a-radio-button v-for="item in typeList" :key="item.value" :value="item.value">{{ item.label }}</a-radio-button>
       </a-radio-group>
     </div>
-    <BasicTable @register="registerTable" :columns="columns">
+    <BasicTable @register="registerTable">
       <template #form-department="{ model, field }">
         <a-select show-search v-model:value="model[field]" :options="deptList" placeholder="请选择部门" allowClear />
       </template>
@@ -89,7 +89,7 @@
         },
       },
       actionColumn: {
-        width: 160,
+        width: 120,
         fixed: 'right',
       },
       beforeFetch: (params) => {

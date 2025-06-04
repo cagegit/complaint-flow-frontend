@@ -5,7 +5,8 @@ export const columns: BasicColumn[] = [
     title: '部门',
     dataIndex: 'deptName',
     key: 'deptName',
-    width: 200,
+    width: 150,
+    ellipsis: true,
     customRender: ({ text }) => {
       return text || '-';
     },
@@ -14,7 +15,8 @@ export const columns: BasicColumn[] = [
     title: '诉求事项',
     dataIndex: 'optionText',
     key: 'optionText',
-    width: 100,
+    width: 150,
+    ellipsis: true,
     customRender: ({ text }) => {
       return text || '-';
     },
@@ -23,7 +25,8 @@ export const columns: BasicColumn[] = [
     title: '标题',
     dataIndex: 'title',
     key: 'title',
-    width: 100,
+    width: 200,
+    ellipsis: true,
     slots: {
       customRender: 'title',
     },
@@ -32,7 +35,7 @@ export const columns: BasicColumn[] = [
     title: '创建时间',
     dataIndex: 'createTime',
     key: 'createTime',
-    width: 180,
+    width: 120,
   },
 ];
 
