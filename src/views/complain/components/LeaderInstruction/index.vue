@@ -49,7 +49,7 @@
     </div>
 </template>
 <script lang="ts" name="leader-instruction" setup>
-  import { ref, defineProps, computed } from 'vue';
+  import { ref, defineProps, computed, watch } from 'vue';
   import { shujiSuggest, zhurenSuggest } from '../../assign/assign.api'
   import { useMessage } from '/@/hooks/web/useMessage';
   import { usePermission } from '/@/hooks/web/usePermission';
@@ -73,6 +73,15 @@
   const zhuRenContent = ref(props.zrContent);
   // 书记批示内容
   const shuJiContent = ref(props.sjContent);
+
+  // 增加watch
+  watch(() => props.zrContent, (newVal) => {
+    zhuRenContent.value = newVal;
+  });
+  
+  watch(() => props.sjContent, (newVal) => {
+    shuJiContent.value = newVal;
+  }); 
 
   const { createMessage } = useMessage();
   const { hasPermission } = usePermission();
