@@ -17,9 +17,10 @@
             <BasicForm @register="registerForm"/>
             <!-- 领导批示区域 -->
             <LeaderInstruction
-              :ticketId="ticketDetail.id"
-              :zrContent="ticketDetail.zhurenSuggest"
-              :sjContent="ticketDetail.shujiSuggest"
+              v-if="ticketResult.id"
+              :ticketId="ticketResult.id"
+              :zrContent="ticketResult.zhurenSuggest"
+              :sjContent="ticketResult.shujiSuggest"
               :style="{width: '85%'}"
             />
         </div>
@@ -60,6 +61,8 @@
     let currentData:any = {};
     // 表单详情
     const ticketDetail = ref<any>({});
+    // 接口返回详情
+    const ticketResult = ref<any>({});
     //表单配置
     const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
       labelWidth: 100,
@@ -139,7 +142,9 @@
         let res:any = {};
         try {
           res = await getComplaintDetail(data.record.id);
+          console.log(res);
           ticketDetail.value = res;
+          ticketResult.value = res;
         } catch (error) {
           console.log(error);
         }

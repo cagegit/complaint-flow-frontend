@@ -22,6 +22,7 @@
             <RejectInfo :detailInfo="ticketDetail" />
             <BasicForm @register="registerForm"/>
             <LeaderInstruction
+              v-if="ticketDetail.id"
               :ticketId="ticketDetail.id"
               :zrContent="ticketDetail.zhurenSuggest"
               :sjContent="ticketDetail.shujiSuggest"

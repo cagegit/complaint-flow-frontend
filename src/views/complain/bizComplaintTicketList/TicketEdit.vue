@@ -12,6 +12,7 @@
       <div class="pl-18">
         <BasicForm @register="registerForm"/>
         <LeaderInstruction 
+          v-if="currentUnionRecord?.id"
           :ticketId="currentUnionRecord?.id" 
           :sjContent="currentUnionRecord?.shujiSuggest" 
           :zrContent="currentUnionRecord?.zhurenSuggest"
@@ -68,6 +69,7 @@
         // 查询工单详情
         const detailRes = await getTicketInfoInTurnOut({ticketId:data.record.id});
         const res = await getComplaintDetail(data.record.id);
+        console.log(res);
         currentUnionRecord.value = {
           ...data.record,
           ...detailRes,

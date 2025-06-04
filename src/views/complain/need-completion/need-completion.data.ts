@@ -196,7 +196,7 @@ export const columns: BasicColumn[] = [
             options: [
                 { label: '待最终回复', value: '0' },
                 { label: '待区级审核', value: '1' },
-                { label: '已办结', value: '2' },
+                // { label: '已办结', value: '2' },
             ],
             allowClear: false  
         },

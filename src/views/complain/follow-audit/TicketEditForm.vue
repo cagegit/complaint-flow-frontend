@@ -50,6 +50,7 @@
                <BasicForm @register="registerForm"/>
                 <!-- 领导批示区域 -->
                <LeaderInstruction
+                v-if="ticketDetail.id"
                 :ticketId="ticketDetail.id"
                 :zrContent="ticketDetail.zhurenSuggest"
                 :sjContent="ticketDetail.shujiSuggest"

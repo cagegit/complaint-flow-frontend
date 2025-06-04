@@ -183,6 +183,24 @@
           class="w-full h-full"
           frameborder="0"
         ></iframe>
+        <!-- 音频预览 -->
+        <audio
+          v-else-if="isAudioFile(previewFile)"
+          controls
+          class="w-full"
+        >
+          <source :src="previewUrl">
+          您的浏览器不支持音频播放
+        </audio>
+        <!-- 视频预览 -->
+        <video
+          v-else-if="isVideoFile(previewFile)"
+          controls
+          class="w-full h-full"
+        >
+          <source :src="previewUrl">
+          您的浏览器不支持视频播放
+        </video>
         <!-- 其他文件 -->
         <div v-else class="text-center p-8">
           <FileOutlined class="text-6xl text-gray-300 mb-4" />
@@ -538,8 +556,13 @@ const handlePreview = (file) => {
   
   // 在实际应用中，这里应该是通过fileKey获取真实的预览URL
   if (file.fileKey) {
-    // 模拟获取预览URL，实际应该调用API
-    previewUrl.value = `/citizen-voice/sys/common/static/${file.fileKey}`;
+    if(file.fileKey.indexOf('app-data/tmp/') > -1) {
+      // 处理临时文件路径
+      previewUrl.value = `/citizen-voice/sys/common/static/${file.fileKey.replace('/citizen-voice/', '')}`;
+    } else {
+      previewUrl.value = `/citizen-voice/sys/common/static/${file.fileKey}`;
+    }
+   
   } else {
     previewUrl.value = '';
   }
@@ -553,9 +576,14 @@ const handleDownload = (file) => {
     createMessage.warning('文件不存在或无法下载');
     return;
   }
-  
+  let downloadUrl = '';
+  if(file.fileKey.indexOf('app-data/tmp/') > -1) {
+    // 处理临时文件路径
+    downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey.replace('/citizen-voice/', '')}`;
+  } else {
+    downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey}`;
+  }
   // 模拟文件下载，实际应该调用API
-  const downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey}`;
   window.open(downloadUrl);
 };
 
@@ -594,6 +622,20 @@ const isPdfFile = (file) => {
   if (!file) return false;
   const name = file.fileName || file.name || '';
   return name.toLowerCase().endsWith('.pdf');
+};
+// 判断是否为音频文件
+const isAudioFile = (file) => {
+  if (!file) return false;
+  const name = file.fileName || file.name || '';
+  const ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
+  return ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].includes(ext);
+};
+// 判断是否为视频文件
+const isVideoFile = (file) => {
+  if (!file) return false;
+  const name = file.fileName || file.name || '';
+  const ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
+  return ['mp4', 'avi', 'mkv', 'webm'].includes(ext);
 };
 </script>
 

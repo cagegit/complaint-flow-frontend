@@ -88,13 +88,13 @@
       let fileUrl = url;
       if(url.indexOf('app-data/complain/') > -1) {
         fileUrl = `/citizen-voice/sys/common/static/${url}`;
-      } else if(url.indexOf('/app-data/tmp/') > -1) {
+      } else if(url.indexOf('app-data/tmp/') > -1) {
         fileUrl = `/citizen-voice/sys/common/static/${url.replace('/citizen-voice/', '')}`;
       }
 
       // 从文件名或URL中获取扩展名
       const fileType = type.toLowerCase() || url.split('.').pop()?.toLowerCase() || '';
-      
+      console.log('fileType', fileType);
       // 图片类型
       const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
       if (imageTypes.includes(fileType)) {
@@ -120,7 +120,7 @@
       }
       
       // 视频类型
-      const videoTypes = ['mp4', 'webm', 'ogg'];
+      const videoTypes = ['mp4', 'avi', 'mkv', 'webm'];
       if (videoTypes.includes(fileType)) {
         openVideoPreview(fileUrl, name);
         return;
@@ -208,7 +208,7 @@
         // 兼容新的上传接口
         if(url.indexOf('app-data/complain/') > -1) {
            url = `/citizen-voice/sys/common/static/${url}`;
-        } else if(url.indexOf('/app-data/tmp/') > -1) {
+        } else if(url.indexOf('app-data/tmp/') > -1) {
            url = `/citizen-voice/sys/common/static/${url.replace('/citizen-voice/', '')}`;
         }
         console.log('url', url);
