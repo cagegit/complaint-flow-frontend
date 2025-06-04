@@ -92,6 +92,7 @@
     import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
+    import { audioTypes, imageTypes } from '/@/utils/fileType';
     const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -167,9 +168,9 @@
               // console.log('item', item);
               // item.fileCount = (item.fileCount || 0) + 1;
               let fileType = item.fileName.split('.').pop();
-              if (['mp3', 'wav','m4a'].includes(fileType)) {
+              if (audioTypes.includes(fileType)) {
                 v.audioCount++;
-              } else if (['jpg', 'jpeg', 'png'].includes(fileType)) {
+              } else if (imageTypes.includes(fileType)) {
                 v.imageCount++;
               } else {
                 v.fileCount++;

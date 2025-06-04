@@ -5,7 +5,7 @@
         <a-textarea 
         v-model:value="zhuRenContent" 
         :placeholder="'主任批示内容'" 
-        :disabled="!isZhuRen"
+        :disabled="!isZhuRen || readOnly"
         :rows="6"
         autoresize
         class="mb-4"
@@ -17,7 +17,7 @@
         <a-button
           type="primary"
           @click="submitZhuRenContent"
-          v-if="isZhuRen"
+          v-if="isZhuRen && !readOnly"
           style="width: 120px;"
         >
           主任批示
@@ -28,7 +28,7 @@
           <a-textarea
           v-model:value="shuJiContent"
           :placeholder="'书记批示内容'"
-          :disabled="!isShuJi"
+          :disabled="!isShuJi || readOnly"
           :rows="6"
           autoresize
           class="mb-4"
@@ -40,7 +40,7 @@
           <a-button
             type="primary"
             @click="submitShuJiContent"
-            v-if="isShuJi"
+            v-if="isShuJi && !readOnly"
             style="width: 120px;"
           >
             书记批示
@@ -66,6 +66,10 @@
       sjContent: {
         type: String,
         default: ''
+      },
+      readOnly: {
+        type: Boolean,
+        default: false
       }
     }
   )

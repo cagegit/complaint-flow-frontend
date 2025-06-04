@@ -6,13 +6,13 @@
       <div>
         <h3>
           <!-- <img :src="logoImg" alt="jeecg" /> -->
-           接诉即办平台
+           城北接诉即办平台
         </h3>
       </div>
     </div>
     <div v-else class="aui-phone-logo">
       <!-- <img :src="logoImg" alt="jeecg" /> -->
-      接诉即办平台
+      城北接诉即办平台
     </div>
     <div v-show="type === 'login'">
       <div class="aui-content">

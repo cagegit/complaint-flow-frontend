@@ -101,6 +101,7 @@
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
+import { audioTypes, imageTypes } from '/@/utils/fileType';
     const { showQuReplyConfirm } = useConfirm();
 
     const { createMessage } = useMessage();
@@ -182,7 +183,7 @@
             res.fileList.forEach((item:any) => {
               // 根据文件后缀名判断类型
               let fileType = item.fileName.split('.').pop();
-              if (['mp3', 'wav','m4a'].includes(fileType)) {
+              if (audioTypes.includes(fileType)) {
                 audioList.push({
                   uid: item.id,
                   name: item.fileName,
@@ -190,7 +191,7 @@
                   url: item.fileKey,
                   response: item, // 保留原始数据
                 });
-              } else if (['jpg', 'jpeg', 'png'].includes(fileType)) {
+              } else if (imageTypes.includes(fileType)) {
                 imageList.push({
                   uid: item.id,
                   name: item.fileName,

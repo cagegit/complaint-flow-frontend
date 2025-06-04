@@ -335,6 +335,7 @@
     FilePptFilled,
     FileImageFilled
   } from '@ant-design/icons-vue';
+import { imageTypes } from '/@/utils/fileType';
   
   // 消息实例
   const { createMessage, createConfirm } = useMessage();
@@ -546,7 +547,7 @@
   
   // 判断是否是图片文件
   const isImageFile = (type) => {
-    return ['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(type);
+    return imageTypes.includes(type);
   };
   
   // 处理文件删除

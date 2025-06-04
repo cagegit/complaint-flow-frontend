@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { h, ref } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict';
+import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -633,7 +634,7 @@ export const addFormSchema: FormSchema[] = [
     componentProps: {
       // 具体上传配置
       multiple: true,
-      accept: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'mp4'],
+      accept: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', ...videoTypes],
       api: uploadJsFile, // 上传接口
       showDownloadButton: true,
       showPreviewButton: true,
@@ -653,7 +654,7 @@ export const addFormSchema: FormSchema[] = [
     component: 'Upload',
     componentProps: {
       multiple: true,
-      accept: ['jpg', 'jpeg', 'png'],
+      accept: imageTypes, // 使用定义的图片类型
       api: uploadJsFile, // 上传接口
       bizPath: 'complain/images', // 业务路径
       maxSize: 10, // 限制大小10M
@@ -671,7 +672,7 @@ export const addFormSchema: FormSchema[] = [
     component: 'Upload',
     componentProps: {
       multiple: true,
-      accept: ['mp3', 'wav','m4a'],
+      accept: audioTypes,
       api: uploadJsFile, // 上传接口
       bizPath: 'complain/audio', // 业务路径
       maxSize: 30, // 限制大小30M

@@ -24,6 +24,7 @@
                 :ticketId="ticketDetail.id"
                 :zrContent="ticketDetail.zhurenSuggest"
                 :sjContent="ticketDetail.shujiSuggest"
+                :readOnly="true"
                 :style="{width: '85%'}"
                />
             </a-tab-pane>

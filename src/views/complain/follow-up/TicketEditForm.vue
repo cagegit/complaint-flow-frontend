@@ -73,9 +73,9 @@
                     </a-space>
                   </template>
                   <!-- 附件 -->
-                  <template #uploadAttachmentsSlot="{model, field}">
+                  <!-- <template #uploadAttachmentsSlot="{model, field}">
                     <UploadList v-model="model[field]" />
-                  </template>
+                  </template> -->
               </BasicForm>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
@@ -110,14 +110,15 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     // @ts-ignore
-    import UploadList from '../components/UploadList/index.vue';
+    // import UploadList from '../components/UploadList/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
     import { getDictItemsByCode } from '/@/utils/dict';
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // @ts-ignore
-    import { preFormLogicHandler, formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
+import { audioTypes, imageTypes } from '/@/utils/fileType';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
@@ -146,7 +147,7 @@
     const ticketDetail = ref<any>({});
     // 从字典获取跟进情况
     const followCodeInfo = computed(() => {
-      const array = getDictItemsByCode('biz_follow_code')
+      const array = getDictItemsByCode('biz_follow_code') || [];
       console.log('array', array);
       return array.find(item => item.value == replyDetailRef.value.followCode)?.text || '-'
     });
@@ -221,9 +222,9 @@
               // console.log('item', item);
               // item.fileCount = (item.fileCount || 0) + 1;
               let fileType = item.fileName.split('.').pop();
-              if (['mp3', 'wav','m4a'].includes(fileType)) {
+              if (audioTypes.includes(fileType)) {
                 v.audioCount++;
-              } else if (['jpg', 'jpeg', 'png'].includes(fileType)) {
+              } else if (imageTypes.includes(fileType)) {
                 v.imageCount++;
               } else {
                 v.fileCount++;

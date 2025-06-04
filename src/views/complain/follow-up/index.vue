@@ -117,7 +117,7 @@
       }
     
       async function handleEdit(record: Recordable) {
-        if(record.visitStatus == '1') {
+        if(record.processStatus == '1') {
           createMessage.error('该工单已回访，不能再次回访!');
           return;
         }
@@ -153,7 +153,7 @@
     
        
      function showEdit(record: Recordable) {
-        if(record.visitStatus == '1') {
+        if(record.processStatus == '1') {
           createMessage.error('该工单已回访，不能再次回访!');
           return;
         }

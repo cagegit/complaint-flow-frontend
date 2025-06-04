@@ -24,6 +24,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { createImgPreview } from '/@/components/Preview/index';
   import { Modal } from 'ant-design-vue';
+  import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 
   export default defineComponent({
     components: { BasicModal, FileList },
@@ -96,7 +97,6 @@
       const fileType = type.toLowerCase() || url.split('.').pop()?.toLowerCase() || '';
       console.log('fileType', fileType);
       // 图片类型
-      const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
       if (imageTypes.includes(fileType)) {
         // 使用图片预览组件
         createImgPreview({
@@ -113,14 +113,14 @@
       }
       
       // 音频类型
-      const audioTypes = ['mp3', 'wav', 'ogg', 'aac', 'm4a'];
+      // const audioTypes = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'];
       if (audioTypes.includes(fileType)) {
         openAudioPreview(fileUrl, name);
         return;
       }
       
       // 视频类型
-      const videoTypes = ['mp4', 'avi', 'mkv', 'webm'];
+      // const videoTypes = ['mp4', 'avi', 'mkv', 'webm'];
       if (videoTypes.includes(fileType)) {
         openVideoPreview(fileUrl, name);
         return;
@@ -162,12 +162,11 @@
           return h('div', { class: 'flex justify-center py-4' }, [
             h('audio', {
               controls: true,
-              autoplay: false,
+              autoplay: true,
               style: 'width: 100%;',
             }, [
               h('source', {
-                src: url,
-                type: `audio/${url.split('.').pop()}`
+                src: url
               }),
               '您的浏览器不支持音频播放'
             ])
@@ -191,8 +190,7 @@
               style: 'width: 100%; max-height: 70vh;',
             }, [
               h('source', {
-                src: url,
-                type: `video/${url.split('.').pop()}`
+                src: url
               }),
               '您的浏览器不支持视频播放'
             ])

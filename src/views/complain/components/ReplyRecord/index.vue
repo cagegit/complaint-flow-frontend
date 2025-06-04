@@ -189,6 +189,7 @@ import { useMessage } from '/@/hooks/web/useMessage';
 import UploadList from '../../components/UploadList/index.vue';
 import { BasicUpload } from '/@/components/Upload';
 import UploadPreviewModal from '/@/components/Upload/src/UploadPreviewModal.vue';
+import { audioTypes, imageTypes } from '/@/utils/fileType';
 
 // 定义回复列表项类型
 interface ReplyItem {
@@ -385,7 +386,7 @@ const handleViewFiles = (record, type) => {
    // 分类，图片、音频、其他
   record.fileList.forEach((item:any) => {
      let fileType = item.fileName.split('.').pop();
-      if (['mp3', 'wav', 'ogg'].includes(fileType)) {
+      if (audioTypes.includes(fileType)) {
         audioList.push({
           uid: item.id,
           name: item.fileName,
@@ -393,7 +394,7 @@ const handleViewFiles = (record, type) => {
           url: item.fileKey,
           response: item, // 保留原始数据
         });
-      } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+      } else if (imageTypes.includes(fileType)) {
         imageList.push({
           uid: item.id,
           name: item.fileName,
@@ -520,7 +521,7 @@ const handleViewDetail = (record) => {
    // 分类，图片、音频、其他
   record.fileList.forEach((item:any) => {
      let fileType = item.fileName.split('.').pop();
-      if (['mp3', 'wav', 'ogg'].includes(fileType)) {
+      if (audioTypes.includes(fileType)) {
         audioList.push({
           uid: item.id,
           name: item.fileName,
@@ -528,7 +529,7 @@ const handleViewDetail = (record) => {
           url: item.fileKey,
           response: item, // 保留原始数据
         });
-      } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+      } else if (imageTypes.includes(fileType)) {
         imageList.push({
           uid: item.id,
           name: item.fileName,

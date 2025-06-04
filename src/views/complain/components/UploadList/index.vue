@@ -186,7 +186,8 @@
         <!-- 音频预览 -->
         <audio
           v-else-if="isAudioFile(previewFile)"
-          controls
+          controls="true"
+          autoplay="true"
           class="w-full"
         >
           <source :src="previewUrl">
@@ -195,7 +196,7 @@
         <!-- 视频预览 -->
         <video
           v-else-if="isVideoFile(previewFile)"
-          controls
+          controls="true"
           class="w-full h-full"
         >
           <source :src="previewUrl">
@@ -226,6 +227,7 @@ import {
 // import { message } from 'ant-design-vue';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { uploadFile as uploadFileApi } from '/@/api/common/api';
+import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 
 // 定义文件类型接口
 interface FileItem {
@@ -614,7 +616,7 @@ const isImageFile = (file) => {
   if (!file) return false;
   const name = file.fileName || file.name || '';
   const ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
-  return ['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext);
+  return imageTypes.includes(ext);
 };
 
 // 判断是否为PDF文件
@@ -628,14 +630,14 @@ const isAudioFile = (file) => {
   if (!file) return false;
   const name = file.fileName || file.name || '';
   const ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
-  return ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].includes(ext);
+  return audioTypes.includes(ext);
 };
 // 判断是否为视频文件
 const isVideoFile = (file) => {
   if (!file) return false;
   const name = file.fileName || file.name || '';
   const ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
-  return ['mp4', 'avi', 'mkv', 'webm'].includes(ext);
+  return videoTypes.includes(ext);
 };
 </script>
 
