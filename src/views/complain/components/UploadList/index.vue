@@ -10,6 +10,11 @@
 
       <!-- 上传按钮 -->
       <div class="flex">
+        <!-- 从已有列表上传 -->
+        <!-- <a-button @click="handleUploadFromList" class="flex items-center">
+          <span>选择回复文件</span>
+        </a-button> -->
+        <!-- 添加 -->
         <a-button type="primary" @click="handleAddClick" class="flex items-center">
           <PlusOutlined />
           <span>添加</span>
@@ -53,7 +58,6 @@
               style="width: 100%"
               placeholder="请选择市级附件类型"
               :options="cityFileTypeOptions"
-              @change="(val) => handleTypeChange(val, record, 'city')"
             >
             </a-select>
           </template>
@@ -65,7 +69,6 @@
               style="width: 100%"
               placeholder="请选择区级附件类型"
               :options="districtFileTypeOptions"
-              @change="(val) => handleTypeChange(val, record, 'district')"
             />
           </template>
 
@@ -610,6 +613,10 @@ const handleTypeChange = (value, record, type) => {
     record.districtFileTagType = value;
   }
 };
+
+function handleUploadFromList() {
+  // 选择文件逻辑
+}
 
 // 判断是否为图片文件
 const isImageFile = (file) => {

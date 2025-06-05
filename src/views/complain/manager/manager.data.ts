@@ -221,6 +221,25 @@ export const searchFormSchema: FormSchema[] = [
       dayjs()
     ]
   },
+  // 回访结果
+  {
+    label: '回访结果',
+    field: 'upRevisitResultState',
+    component: 'ApiSelect',
+    componentProps: {
+      api: async () => {
+        const res = await getDictItems('biz_up_revisit_yes_no');
+        if (Array.isArray(res)) {
+          return res;
+        } else {
+          return [];
+        }
+      },
+      labelField: 'text',
+      valueField: 'value'
+    },
+    colProps: { span: 8 },
+  },
   {
     label: '关键字',
     field: 'keywords',

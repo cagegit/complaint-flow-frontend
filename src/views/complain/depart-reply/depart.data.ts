@@ -142,6 +142,12 @@ export const columns: BasicColumn[] = [
   { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
   { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
   { title: '书记批示', dataIndex: 'shujiSuggest', width: 150 },
+  {
+    title: '回访结果', dataIndex: 'upRevisitResultState', width: 120,
+    customRender: ({ text }) => {
+      return render.renderDict(text, 'biz_up_revisit_yes_no', true);
+    }
+  },
   //caseNature（案件性质）
   { title: '案件性质', dataIndex: 'caseNature_dictText', width: 120 },
   // caseType（案件类型）
