@@ -6,13 +6,13 @@
       <div>
         <h3>
           <!-- <img :src="logoImg" alt="jeecg" /> -->
-           城北接诉即办平台
+           <!-- 城北接诉即办平台 -->
         </h3>
       </div>
     </div>
     <div v-else class="aui-phone-logo">
       <!-- <img :src="logoImg" alt="jeecg" /> -->
-      城北接诉即办平台
+      <!-- 城北接诉即办平台 -->
     </div>
     <div v-show="type === 'login'">
       <div class="aui-content">
@@ -59,7 +59,7 @@
                         </div>
                       </div>
                       <div class="aui-flex">
-                        <div class="aui-flex-box">
+                        <!-- <div class="aui-flex-box">
                           <div class="aui-choice">
                             <a-input class="fix-auto-fill" type="checkbox" v-model:value="rememberMe" />
                             <span style="margin-left: 5px">{{ t('sys.login.rememberMe') }}</span>
@@ -67,7 +67,7 @@
                         </div>
                         <div class="aui-forget">
                           <a @click="forgetHandelClick"> {{ t('sys.login.forgetPassword') }}</a>
-                        </div>
+                        </div> -->
                       </div>
                     </div>
                   </a-form>

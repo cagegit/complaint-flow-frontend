@@ -39,19 +39,22 @@ import { useMessage } from '/@/hooks/web/useMessage';
 import ExportDayExcel from './ExportDay.vue';
 //@ts-ignore
 import ManagerEdit from './ManagerEdit.vue';
-import { usePermission } from '/@/hooks/web/usePermission';
-import { getExportUrl } from '../../system/dict/dict.api';
+// import { usePermission } from '/@/hooks/web/usePermission';
+// import { getExportUrl } from '../../system/dict/dict.api';
 import { downloadByUrl } from '/@/utils/file/download';
-import { ref } from 'vue';
-import { JCheckbox } from '/@/components/Form';
+import { ref, watch } from 'vue';
+// import { JCheckbox } from '/@/components/Form';
 import { reactive } from 'vue';
+import { useRoute } from 'vue-router';
 
 //注册modal
 const [registerModal, { openModal }] = useModal();
 const [registerExportDayModal, { openModal: openExportModal }] = useModal();
+// 当前路由
+const route = useRoute();
+const { createMessage } = useMessage();
 
-const { createMessage, createConfirm } = useMessage();
-const { isDisabledAuth } = usePermission();
+// const { isDisabledAuth } = usePermission();
 const columnNames = ref({});
 const form = reactive({
   sex: '1',
@@ -74,7 +77,7 @@ const sportOptions = [
 ];
 
 // 列表页面公共参数、方法
-const { prefixCls, tableContext, onExportXls } = useListPage({
+const { tableContext } = useListPage({
   designScope: 'ticket-manager',
   tableProps: {
     title: '工单管理列表',
@@ -110,7 +113,22 @@ const { prefixCls, tableContext, onExportXls } = useListPage({
       fixed: 'right',
     },
     beforeFetch: (params) => {
-      return Object.assign(params, { pageNum: params.pageNo });
+      console.log(params);
+      const query=  route.query;
+     if(query?.statusCode == '-1' && query?.resolveCount !== undefined) { // 二次办理statusCode + resolveCount
+        getForm?.()?.setFieldsValue({
+          statusCode: query.statusCode,
+          resolveCount: query.resolveCount
+        });
+        return Object.assign(params, { pageNum: params.pageNo, statusCode: query.statusCode, resolveCount: query.resolveCount });
+      } else if(query?.statusCode !== undefined) {
+        getForm?.()?.setFieldsValue({
+          statusCode: query.statusCode
+        });
+        return Object.assign(params, { pageNum: params.pageNo, statusCode: query.statusCode });
+      } else {
+        return Object.assign(params, { pageNum: params.pageNo });
+      }
     },
     // 高亮状态为重点件的行
     rowClassName: (record:any) => {
@@ -137,7 +155,30 @@ function getTableAction(record): ActionItem[] {
     // },
   ];
 }
-
+// 监听路由变化
+// watch(
+//   () => route.query,
+//   async (newQuery, oldQuery) => {
+//     // 当路由参数变化时，重新加载数据
+//     console.log('路由参数变化', newQuery, oldQuery);
+//     if (newQuery) {
+//       // reload();
+//       if(newQuery?.statusCode !== undefined) {
+//         // console.log(getForm);
+//         // await getForm?.()?.setFieldsValue({
+//         //   statusCode: newQuery.statusCode +'',
+//         // });
+//         // console.log('res', getForm?.()?.getFieldsValue());
+//         reload?.({
+//           searchInfo: {
+//             statusCode: newQuery.statusCode + '',
+//           },
+//         });
+//       }
+//     }
+//   },
+//   { immediate: true } // 初始加载时也执行一次
+// );
 function handleCreate() {
   openModal(true, {
     isUpdate: false,

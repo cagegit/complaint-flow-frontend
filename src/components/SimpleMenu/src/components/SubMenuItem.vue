@@ -275,6 +275,7 @@
         });
 
         rootMenuEmitter.on('on-update-active-name:submenu', (data: number[]) => {
+          console.log(data,instance?.uid);
           if (instance?.uid) {
             state.active = data.includes(instance?.uid);
           }

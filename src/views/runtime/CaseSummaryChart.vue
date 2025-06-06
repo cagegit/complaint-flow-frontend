@@ -147,7 +147,7 @@
             edgeDistance: 10,
             lineHeight: 15,
             formatter: (params) => {
-              console.log('params', params);
+              // console.log('params', params);
               const rate = params.data.rate || 0;
               return `{name|${params.name}} {percent|${params.percent}} {unit|%} \n {rate|同比} {${rate > 0 ? 'rateUp|' : rate == 0 ? 'zero|' : 'rateDown|'}} {rate|${rate}%}`;
             },

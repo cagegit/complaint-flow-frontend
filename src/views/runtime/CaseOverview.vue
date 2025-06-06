@@ -5,7 +5,7 @@
       <CustomTabs :data="tabs" />
     </div>
     <div class="long-case">
-      <div class="long-case-item">
+      <div class="long-case-item" @click="handleClick({href: '/complaint/manager'}, {importTime:''})">
         <img :src="caseIcon" alt="" class="case-item-l" />
         <div class="case-item-r">
           <div class="case-text">接件数</div>
@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div class="long-case-item">
+      <div class="long-case-item" @click="handleClick({href: '/complaint/manager'}, {statusCode:-1})">
         <img :src="doingIcon" alt="" class="case-item-l" />
         <div class="case-item-r">
           <div class="case-text">处理中</div>
@@ -61,14 +61,17 @@
   import { getOverviewCount, getSatisfyRate } from '@/api/complaint/statistic';
   import { calculateYoY } from '@/utils/dashboard';
   import EmptyState from '@/components/EmptyState/index.vue';
-  import { router } from '/@/router';
+  // import { router } from '/@/router';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
 
   const tabs = [{ value: 2, label: '期' }];
   const totalCase = ref(0);
   const doingCase = ref(0);
   const statusData = ref([
     {
-      label: '待分配',
+      label: '待分派',
       value: 0,
       bg: errorbg,
       href: '/complaint/assign',
@@ -83,7 +86,8 @@
       label: '二次办理',
       value: 0,
       bg: waitbg,
-      href: '/complaint/area-reply',
+      href: '/complaint/manager',
+      query: { statusCode: -1, resolveCount: '2' },
     },
     {
       label: '待回访',
@@ -105,10 +109,16 @@
     },
   ]);
 
-  const handleClick = (item: any) => {
+  const handleClick = (item: any, query?: any) => {
     console.log(item);
     if (item.href) {
-      router.push(item.href);
+      const params:any = { path: item.href };
+      if(item.query) {
+        params.query = item.query;
+      } else if(query) {
+        params.query = query;
+      }
+      router.push(params);
     }
   };
 
