@@ -31,6 +31,9 @@
   import { RomplaintTypeTabs, RangeTypeEnum, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
 
+  // 控制是否使用模拟数据
+  const useMockData = ref(false);
+
   interface DissatisfactionData {
     caseCount: number;
     labelName: string;
@@ -90,7 +93,12 @@
       const segmentStart = startRad;
       const segmentEnd = startRad + (endRad - startRad);
 
-      const coords = getCoordinates(segmentStart, segmentEnd);
+      const coords = getCoordinates(segmentStart, segmentEnd) as {
+        x: number;
+        y: number;
+        x2: number;
+        y2: number;
+      };
       const startColor = `rgba(${item.color}, 0)`;
       const endColor = `rgba(${item.color}, 1)`;
 
@@ -225,6 +233,47 @@
     }
   };
 
+  // 生成模拟数据
+  const generateMockData = (): DissatisfactionData[] => {
+    const mockData: DissatisfactionData[] = [];
+    // 创建足够多的类别，与颜色数组长度相匹配
+    const categories = [
+      '产品质量',
+      '服务态度',
+      '价格问题',
+      '售后服务',
+      '物流配送',
+      '商品描述',
+      '退款问题',
+      '发票问题',
+      '包装问题',
+      '商品破损',
+      '延迟发货',
+      '客服响应慢',
+      '退换货难',
+      '虚假宣传',
+      '质保问题',
+      '系统故障',
+      '账户问题',
+      '支付问题',
+      '优惠券问题',
+    ];
+
+    // 确保类别数量与颜色数组长度一致
+    const selectedCategories = categories.slice(0, colors.length);
+
+    // 为每个类别生成随机数据
+    selectedCategories.forEach((category, index) => {
+      mockData.push({
+        caseCount: Math.floor(Math.random() * 100) + 10, // 10-110的随机数
+        labelName: category,
+        color: colors[index],
+      });
+    });
+
+    return mockData;
+  };
+
   const fetchData = async () => {
     let parmas: any = {
       rangeType: rangeTypeRef.value,
@@ -233,13 +282,22 @@
       endTime: endTimeRef.value,
     };
     try {
-      const res: any = await getDoubleNoList(parmas);
+      let res: any;
+
+      if (useMockData.value) {
+        // 使用模拟数据
+        res = generateMockData();
+      } else {
+        // 使用真实接口数据
+        res = await getDoubleNoList(parmas);
+      }
+
       const nowTotal = res.reduce((acc, item) => acc + item.caseCount, 0);
       total.value = nowTotal;
       dissatisfactionData.value = res.map((item, index) => ({
         caseCount: item.caseCount,
         labelName: item.labelName,
-        color: colors[index],
+        color: colors[index % colors.length],
       }));
       initChart();
     } catch (error) {

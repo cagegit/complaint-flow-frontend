@@ -90,7 +90,7 @@
   import yellowLongSelect from '@/assets/images/composite/yellow-long-s.png';
   import { getDictItems } from '/@/api/common/api';
 
-  const pageSize = 16;
+  const pageSize = 11;
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
 
@@ -118,23 +118,28 @@
   const onCategoryClick = (value) => {
     console.log('onCategoryClick', value);
     if (selectedCategory.value === value) {
-      selectedCategory.value = '';
-    } else {
-      selectedCategory.value = value;
+      return;
     }
+    selectedCategory.value = value;
     fetchData();
   };
 
   const onPrevPage = () => {
     console.log('上一页');
-    currentPage.value = 1;
+    if (currentPage.value === 1) {
+      return;
+    }
+    currentPage.value = currentPage.value - 1;
     getPageData(allData.value);
     initChart();
   };
 
   const onNextPage = () => {
     console.log('下一页');
-    currentPage.value = 2;
+    if (currentPage.value === Math.ceil(allData.value.length / pageSize)) {
+      return;
+    }
+    currentPage.value = currentPage.value + 1;
     getPageData(allData.value);
     initChart();
   };
@@ -288,7 +293,7 @@
             barGap: 0,
             data: caseCount.value,
             yAxisIndex: 0,
-            barWidth: 10,
+            barWidth: 16,
             itemStyle: {
               color: {
                 type: 'linear',
@@ -314,18 +319,17 @@
                 value: {
                   color: '#fff',
                   align: 'right',
-                  padding: [0, 2, 4, 0],
+                  padding: [0, 5, 4, 0],
                 },
                 block: {
                   height: 2,
-                  width: 12,
+                  width: 16,
                   backgroundColor: {
                     image: blockImage,
                   },
-                  align: 'right',
                 },
               },
-              offset: [5, 6], // 调整标签位置，向上偏移
+              offset: [8, 5], // 调整标签位置，向上偏移
             },
           },
           {
@@ -333,7 +337,7 @@
             type: 'bar',
             data: doubleYesRate.value,
             yAxisIndex: 1,
-            barWidth: 10,
+            barWidth: 16,
             itemStyle: {
               color: {
                 type: 'linear',
@@ -353,7 +357,7 @@
               align: 'center', // 右对齐
               distance: 5,
               formatter: function (params) {
-                return `{value|${params.value}%}\n{block|}`;
+                return `{value|${params.value}}\n{block|}`;
               },
               rich: {
                 value: {
@@ -363,7 +367,7 @@
                 },
                 block: {
                   height: 2,
-                  width: 10,
+                  width: 16,
                   backgroundColor: {
                     image: blockImage,
                   },
@@ -378,7 +382,7 @@
             type: 'bar',
             data: doubleNoRate.value,
             yAxisIndex: 1,
-            barWidth: 10,
+            barWidth: 16,
             itemStyle: {
               color: {
                 type: 'linear',
@@ -398,24 +402,24 @@
               align: 'left', // 右对齐
               distance: 5,
               formatter: function (params) {
-                return `{value|${params.value}%}\n{block|}`;
+                return `{value|${params.value}}\n{block|}`;
               },
               rich: {
                 value: {
                   color: '#fff',
                   align: 'left',
-                  padding: [0, 0, 4, 0],
+                  padding: [0, 0, 4, 5],
                 },
                 block: {
                   height: 2,
-                  width: 12,
+                  width: 16,
                   backgroundColor: {
                     image: blockImage,
                   },
                   align: 'left',
                 },
               },
-              offset: [-5, 5], // 调整标签位置，向上偏移
+              offset: [-8, 5], // 调整标签位置，向上偏移
             },
           },
         ],
@@ -511,6 +515,7 @@
           });
         }
       });
+      selectedCategory.value = newGreenCategories[0].label;
       greenCategories.value = newGreenCategories;
       blueCategories.value = newBlueCategories;
       yellowCategories.value = newYellowCategories;

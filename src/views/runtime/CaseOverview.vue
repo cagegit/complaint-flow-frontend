@@ -126,31 +126,38 @@
   const isDirectEmpty = ref(false);
   const isCompositeEmpty = ref(false);
 
+  const colors = ref([
+    '62, 237, 241',
+    '242, 127, 69',
+    '224, 224, 224',
+    '244, 229, 106',
+  ]);
+
   // 案件总结数据
   const directData = ref([
     {
       value: 0,
       name: '双是',
       rate: 0,
-      color: '62, 237, 241',
+      color: colors.value[0],
     },
     {
       value: 0,
       name: '单是',
       rate: 0,
-      color: '242, 127, 69',
+      color: colors.value[1],
     },
     {
       value: 0,
       name: '双否',
       rate: 0,
-      color: '224, 224, 224',
+      color: colors.value[2],
     },
     {
       value: 0,
       name: '其他',
       rate: 0,
-      color: '244, 229, 106',
+      color: colors.value[3],
     },
   ]);
   const compositeData = ref([
@@ -158,25 +165,25 @@
       value: 0,
       name: '双是',
       rate: 0,
-      color: '62, 237, 241',
+      color: colors.value[0],
     },
     {
       value: 0,
       name: '单是',
       rate: 0,
-      color: '242, 127, 69',
+      color: colors.value[1],
     },
     {
       value: 0,
       name: '双否',
       rate: 0,
-      color: '224, 224, 224',
+      color: colors.value[2],
     },
     {
       value: 0,
       name: '其他',
       rate: 0,
-      color: '244, 229, 106',
+      color: colors.value[3],
     },
   ]);
 
@@ -227,25 +234,25 @@
           value: directRes.doubleYes,
           name: '双是',
           rate: calculateYoY(directRes.doubleYes, directRes.lastDoubleYes),
-          color: '62, 237, 241',
+          color: colors.value[0],
         },
         {
           value: directRes.singleYes,
           name: '单是',
           rate: calculateYoY(directRes.singleYes, directRes.lastSingleYes),
-          color: '242, 127, 69',
+          color: colors.value[1],
         },
         {
           value: directRes.doubleNo,
           name: '双否',
           rate: calculateYoY(directRes.doubleNo, directRes.lastDoubleNo),
-          color: '224, 224, 224',
+          color: colors.value[2],
         },
         {
           value: directRes.other,
           name: '其他',
           rate: calculateYoY(directRes.other, directRes.lastOther),
-          color: '244, 229, 106',
+          color: colors.value[3],
         },
       ];
       const compositeRes: any = await getSatisfyRate();
@@ -258,25 +265,25 @@
           value: compositeRes.doubleYes,
           name: '双是',
           rate: calculateYoY(compositeRes.doubleYes, compositeRes.lastDoubleYes),
-          color: '62, 237, 241',
+          color: colors.value[0],
         },
         {
           value: compositeRes.singleYes,
           name: '单是',
           rate: calculateYoY(compositeRes.singleYes, compositeRes.lastSingleYes),
-          color: '242, 127, 69',
+          color: colors.value[1],
         },
         {
           value: compositeRes.doubleNo,
           name: '双否',
           rate: calculateYoY(compositeRes.doubleNo, compositeRes.lastDoubleNo),
-          color: '224, 224, 224',
+          color: colors.value[2],
         },
         {
           value: compositeRes.other,
           name: '其他',
           rate: calculateYoY(compositeRes.other, compositeRes.lastOther),
-          color: '244, 229, 106',
+          color: colors.value[3],
         },
       ];
     } catch (error) {

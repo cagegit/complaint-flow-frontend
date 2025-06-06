@@ -131,7 +131,7 @@
             alignTicks: true,
             axisLabel: {
               color: '#B0E1D9',
-              formatter: '{value}%',
+              formatter: '{value}',
             },
           },
         ],
@@ -211,7 +211,7 @@
               formatter: function (params) {
                 // params 包含当前数据项的信息，例如 dataIndex（索引）和 value（数值）
                 if (params.dataIndex % 2 === 0) {
-                  return `${params.value}%`; // 显示偶数索引的标签值
+                  return `${params.value}`; // 显示偶数索引的标签值
                 } else {
                   return ''; // 奇数索引返回空字符串，达到隐藏效果
                 }
@@ -253,7 +253,7 @@
               formatter: function (params) {
                 // params 包含当前数据项的信息，例如 dataIndex（索引）和 value（数值）
                 if (params.dataIndex % 2 === 0) {
-                  return `${params.value}%`; // 显示偶数索引的标签值
+                  return `${params.value}`; // 显示偶数索引的标签值
                 } else {
                   return ''; // 奇数索引返回空字符串，达到隐藏效果
                 }

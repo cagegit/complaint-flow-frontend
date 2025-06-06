@@ -16,6 +16,9 @@
   import upIcon from '@/assets/images/runtime/category/up-icon.png';
   import downIcon from '@/assets/images/runtime/category/down-icon.png';
 
+  // 控制是否使用模拟数据
+  const useMockData = ref(true);
+
   const props = defineProps({
     seriesData: {
       type: Array,
@@ -28,9 +31,30 @@
   let chartInstance = null;
   let isNo100 = ref(false);
 
+  // 生成模拟数据
+  const generateMockData = () => {
+    const categories = ['直派案件', '综合案件', '一般案件', '特殊案件'];
+    const colors = ['96, 240, 187', '255, 133, 71', '126, 232, 250', '255, 206, 86'];
+
+    return categories.map((name, index) => {
+      const value = Math.floor(Math.random() * 30) + 5; // 5-35的随机数
+      const rate = Math.floor(Math.random() * 40) - 20; // -20到+20的同比率
+
+      return {
+        name,
+        value,
+        color: colors[index % colors.length],
+        rate,
+      };
+    });
+  };
+
   function processData(data) {
-    const total = data.reduce((sum, item) => sum + item.value, 0);
-    const result = [...data];
+    // 如果启用了mock且没有真实数据，使用模拟数据
+    const processedData = useMockData.value ? generateMockData() : [...data];
+
+    const total = processedData.reduce((sum, item) => sum + item.value, 0);
+    const result = [...processedData];
 
     chartNumber.value = total;
 
@@ -62,7 +86,6 @@
     let startAngle = 180;
     // 已经按100补齐
     const total = 100;
-    let currentAngleSum = 0;
     data.forEach((item, index) => {
       const angle = (item.value / total) * 360;
       const endAngle = startAngle + angle;
@@ -122,7 +145,6 @@
       series.push(targetSerie);
 
       startAngle = endAngle;
-      currentAngleSum += angle;
     });
 
     const option = {
@@ -131,7 +153,6 @@
       },
       series: [
         {
-          name: '双是率',
           type: 'pie',
           radius: ['68%', '75%'], // 调细圆环
           startAngle: -90,
@@ -214,8 +235,15 @@
   };
 
   const initChart = () => {
+    if (chartInstance) {
+      chartInstance.dispose();
+    }
     chartInstance = echarts.init(chartRef.value);
     setChartOption();
+    // 初始化后立即调整大小
+    setTimeout(() => {
+      resizeChart();
+    }, 0);
   };
 
   onMounted(() => {
@@ -235,7 +263,7 @@
     () => [props.seriesData, props.xAxisData],
     () => {
       nextTick(() => {
-        setChartOption();
+        initChart();
       });
     },
     { deep: true }
@@ -249,11 +277,13 @@
 <style scoped lang="less">
   .chart-container {
     width: 100%;
-    height: 202px;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+    padding: 10px 0;
+    box-sizing: border-box;
     .chart-bg {
       position: absolute;
       width: 203px;

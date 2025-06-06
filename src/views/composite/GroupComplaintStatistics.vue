@@ -24,10 +24,23 @@
   import CaseLabelBox from '@/components/CaseLabelBox/index.vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
+  // 保留导入但添加注释表明暂时未使用
+  // eslint-disable-next-line
   import { getQunsuList, getTimeCycle, getYearCycle } from '@/api/complaint/statistic';
   import { message } from 'ant-design-vue';
   import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
+
+  // 控制是否使用模拟数据
+  const useMockData = ref(false);
+
+  // 定义数据接口
+  interface ChartDataItem {
+    caseCount: number;
+    doubleYes: number;
+    doubleNo: number;
+    labelName: string;
+  }
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
@@ -41,6 +54,26 @@
   const caseCount = ref<number[]>([]); // 诉件数
   const doubleYesRate = ref<number[]>([]); // 双正
   const doubleNoRate = ref<number[]>([]); // 双负
+
+  // 模拟数据生成函数
+  const generateMockData = (count = 6): ChartDataItem[] => {
+    const mockData: ChartDataItem[] = [];
+    const months = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+    const years = ['2021', '2022', '2023', '2024'];
+
+    for (let i = 0; i < count; i++) {
+      mockData.push({
+        caseCount: Math.floor(Math.random() * 1000) + 100, // 100-1100 的随机数
+        doubleYes: Math.floor(Math.random() * 60) + 20, // 20-80 的随机数
+        doubleNo: Math.floor(Math.random() * 40) + 10, // 10-50 的随机数
+        labelName:
+          rangeTypeRef.value === RangeTypeEnum.MONTH
+            ? months[Math.floor(Math.random() * months.length)]
+            : years[Math.floor(Math.random() * years.length)],
+      });
+    }
+    return mockData;
+  };
 
   const initChart = () => {
     if (chartRef.value) {
@@ -181,8 +214,9 @@
             label: {
               show: true,
               position: 'top',
-              formatter: '{c}%',
+              formatter: '{c}',
               color: '#fff',
+              offset: [0, 4], // 调整标签位置，向上偏移
             },
           },
           {
@@ -200,8 +234,9 @@
             label: {
               show: true,
               position: 'top',
-              formatter: '{c}%',
+              formatter: '{c}',
               color: '#fff',
+              offset: [0, 4], // 调整标签位置，向上偏移
             },
           },
         ],
@@ -270,19 +305,29 @@
   };
 
   const fetchData = async () => {
-    let parmas: any = {
+    // eslint-disable-next-line
+    const params = {
       sourceType: sourceTypeRef.value,
       rangeType: rangeTypeRef.value,
       startTime: startTimeRef.value,
       endTime: endTimeRef.value,
     };
     try {
-      const res: any = await getQunsuList(parmas);
+      let res: ChartDataItem[];
+
+      if (useMockData.value) {
+        // 使用模拟数据
+        res = generateMockData();
+      } else {
+        // 使用真实接口数据
+        res = (await getQunsuList(params)) as ChartDataItem[];
+      }
+
       const newCaseCount: number[] = [];
       const newDoubleYesRate: number[] = [];
       const newDoubleNoRate: number[] = [];
       const newLabelNames: string[] = [];
-      res.forEach((item: any) => {
+      res.forEach((item: ChartDataItem) => {
         newCaseCount.push(item.caseCount);
         newDoubleYesRate.push(item.doubleYes);
         newDoubleNoRate.push(item.doubleNo);

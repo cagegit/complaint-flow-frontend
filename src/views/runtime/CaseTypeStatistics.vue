@@ -128,7 +128,7 @@
         },
         {
           type: 'value',
-          name: '百分比',
+          name: '双是率',
           nameTextStyle: {
             color: '#B0E1D9',
             fontSize: 14,
@@ -259,7 +259,7 @@
         yAxisIndex: 0,
       },
       {
-        label: '百分比',
+        label: '双是率',
         data: currentCaseStatistics.value.map((item) => item.satisfyRate),
         color: YES_PERCENT_COLOR.rgbStr, // 橙色
         yAxisIndex: 1,
