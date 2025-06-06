@@ -108,9 +108,15 @@
 
 </script>
 <style lang="less">
-  // update-begin--author:liaozhiyang---date:20230803---for：【QQYUN-5839】windi会影响到html2canvas绘制的图片样式
   img {
     display: inline-block;
   }
-  // update-end--author:liaozhiyang---date:20230803---for：【QQYUN-5839】windi会影响到html2canvas绘制的图片样式
+  .highlight-table-row {
+    background-color: oklch(63.7% 0.237 25.331);
+    color: #fff;
+  }
+  .highlight-table-row:hover > td {
+    background-color: oklch(63.7% 0.237 25.331) !important;
+    color: #fff;
+  }
 </style>

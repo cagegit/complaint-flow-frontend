@@ -154,6 +154,10 @@
             console.log(params);
             return Object.assign(params, { pageNum:  params.pageNo });
             },
+            // 高亮状态为重点件的行
+            rowClassName: (record:any) => {
+              return record.labelCode == '11' ? 'highlight-table-row' : '';
+            }
         },
         // exportConfig: {
         //   name: '用户列表',
