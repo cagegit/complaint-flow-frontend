@@ -713,7 +713,7 @@ export const formAuditSchema: FormSchema[] = [
     field: 'followCode',
     label: '跟进情况',
     component: 'ApiSelect',
-    required: true,
+    // required: true,
     componentProps: {
       api: async () => {
         const res  = await getDictItems('biz_follow_code')

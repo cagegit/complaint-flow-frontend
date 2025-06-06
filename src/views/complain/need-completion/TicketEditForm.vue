@@ -49,7 +49,7 @@
                     </template>
                     <!-- 附件 -->
                       <template #uploadAttachmentsSlot="{model, field}">
-                      <UploadList v-model="model[field]" />
+                      <UploadList v-model:value="model[field]" @change="changePreList" />
                       </template>
                   </BasicForm>
                 </div>
@@ -123,7 +123,8 @@
     const total = ref(0);
     // 表单详情
     const ticketDetail = ref<any>({});
-
+    // 预回文件列表
+    let preReplyFileList:any[] = [];
     // 拒绝表单
     const rejectFormSchema:any[] = [
       // 驳回原因
@@ -193,6 +194,8 @@
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
       console.log(data);
+      // 恢复默认设置
+      preReplyFileList = []
       activeKey.value = '1'; // 默认选中预回复
       finalChoice.value = '1'; // 默认选择最终回复
       showFooter.value = data?.showFooter ?? true;
@@ -254,7 +257,10 @@
       return '最终审核';
     });
     // const { adaptiveWidth } = useDrawerAdaptiveWidth();
-  
+   function changePreList(list:any[]) {
+      console.log(list);
+      preReplyFileList = list;
+    }
     //提交事件
     async function handleSubmit() {
       try {
@@ -281,12 +287,16 @@
             setModalProps({ confirmLoading: false });
             throw new Error('请上传附件');
           } else {
-            try{
-              const list = JSON.parse(params.attachments);
-              newFileList = list;
-            } catch(err) {
-              console.error('Error uploading attachments:', err);
-            }   
+            newFileList = preReplyFileList.map(v => {
+              return {
+                districtFileTagType: v.districtFileTagType,
+                fileKey: v.fileKey,
+                fileName: v.fileName,
+                fileSize: v.fileSize,
+                fileTagType: v.fileTagType,
+                id: v.id
+              }
+             });  
           }
           // 最终回复
           const newParams = {

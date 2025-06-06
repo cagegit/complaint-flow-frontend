@@ -32,7 +32,7 @@
            </template>
            <!-- 附件 -->
             <template #uploadAttachmentsSlot="{model, field}">
-             <UploadList v-model="model[field]" />
+             <UploadList v-model:value="model[field]" />
              </template>
          </BasicForm>
     </div>

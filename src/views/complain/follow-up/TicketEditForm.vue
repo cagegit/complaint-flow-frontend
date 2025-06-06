@@ -73,9 +73,9 @@
                     </a-space>
                   </template>
                   <!-- 附件 -->
-                  <!-- <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model="model[field]" />
-                  </template> -->
+                  <template #uploadAttachmentsSlot="{model, field}">
+                    <UploadList v-model="model[field]"  @change="changePreList"/>
+                  </template>
               </BasicForm>
             </a-tab-pane>
             <a-tab-pane key="2" tab="基础信息" force-render>
@@ -110,15 +110,15 @@
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     // @ts-ignore
-    // import UploadList from '../components/UploadList/index.vue';
+    import UploadList from '../components/UploadList/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
     import { getDictItemsByCode } from '/@/utils/dict';
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // @ts-ignore
-    import { preFormLogicHandler, formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
-import { audioTypes, imageTypes } from '/@/utils/fileType';
+   import { audioTypes, imageTypes } from '/@/utils/fileType';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
@@ -145,6 +145,8 @@ import { audioTypes, imageTypes } from '/@/utils/fileType';
     const collapsibleKey = ref<string | null>('2');
     // 表单详情
     const ticketDetail = ref<any>({});
+    // 预回文件列表
+    let preReplyFileList:any[] = [];
     // 从字典获取跟进情况
     const followCodeInfo = computed(() => {
       const array = getDictItemsByCode('biz_follow_code') || [];
@@ -204,6 +206,8 @@ import { audioTypes, imageTypes } from '/@/utils/fileType';
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
       console.log(data);
+      // 恢复默认值
+      preReplyFileList = []
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
@@ -295,7 +299,11 @@ import { audioTypes, imageTypes } from '/@/utils/fileType';
       return '工单回访';
     });
     const { adaptiveWidth } = useDrawerAdaptiveWidth();
-  
+
+    function changePreList(list:any[]) {
+      console.log(list);
+      preReplyFileList = list;
+    }
     //提交事件
     async function handleSubmit() {
       try {
@@ -308,12 +316,16 @@ import { audioTypes, imageTypes } from '/@/utils/fileType';
             // 判断附件是否存在
             let newFileList:any[] = [];
             if (preParams?.attachments) {
-               try{
-                const list = JSON.parse(preParams.attachments);
-                newFileList = list;
-              } catch(err) {
-                console.error('Error uploading attachments:', err);
-              } 
+              newFileList = preReplyFileList.map(v => {
+                return {
+                  districtFileTagType: v.districtFileTagType,
+                  fileKey: v.fileKey,
+                  fileName: v.fileName,
+                  fileSize: v.fileSize,
+                  fileTagType: v.fileTagType,
+                  id: v.id
+                }
+               });  
             }
             const resResult = await savePreReply({
               "deleteFileIdList": [],

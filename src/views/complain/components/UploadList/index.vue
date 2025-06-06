@@ -47,7 +47,7 @@
           <!-- 文件名称 -->
           <template v-if="column.key === 'fileName'">
             <div class="flex items-center">
-              <a-input v-model:value="record.fileName" />
+              <a-input v-model:value="record.fileName"  :maxLength="200"/>
               <PaperClipOutlined v-if="record.fileKey" class="ml-1 text-gray-400" />
             </div>
           </template>
@@ -217,7 +217,7 @@
 </template>
 
 <script setup lang="ts" name="UploadList">
-import { ref, computed, onMounted, watch, PropType } from 'vue';
+import { ref, onMounted, watch, defineModel, defineProps, PropType, unref } from 'vue';
 //@ts-ignore
 import { 
   PlusOutlined, 
@@ -249,10 +249,10 @@ interface FileItem {
 
 // 组件属性定义
 const props = defineProps({
-  value: {
-    type: Array as PropType<FileItem[]>,
-    default: () => []
-  },
+  // value: {
+  //   type: Array as PropType<FileItem[]>,
+  //   default: () => []
+  // },
   readOnly: {
     type: Boolean,
     default: false
@@ -267,11 +267,14 @@ const props = defineProps({
   },
   accept: {
     type: String,
-    default: '.pdf,.doc,.docx,.xls,.xlsx,.txt,.png,.jpg,.jpeg,.aac,.wma,.cda,.flac,.mid,.mka,.mp2,.mpa,.mpc,.ape,.ofr,.ogg,.ra,.wv,.tta,.ac3,.dts,.mp3,.mp4,.m4a,.zip,.wav,.rar'
+    default: '.pdf,.doc,.docx,.xls,.xlsx,.txt,.png,.jpg,.jpeg,.aac,.wma,.cda,.flac,.mid,.mka,.mp2,.mpa,.mpc,.ape,.ofr,.ogg,.ra,.wv,.tta,.ac3,.dts,.mp3,.mp4,.m4a,.wav'
   }
 });
-
-const emit = defineEmits(['update:value', 'change','update:modelValue']);
+const modelValue = defineModel('value', {
+  type: Array as PropType<FileItem[]>,
+  default: () => []
+});
+const emit = defineEmits(['change']);
 
 // 创建消息实例
 const { createMessage } = useMessage();
@@ -381,46 +384,95 @@ const districtFileTypeOptions = [
   { label: '录音', value: 2 },
 ];
 
-// 监听props变化
+// // 监听props变化
+// watch(
+//   () => props.value,
+//   (newVal, oldVal) => {
+//     let hasChanges = false;
+//     console.log('props.value变化:', newVal, oldVal);
+//     try {
+//       hasChanges = JSON.stringify(newVal) !== JSON.stringify(oldVal);
+//     } catch (error) {
+//       console.error('Error in watch:', error);
+//     }
+//     console.log('hasChanges:', hasChanges);
+//     if (hasChanges) {
+//       fileList.value = [...newVal];
+//     }
+//   },
+//   { immediate: true, deep: true }
+// );
+
+// // 监听文件列表变化
+// watch(
+//   () => fileList.value,
+//   (newVal, _oldVal) => {
+//     // let hasChanges = false;
+//     // console.log(newVal, oldVal);
+//     // console.log(JSON.stringify(newVal), JSON.stringify(oldVal));
+//     // try {
+//     //   hasChanges = JSON.stringify(newVal) !== JSON.stringify(oldVal);
+//     // } catch (error) {
+//     //   console.error('Error in watch:', error);
+//     // }
+//     // if (!hasChanges) return;
+//     let jsonStr:any = ''
+//     try {
+//       jsonStr = JSON.stringify(newVal);
+//     } catch (error) {
+//       console.error('Error converting fileList to JSON:', error);
+//     }
+//     console.log('文件列表变化:', newVal);
+//     console.log('文件列表变化 JSON:', jsonStr);
+//     // emit('update:value', newVal);
+//     emit('change', newVal);
+//     emit('update:modelValue', jsonStr);
+//   },
+//   { deep: true, immediate: true }
+// );
+
+//  const newValue = computed({
+//   get: () => props.value,
+//   set: (nv) => {
+//     console.log('newValue set:', nv);
+//     let jsonStr:any = ''
+//     try {
+//       jsonStr = JSON.stringify(nv);
+//     } catch (error) {
+//       console.error('Error converting fileList to JSON:', error);
+//     }
+//     emit('update:value', jsonStr)
+//   }
+// })
+// 同步 modelValue -> fileList
 watch(
-  () => props.value,
-  (newVal, oldVal) => {
-    let hasChanges = false;
-    try {
-      hasChanges = JSON.stringify(newVal) !== JSON.stringify(oldVal);
-    } catch (error) {
-      console.error('Error in watch:', error);
-    }
-    if (hasChanges) {
+  () => modelValue.value,
+  (newVal) => {
+    if (newVal && Array.isArray(newVal)) {
       fileList.value = [...newVal];
     }
   },
   { immediate: true, deep: true }
 );
 
-// 监听文件列表变化
+// 同步 fileList -> modelValue
 watch(
-  fileList,
-  (newVal, oldVal) => {
-    let hasChanges = false;
-    try {
-      hasChanges = JSON.stringify(newVal) !== JSON.stringify(oldVal);
-    } catch (error) {
-      console.error('Error in watch:', error);
+  () => fileList.value,
+  (newVal) => {
+    console.log(modelValue.value, newVal);
+   // 避免循环更新，只在值真正变化时才更新
+    if (JSON.stringify(modelValue.value) !== JSON.stringify(newVal)) {
+      modelValue.value = [...newVal];
     }
-    if (!hasChanges) return;
-    emit('update:value', newVal);
-    emit('change', newVal);
-    const str = JSON.stringify(newVal);
-    emit('update:modelValue', str);
+    // 保留 change 事件，确保向后兼容
+    emit('change', unref(newVal));
   },
   { deep: true }
 );
-
 // 初始化
 onMounted(() => {
-  if (props.value && props.value.length > 0) {
-    fileList.value = [...props.value];
+  if (modelValue && modelValue.length > 0) {
+    fileList.value = modelValue.value;
   }
 });
 

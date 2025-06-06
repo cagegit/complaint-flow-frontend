@@ -1,3 +1,4 @@
+import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { pageNoToPageNum } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
@@ -9,7 +10,8 @@ export enum Api {
   // 最终回复
   saveReviewReply = '/complain/upAudit/finalReply',
   // 最终驳回
-  confirmReply = '/complain/upAudit/confirmReply',
+  // confirmReply = '/complain/upAudit/confirmReply',
+  confirmReply = '/complain/upAudit/reject',
 }
 /**
  * 已接收列表
@@ -68,5 +70,5 @@ export const saveReviewReply = (param) => {
  * 保存审核驳回
  */
 export const confirmReply = (param) => {
-  return defHttp.post({ url: Api.confirmReply, data: param})
+  return defHttp.post({ url: Api.confirmReply, data: param, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED}})
 }

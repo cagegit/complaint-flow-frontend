@@ -38,7 +38,7 @@
                   </template>
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model="model[field]" />
+                    <UploadList v-model:value="model[field]" @change="changePreList" />
                     </template>
                 </BasicForm>
               </div>
@@ -109,6 +109,8 @@
     const currentEditRecordRef = ref<any>(null);
     // 表单详情
     const ticketDetail = ref<any>({});
+    // 预回文件列表
+    let preReplyFileList:any[] = [];
     // 预回复表单
     const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue, updateSchema }] = useForm({
       labelWidth: 150,
@@ -150,6 +152,8 @@
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
       console.log(data);
+      // 恢复默认值
+      preReplyFileList = []
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
@@ -235,6 +239,10 @@
     });
     const { adaptiveWidth } = useDrawerAdaptiveWidth();
   
+    function changePreList(list:any[]) {
+      console.log(list);
+      preReplyFileList = list;
+    }
     //提交事件
     async function handleSubmit() {
       try {
@@ -242,12 +250,11 @@
         let auditValues = await validateAuditForm();
         // 预回复表单
         let preReplyValues = await validatePreReplyForm();
-        console.log('auditValues', auditValues);
-        console.log('preReplyValues', preReplyValues);
+        // console.log('auditValues', auditValues);
+        // console.log('preReplyValues', preReplyValues);
         // 先验证回访审核表单
         let values = await validate();
         setModalProps({ confirmLoading: true });
-        
         // 判断附件是否存在
         let newFileList:any[] = [];
         if (!preReplyValues?.attachments) {
@@ -255,14 +262,18 @@
           setModalProps({ confirmLoading: false });
           throw new Error('请上传附件');
         } else {
-           try{
-             const list = JSON.parse(preReplyValues.attachments);
-             newFileList = list;
-           } catch(err) {
-            console.error('Error uploading attachments:', err);
-           }   
+          newFileList = preReplyFileList.map(v => {
+            return {
+              districtFileTagType: v.districtFileTagType,
+              fileKey: v.fileKey,
+              fileName: v.fileName,
+              fileSize: v.fileSize,
+              fileTagType: v.fileTagType,
+              id: v.id
+            }
+          });  
         }
-
+        // console.log('newFileList', newFileList);
         let isUpdateVal = unref(isUpdate);
         let params = values;
         const ticketId = currentEditRecordRef.value?.id;
