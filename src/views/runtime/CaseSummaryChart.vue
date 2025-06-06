@@ -17,7 +17,7 @@
   import downIcon from '@/assets/images/runtime/category/down-icon.png';
 
   // 控制是否使用模拟数据
-  const useMockData = ref(true);
+  const useMockData = ref(false);
 
   const props = defineProps({
     seriesData: {
