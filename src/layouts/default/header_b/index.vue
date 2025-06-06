@@ -1,6 +1,6 @@
 <template>
     <div class="screen-header" :class="getHeaderClass">
-      <Header :showAvatar="true"/>
+      <Header :index="3" :showAvatar="true"/>
     </div>
 </template>
 <script setup lang="ts">
