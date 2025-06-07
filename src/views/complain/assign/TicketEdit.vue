@@ -3,7 +3,7 @@
       v-bind="$attrs"
       @register="registerDrawer"
       :title="getTitle"
-      :width="900"
+      :width="1000"
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose

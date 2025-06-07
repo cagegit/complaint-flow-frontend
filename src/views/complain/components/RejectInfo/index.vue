@@ -61,7 +61,7 @@
             return false;
         }
         // 如果没有区级回复信息，直接返回false
-        return defaultInfo.upRevisit === 1 && defaultInfo.upReplyAudit === 1;
+        return defaultInfo.upRevisit == 1 && defaultInfo.upReplyAudit == 1;
     });
     // 回访结果
     const visitResult = computed(() => {

@@ -3,7 +3,7 @@
       v-bind="$attrs"
       @register="registerDrawer"
       :title="getTitle"
-      :width="900"
+      :width="1000"
       @ok="handleSubmit"
       :showFooter="showFooter"
       destroyOnClose
@@ -112,7 +112,7 @@
     // 预回文件列表
     let preReplyFileList:any[] = [];
     // 预回复表单
-    const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue, updateSchema }] = useForm({
+    const [registerPreReplyForm, { validate: validatePreReplyForm, clearValidate: clearPreReplyValidate, setFieldsValue: setPreReplyFieldsValue, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: preReplyFormSchema,
       showActionButtonGroup: false,
@@ -228,6 +228,8 @@
           const upReply = preRes.upReply;
           // 更新组件级联关系
           preFormLogicHandler(upReply, updateSchema);
+          // 清除验证
+          clearPreReplyValidate?.();
         }
       }).catch(err => {
         console.error('查询预回复详情失败', err);

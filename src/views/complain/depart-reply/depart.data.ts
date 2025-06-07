@@ -90,6 +90,7 @@ export const columns: BasicColumn[] = [
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
   { title: '状态', dataIndex: 'processName', width: 120 },
+  { title: '驳回原因', dataIndex: 'rejectReason', width: 200 },
   { title: '月次', dataIndex: 'monthCount', width: 80, 
     slots:{
       customRender: 'monthCount',
@@ -128,7 +129,6 @@ export const columns: BasicColumn[] = [
   //  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
   //  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
-   { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
    { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
    { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
    { title: '处理次数', dataIndex: 'resolveCount', width: 120 },

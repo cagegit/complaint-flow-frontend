@@ -50,7 +50,7 @@
             </BasicForm>
             <a-divider>可选表单区域</a-divider>
                <a-collapse v-model:activeKey="subActiveKey" ghost>
-                <a-collapse-panel key="1" header="预回复表单">
+                <a-collapse-panel key="1" header="预回复表单" forceRender>
                   <BasicForm
                     @register="registerPreReplyForm"
                   >
@@ -289,7 +289,7 @@
       if (!unref(isUpdate)) {
         return '回复';
       } else {
-        return '部门回复';
+        return '工单回复';
       }
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });
