@@ -320,7 +320,7 @@ const auditOptions = [
   { label: '请选择', value: null },
   // { label: '未提交', value: -2 },
   { label: '拒绝', value: -1 },
-  { label: '待审核', value: 0 },
+  // { label: '待审核', value: 0 },
   { label: '通过', value: 1 }
 ];
 
@@ -353,7 +353,12 @@ const getAuditStatusText = (status) => {
 // 监听外部传入的回复数据变化
 watch(() => props.replyData, (newValue) => {
   // 统计个类型文件的数量
-  localReplyList.value = newValue;
+  localReplyList.value = Array.isArray(newValue) ? newValue.map(v => {
+    return {
+      ...v,
+      auditStatus: v.auditStatus || null,
+    }
+  }) : [];
   loading.value = false;
 }, { deep: true, immediate: true });
 
