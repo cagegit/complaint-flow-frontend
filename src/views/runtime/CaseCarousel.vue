@@ -1,7 +1,7 @@
 <template>
   <div class="case-carousel-container">
     <div class="title">
-      <div class="text">案件轮动</div>
+      <div class="text">诉件轮动</div>
       <div class="warning-box">
         <div>预警：</div>
         <div class="warning-one">
@@ -45,7 +45,7 @@
     <!-- 详情弹窗 -->
     <a-modal
       v-model:visible="modalVisible"
-      :title="'案件详情'"
+      :title="'诉件详情'"
       :footer="null"
       :mask-closable="true"
       :width="800"
@@ -57,7 +57,7 @@
           <h3>基本信息</h3>
           <div class="detail-grid">
             <div class="detail-row">
-              <div class="detail-label">案件编号：</div>
+              <div class="detail-label">诉件编号：</div>
               <div class="detail-value">{{ currentItem.caseNumber || '-' }}</div>
             </div>
             <div class="detail-row">

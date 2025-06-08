@@ -26,6 +26,7 @@
   import { message } from 'ant-design-vue';
   import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
+  import dayjs from 'dayjs';
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
@@ -342,7 +343,8 @@
           newDoubleNoRate.push(item.doubleNo);
         });
         chartData.value = {
-          labelNames: newLabelNames,
+          // 处理反馈问题
+          labelNames: newLabelNames.map(v => dayjs(v).format('MM-DD')),
           caseCounts: newCaseCounts,
           doubleYesRate: newDoubleYesRate,
           doubleNoRate: newDoubleNoRate,

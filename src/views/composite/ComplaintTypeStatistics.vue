@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <div class="title-left">
-      <div class="text">诉讼类型分析统计</div>
+      <div class="text">诉件类型分析统计</div>
       <DispatchTabs :onTabChange="onTabChange" />
     </div>
     <div class="title-right">
@@ -89,7 +89,7 @@
   import yellowLong from '@/assets/images/composite/yellow-long.png';
   import yellowLongSelect from '@/assets/images/composite/yellow-long-s.png';
   import { getDictItems } from '/@/api/common/api';
-
+  import dayjs from 'dayjs';
   const pageSize = 11;
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
@@ -451,7 +451,7 @@
       newDoubleNoRate.push(item.doubleNo);
       newLabelNames.push(item.labelName);
     });
-    labelNames.value = newLabelNames;
+    labelNames.value = newLabelNames.map(v => dayjs(v).format('MM-DD')); // 格式化日期为 MM-DD
     caseCount.value = newCaseCount; // 诉件数
     doubleYesRate.value = newDoubleYesRate; // 双是
     doubleNoRate.value = newDoubleNoRate; // 双否

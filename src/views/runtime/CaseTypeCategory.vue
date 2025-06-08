@@ -1,13 +1,13 @@
 <template>
   <div class="category-box">
     <div class="title">
-      <div class="text">案件性质分类</div>
+      <div class="text">诉件性质分类</div>
     </div>
     <div class="category-list">
       <div class="category-item">
         <img class="category-icon" src="@/assets/images/runtime/category/normal-icon.png" alt="" />
         <div class="category-info">
-          <div class="name">普通案件</div>
+          <div class="name">普通诉件</div>
           <div class="count">{{ data.normalCase.value }}</div>
           <div class="comparison">
             <div>环比</div>
@@ -20,7 +20,7 @@
       <div class="category-item">
         <img class="category-icon" src="@/assets/images/runtime/category/enterprise-icon.png" alt="" />
         <div class="category-info">
-          <div class="name">企业案件</div>
+          <div class="name">企业诉件</div>
           <div class="count">{{ data.enterpriseCase.value }}</div>
           <div class="comparison">
             <div>环比</div>
@@ -33,7 +33,7 @@
       <div class="category-item">
         <img class="category-icon" src="@/assets/images/runtime/category/group-icon.png" alt="" />
         <div class="category-info">
-          <div class="name">群诉案件</div>
+          <div class="name">群诉件</div>
           <div class="count">{{ data.groupCase.value }}</div>
           <div class="comparison" v-if="!isNaN(data.groupCase.percent) && data.groupCase.percent !== null">
             <div>环比</div>

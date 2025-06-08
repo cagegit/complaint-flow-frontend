@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <div class="title-left">
-      <div class="text">群诉案件分析</div>
+      <div class="text">群诉件分析</div>
       <DispatchTabs :onTabChange="onTabChange" />
     </div>
     <div class="title-right">
@@ -30,7 +30,7 @@
   import { message } from 'ant-design-vue';
   import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
-
+  import dayjs from 'dayjs'
   // 控制是否使用模拟数据
   const useMockData = ref(false);
 
@@ -333,7 +333,7 @@
         newDoubleNoRate.push(item.doubleNo);
         newLabelNames.push(item.labelName);
       });
-      labelNames.value = newLabelNames;
+      labelNames.value = newLabelNames.map(v => dayjs(v).format('MM-DD')); // 格式化为日显示
       caseCount.value = newCaseCount; // 诉件数
       doubleYesRate.value = newDoubleYesRate; // 双是
       doubleNoRate.value = newDoubleNoRate; // 双否

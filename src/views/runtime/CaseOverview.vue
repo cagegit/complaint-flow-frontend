@@ -1,7 +1,7 @@
 <template>
   <div class="case-overview">
     <div class="title">
-      <div class="text">案件总览</div>
+      <div class="text">诉件总览</div>
       <CustomTabs :data="tabs" />
     </div>
     <div class="long-case">
