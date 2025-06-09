@@ -84,6 +84,10 @@
     import { getBackDepartList, getDistrictDictByCode } from '/@/api/common/api';
     //@ts-ignore
     import TicketEditForm from '../bizComplaintTicketList/TicketEdit.vue';
+    import { useRoute, useRouter } from 'vue-router';
+
+    const route = useRoute();
+    const router = useRouter();
     // 创建消息实例
     const { createMessage, createConfirm } = useMessage();
     //注册 modal
@@ -143,16 +147,37 @@
             columns: columns,
             size: 'small',
             formConfig: {
-            // labelWidth: 200,
-            schemas: searchFormSchema,
+              // labelWidth: 200,
+              schemas: searchFormSchema,
+              resetFunc: async () => {
+                if(route?.query) {
+                  router.replace({ path: route.path });
+                } else {
+                  await getForm?.()?.resetFields?.();
+                  reload?.();
+                }
+              }
             },
             actionColumn: {
               width: 180,
               fixed: 'right',
             },
             beforeFetch: (params) => {
-            console.log(params);
-            return Object.assign(params, { pageNum:  params.pageNo });
+              console.log(params);
+              if(route?.query) {
+                const {startTime, endTime, ...rest} = route.query;
+                getForm?.()?.setFieldsValue?.({
+                  ...rest,
+                  ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+                });
+                return Object.assign(params, { 
+                  pageNum:  params.pageNo, 
+                  ...rest,
+                   ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+                 });
+              } else {
+                return Object.assign(params, { pageNum:  params.pageNo });
+              }
             },
             // 高亮状态为重点件的行
             rowClassName: (record:any) => {
@@ -177,7 +202,7 @@
     });
 
     //注册table数据
-    const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+    const [registerTable, { reload, getForm }, { rowSelection, selectedRowKeys }] = tableContext;
     
     function getTableAction(record): ActionItem[] {
       return [

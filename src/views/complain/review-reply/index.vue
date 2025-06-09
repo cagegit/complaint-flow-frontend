@@ -61,7 +61,10 @@
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
     import { useMessage } from '/@/hooks/web/useMessage';
+    import { useRoute, useRouter } from 'vue-router';
 
+    const route = useRoute();
+    const router = useRouter();
     const { createMessage } = useMessage();
 
     const [registerModal, { openModal }] = useModal();
@@ -80,6 +83,14 @@
           formConfig: {
             // labelWidth: 200,
             schemas: searchFormSchema,
+            resetFunc: async () => {
+              if(route?.query) {
+                router.replace({ path: route.path });
+              } else {
+                await getForm?.()?.resetFields?.();
+                reload?.();
+              }
+            }
           },
           actionColumn: {
             width: 120,
@@ -94,7 +105,19 @@
             } else if(params.auditStatus === '1'){
               processStatus = 1;
             } 
-            return Object.assign(params, {pageNum:  params.pageNo, processStatus});
+            if(route?.query) {
+              const {startTime, endTime, ...rest} = route.query;
+               getForm?.()?.setFieldsValue?.({
+                  ...rest,
+                  ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+                });
+              return Object.assign(params, {pageNum:  params.pageNo, processStatus, 
+                ...rest,
+                ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+              });
+            } else {
+              return Object.assign(params, {pageNum:  params.pageNo, processStatus});
+            }
           },
           // 高亮状态为重点件的行
           rowClassName: (record:any) => {
@@ -111,7 +134,7 @@
       });
     
       //注册table数据
-       const [registerTable, { reload }] = tableContext;
+       const [registerTable, { reload, getForm }] = tableContext;
        
       function getTableAction(record): ActionItem[] {
         return [

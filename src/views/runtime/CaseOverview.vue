@@ -5,7 +5,7 @@
       <CustomTabs :data="tabs" />
     </div>
     <div class="long-case">
-      <div class="long-case-item" @click="handleClick({href: '/complaint/manager'}, {startTime: startTimeRef, endTime: endTimeRef})">
+      <div class="long-case-item" @click="handleClick({href: '/complaint/manager'}, {})">
         <img :src="caseIcon" alt="" class="case-item-l" />
         <div class="case-item-r">
           <div class="case-text">接件数</div>
@@ -64,7 +64,6 @@
   import EmptyState from '@/components/EmptyState/index.vue';
   // import { router } from '/@/router';
   import { useRouter } from 'vue-router';
-import { start } from 'nprogress';
 
   const router = useRouter();
 
@@ -92,7 +91,10 @@ import { start } from 'nprogress';
       value: 0,
       bg: waitbg,
       href: '/complaint/manager',
-      query: { statusCode: -1, resolveCount: '2' },
+      query: { 
+        statusCode: -1, 
+        resolveCount: '2',
+       },
     },
     {
       label: '待回访',
@@ -117,11 +119,16 @@ import { start } from 'nprogress';
   const handleClick = (item: any, query?: any) => {
     console.log(item);
     if (item.href) {
-      const params:any = { path: item.href };
+      const params:any = { path: item.href, query: {} };
       if(item.query) {
         params.query = item.query;
       } else if(query) {
-        params.query = query;
+        params.query = query
+      }
+      params.query = {
+        ...params.query,
+        startTime: startTimeRef.value,
+        endTime: endTimeRef.value
       }
       router.push(params);
     }

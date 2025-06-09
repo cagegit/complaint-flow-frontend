@@ -50,13 +50,17 @@
     import TicketEdit from './TicketEditForm.vue';
      //@ts-ignore
     import PreReplyForm from '../components/PreReplyForm/index.vue';
+    import { useRoute, useRouter } from 'vue-router';
+
+    const route = useRoute();
+    const router = useRouter();
     const [registerModal, { openModal }] = useModal();
 
     const [registerReplyModal] = useModal();
     // const { createMessage, createConfirm } = useMessage();
 
     // 列表页面公共参数、方法
-    const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+    const { tableContext } = useListPage({
         designScope: 'ticket-list',
         tableProps: {
           title: '待区级审核列表',
@@ -66,6 +70,14 @@
           formConfig: {
             // labelWidth: 200,
             schemas: searchFormSchema,
+            resetFunc: async () => {
+              if(route?.query) {
+                router.replace({ path: route.path });
+              } else {
+                await getForm?.()?.resetFields?.();
+                reload?.();
+              }
+            }
           },
           actionColumn: {
             width: 120,
@@ -79,8 +91,20 @@
               processStatus = 0;
             } else if(params.auditStatus === '1'){
               processStatus = 1;
-            } 
-            return Object.assign(params, {pageNum:  params.pageNo, processStatus});
+            }
+            if(route?.query) {
+              const {startTime, endTime, ...rest} = route.query;
+               getForm?.()?.setFieldsValue?.({
+                  ...rest,
+                  ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+                });
+              return Object.assign(params, {pageNum:  params.pageNo, processStatus, 
+                ...rest,
+                ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+              });
+            } else {
+              return Object.assign(params, {pageNum:  params.pageNo, processStatus});
+            }
           },
           // 高亮状态为重点件的行
           rowClassName: (record:any) => {
@@ -97,7 +121,7 @@
       });
     
       //注册table数据
-       const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+       const [registerTable, { reload, getForm }, { rowSelection, selectedRowKeys }] = tableContext;
        
       function getTableAction(record): ActionItem[] {
         return [

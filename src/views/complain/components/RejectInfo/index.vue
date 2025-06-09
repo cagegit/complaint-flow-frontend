@@ -1,6 +1,6 @@
 <template>
-<div v-bind="attrs" v-if="hasDistrictInfo">
-    <a-divider><span class="text-red-500">拒绝信息\区级回复</span></a-divider>
+<div v-bind="attrs">
+    <a-divider><span class="text-red-500">拒绝信息/区级回复</span></a-divider>
     <a-row :gutter="24" class="py-4">
         <a-col :span="12">
             <div class="flex items-center">
@@ -11,11 +11,11 @@
         <a-col :span="12">
             <div class="flex items-center">
                 <div class="text-gray-400">回访状态:</div>
-                <div class="pl-2">{{ visitStatus }}</div>
+                <div class="pl-2">{{ visitStatus || '无' }}</div>
             </div>
         </a-col>
     </a-row>
-     <a-row :gutter="24" class="py-4">
+    <a-row :gutter="24" class="py-4" v-if="hasUpReplyAudit">
         <a-col :span="24">
             <div class="flex items-center">
                 <div class="text-gray-400">最终回复审核内容:</div>
@@ -23,22 +23,25 @@
             </div>
         </a-col>
     </a-row>
-     <a-row :gutter="24" class="py-4">
-        <a-col :span="24">
-            <div class="flex items-center">
-                <div class="text-gray-400">区回访内容:</div>
-                <div class="pl-2">{{ props.detailInfo.upRevisitContent || '无' }}</div>
-            </div>
-        </a-col>
-    </a-row>
-    <a-row :gutter="24" class="py-4">
-        <a-col :span="12">
-            <div class="flex items-center">
-                <div class="text-gray-400">区回访时间:</div>
-                <div class="pl-2">{{ props.detailInfo.upRevisitTime || '无' }}</div>
-            </div>
-        </a-col>
-    </a-row>
+    <template v-if="hasUpRevisit">
+        <a-row :gutter="24" class="py-4">
+            <a-col :span="24">
+                <div class="flex items-center">
+                    <div class="text-gray-400">区回访内容:</div>
+                    <div class="pl-2">{{ props.detailInfo.upRevisitContent || '无' }}</div>
+                </div>
+            </a-col>
+        </a-row>
+        <a-row :gutter="24" class="py-4">
+            <a-col :span="12">
+                <div class="flex items-center">
+                    <div class="text-gray-400">区回访时间:</div>
+                    <div class="pl-2">{{ props.detailInfo.upRevisitTime || '无' }}</div>
+                </div>
+            </a-col>
+        </a-row>
+    </template>
+
     <a-divider>基本信息</a-divider>
 </div>
 </template>
@@ -55,14 +58,25 @@
     });
 
     // 是否包含区级回复信息
-    const hasDistrictInfo = computed(() => {
+    const hasUpRevisit = computed(() => {
         const defaultInfo = unref(props.detailInfo);
         if (defaultInfo?.upRevisit === undefined) {
             return false;
         }
         // 如果没有区级回复信息，直接返回false
-        return defaultInfo.upRevisit == 1 && defaultInfo.upReplyAudit == 1;
+        return defaultInfo.upRevisit == 1;
     });
+
+    // 最终审核判断
+    const hasUpReplyAudit = computed(() => {
+        const defaultInfo = unref(props.detailInfo);
+        if (defaultInfo?.upRevisit === undefined) {
+            return false;
+        }
+        // 如果没有区级回复信息，直接返回false
+        return defaultInfo.upReplyAudit == 1;
+    });
+    // 如果没有区级回复信息，直接返回空
     // 回访结果
     const visitResult = computed(() => {
         const defaultInfo = unref(props.detailInfo);

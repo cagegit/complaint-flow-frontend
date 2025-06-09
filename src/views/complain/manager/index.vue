@@ -120,7 +120,8 @@ const { tableContext } = useListPage({
      if(query?.statusCode == '-1' && query?.resolveCount !== undefined) { // 二次办理statusCode + resolveCount
         getForm?.()?.setFieldsValue({
           statusCode: query.statusCode,
-          resolveCount: query.resolveCount
+          resolveCount: query.resolveCount,
+          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
         });
         return Object.assign(params, { pageNum: params.pageNo, statusCode: query.statusCode, resolveCount: query.resolveCount });
       } else if(query?.statusCode == 'complete_done') {
@@ -146,9 +147,14 @@ const { tableContext } = useListPage({
         });
       } else if(query?.statusCode !== undefined) {
         getForm?.()?.setFieldsValue({
-          statusCode: query.statusCode
+          statusCode: query.statusCode,
+          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
         });
-        return Object.assign(params, { pageNum: params.pageNo, statusCode: query.statusCode });
+        return Object.assign(params, { 
+          pageNum: params.pageNo, 
+          statusCode: query.statusCode,
+          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
+         });
       } else if(query?.startTime && query?.endTime) {
         // console.log('query', query);
         getForm?.()?.setFieldsValue({
@@ -170,7 +176,7 @@ const { tableContext } = useListPage({
 const [registerTable, { reload, getForm }, { rowSelection, selectedRowKeys }] = tableContext;
 
 // 重置表单
-function resetSearchList() {
+async function resetSearchList() {
   if(route.query) {
     router.replace({ path: route.path });
   } else {
