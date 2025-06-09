@@ -121,6 +121,23 @@ const { tableContext } = useListPage({
           resolveCount: query.resolveCount
         });
         return Object.assign(params, { pageNum: params.pageNo, statusCode: query.statusCode, resolveCount: query.resolveCount });
+      } else if(query?.statusCode == 'complete_done') {
+        // 诉件统计
+        getForm?.()?.setFieldsValue({
+          statusCode: query.statusCode + '',
+          sourceType: query.sourceType + '',
+          importTime: [query.startTime, query.endTime],
+          caseType: query.caseType  || null, // 案件类型
+          caseNature: query.caseNature || null, // 案件性质
+        });
+        return Object.assign(params, { 
+          pageNum: params.pageNo, 
+          statusCode: query.statusCode + '',
+          sourceType: query.sourceType + '',
+          importTime: [query.startTime, query.endTime],
+          caseType: query.caseType  || null,//案件类型
+          caseNature: query.caseNature || null, //案件性质
+        });
       } else if(query?.statusCode !== undefined) {
         getForm?.()?.setFieldsValue({
           statusCode: query.statusCode

@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <div class="title-left">
-      <div class="text">诉件统计</div>
+      <div class="text cursor-pointer" @click="toGongDan('1')">诉件统计</div>
       <DispatchTabs :onTabChange="onTabChange" />
     </div>
     <div class="title-right">
@@ -27,6 +27,9 @@
   import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
   import dayjs from 'dayjs';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
@@ -401,6 +404,21 @@
       chart = null;
     }
   });
+
+  // 跳转到工单页面
+  const toGongDan = (tp:string) => {
+    if(tp === '1') {
+      router.push({ path: '/complaint/manager',
+       query: { 
+        statusCode: 'complete_done', 
+        sourceType: sourceTypeRef.value,
+        // importTime: [ startTimeRef.value, endTimeRef.value].join('|'),
+        startTime: startTimeRef.value,
+        endTime: endTimeRef.value,
+       } });
+    }
+   
+  };
 </script>
 
 <style lang="less" scoped>

@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <div class="title-left">
-      <div class="text">双否分析</div>
+      <div class="text cursor-pointer" @click="toGongDan('1')">双否分析</div>
       <DispatchTabs :onTabChange="onTabChange" />
     </div>
     <CustomTabs :data="RomplaintTypeTabs" :onTabChange="onTypeChange" />
@@ -30,7 +30,9 @@
   import DispatchTabs from '@/components/DispatchTabs/index.vue';
   import { RomplaintTypeTabs, RangeTypeEnum, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
+  import { useRouter } from 'vue-router';
 
+  const router = useRouter();
   // 控制是否使用模拟数据
   const useMockData = ref(false);
 
@@ -73,6 +75,8 @@
 
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
+
+  let hasListened: boolean = false;
 
   const setChartOption = () => {
     if (!chart) return;
@@ -203,6 +207,13 @@
   const initChart = () => {
     chart = echarts.init(chartRef.value);
     setChartOption();
+    if(chart && !hasListened) {
+      hasListened = true;
+      chart.on('click','series.label', (params) => {
+        console.log('Clicked on:', params);
+        // 跳转到工单页面}
+      });
+    }
     // 初始化后立即调整大小
     setTimeout(() => {
       resizeChart();
@@ -370,6 +381,20 @@
       chart = null;
     }
   });
+  // 跳转到工单页面
+  const toGongDan = (tp:string) => {
+    if(tp === '1') {
+      router.push({ path: '/complaint/manager',
+       query: { 
+        statusCode: 'complete_done', 
+        sourceType: sourceType.value,
+        // importTime: [ startTimeRef.value, endTimeRef.value].join('|'),
+        startTime: startTimeRef.value,
+        endTime: endTimeRef.value,
+        caseType: '1'
+       } });
+    }
+  };
 </script>
 
 <style scoped lang="less">

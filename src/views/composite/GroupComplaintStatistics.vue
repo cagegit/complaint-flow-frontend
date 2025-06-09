@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <div class="title-left">
-      <div class="text">群诉件分析</div>
+      <div class="text cursor-pointer" @click="toGongDan('1')">群诉件分析</div>
       <DispatchTabs :onTabChange="onTabChange" />
     </div>
     <div class="title-right">
@@ -31,6 +31,9 @@
   import { RangeTypeEnum, RomplaintTypeTabs, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
   import dayjs from 'dayjs'
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
   // 控制是否使用模拟数据
   const useMockData = ref(false);
 
@@ -386,6 +389,19 @@
       chart = null;
     }
   });
+     // 跳转到工单页面
+  const toGongDan = (tp:string) => {
+    if(tp === '1') {
+      router.push({ path: '/complaint/manager',
+       query: { 
+        statusCode: 'complete_done', 
+        sourceType: sourceTypeRef.value,
+        startTime: startTimeRef.value,
+        endTime: endTimeRef.value,
+        caseNature: '3', // 群诉件
+       } });
+    }
+  };
 </script>
 
 <style scoped lang="less">

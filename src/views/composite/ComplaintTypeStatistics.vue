@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <div class="title-left">
-      <div class="text">诉件类型分析统计</div>
+      <div class="text cursor-pointer" @click="toGongDan('1')">诉件类型分析统计</div>
       <DispatchTabs :onTabChange="onTabChange" />
     </div>
     <div class="title-right">
@@ -30,7 +30,7 @@
           backgroundSize: selectedCategory === item.label ? '100% 112%' : '100% 100%',
           opacity: selectedCategory === item.label ? 1 : 0.8,
         }"
-        @click="onCategoryClick(item.label)"
+        @click="onCategoryClick(item)"
         >{{ item.label }}</div
       >
       <div class="line"></div>
@@ -43,7 +43,7 @@
           backgroundImage: selectedCategory === item.label ? `url(${item.selectedBg})` : `url(${item.bg})`,
           backgroundSize: selectedCategory === item.label ? '100% 112%' : '100% 100%',
         }"
-        @click="onCategoryClick(item.label)"
+        @click="onCategoryClick(item)"
         >{{ item.label }}</div
       >
       <div class="line"></div>
@@ -56,7 +56,7 @@
           backgroundImage: selectedCategory === item.label ? `url(${item.selectedBg})` : `url(${item.bg})`,
           backgroundSize: selectedCategory === item.label ? '100% 112%' : '100% 100%',
         }"
-        @click="onCategoryClick(item.label)"
+        @click="onCategoryClick(item)"
         >{{ item.label }}</div
       >
     </div>
@@ -90,6 +90,9 @@
   import yellowLongSelect from '@/assets/images/composite/yellow-long-s.png';
   import { getDictItems } from '/@/api/common/api';
   import dayjs from 'dayjs';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
   const pageSize = 11;
   const chartRef = ref(null);
   let chart: echarts.EChartsType | null = null;
@@ -107,6 +110,8 @@
   const doubleNoRate = ref<number[]>([]); // 双负
 
   const selectedCategory = ref('');
+  // 选中caseType
+  const selectedCaseType = ref(''); // 选中的caseType
 
   const greenCategories: any = ref([]);
   const blueCategories: any = ref([]);
@@ -115,12 +120,13 @@
   const showPagination = ref(false);
   const allData = ref([]);
 
-  const onCategoryClick = (value) => {
-    console.log('onCategoryClick', value);
-    if (selectedCategory.value === value) {
+  const onCategoryClick = (item:any) => {
+    console.log('onCategoryClick', item);
+    if (selectedCategory.value === item.label) {
       return;
     }
-    selectedCategory.value = value;
+    selectedCategory.value = item.label;
+    selectedCaseType.value = item.value;
     fetchData();
   };
 
@@ -516,6 +522,7 @@
         }
       });
       selectedCategory.value = newGreenCategories[0].label;
+      selectedCaseType.value = newGreenCategories[0].value; // 默认选中第一个
       greenCategories.value = newGreenCategories;
       blueCategories.value = newBlueCategories;
       yellowCategories.value = newYellowCategories;
@@ -545,8 +552,22 @@
     window.removeEventListener('resize', () => {});
     window.removeEventListener('refresh-runtime-data', refreshData);
   });
+    // 跳转到工单页面
+  const toGongDan = (tp:string) => {
+    if(tp === '1') {
+      router.push({ path: '/complaint/manager',
+       query: { 
+        statusCode: 'complete_done', 
+        sourceType: sourceTypeRef.value,
+        // importTime: [ startTimeRef.value, endTimeRef.value].join('|'),
+        startTime: startTimeRef.value,
+        endTime: endTimeRef.value,
+        caseType: selectedCaseType.value
+       } });
+    }
+   
+  };
 </script>
-
 <style scoped lang="less">
   .title {
     width: 100%;
