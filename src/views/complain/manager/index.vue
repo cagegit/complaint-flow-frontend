@@ -45,13 +45,14 @@ import { downloadByUrl } from '/@/utils/file/download';
 import { ref, watch } from 'vue';
 // import { JCheckbox } from '/@/components/Form';
 import { reactive } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 //注册modal
 const [registerModal, { openModal }] = useModal();
 const [registerExportDayModal, { openModal: openExportModal }] = useModal();
 // 当前路由
 const route = useRoute();
+const router = useRouter();
 const { createMessage } = useMessage();
 
 // const { isDisabledAuth } = usePermission();
@@ -107,6 +108,7 @@ const { tableContext } = useListPage({
       //   span: 24,
       //   style: { textAlign: 'left' }, // 可选，按钮靠左
       // },
+      resetFunc: resetSearchList
     },
     actionColumn: {
       width: 120,
@@ -124,25 +126,35 @@ const { tableContext } = useListPage({
       } else if(query?.statusCode == 'complete_done') {
         // 诉件统计
         getForm?.()?.setFieldsValue({
-          statusCode: query.statusCode + '',
-          sourceType: query.sourceType + '',
-          importTime: [query.startTime, query.endTime],
+          statusCode: query.statusCode ? query.statusCode +'' : null,
+          sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
+          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
           caseType: query.caseType  || null, // 案件类型
           caseNature: query.caseNature || null, // 案件性质
+          satisfyFlag: query.satisfyFlag || null, // 是否满意
+          resolveFlag: query.resolveFlag || null, // 是否解决
         });
         return Object.assign(params, { 
           pageNum: params.pageNo, 
-          statusCode: query.statusCode + '',
-          sourceType: query.sourceType + '',
-          importTime: [query.startTime, query.endTime],
+          statusCode: query.statusCode ? query.statusCode +'' : null,
+          sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
+          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
           caseType: query.caseType  || null,//案件类型
           caseNature: query.caseNature || null, //案件性质
+          satisfyFlag: query.satisfyFlag || null, // 是否满意
+          resolveFlag: query.resolveFlag || null, // 是否解决
         });
       } else if(query?.statusCode !== undefined) {
         getForm?.()?.setFieldsValue({
           statusCode: query.statusCode
         });
         return Object.assign(params, { pageNum: params.pageNo, statusCode: query.statusCode });
+      } else if(query?.startTime && query?.endTime) {
+        // console.log('query', query);
+        getForm?.()?.setFieldsValue({
+          importTime: [query.startTime, query.endTime],
+        });
+        return Object.assign(params, { pageNum: params.pageNo, importTime: [query.startTime, query.endTime] });
       } else {
         return Object.assign(params, { pageNum: params.pageNo });
       }
@@ -156,6 +168,19 @@ const { tableContext } = useListPage({
 
 //@ts-ignore 注册table数据
 const [registerTable, { reload, getForm }, { rowSelection, selectedRowKeys }] = tableContext;
+
+// 重置表单
+function resetSearchList() {
+  if(route.query) {
+    router.replace({ path: route.path });
+  } else {
+   // console.log('重置表单');
+    getForm?.()?.resetFields();
+
+    reload?.();
+  }
+ 
+}
 
 function getTableAction(record): ActionItem[] {
   return [

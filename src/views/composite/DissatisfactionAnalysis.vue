@@ -31,6 +31,7 @@
   import { RomplaintTypeTabs, RangeTypeEnum, SourceTypeDefault } from '/@/enums/statisticEnum';
   import TimeSwiper from '@/components/TimeSwiper/index.vue';
   import { useRouter } from 'vue-router';
+import { getDictItems } from '/@/api/common/api';
 
   const router = useRouter();
   // 控制是否使用模拟数据
@@ -70,6 +71,8 @@
   const startTimeRef = ref(''); // 时间周期类型
   const endTimeRef = ref(''); // 时间周期类型
   const offsetRef = ref(0); // 偏移量
+  // 案件类型字典
+  const romplaintTypeTabs = ref<any[]>([]);
 
   const total = ref(0);
 
@@ -180,7 +183,7 @@
           center: ['50%', '50%'],
           startAngle: 90,
           data: seriesData,
-          silent: true,
+          silent: false,
           labelLine: {
             length: 15,
             length2: 0,
@@ -209,9 +212,11 @@
     setChartOption();
     if(chart && !hasListened) {
       hasListened = true;
-      chart.on('click','series.label', (params) => {
+      chart.on('click','series.pie.label', (params) => {
         console.log('Clicked on:', params);
-        // 跳转到工单页面}
+        const item  = romplaintTypeTabs.value.find((item) => item.label === params.name);
+        console.log(item)
+        toGongDan('1',item.value);
       });
     }
     // 初始化后立即调整大小
@@ -362,9 +367,23 @@
       console.error(error);
     }
   };
+  // 获取案件类型字典
+  function getCaseTypeList() {
+    getDictItems('biz_case_category').then((res) => {
+      if (Array.isArray(res)) {
+        romplaintTypeTabs.value = res.map((item) => ({
+          label: item.text,
+          value: item.value,
+        }));
+      }
+    }).catch((error) => {
+      console.error('获取案件类型字典失败', error);
+    });
+  }
 
   onMounted(() => {
     fetchMonthConfig();
+    getCaseTypeList();
     // 添加窗口resize事件监听
     window.addEventListener('resize', resizeChart);
     window.addEventListener('refresh-runtime-data', fetchMonthConfig);
@@ -382,7 +401,7 @@
     }
   });
   // 跳转到工单页面
-  const toGongDan = (tp:string) => {
+  const toGongDan = (tp:string, caseType?:string) => {
     if(tp === '1') {
       router.push({ path: '/complaint/manager',
        query: { 
@@ -391,7 +410,9 @@
         // importTime: [ startTimeRef.value, endTimeRef.value].join('|'),
         startTime: startTimeRef.value,
         endTime: endTimeRef.value,
-        caseType: '1'
+        caseType: caseType || '',
+        satisfyFlag: '0', // 不满意
+        resolveFlag: '0', // 未解决
        } });
     }
   };

@@ -5,7 +5,7 @@
       <CustomTabs :data="tabs" />
     </div>
     <div class="long-case">
-      <div class="long-case-item" @click="handleClick({href: '/complaint/manager'}, {importTime:''})">
+      <div class="long-case-item" @click="handleClick({href: '/complaint/manager'}, {startTime: startTimeRef, endTime: endTimeRef})">
         <img :src="caseIcon" alt="" class="case-item-l" />
         <div class="case-item-r">
           <div class="case-text">接件数</div>
@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount } from 'vue';
+  import { getTimeCycle } from '@/api/complaint/statistic';
   import errorbg from '@/assets/images/runtime/overview/error.png';
   import waitbg from '@/assets/images/runtime/overview/wait.png';
   import donebg from '@/assets/images/runtime/overview/done.png';
@@ -63,9 +64,13 @@
   import EmptyState from '@/components/EmptyState/index.vue';
   // import { router } from '/@/router';
   import { useRouter } from 'vue-router';
+import { start } from 'nprogress';
 
   const router = useRouter();
 
+  const offsetRef = ref(0); // 偏移量
+  const startTimeRef = ref(''); // 时间周期类型
+  const endTimeRef = ref(''); // 时间周期类型
   const tabs = [{ value: 2, label: '期' }];
   const totalCase = ref(0);
   const doingCase = ref(0);
@@ -187,9 +192,20 @@
     },
   ]);
 
-  onMounted(() => {
-    fetchData();
+  const fetchMonthConfig = async () => {
+    try {
+      const { startTime, endTime }: any = await getTimeCycle({ offset: offsetRef.value });
+      startTimeRef.value = startTime;
+      endTimeRef.value = endTime;
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
 
+  onMounted(() => {
+    fetchMonthConfig();
+    fetchData();
     // 监听刷新数据事件
     window.addEventListener('refresh-runtime-data', fetchData);
   });
