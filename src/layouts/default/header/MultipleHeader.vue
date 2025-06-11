@@ -24,9 +24,10 @@
   import { useLayoutHeight } from '../content/useContentViewHeight';
   import { TabsThemeEnum } from '/@/enums/appEnum';
   import { MenuTypeEnum } from '/@/enums/menuEnum';
+  // import { getCssVariableNumber } from '/@/utils';
 
   // update-begin--author:liaozhiyang---date:20240407---for：【QQYUN-8774】网站header区域加高
-  const HEADER_HEIGHT = 72;
+  // let HEADER_HEIGHT = 72;
   // update-begin--author:liaozhiyang---date:20240407---for：【【QQYUN-8774】网站header区域加高
 
   // updateBy:sunjianlei---updateDate:2021-09-03---修改tab切换栏样式：更改高度
@@ -38,6 +39,8 @@
     name: 'LayoutMultipleHeader',
     components: { LayoutHeader, MultipleTabs },
     setup() {
+      // 获取全局header height变量
+      // HEADER_HEIGHT = getCssVariableNumber('global-header-height') || 72;
       const { setHeaderHeight } = useLayoutHeight();
       const { prefixCls } = useDesign('layout-multiple-header');
 
@@ -79,7 +82,7 @@
           style.width = unref(getIsMobile) ? '100%' : unref(getCalcContentWidth);
         }
         if (unref(getShowFullHeaderRef)) {
-          style.top = `${HEADER_HEIGHT}px`;
+          style.top = `${appStore.headerHeight}px`;
         }
         return style;
       });
@@ -104,14 +107,14 @@
         let height = 0;
         // update-begin--author:liaozhiyang---date:20241216---for：【issues/7561】主题切换为顶部混合模式时，页面顶部内容显示不出来，被遮盖
         if ((unref(getShowFullHeaderRef) || !unref(getSplit)) && unref(getShowHeader) && !unref(getFullContent) || unref(getMenuType) == MenuTypeEnum.MIX) {
-          height += HEADER_HEIGHT;
+          height += appStore.headerHeight;
         }
         // update-end--author:liaozhiyang---date:20241216---for：【issues/7561】主题切换为顶部混合模式时，页面顶部内容显示不出来，被遮盖
         if (unref(getShowTabs) && !unref(getFullContent)) {
           height += unref(getTabsThemeHeight);
         }
-        if(height < 72){
-          height = 72;
+        if(height < appStore.headerHeight){
+          height = appStore.headerHeight;
         }
         setHeaderHeight(height);
         return {

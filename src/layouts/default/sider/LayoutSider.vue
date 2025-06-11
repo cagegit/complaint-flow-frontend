@@ -149,6 +149,7 @@
     }
 
     &--mix {
+      // top: @header-height;
       top: @header-height;
       height: calc(100% - @header-height);
     }

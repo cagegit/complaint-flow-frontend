@@ -606,3 +606,54 @@ export const paramsToQuery = (baseUrl, params) => {
   const url = `${baseUrl}?${query}`
   return url;
 }
+
+// 计算自适应样式
+export function calculateAspectRatioFit(dw: number, dh: number, originHeight:number, limit = 0.1, cssMode = "scale") {
+  const clientHeight = document.documentElement.clientHeight;
+  const clientWidth = document.documentElement.clientWidth;
+  let currScale =
+    clientWidth / clientHeight < dw / dh ? clientWidth / dw : clientHeight / dh;
+  currScale = Math.abs(1 - currScale) > limit ? currScale : 1;
+  // autofit.scale = +currScale;
+  const height = Math.round(clientHeight / Number(currScale));
+  const width = Math.round(clientWidth / Number(currScale));
+  // dom.style.height = `${height}px`;
+  // dom.style.width = `${width}px`;
+  //设置全局height
+  setCssVariable('global-header-height', `${originHeight*Number(currScale)}px`);
+  if (cssMode === "zoom") {
+    // (dom.style as any).zoom = `${currScale}`;
+     return [{
+      height: originHeight + 'px',
+      width: width + 'px',
+      transformOrigin: '0px 0px',
+      overflow: 'hidden',
+      zoom:`${currScale}`,
+      transition: 'nones',
+    },+currScale]
+  } else {
+    // dom.style.transform = `translateZ(0) scale(${currScale})`;
+     return [{
+      height: originHeight + 'px',
+      width: width + 'px',
+      transformOrigin: '0px 0px',
+      overflow: 'hidden',
+      transform: `translateZ(0px) scale(${currScale})`,
+      transition: 'nones',
+    }, +currScale];
+  }
+}
+
+// 设置全局css变量
+export function setCssVariable(name: string, value: string) {
+  document.documentElement.style.setProperty(`--${name}`, value);
+}
+// 获取全局css变量
+export function getCssVariable(name: string): string {  
+  return getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim();
+}
+// 获取全局css变量，返回数字
+export function getCssVariableNumber(name: string): number {
+  const value = getCssVariable(name);
+  return parseFloat(value) || 0;
+}

@@ -1,5 +1,5 @@
 <template>
-    <div class="screen-header" :class="getHeaderClass">
+    <div class="screen-header" :class="getHeaderClass" :style="getComputedStyle">
       <Header :index="3" :showAvatar="true"/>
     </div>
 </template>
@@ -7,6 +7,9 @@
   import { computed, defineProps } from 'vue';
   //@ts-ignore
   import Header from '/@/components/Header/index.vue';
+  import { useAppStore } from "@/store/modules/app";
+
+  const appStore = useAppStore()
   const prefixCls = 'custom-header';
 
   const props = defineProps({
@@ -14,6 +17,13 @@
       type: Boolean,
       default: false,
     },
+  });
+
+  const getComputedStyle = computed(() => {
+    const headerHeight = appStore.headerHeight;
+    return {
+      maxHeight: `${headerHeight}px`,
+    };
   });
 
   const getHeaderClass = computed(() => {

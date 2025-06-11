@@ -10,7 +10,7 @@ import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from '/@/enums/cacheEnum';
 import { Persistent } from '/@/utils/cache/persistent';
 import { darkMode } from '/@/settings/designSetting';
 import { resetRouter } from '/@/router';
-import { deepMerge } from '/@/utils';
+import { deepMerge, getCssVariableNumber } from '/@/utils';
 
 interface AppState {
   darkMode?: ThemeEnum;
@@ -24,6 +24,8 @@ interface AppState {
   messageHrefParams: any,
   // 应用参数
   mainAppProps: MainAppProps,
+  // 全局header高度
+  headerHeight: number;
 }
 let timeId: TimeoutHandle;
 export const useAppStore = defineStore({
@@ -35,6 +37,7 @@ export const useAppStore = defineStore({
     beforeMiniInfo: {},
     messageHrefParams: {},
     mainAppProps: {},
+    headerHeight: 72, // 默认header高度
   }),
   getters: {
     getPageLoading(): boolean {
@@ -69,6 +72,9 @@ export const useAppStore = defineStore({
     },
     getMainAppProps(): MainAppProps {
       return this.mainAppProps;
+    },
+    getHeaderHeight(): number {
+      return this.headerHeight || getCssVariableNumber('global-header-height') || 72; // 默认header高度
     },
   },
   actions: {
@@ -118,7 +124,10 @@ export const useAppStore = defineStore({
       this.mainAppProps.hideSider = args.hideSider ?? false;
       this.mainAppProps.hideMultiTabs = args.hideMultiTabs ?? false;
     },
-
+    // 设置全局header高度
+    setHeaderHeight(height: number): void {
+      this.headerHeight = height;
+    }
   },
 });
 

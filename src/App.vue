@@ -17,13 +17,13 @@
   import { useRootSetting } from '/@/hooks/setting/useRootSetting';
   import { ThemeEnum } from '/@/enums/appEnum';
   import { changeTheme } from '/@/logics/theme/index';
-
-  const appStore = useAppStore();
   // 解决日期时间国际化问题
   import 'dayjs/locale/zh-cn';
   import { MenuModeEnum, MenuTypeEnum } from './enums/menuEnum';
+  import { setCssVariable } from './utils';
   // support Multi-language
   const { getAntdLocale } = useLocale();
+  const appStore = useAppStore();
 
   useTitle();
   /**
@@ -105,7 +105,8 @@
       topMenuAlign: 'center',
     },
   });
-
+  // 设置全局header高度
+  setCssVariable('global-header-height', `72px`);
 </script>
 <style lang="less">
   img {

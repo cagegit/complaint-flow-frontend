@@ -1,5 +1,5 @@
 <template>
-  <header class="app-header">
+  <header class="app-header" :style="getComputedStyle">
     <nav class="nav-menu">
       <router-link
         v-for="item in navItems"
@@ -30,10 +30,13 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
+  import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
   import dayjs from 'dayjs';
   import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
   import { UserDropDown } from '/@/layouts/default/header/components';
+  import { calculateAspectRatioFit } from '/@/utils';
+  import { useAppStore } from "@/store/modules/app";
+
   const props = defineProps({
     index: {
       type: Number,
@@ -45,7 +48,7 @@
       default: false,
     },
   });
-
+  const appStore = useAppStore()
   const { getHeaderTheme } = useHeaderSetting();
 
   const platformName = '城北街道诉求管理平台';
@@ -53,6 +56,8 @@
   const week = ref(new Date().toLocaleDateString('zh-CN', { weekday: 'long' }));
   const date = ref(dayjs().format('YYYY.MM.DD'));
   const currentPath = ref('');
+
+  const calcStyle = ref({});
 
   const navItems = [
     { title: '综合事态', path: '/composite' },
@@ -70,6 +75,20 @@
   };
 
   let timer = ref(null);
+
+  const getComputedStyle = computed(() => {
+    if (props.index == '3') {
+      return calcStyle.value;
+    }
+    return {};
+  });
+  // 控制header高度
+  function changeHeaderStyle() {
+    const [styles, currScale] = calculateAspectRatioFit(1920,1080,72);
+    calcStyle.value = styles;
+    appStore.setHeaderHeight(72 * currScale);
+  }
+
   onMounted(() => {
     updateTime();
     timer.value = setInterval(() => {
@@ -77,10 +96,18 @@
     }, 1000);
     const pathname = window.location.pathname;
     currentPath.value = pathname;
+    if(props.index == '3') {
+      changeHeaderStyle();
+      window.addEventListener('resize', changeHeaderStyle);
+    }
   });
 
   onBeforeUnmount(() => {
     if (timer.value) clearInterval(timer.value);
+
+    if(props.index == '3') {
+      window.removeEventListener('resize', changeHeaderStyle);
+    }
   });
 </script>
 
@@ -91,6 +118,7 @@
     justify-content: space-between;
     align-items: center;
     height: 72px;
+    // height: var(--global-header-height);
     color: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     background-image: url(@/assets/images/runtime/header/header-bg.png);
