@@ -85,6 +85,7 @@
     //@ts-ignore
     import TicketEditForm from '../bizComplaintTicketList/TicketEdit.vue';
     import { useRoute, useRouter } from 'vue-router';
+    import dayjs from 'dayjs';
 
     const route = useRoute();
     const router = useRouter();
@@ -165,7 +166,11 @@
             beforeFetch: (params) => {
               console.log(params);
               if(route?.query) {
-                const {startTime, endTime, ...rest} = route.query;
+                let {startTime:q_startTime, endTime:q_endTime, ...rest} = route.query;
+                  // @ts-ignore
+                const startTime = q_startTime ? dayjs(q_startTime) : null;
+                // @ts-ignore
+                const endTime = q_endTime ? dayjs(q_endTime) : null;
                 getForm?.()?.setFieldsValue?.({
                   ...rest,
                   ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
@@ -173,7 +178,7 @@
                 return Object.assign(params, { 
                   pageNum:  params.pageNo, 
                   ...rest,
-                   ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+                   ...(startTime&& endTime) ? {importTime: [startTime, endTime].join(',')} : {}
                  });
               } else {
                 return Object.assign(params, { pageNum:  params.pageNo });

@@ -46,6 +46,7 @@ import { ref, watch } from 'vue';
 // import { JCheckbox } from '/@/components/Form';
 import { reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import dayjs from 'dayjs';
 
 //注册modal
 const [registerModal, { openModal }] = useModal();
@@ -117,19 +118,28 @@ const { tableContext } = useListPage({
     beforeFetch: (params) => {
       console.log(params);
       const query=  route.query;
+      // @ts-ignore
+      const startTime = query?.startTime ? dayjs(query.startTime) : null;
+      // @ts-ignore
+      const endTime = query?.endTime ? dayjs(query.endTime) : null;
      if(query?.statusCode == '-1' && query?.resolveCount !== undefined) { // 二次办理statusCode + resolveCount
         getForm?.()?.setFieldsValue({
           statusCode: query.statusCode,
           resolveCount: query.resolveCount,
-          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
         });
-        return Object.assign(params, { pageNum: params.pageNo, statusCode: query.statusCode, resolveCount: query.resolveCount });
+        return Object.assign(params, { 
+          pageNum: params.pageNo, 
+          statusCode: query.statusCode, 
+          resolveCount: query.resolveCount,
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {}, 
+        });
       } else if(query?.statusCode == 'complete_done') {
         // 诉件统计
         getForm?.()?.setFieldsValue({
           statusCode: query.statusCode ? query.statusCode +'' : null,
           sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
-          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
           caseType: query.caseType  || null, // 案件类型
           caseNature: query.caseNature || null, // 案件性质
           satisfyFlag: query.satisfyFlag || null, // 是否满意
@@ -139,7 +149,7 @@ const { tableContext } = useListPage({
           pageNum: params.pageNo, 
           statusCode: query.statusCode ? query.statusCode +'' : null,
           sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
-          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
           caseType: query.caseType  || null,//案件类型
           caseNature: query.caseNature || null, //案件性质
           satisfyFlag: query.satisfyFlag || null, // 是否满意
@@ -148,19 +158,33 @@ const { tableContext } = useListPage({
       } else if(query?.statusCode !== undefined) {
         getForm?.()?.setFieldsValue({
           statusCode: query.statusCode,
-          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
         });
         return Object.assign(params, { 
           pageNum: params.pageNo, 
           statusCode: query.statusCode,
-          ...query.startTime && query.endTime ? { importTime: [query.startTime, query.endTime] } : {},
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
          });
+      } else if(query?.caseNature && query?.startTime && query?.endTime) {
+        // console.log('query', query);
+        getForm?.()?.setFieldsValue({
+          caseNature: query.caseNature || null, // 案件性质
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+        });
+        return Object.assign(params, { 
+          pageNum: params.pageNo, 
+          caseNature: query.caseNature || null, // 案件性质
+         ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+        });
       } else if(query?.startTime && query?.endTime) {
         // console.log('query', query);
         getForm?.()?.setFieldsValue({
-          importTime: [query.startTime, query.endTime],
+          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
         });
-        return Object.assign(params, { pageNum: params.pageNo, importTime: [query.startTime, query.endTime] });
+        return Object.assign(params, { 
+          pageNum: params.pageNo, 
+         ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+        });
       } else {
         return Object.assign(params, { pageNum: params.pageNo });
       }

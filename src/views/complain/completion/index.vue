@@ -55,6 +55,7 @@
     //@ts-ignore
     import UploadPreviewModal from '/@/components/Upload/src/UploadPreviewModal.vue';
     import { useRoute, useRouter } from 'vue-router';
+    import dayjs from 'dayjs';
 
     const route = useRoute();
     const router = useRouter();
@@ -100,14 +101,18 @@
               processStatus = 1;
             } 
             if(route?.query) {
-              const {startTime, endTime, ...rest} = route.query;
+               const {startTime:q_startTime, endTime:q_endTime, ...rest} = route.query;
+                // @ts-ignore
+               const startTime = q_startTime ? dayjs(q_startTime) : null;
+                // @ts-ignore
+               const endTime = q_endTime ? dayjs(q_endTime) : null;
                getForm?.()?.setFieldsValue?.({
                   ...rest,
                   ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
                 });
               return Object.assign(params, {pageNum:  params.pageNo, processStatus, 
                 ...rest,
-                ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+                ...(startTime&& endTime) ? {importTime: [startTime, endTime].join(',')} : {}
               });
             } else {
               return Object.assign(params, {pageNum:  params.pageNo, processStatus});

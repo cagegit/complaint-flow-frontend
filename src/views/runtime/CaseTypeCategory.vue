@@ -7,7 +7,7 @@
       <div class="category-item">
         <img class="category-icon" src="@/assets/images/runtime/category/normal-icon.png" alt="" />
         <div class="category-info">
-          <div class="name">普通诉件</div>
+          <div class="name cursor-pointer" @click="handleClick({href: '/complaint/manager'}, {caseNature:1})">普通诉件</div>
           <div class="count">{{ data.normalCase.value }}</div>
           <div class="comparison">
             <div>环比</div>
@@ -20,7 +20,7 @@
       <div class="category-item">
         <img class="category-icon" src="@/assets/images/runtime/category/enterprise-icon.png" alt="" />
         <div class="category-info">
-          <div class="name">企业诉件</div>
+          <div class="name cursor-pointer" @click="handleClick({href: '/complaint/manager'}, {caseNature:2})">企业诉件</div>
           <div class="count">{{ data.enterpriseCase.value }}</div>
           <div class="comparison">
             <div>环比</div>
@@ -33,7 +33,7 @@
       <div class="category-item">
         <img class="category-icon" src="@/assets/images/runtime/category/group-icon.png" alt="" />
         <div class="category-info">
-          <div class="name">群诉件</div>
+          <div class="name cursor-pointer" @click="handleClick({href: '/complaint/manager'}, {caseNature:3})">群诉件</div>
           <div class="count">{{ data.groupCase.value }}</div>
           <div class="comparison" v-if="!isNaN(data.groupCase.percent) && data.groupCase.percent !== null">
             <div>环比</div>
@@ -90,10 +90,13 @@
   import LabelBox from '@/components/LabelBox/index.vue';
   import CustomTabs from '@/components/CustomTabs/index.vue';
   import { message } from 'ant-design-vue';
-  import { getCaseNatureCount, getDeptRankList } from '@/api/complaint/statistic';
+  import { getCaseNatureCount, getDeptRankList, getTimeCycle } from '@/api/complaint/statistic';
   import { calculateYoY } from '@/utils/dashboard';
   import { UnitTypeEnum, UnitTypeNameMap } from '@/enums/statisticEnum';
   import EmptyState from '@/components/EmptyState/index.vue';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
 
   const tabs = ref([
     {
@@ -115,6 +118,9 @@
   const ranking = ref<{ orgId: number; orgName: string; doubleNo: number; doubleYes: number; caseCount: number }[]>([]);
 
   const currentIndex = ref(UnitTypeEnum.DEPT);
+  const offsetRef = ref(0); // 偏移量
+  const startTimeRef = ref(''); // 时间周期类型
+  const endTimeRef = ref(''); // 时间周期类型
 
   const data = ref({
     normalCase: {
@@ -142,6 +148,7 @@
   };
 
   onMounted(() => {
+    fetchMonthConfig();
     fetchData();
     fetchRanking({
       deptType: UnitTypeEnum.DEPT,
@@ -203,6 +210,35 @@
       console.error(error);
       // 错误时设置为空数组，显示空状态
       ranking.value = [];
+    }
+  };
+
+  const fetchMonthConfig = async () => {
+    try {
+      const { startTime, endTime }: any = await getTimeCycle({ offset: offsetRef.value });
+      startTimeRef.value = startTime;
+      endTimeRef.value = endTime;
+    } catch (error) {
+      message.error('获取数据失败');
+      console.error(error);
+    }
+  };
+
+  const handleClick = (item: any, query?: any) => {
+    console.log(item);
+    if (item.href) {
+      const params:any = { path: item.href, query: {} };
+      if(item.query) {
+        params.query = item.query;
+      } else if(query) {
+        params.query = query
+      }
+      params.query = {
+        ...params.query,
+        startTime: startTimeRef.value,
+        endTime: endTimeRef.value
+      }
+      router.push(params);
     }
   };
 </script>

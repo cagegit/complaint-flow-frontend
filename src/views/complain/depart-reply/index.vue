@@ -61,6 +61,10 @@
     // import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
     import TicketEdit from './TicketEditForm.vue';
+    import { useRoute } from 'vue-router';
+    import dayjs from 'dayjs';
+
+    const route = useRoute();
     const [registerModal, { openModal }] = useModal();
     // const { createMessage, createConfirm } = useMessage();
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
@@ -83,7 +87,24 @@
           },
           beforeFetch: (params) => {
             console.log(params);
-            return Object.assign(params, { pageNum:  params.pageNo });
+            if(route?.query) {
+                let {startTime:q_startTime, endTime:q_endTime, ...rest} = route.query;
+                  // @ts-ignore
+                const startTime = q_startTime ? dayjs(q_startTime) : null;
+                // @ts-ignore
+                const endTime = q_endTime ? dayjs(q_endTime) : null;
+                getForm?.()?.setFieldsValue?.({
+                  ...rest,
+                  ...(startTime&& endTime) ? {importTime: [startTime, endTime]} : {}
+                });
+                return Object.assign(params, { 
+                  pageNum:  params.pageNo, 
+                  ...rest,
+                   ...(startTime&& endTime) ? {importTime: [startTime, endTime].join(',')} : {}
+                 });
+              } else {
+                 return Object.assign(params, { pageNum:  params.pageNo });
+              }
           },
           // 高亮状态为重点件的行
           rowClassName: (record:any) => {
@@ -100,7 +121,7 @@
       });
     
       //注册table数据
-       const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+       const [registerTable, { reload, getForm }, { rowSelection, selectedRowKeys }] = tableContext;
        
       function getTableAction(record): ActionItem[] {
         return [

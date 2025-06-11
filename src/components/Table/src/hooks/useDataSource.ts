@@ -251,7 +251,11 @@ export function useDataSource(
         ...(opt?.filterInfo ?? {}),
       };
       if (beforeFetch && isFunction(beforeFetch)) {
-        params = (await beforeFetch(params)) || params;
+        try {
+          params = (await beforeFetch(params)) || params;
+        } catch(e) {
+          console.error('beforeFetch error:', e);
+        }
       }
       // update-begin--author:liaozhiyang---date:20240227---for：【QQYUN-8316】table查询条件,请求剔除空字符串字段
       for (let item of Object.entries(params)) {
