@@ -40,23 +40,46 @@
         (value:any) => {
           if (!isArray(value)) value = [];
           let list:any[] = [];
-          if(typeof(value[0])==='string') {
-            list = value.filter((item) => !!item).map((item) => {
+          console.log('value', value);
+          // if(typeof(value[0])==='string') {
+          //   list = value.filter((item) => !!item).map((item) => {
+          //     return {
+          //       url: item,
+          //       type: item.split('.').pop() || '',
+          //       name: item || '',
+          //     };
+          //   });
+          // } else if(typeof(value[0])==='object') {
+          //   list = value.filter((item:any) => !!item.url).map((item:any) => {
+          //     return {
+          //       url: item.url,
+          //       type: item.type ||  '',
+          //       name: item.name ||'',
+          //     };
+          //   });
+          // }
+          list = value.filter((item) => !!item).map((item) => {
+            console.log('item', item);
+            if(typeof item === 'object') {
+              return {
+                url: item.url,
+                type: item.name? item.name.split('.').pop() : '',
+                name: item.name || '',
+              };
+            } else  {
               return {
                 url: item,
                 type: item.split('.').pop() || '',
-                name: item.split('/').pop() || '',
+                name: item || '',
               };
-            });
-          } else if(typeof(value[0])==='object') {
-            list = value.filter((item:any) => !!item.url).map((item:any) => {
-              return {
-                url: item.url,
-                type: item.type ||  '',
-                name: item.name ||'',
-              };
-            });
-          }
+            }
+            // return {
+            //   url: item,
+            //   type: item.split('.').pop() || '',
+            //   name: item || '',
+            // };
+          });
+          console.log('fileListRef', list);
           fileListRef.value = list;
         },
         { immediate: true }

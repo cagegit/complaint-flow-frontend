@@ -637,8 +637,9 @@ export const addFormSchema: FormSchema[] = [
     field: 'file',
     label: '附件/视频',
     component: 'Upload',
-    componentProps: {
-      // 具体上传配置
+    componentProps({formModel}){
+     return {
+       // 具体上传配置
       multiple: true,
       accept: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', ...videoTypes],
       api: uploadJsFile, // 上传接口
@@ -649,54 +650,103 @@ export const addFormSchema: FormSchema[] = [
       uploadParams: {
         biz: 'complain/file',
       },
+      onPreviewDelete: (url: string) => {
+        // 判断是否重复
+        if(formModel.fileDelete.indexOf(url) === -1) {
+          if(formModel.fileDelete.length === 0) {
+            formModel.fileDelete  += url; // 存储删除的文件url
+          } else {
+            formModel.fileDelete += ',' + url; // 存储删除的文件url
+          }
+        }
+      }
+     }
     },
     colProps: {
       span: 12
     }
   },
+  // 存储删除文件id
+  {
+    label: '',
+    field: 'fileDelete',
+    component:'Input',
+    defaultValue: '',
+    show:false
+  },
   {
     field: 'image',
     label: '图片上传',
     component: 'Upload',
-    componentProps: {
-      multiple: true,
-      accept: imageTypes, // 使用定义的图片类型
-      api: uploadJsFile, // 上传接口
-      bizPath: 'complain/images', // 业务路径
-      maxSize: 10, // 限制大小10M
-      uploadParams: {
-        biz: 'complain/image',
+    componentProps({formModel}){
+      return {
+        multiple: true,
+        accept: imageTypes, // 使用定义的图片类型
+        api: uploadJsFile, // 上传接口
+        bizPath: 'complain/images', // 业务路径
+        maxSize: 10, // 限制大小10M
+        uploadParams: {
+          biz: 'complain/image',
+        },
+        onPreviewDelete: (url: string) => {
+          // 判断是否重复
+          if(formModel.imageDelete.indexOf(url) === -1) {
+            if(formModel.imageDelete.length === 0) {
+              formModel.imageDelete  += url; // 存储删除的文件url
+            } else {  
+              formModel.imageDelete += ',' + url; // 存储删除的文件url
+            }
+          }
+        }
       }
     },
     colProps: {
       span: 12
     }
   },
+  // 存储删除图片id
+  {
+    label: '',
+    field: 'imageDelete',
+    component:'Input',
+    defaultValue: '',
+    show:false
+  },
   {
     field: 'audio',
     label: '录音上传',
     component: 'Upload',
-    componentProps: {
-      multiple: true,
-      accept: audioTypes,
-      api: uploadJsFile, // 上传接口
-      bizPath: 'complain/audio', // 业务路径
-      maxSize: 30, // 限制大小30M
-      uploadParams: {
-        biz: 'complain/audio',
-      },
+    componentProps({formModel}){
+      return {
+        multiple: true,
+        accept: audioTypes,
+        api: uploadJsFile, // 上传接口
+        bizPath: 'complain/audio', // 业务路径
+        maxSize: 30, // 限制大小30M
+        uploadParams: {
+          biz: 'complain/audio',
+        },
+        onPreviewDelete: (url: string) => {
+          // 判断是否重复
+          if(formModel.audioDelete.indexOf(url) === -1) {
+            if(formModel.audioDelete.length === 0) {
+              formModel.audioDelete  += url; // 存储删除的文件url
+            } else {  
+              formModel.audioDelete += ',' + url; // 存储删除的文件url
+            }
+          }
+        }
+      }
     },
   },
-  // {
-  //   field: 'audioDuration',
-  //   label: '录音时长',
-  //   component: 'Input',
-  //   slot: 'audioDurationSlot',
-  //   componentProps: {
-  //     placeholder: '00分00秒处表明态度',
-  //   },
-  //   defaultValue:[null, null]
-  // },
+ // 存储删除音频id
+  {
+    label: '',
+    field: 'audioDelete',
+    component:'Input',
+    defaultValue: '',
+    show:false
+  },
   {
     field: 'resolveResult',
     label: '处理情况',

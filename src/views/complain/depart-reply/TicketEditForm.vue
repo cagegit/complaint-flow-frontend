@@ -123,6 +123,8 @@
     const isUpdate = ref(true);
     const rowId = ref('');
     const departOptions = ref([]);
+    // 详情接口返回fileList
+    let respFileList:any[] = [];
     // 预回复详情
     const preReplyDetail = ref<any>(null);
     //表单配置
@@ -177,6 +179,7 @@
       currentEditRecordRef.value = data.record;
       // 查询详情数据
       let res:any = null;
+      respFileList = [];
       try {
         res = await getReplyDetail({ assignId: data.record.assignId });
         console.log(res);
@@ -184,6 +187,8 @@
           let audioList:any = [];
           let fileList:any = [];
           let imageList:any = [];
+          // 赋值
+          respFileList = res.fileList || [];
           // 附件列表
           if (Array.isArray(res.fileList)) {
             // 分类，图片、音频、其他
@@ -191,31 +196,33 @@
               // 根据文件后缀名判断类型
               let fileType = item.fileName.split('.').pop();
               if (audioTypes.includes(fileType)) {
-                audioList.push({
-                  uid: item.id,
-                  name: item.fileName,
-                  status: 'done',
-                  url: item.fileKey,
-                  response: item, // 保留原始数据
-                });
+                // audioList.push({
+                //   uid: item.id,
+                //   name: item.fileName,
+                //   status: 'done',
+                //   url: item.fileKey,
+                //   response: item, // 保留原始数据
+                // });
+                audioList.push(item.fileKey)
               } else if (imageTypes.includes(fileType)) {
-                imageList.push({
-                  uid: item.id,
-                  name: item.fileName,
-                  status: 'done',
-                  url: item.fileKey,
-                  response: item, // 保留原始数据
-                });
+                // imageList.push({
+                //   uid: item.id,
+                //   name: item.fileName,
+                //   status: 'done',
+                //   url: item.fileKey,
+                //   response: item, // 保留原始数据
+                // });
+                imageList.push(item.fileKey)
               } else {
-                fileList.push({
-                  uid: item.id,
-                  name: item.fileName,
-                  status: 'done',
-                  url: item.fileKey,
-                  response: item, // 保留原始数据
-                });
+                // fileList.push({
+                //   uid: item.id,
+                //   name: item.fileName,
+                //   status: 'done',
+                //   url: item.fileKey,
+                //   response: item, // 保留原始数据
+                // });
+                fileList.push(item.fileKey);
               }
-
             });
             audioList.length && setFieldsValue({ audio: audioList });
             imageList.length && setFieldsValue({ image: imageList });
@@ -310,88 +317,144 @@
         console.log('params', params);
         const assignId = currentEditRecordRef.value?.assignId || '';
         const addFileList:any[] = [];
-        let idx = 0;
+        const deleteFileIdList:string[] = [];
+        // let idx = 0;
         // 文件/视频
-        if(Array.isArray(params.file)){
-          params.file.forEach((item) => {
-            addFileList.push({
-              assignId: assignId,
-              fileKey: item.fileKey,
-              fileName: item.name,
-              id: ++idx,
-              remark: '',
-              type: '1' // file
-            });
-          });
-        } else if(typeof params.file === 'string' && params.file) {
+        if(typeof params.file === 'string' && params.file) {
           params.file.split(',').forEach((item) => {
             item = item.trim();
             if(!item) return;
-            addFileList.push({
+            let resInfo:any = null;
+            respFileList.forEach((fileItem) => {
+              if(fileItem.fileKey === item) {
+                resInfo = fileItem;
+              }
+            });
+            if(!resInfo) {
+            //   addFileList.push({
+            //     assignId: assignId,
+            //     fileKey: resInfo.fileKey,
+            //     fileName: resInfo.fileName,
+            //     id: resInfo.id,
+            //     remark: resInfo.remark || '',
+            //     type: '1' // file
+            //   });
+            // } else {
+              addFileList.push({
                 assignId: assignId,
                 fileKey: item,
                 fileName: item,
-                id: ++idx,
+                id: null,
                 remark: '',
                 type: '1' // file
               });
+            }
+          });
+        }
+        // 判断是否有文件删除
+        if(params.fileDelete) {
+          params.fileDelete.split(',').forEach((item) => {
+            item = item.trim();
+            if(!item) return;
+            respFileList.forEach((fileItem) => {
+              if(fileItem.fileKey === item) {
+                deleteFileIdList.push(fileItem.id);
+              }
+            });
           });
         }
         // 图片
-        if(Array.isArray(params.image)){
-          params.image.forEach((item) => {
-            addFileList.push({
-              assignId: assignId,
-              fileKey: item.fileKey,
-               fileName: item.name,
-              id: ++idx,
-              remark: '',
-              type: '2' // 2 image
-            });
-          });
-        } else if(typeof params.image === 'string' && params.image) {
+        if(typeof params.image === 'string' && params.image) {
             params.image.split(',').forEach((item) => {
               item = item.trim();
-              if(!item) return;
-              addFileList.push({
-                  assignId: assignId,
-                  fileKey: item,
-                  fileName: item,
-                  id: ++idx,
-                  remark: '',
-                  type: '2' // 2 image
-                });
+              // if(!item) return;
+               let resInfo:any = null;
+              respFileList.forEach((fileItem) => {
+                if(fileItem.fileKey === item) {
+                  resInfo = fileItem;
+                }
+              });
+              if(!resInfo) {
+              //   addFileList.push({
+              //     assignId: assignId,
+              //     fileKey: resInfo.fileKey,
+              //     fileName: resInfo.fileName,
+              //     id: resInfo.id,
+              //     remark: resInfo.remark || '',
+              //     type: '2' // 2 image
+              //   });
+              // } else{
+                // 处理图片
+                addFileList.push({
+                    assignId: assignId,
+                    fileKey: item,
+                    fileName: item,
+                    id: null,
+                    remark: '',
+                    type: '2' // 2 image
+                  });
+              }
             });
         }
-        // 音频
-        if(Array.isArray(params.audio)){
-          params.audio.forEach((item) => {
-            addFileList.push({
-              assignId: assignId,
-              fileKey: item.fileKey,
-              fileName: item.name,
-              id: ++idx,
-              remark: '',
-              type: '3' // 3 audio
+        // 判断是否有图片删除
+        if(params.imageDelete) {
+          params.imageDelete.split(',').forEach((item) => {
+            item = item.trim();
+            if(!item) return;
+            respFileList.forEach((fileItem) => {
+              if(fileItem.fileKey === item) {
+                deleteFileIdList.push(fileItem.id);
+              }
             });
           });
-        } else if(typeof params.audio === 'string' && params.audio) {
+        }
+        // 音频
+        if(typeof params.audio === 'string' && params.audio) {
           params.audio.split(',').forEach((item) => {
             item = item.trim();
             if(!item) return;
-            // 处理音频
-            addFileList.push({
-              assignId: assignId,
-              fileKey: item,
-              fileName: item,
-              id: ++idx,
-              remark: '',
-              type: '3' // 3 audio
+            let resInfo:any = null;
+            respFileList.forEach((fileItem) => {
+              if(fileItem.fileKey === item) {
+                resInfo = fileItem;
+              }
+            });
+            if(!resInfo) {
+            //   addFileList.push({
+            //     assignId: assignId,
+            //     fileKey: resInfo.fileKey,
+            //     fileName: resInfo.fileName,
+            //     id: resInfo.id,
+            //     remark: resInfo.remark || '',
+            //     type: '3' // 3 audio
+            //   });
+            // } else {
+              // 处理音频
+              addFileList.push({
+                assignId: assignId,
+                fileKey: item,
+                fileName: item,
+                id: null,
+                remark: '',
+                type: '3' // 3 audio
+              });
+            }
+          });
+        }
+        // 判断是否有音频删除
+        if(params.audioDelete) {
+          params.audioDelete.split(',').forEach((item) => {
+            item = item.trim();
+            if(!item) return;
+            respFileList.forEach((fileItem) => {
+              if(fileItem.fileKey === item) {
+                deleteFileIdList.push(fileItem.id);
+              }
             });
           });
         }
       // 判断文件列表是否为空
-      if(addFileList.length === 0) {
+      if(addFileList.length === 0 && respFileList.length === 0) {
         createMessage.error('上传附件不能为空，必选上传其中任意一种！');
         return;
       }
@@ -416,7 +479,7 @@
        const newParams = {
           "addFileList": addFileList,
           "assignId": assignId,
-          "deleteFileIdList": [],
+          "deleteFileIdList": deleteFileIdList,
           "overseeUserName": params.overseeUserName,
           "overseeUserPhone": "",
           "remark": params.remark,

@@ -274,7 +274,7 @@ const modelValue = defineModel('value', {
   type: Array as PropType<FileItem[]>,
   default: () => []
 });
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change','delete']);
 
 // 创建消息实例
 const { createMessage } = useMessage();
