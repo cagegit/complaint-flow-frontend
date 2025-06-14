@@ -41,7 +41,7 @@
     import { formSchema, addFormSchema } from './assign.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     import { addAssign, getAssignDetail } from './assign.api';
-    import { getCommunityChildList, getComplaintDetail, getSecondTreeList } from '/@/api/common/api';
+    import { getCitySevenFiveList, getCommunityChildList, getComplaintDetail, getSecondTreeList } from '/@/api/common/api';
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { useMessage } from '/@/hooks/web/useMessage';
@@ -98,41 +98,20 @@
       // 给当前data赋值
       currentData = data;
       console.log(data);
+      let assignDetail:any = {};
       // 查询分派详情
       try {
-        const res = await getAssignDetail(data.record.id);
+        assignDetail = await getAssignDetail(data.record.id);
         // console.log(res);
         // 回显数据
-        if(res) {
-          setFieldsValue({
-            ...res,
-            reportDistrictId: res?.assignCommunityList[0]?.parentOrgId || null,
-            reportCommunityId: res?.assignCommunityList[0]?.orgId || null,
-            assignDeptIdList: res?.assignDeptList?.map(v => v.orgId)?.join(',') || null,
-          });
-          try {
-            if(res?.assignCommunityList[0]?.parentOrgId) {
-              const ksData = await getCommunityChildList(res?.assignCommunityList[0]?.parentOrgId)
-              console.log(ksData)
-              if (Array.isArray(ksData)) {
-                updateSchema({
-                  field: 'reportCommunityId',
-                  // required: true,
-                  componentProps: {
-                    options: ksData.map(v => {
-                      return {
-                        label: v.departName,
-                        value: v.id
-                      }
-                    }),
-                  }
-                });
-              }
-            }
-          } catch (error) {
-            console.log(error)
-          }
-        }
+        // if(assignDetail) {
+        //   setFieldsValue({
+        //     ...assignDetail,
+        //     reportDistrictId: assignDetail?.assignCommunityList[0]?.parentOrgId || null,
+        //     reportCommunityId: assignDetail?.assignCommunityList[0]?.orgId || null,
+        //     assignDeptIdList: assignDetail?.assignDeptList?.map(v => v.orgId)?.join(',') || null,
+        //   });
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -145,6 +124,65 @@
           console.log(res);
           ticketDetail.value = res;
           ticketResult.value = res;
+          // 处理社区/居委会
+          let communityList:any[] = [];
+          if(Array.isArray(assignDetail?.assignCommunityList)) {
+            assignDetail.assignCommunityList.forEach((v:any) => {
+              if(v.orgId) {
+                communityList.push([v.parentOrgId,v.orgId]);
+              }
+            });
+          }
+          console.log(communityList);
+          // 转派表单回显
+          setFieldsValue({
+            ...res,
+            caseNature: res?.caseNature ? res.caseNature + '' : null,
+            labelCode: res?.labelCode ? res.labelCode + '' : null,
+            // 处理科室
+            assignDeptIdList: Array.isArray(assignDetail?.assignDeptList) ? assignDetail.assignDeptList.map(v => v.orgId) : [],
+            // 处理社区/居委会
+            assignCommunityIdList:  communityList,
+          });
+          // 反映社区回显
+          if(res?.reportDistrictId) {
+              getCommunityChildList(res?.reportDistrictId).then(ksData => {
+                // console.log(ksData)
+                if (Array.isArray(ksData)) {
+                  updateSchema({
+                    field: 'reportCommunityId',
+                    // required: true,
+                    componentProps: {
+                      options: ksData.map(v => {
+                        return {
+                          label: v.departName,
+                          value: v.id
+                        }
+                      }),
+                    }
+                  });
+                }
+              }).catch(error => {
+                console.log(error);
+              });
+            }
+            // 七有五性回显
+            if(res?.sevenFiveId) {
+              getCitySevenFiveList().then(sevenFiveData => {
+                if(Array.isArray(sevenFiveData)) {
+                  sevenFiveData.forEach((item:any) => {
+                    if(item.id == res.sevenFiveId) {
+                      // res.sevenFiveId = item.name;
+                      setFieldsValue({
+                        sevenFiveId: item.allParentIds ? item.allParentIds.split(',') : [],
+                      });
+                    }
+                  });
+                }
+              }).catch(error => {
+                console.log(error);
+              });
+            }
         } catch (error) {
           console.log(error);
         }
@@ -183,7 +221,6 @@
           createMessage.error('请选择处理科室或处理社区!');
           return;
         }
-
         console.log(params)
         let shequTreeList:any[] =[];
         try {
@@ -191,7 +228,6 @@
         } catch (error) {
           console.log(error)
         }
-        
         if(currentData) {
           // 处理社区
           if(params.assignCommunityIdList) {

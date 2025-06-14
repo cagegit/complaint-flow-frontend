@@ -87,7 +87,7 @@
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
-    import { getComplaintDetail } from '/@/api/common/api';
+    import { getCitySevenFiveList, getComplaintDetail } from '/@/api/common/api';
     import { useMessage } from '/@/hooks/web/useMessage';
     import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
@@ -137,7 +137,7 @@
       disabled: true
     });
     //回访审核表单配置
-    const [registerAuditForm, { validate:validateAuditForm }] = useForm({
+    const [registerAuditForm, { validate:validateAuditForm, setFieldsValue: setAuditFieldsValue }] = useForm({
       labelWidth: 150,
       schemas: auditFormSchema,
       showActionButtonGroup: false,
@@ -164,28 +164,28 @@
         console.log(res);
         if(res) {
           // 处理文件数据
-        let newFileList = res?.replyList?.map((v:any) => {
-            v.fileCount = 0;
-            v.imageCount = 0;
-            v.audioCount = 0;
-            v.fileList?.forEach(item => {
-              // console.log('item', item);
-              // item.fileCount = (item.fileCount || 0) + 1;
-              let fileType = item.fileName.split('.').pop();
-              if (audioTypes.includes(fileType)) {
-                v.audioCount++;
-              } else if (imageTypes.includes(fileType)) {
-                v.imageCount++;
-              } else {
-                v.fileCount++;
-              }
-          });
-          return {
-           ...v
-          };
-        }) || [];
-         replyList.value = newFileList;
-         total.value = res.replyList?.length || 0;
+          let newFileList = res?.replyList?.map((v:any) => {
+              v.fileCount = 0;
+              v.imageCount = 0;
+              v.audioCount = 0;
+              v.fileList?.forEach(item => {
+                // console.log('item', item);
+                // item.fileCount = (item.fileCount || 0) + 1;
+                let fileType = item.fileName.split('.').pop();
+                if (audioTypes.includes(fileType)) {
+                  v.audioCount++;
+                } else if (imageTypes.includes(fileType)) {
+                  v.imageCount++;
+                } else {
+                  v.fileCount++;
+                }
+            });
+            return {
+            ...v
+            };
+          }) || [];
+          replyList.value = newFileList;
+          total.value = res.replyList?.length || 0;
         }
       } catch (error) {
         console.error('Error fetching reply list:', error);
@@ -204,6 +204,31 @@
           ...data.record,
           ...detailRes
         });
+        // 设置审核表单值
+        setAuditFieldsValue({
+          followCode: detailRes.followCode ? detailRes.followCode +'' : '',
+          labelCode: detailRes.labelCode ? detailRes.labelCode +'' : '',
+          rejectReason: detailRes.rejectReason ? detailRes.rejectReason : '',
+          finalResolveResult: detailRes.finalResolveResult ? detailRes.finalResolveResult : '',
+          remark: detailRes.remark ? detailRes.remark : '',
+        });
+        // 七有五性回显
+        if(detailRes?.sevenFiveId) {
+          getCitySevenFiveList().then(sevenFiveData => {
+            if(Array.isArray(sevenFiveData)) {
+              sevenFiveData.forEach((item:any) => {
+                if(item.id == detailRes.sevenFiveId) {
+                  // detailRes.sevenFiveId = item.name;
+                  setAuditFieldsValue({
+                    sevenFiveId: item.allParentIds ? item.allParentIds.split(',') : [],
+                  });
+                }
+              });
+            }
+          }).catch(error => {
+            console.log(error);
+          });
+        }
       }
       // 查询预回复详情
       getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
@@ -255,36 +280,39 @@
         // console.log('auditValues', auditValues);
         // console.log('preReplyValues', preReplyValues);
         // 先验证回访审核表单
-        let values = await validate();
+        // let values = await validate();
         setModalProps({ confirmLoading: true });
         // 判断附件是否存在
         let newFileList:any[] = [];
-        if (!preReplyValues?.attachments) {
-          createMessage.error('请上传附件');
-          setModalProps({ confirmLoading: false });
-          throw new Error('请上传附件');
-        } else {
-          newFileList = preReplyFileList.map(v => {
-            return {
-              districtFileTagType: v.districtFileTagType,
-              fileKey: v.fileKey,
-              fileName: v.fileName,
-              fileSize: v.fileSize,
-              fileTagType: v.fileTagType,
-              id: v.id
-            }
-          });  
+        // 如果审核状态不是-1，则需要检查预回复的附件
+        if(auditValues.auditStatus != -1) {
+          if (!preReplyValues?.attachments) {
+            createMessage.error('请上传附件');
+            setModalProps({ confirmLoading: false });
+            throw new Error('请上传附件');
+          } else {
+            newFileList = preReplyFileList.map(v => {
+              return {
+                districtFileTagType: v.districtFileTagType,
+                fileKey: v.fileKey,
+                fileName: v.fileName,
+                fileSize: v.fileSize,
+                fileTagType: v.fileTagType,
+                id: v.id
+              }
+            });  
+          }
         }
         // console.log('newFileList', newFileList);
         let isUpdateVal = unref(isUpdate);
-        let params = values;
+        // let params = values;
         const ticketId = currentEditRecordRef.value?.id;
         const newParams = {
           "auditStatus": auditValues.auditStatus,
           "deleteFileIdList": [],
           "finalResolveResult": auditValues.finalResolveResult,
           "followCode": auditValues.followCode,
-          "labelCode": params.labelCode,
+          "labelCode": auditValues.labelCode,
           "needVisit":  auditValues.needVisit,
           "rejectReason": auditValues.rejectReason,
           "remark": auditValues.remark,
@@ -292,7 +320,7 @@
             // ...replyList.value,
             ...newFileList
           ],
-          "sevenFiveId": params.sevenFiveId,
+          "sevenFiveId": auditValues.sevenFiveId,
           // "ticketId": 0,
           "ticketReplyDataVo": {
             ...preReplyValues,
@@ -305,7 +333,7 @@
         //关闭弹窗
         closeModal();
         //刷新列表
-        emit('success',{isUpdateVal ,values});
+        emit('success',{isUpdateVal, auditValues});
       } finally {
         setModalProps({ confirmLoading: false });
       }

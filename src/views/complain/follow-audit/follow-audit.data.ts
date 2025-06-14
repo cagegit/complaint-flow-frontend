@@ -100,6 +100,8 @@ export const columns: BasicColumn[] = [
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
    { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
+   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
    { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
    { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
    { title: '来电时间', dataIndex: 'callTime', width: 150 },
@@ -125,8 +127,6 @@ export const columns: BasicColumn[] = [
    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
   //  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
    { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
-   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
    { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
    { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
    { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
@@ -901,12 +901,17 @@ export const auditFormSchema: FormSchema[] = [
     field: 'labelCode',
     label: '标签',
     component: 'RadioGroup',
-    required: true,
+    required: ({ values }) => {
+      return values.auditStatus != -1; // 仅在待审核状态下可编辑
+    },
     componentProps: { 
       options: getDictItemsByCode('biz_complaint_lavel') 
     },
     defaultValue: '1',
     colProps: { span: 12 },
+    dynamicDisabled: ({ values }) => {
+      return values.auditStatus == -1; // 仅在待审核状态下可编辑
+    }
   },
   {
     field: 'followCode',
@@ -928,6 +933,9 @@ export const auditFormSchema: FormSchema[] = [
       placeholder: '==请选择==',
     },
     colProps: { span: 12 },
+    dynamicDisabled: ({ values }) => {
+      return values.auditStatus == -1; // 仅在待审核状态下可编辑
+    }
   },
   // {
   //   field: 'factFlag',
@@ -944,25 +952,30 @@ export const auditFormSchema: FormSchema[] = [
   // },
     // 是否需要区回访
     {
-    field: 'needVisit',
-    label: '是否需要区回访',
-    component: 'Select',
-    required: true,
-    componentProps: {
-      options:[
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-      placeholder: '==请选择是否需求区回访==',
-    },
-    colProps: { span: 12 },
+      field: 'needVisit',
+      label: '是否需要区回访',
+      component: 'Select',
+      required: ({ values }) => {
+        return values.auditStatus != -1; // 仅在待审核状态下可编辑
+      },
+      componentProps: {
+        options:[
+          { label: '是', value: '1' },
+          { label: '否', value: '0' },
+        ],
+        placeholder: '==请选择是否需求区回访==',
+      },
+      colProps: { span: 12 },
+      dynamicDisabled: ({ values }) => {
+        return values.auditStatus == -1; // 仅在待审核状态下可编辑
+      }
     },
     // 七有五性
     { 
      field: 'sevenFiveId', 
      label: '七有五性', 
      component: 'ApiCascader',
-    //  required: true,
+     //  required: true,
      componentProps: {
        api: async () => {
          const res  = await getCitySevenFiveList();
@@ -979,6 +992,9 @@ export const auditFormSchema: FormSchema[] = [
        changeOnSelect: true,
      },
      colProps: { span: 12 },
+     dynamicDisabled: ({ values }) => {
+      return values.auditStatus == -1; // 仅在待审核状态下可编辑
+     }
    },
    // 审核状态 auditStatus
     {
@@ -999,7 +1015,7 @@ export const auditFormSchema: FormSchema[] = [
         wrapperCol: { span: 24, sm: { span: 21 } },
       }
     },
-   // 驳回原因
+    // 驳回原因
     {
       field: 'rejectReason',
       label: '驳回原因',
@@ -1008,6 +1024,7 @@ export const auditFormSchema: FormSchema[] = [
         placeholder: '请输入驳回原因',
         rows: 4,
       },
+      required: true,
       colProps: { span: 24 },
       itemProps: {
         wrapperCol: { span: 24, sm: { span: 21 } },
@@ -1021,7 +1038,9 @@ export const auditFormSchema: FormSchema[] = [
       field: 'finalResolveResult',
       label: '最终处理情况',
       component: 'InputTextArea',
-      required: true,
+      required: ({ values }) => {
+        return values.auditStatus != -1; // 仅在待审核状态下可编辑
+      },
       componentProps: {
         placeholder: '请输入处理情况',
         rows: 4,
@@ -1029,6 +1048,9 @@ export const auditFormSchema: FormSchema[] = [
       colProps: { span: 24 },
       itemProps: {
         wrapperCol: { span: 24, sm: { span: 21 } },
+      },
+      dynamicDisabled: ({ values }) => {
+        return values.auditStatus == -1; // 仅在待审核状态下可编辑
       }
     },
     // 备注
@@ -1043,6 +1065,9 @@ export const auditFormSchema: FormSchema[] = [
       colProps: { span: 24 },
       itemProps: {
         wrapperCol: { span: 24, sm: { span: 21 } },
+      },
+      dynamicDisabled: ({ values }) => {
+        return values.auditStatus == -1; // 仅在待审核状态下可编辑
       }
     },
 ];

@@ -1,4 +1,4 @@
-import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
+import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -96,8 +96,9 @@ export const columns: BasicColumn[] = [
   { title: '年次', dataIndex: 'yearCount', width: 80 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
-
   { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+  { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
+  { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
   { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
   { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
   { title: '来电时间', dataIndex: 'callTime', width: 150 },
@@ -123,8 +124,6 @@ export const columns: BasicColumn[] = [
   { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
   // { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
   { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-  { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
-  { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
   { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
   { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
   { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
@@ -545,7 +544,8 @@ export const formSchema: FormSchema[] = [
 // 待补充表单
 export const addFormSchema: FormSchema[] = [
   {
-    field: 'labelCode', label: '标签',
+    field: 'labelCode', 
+    label: '标签',
     component: 'RadioGroup',
     componentProps: {
       options: getDictItemsByCode('biz_complaint_lavel')
@@ -638,29 +638,35 @@ export const addFormSchema: FormSchema[] = [
     label: '处理社区/居委会',
     component: 'ApiCascader',
     // required: true,
-    componentProps: {
-      checkable: true,
-      multiple: true,
-      api: async () => {
-        const res = await getSecondTreeList('3');
-        // console.log(res)
-        if (Array.isArray(res)) {
-          // 把tree格式数据展开
-          const newList = treeToList(res);
-          return newList.map(v => {
-            return {
-              id: v.id,
-              parentId: v.parentId,
-              label: v.title,
-              value: v.id,
-            }
-          });
-        } else {
-          return [];
-        }
-      },
-      treeDataSimpleMode: true,
-      showCheckedStrategy: 'Cascader.SHOW_CHILD',
+    componentProps: ({formModel}) =>{
+      return {
+        checkable: true,
+        multiple: true,
+        api: async () => {
+          const res = await getSecondTreeList('3');
+          // console.log(res)
+          if (Array.isArray(res)) {
+            // 把tree格式数据展开
+            const newList = treeToList(res);
+            return newList.map(v => {
+              return {
+                id: v.id,
+                parentId: v.parentId,
+                label: v.title,
+                value: v.id,
+              }
+            });
+          } else {
+            return [];
+          }
+        },
+        onChange:(values, options) => {
+          console.log(values, options);
+          // formModel.communityList = values;
+        },
+        treeDataSimpleMode: true,
+        // showCheckedStrategy: 'Cascader.SHOW_CHILD'
+      }
     },
     // treeDataSimpleMode: true,
   },
@@ -669,19 +675,25 @@ export const addFormSchema: FormSchema[] = [
     label: '七有五性',
     component: 'ApiCascader',
     // required: true,
-    componentProps: {
-      api: async () => {
-        const res = await getCitySevenFiveList();
-        // console.log(res)
-        if (Array.isArray(res)) {
-          return res;
-        } else {
-          return [];
+    componentProps: ({formModel}) => {
+      return {
+        api: async () => {
+          const res = await getCitySevenFiveList();
+          // console.log(res)
+          if (Array.isArray(res)) {
+            return res;
+          } else {
+            return [];
+          }
+        },
+        labelField: 'name',
+        valueField: 'id',
+        changeOnSelect: true,
+        onChange: (values, options) => {
+          console.log(values, options);
+          // formModel.sevenFiveList = values; 
         }
-      },
-      labelField: 'name',
-      valueField: 'id',
-      changeOnSelect: true,
+      }
     }
   },
   // 案件性质
