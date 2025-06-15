@@ -49,7 +49,7 @@
                     </template>
                     <!-- 附件 -->
                       <template #uploadAttachmentsSlot="{model, field}">
-                      <UploadList v-model:value="model[field]" @change="changePreList" />
+                      <UploadList v-model:value="model[field]" @change="changePreList" @delete="handleDeleteList" />
                       </template>
                   </BasicForm>
                 </div>
@@ -125,6 +125,8 @@
     const ticketDetail = ref<any>({});
     // 预回文件列表
     let preReplyFileList:any[] = [];
+    // 预回复删除文件ID列表
+    let preReplyDeleteFileIdList:any[] = [];
     // 拒绝表单
     const rejectFormSchema:any[] = [
       // 驳回原因
@@ -196,6 +198,7 @@
       console.log(data);
       // 恢复默认设置
       preReplyFileList = []
+      preReplyDeleteFileIdList = [];
       activeKey.value = '1'; // 默认选中预回复
       finalChoice.value = '1'; // 默认选择最终回复
       showFooter.value = data?.showFooter ?? true;
@@ -261,6 +264,14 @@
       console.log(list);
       preReplyFileList = list;
     }
+    // 删除预回复文件
+    function handleDeleteList(file:any) {
+      console.log('删除预回复文件', file);
+      // preReplyFileList = preReplyFileList.filter(v => v.fileKey !== file.fileKey);
+      if (preReplyDeleteFileIdList.indexOf(file.id) === -1) {
+        preReplyDeleteFileIdList.push(file.id);
+      }
+    }
     //提交事件
     async function handleSubmit() {
       try {
@@ -306,7 +317,7 @@
               replyRequestName: rest.replyRequestType
             },
             "ticketId": ticketId,
-            "deleteFileIdList": [],
+            "deleteFileIdList": preReplyDeleteFileIdList,
           };
           //提交表单
           await saveReviewReply(newParams);

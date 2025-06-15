@@ -74,7 +74,7 @@
                   </template>
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model:value="model[field]"  @change="changePreList"/>
+                    <UploadList v-model:value="model[field]" @change="changePreList" @delete="handleDeleteList"/>
                   </template>
               </BasicForm>
             </a-tab-pane>
@@ -118,7 +118,7 @@
     // @ts-ignore
     import { preFormLogicHandler, formFinalNoRequiredSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
-   import { audioTypes, imageTypes } from '/@/utils/fileType';
+    import { audioTypes, imageTypes } from '/@/utils/fileType';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
     const total = ref(0);
@@ -147,6 +147,8 @@
     const ticketDetail = ref<any>({});
     // 预回文件列表
     let preReplyFileList:any[] = [];
+    // 预回复删除的文件ID列表
+    let preReplyDeleteFileIdList:any[] = [];
     // 从字典获取跟进情况
     const followCodeInfo = computed(() => {
       const array = getDictItemsByCode('biz_follow_code') || [];
@@ -208,6 +210,7 @@
       console.log(data);
       // 恢复默认值
       preReplyFileList = []
+      preReplyDeleteFileIdList = []
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
@@ -306,6 +309,14 @@
       console.log(list);
       preReplyFileList = list;
     }
+    // 删除预回复文件
+    function handleDeleteList(file:any) {
+      console.log('删除预回复文件', file);
+      // preReplyFileList = preReplyFileList.filter(v => v.fileKey !== file.fileKey);
+      if (preReplyDeleteFileIdList.indexOf(file.id) === -1) {
+        preReplyDeleteFileIdList.push(file.id);
+      }
+    }
     //提交事件
     async function handleSubmit() {
       try {
@@ -330,7 +341,7 @@
                });  
             }
             const resResult = await savePreReply({
-              "deleteFileIdList": [],
+              "deleteFileIdList": preReplyDeleteFileIdList,
               "replyFileList": newFileList,
               "ticketId": currentEditRecordRef.value?.id,
               "ticketReplyDataVo": {

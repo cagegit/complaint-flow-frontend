@@ -38,7 +38,7 @@
                   </template>
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model:value="model[field]" @change="changePreList" />
+                    <UploadList v-model:value="model[field]" @change="changePreList" @delete="handleDeleteList" />
                     </template>
                 </BasicForm>
               </div>
@@ -111,6 +111,8 @@
     const ticketDetail = ref<any>({});
     // 预回文件列表
     let preReplyFileList:any[] = [];
+    // 预回复删除的文件ID列表
+    let preReplyDeleteFileIdList:any[] = [];
     // 预回复表单
     const [registerPreReplyForm, { validate: validatePreReplyForm, clearValidate: clearPreReplyValidate, setFieldsValue: setPreReplyFieldsValue, updateSchema }] = useForm({
       labelWidth: 150,
@@ -154,6 +156,7 @@
       console.log(data);
       // 恢复默认值
       preReplyFileList = []
+      preReplyDeleteFileIdList = [];
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
@@ -269,6 +272,14 @@
     function changePreList(list:any[]) {
       console.log(list);
       preReplyFileList = list;
+    }
+    // 删除预回复文件
+    function handleDeleteList(file:any) {
+      console.log('删除预回复文件', file);
+      // preReplyFileList = preReplyFileList.filter(v => v.fileKey !== file.fileKey);
+      if (preReplyDeleteFileIdList.indexOf(file.id) === -1) {
+        preReplyDeleteFileIdList.push(file.id);
+      }
     }
     //提交事件
     async function handleSubmit() {

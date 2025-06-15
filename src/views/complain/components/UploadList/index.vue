@@ -9,10 +9,10 @@
       </div>
 
       <!-- 上传按钮 -->
-      <div class="flex">
+      <div class="flex gap-2">
         <!-- 从已有列表上传 -->
         <!-- <a-button @click="handleUploadFromList" class="flex items-center">
-          <span>选择回复文件</span>
+          <span>从回复文件选择</span>
         </a-button> -->
         <!-- 添加 -->
         <a-button type="primary" @click="handleAddClick" class="flex items-center">
@@ -605,6 +605,7 @@ const handleDelete = (file) => {
     (item.id && item.id !== file.id) || (item.uid && item.uid !== file.uid)
   );
   createMessage.success('文件删除成功');
+  emit('delete', file);
 };
 
 // 文件预览
