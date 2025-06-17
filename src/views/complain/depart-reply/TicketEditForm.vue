@@ -8,6 +8,7 @@
       destroyOnClose
       :maskClosable="false"
       @cancel="closeTheModal"
+      :confirmLoading="isSaving"
     >
     <div style="max-height: 800px; overflow: auto;">
       <div class="flex px-3 relative ">
@@ -33,20 +34,17 @@
 
         <div style="width: 500px; padding-left: 40px; " :style="{width: showLeft ? '500px': 'auto'}">
             <a-divider><span class="text-red-500">必填表单区域</span></a-divider>
-            <BasicForm
-                :schemas="addFormSchema"
-                @register="registerAddForm"
-            >
-            <template #audioDurationSlot="record">
-              <a-space>
-                <a-time-picker
-                  v-model="record.model.audioDuration[0]"
-                  format="HH:mm:ss"
-                  style="width: 100%"
-                />
-                <a-input v-model="record.model.audioDuration[1]" placeholder="00分00秒处表明态度" />
-              </a-space>
-              </template>
+            <BasicForm @register="registerAddForm">
+              <template #audioDurationSlot="record">
+                <a-space>
+                  <a-time-picker
+                    v-model="record.model.audioDuration[0]"
+                    format="HH:mm:ss"
+                    style="width: 100%"
+                  />
+                  <a-input v-model="record.model.audioDuration[1]" placeholder="00分00秒处表明态度" />
+                </a-space>
+                </template>
             </BasicForm>
             <a-divider>可选表单区域</a-divider>
                <a-collapse v-model:activeKey="subActiveKey" ghost>
@@ -93,9 +91,8 @@
   <script lang="ts" setup>
     import { ref, computed, unref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema, addFormSchema } from './depart.data';
+    import { formSchema } from './depart.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
-    
     import { addDepartReply, getReplyDetail, saveSubmitReply } from './depart.api';
     import { useMessage } from '/@/hooks/web/useMessage';
     // @ts-ignore
@@ -108,8 +105,9 @@
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
-    import { audioTypes, imageTypes } from '/@/utils/fileType';
-
+    import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
+    import { uploadJsFile } from '/@/api/common/api';
+    import { UploadFileItem } from '/@/components/UploadItem/src/props';
     // const { showQuReplyConfirm } = useConfirm();
 
     const { createMessage } = useMessage();
@@ -121,12 +119,19 @@
     const subActiveKey = ref<string>('');
     const attrs = useAttrs();
     const isUpdate = ref(true);
-    const rowId = ref('');
-    const departOptions = ref([]);
+    // const rowId = ref('');
+    // const departOptions = ref([]);
+    const isSaving = ref(false);
     // 详情接口返回fileList
     let respFileList:any[] = [];
     // 预回复详情
     const preReplyDetail = ref<any>(null);
+    // 全局deleteFileIdList
+    let deleteFileIdList: (string|number)[] = [];
+    // 全局上上传文件列表
+    let uploadFileList: UploadFileItem[] = [];
+    let uploadImageList: UploadFileItem[] = [];
+    let uploadAudioList: UploadFileItem[] = [];
     //表单配置
     const [registerForm, {setFieldsValue: setBasicFieldsValue}] = useForm({
       labelWidth: 150,
@@ -141,9 +146,158 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+    const [registerAddForm, { resetFields, setFieldsValue, validate }] = useForm({
       labelWidth: 150,
-      schemas: addFormSchema,
+      schemas: [
+           {
+            field: 'department',
+            label: '处理部门',
+            component: 'Input',
+            required: true,
+            componentProps: {
+              placeholder: '请输入处理部门',
+              disabled: true
+            },
+            colProps: {
+              span: 12
+            }
+          },
+          {
+            field: 'overseeUserName',
+            label: '督办人',
+            component: 'Input',
+            required: true,
+            componentProps: {
+              placeholder: '请输入督办人',
+            },
+            colProps: {
+              span: 12
+            }
+          },
+          {
+          field: 'file',
+          label: '附件/视频',
+          component: 'UploadItem',
+          componentProps(){
+            return {
+              // 具体上传配置
+              multiple: true,
+              accept: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', ...videoTypes],
+              api: uploadJsFile, // 上传接口
+              showDownloadButton: true,
+              showPreviewButton: true,
+              bizPath: 'complain/files', // 业务路径
+              maxSize: 30, // 限制大小30M
+              uploadParams: {
+                biz: 'complain/file',
+              },
+              onPreviewDelete: (item: UploadFileItem) => {
+                console.log('删除附件/视频', item);
+                // 判断是否重复
+                if(item.id && deleteFileIdList.indexOf(item.id) === -1) {
+                  deleteFileIdList.push(item.id);
+                }
+              },
+              onChange: (fileList: UploadFileItem[]) => {
+                console.log('附件/视频上传成功', fileList);
+                // 更新全局上传文件列表
+                uploadFileList = fileList;
+              }
+            }
+          },
+          colProps: {
+            span: 12
+          }
+        },
+        {
+          field: 'image',
+          label: '图片上传',
+          component: 'UploadItem',
+          componentProps(){
+            return {
+              multiple: true,
+              accept: imageTypes, // 使用定义的图片类型
+              api: uploadJsFile, // 上传接口
+              bizPath: 'complain/images', // 业务路径
+              maxSize: 10, // 限制大小10M
+              uploadParams: {
+                biz: 'complain/image',
+              },
+              onPreviewDelete: (item: UploadFileItem) => {
+                console.log('删除图片', item);
+                // 判断是否重复
+                if(item.id && deleteFileIdList.indexOf(item.id) === -1) {
+                  deleteFileIdList.push(item.id);
+                }
+              },
+              onChange: (fileList: UploadFileItem[]) => {
+                console.log('图片上传成功', fileList);
+                // 更新全局上传图片列表
+                uploadImageList = fileList;
+              }
+            }
+          },
+          colProps: {
+            span: 12
+          }
+        },
+        {
+          field: 'audio',
+          label: '录音上传',
+          component: 'UploadItem',
+          componentProps(){
+            return {
+              multiple: true,
+              accept: audioTypes,
+              api: uploadJsFile, // 上传接口
+              bizPath: 'complain/audio', // 业务路径
+              maxSize: 30, // 限制大小30M
+              uploadParams: {
+                biz: 'complain/audio',
+              },
+              onPreviewDelete: (item: UploadFileItem) => {
+                console.log('删除音频', item);
+                // 判断是否重复
+                if(item.id && deleteFileIdList.indexOf(item.id) === -1) {
+                  deleteFileIdList.push(item.id);
+                }
+              },
+              onChange: (fileList: UploadFileItem[]) => {
+                console.log('音频上传成功', fileList);
+                // 更新全局上传音频列表
+                uploadAudioList = fileList;
+              }
+            }
+          },
+        },
+        {
+          field: 'resolveResult',
+          label: '处理情况',
+          component: 'InputTextArea',
+          required: true,
+          componentProps: {
+            placeholder: '请输入处理情况',
+            rows: 6,
+          },
+          colProps: { span: 24 },
+          itemProps: {
+            wrapperCol: { span: 24, sm: { span: 21 } },
+          }
+        },
+        {
+          field: 'remark',
+          label: '备注',
+          component: 'InputTextArea',
+          componentProps: {
+            placeholder: '请输入备注',
+            rows: 3,
+          },
+          colProps: { span: 24 },
+          itemProps: {
+            wrapperCol: { span: 24, sm: { span: 21 } },
+          }
+        }
+      ],
       showActionButtonGroup: false,
       layout: 'vertical',
       rowProps: { gutter: 12, justify: 'center', align: 'middle' },
@@ -165,13 +319,19 @@
     // 当前编辑工单
     const currentEditRecordRef = ref<any>(null);
     // 表单被关闭
-    let isQjFormCloseDirect = false;
+    // let isQjFormCloseDirect = false;
     // 表单详情
     const ticketDetail = ref<any>({});
     //表单赋值
     const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (data) => {
       await resetFields();
       console.log(data);
+      // 重置
+      subActiveKey.value = '';
+      deleteFileIdList = [];
+      uploadFileList = [];
+      uploadImageList = [];
+      uploadAudioList = [];
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
@@ -196,32 +356,32 @@
               // 根据文件后缀名判断类型
               let fileType = item.fileName.split('.').pop();
               if (audioTypes.includes(fileType)) {
-                // audioList.push({
-                //   uid: item.id,
-                //   name: item.fileName,
-                //   status: 'done',
-                //   url: item.fileKey,
-                //   response: item, // 保留原始数据
-                // });
-                audioList.push(item.fileKey)
+                audioList.push({
+                  id: item.id,
+                  name: item.fileName,
+                  status: 'done',
+                  url: item.fileKey,
+                  response: item, // 保留原始数据
+                });
+                // audioList.push(item.fileKey)
               } else if (imageTypes.includes(fileType)) {
-                // imageList.push({
-                //   uid: item.id,
-                //   name: item.fileName,
-                //   status: 'done',
-                //   url: item.fileKey,
-                //   response: item, // 保留原始数据
-                // });
-                imageList.push(item.fileKey)
+                imageList.push({
+                  id: item.id,
+                  name: item.fileName,
+                  status: 'done',
+                  url: item.fileKey,
+                  response: item, // 保留原始数据
+                });
+                // imageList.push(item.fileKey)
               } else {
-                // fileList.push({
-                //   uid: item.id,
-                //   name: item.fileName,
-                //   status: 'done',
-                //   url: item.fileKey,
-                //   response: item, // 保留原始数据
-                // });
-                fileList.push(item.fileKey);
+                fileList.push({
+                  id: item.id,
+                  name: item.fileName,
+                  status: 'done',
+                  url: item.fileKey,
+                  response: item, // 保留原始数据
+                });
+                // fileList.push(item.fileKey);
               }
             });
             audioList.length && setFieldsValue({ audio: audioList });
@@ -307,9 +467,9 @@
     }
     //提交事件
     async function handleSubmit(tp:string ='1') {
+      setModalProps({ confirmLoading: true });
       try {
         let values = await validate();
-        setModalProps({ confirmLoading: true });
         values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
         // -update-begin--author:liaozhiyang---date:20240702---for：【TV360X-1737】部门用户编辑接口，增加参数updateFromPage:"deptUsers"
@@ -317,145 +477,185 @@
         console.log('params', params);
         const assignId = currentEditRecordRef.value?.assignId || '';
         const addFileList:any[] = [];
-        const deleteFileIdList:string[] = [];
+        // const deleteFileIdList:string[] = [];
         // let idx = 0;
         // 文件/视频
-        if(typeof params.file === 'string' && params.file) {
-          params.file.split(',').forEach((item) => {
-            item = item.trim();
-            if(!item) return;
-            let resInfo:any = null;
-            respFileList.forEach((fileItem) => {
-              if(fileItem.fileKey === item) {
-                resInfo = fileItem;
-              }
-            });
-            if(!resInfo) {
-            //   addFileList.push({
-            //     assignId: assignId,
-            //     fileKey: resInfo.fileKey,
-            //     fileName: resInfo.fileName,
-            //     id: resInfo.id,
-            //     remark: resInfo.remark || '',
-            //     type: '1' // file
-            //   });
-            // } else {
-              addFileList.push({
+        if(uploadFileList.length > 0) {
+          uploadFileList.filter(item => !item.id).forEach((item: UploadFileItem) => {
+             // 新增
+             addFileList.push({
                 assignId: assignId,
-                fileKey: item,
-                fileName: item,
+                fileKey: item.url,
+                fileName: item.name,
                 id: null,
                 remark: '',
-                type: '1' // file
+                type: '1' // 1 file
               });
-            }
           });
         }
-        // 判断是否有文件删除
-        if(params.fileDelete) {
-          params.fileDelete.split(',').forEach((item) => {
-            item = item.trim();
-            if(!item) return;
-            respFileList.forEach((fileItem) => {
-              if(fileItem.fileKey === item) {
-                deleteFileIdList.push(fileItem.id);
-              }
-            });
-          });
-        }
+        // if(typeof params.file === 'string' && params.file) {
+        //   params.file.split(',').forEach((item) => {
+        //     item = item.trim();
+        //     if(!item) return;
+        //     let resInfo:any = null;
+        //     respFileList.forEach((fileItem) => {
+        //       if(fileItem.fileKey === item) {
+        //         resInfo = fileItem;
+        //       }
+        //     });
+        //     if(!resInfo) {
+        //     //   addFileList.push({
+        //     //     assignId: assignId,
+        //     //     fileKey: resInfo.fileKey,
+        //     //     fileName: resInfo.fileName,
+        //     //     id: resInfo.id,
+        //     //     remark: resInfo.remark || '',
+        //     //     type: '1' // file
+        //     //   });
+        //     // } else {
+        //       addFileList.push({
+        //         assignId: assignId,
+        //         fileKey: item,
+        //         fileName: item,
+        //         id: null,
+        //         remark: '',
+        //         type: '1' // file
+        //       });
+        //     }
+        //   });
+        // }
+        // // 判断是否有文件删除
+        // if(params.fileDelete) {
+        //   params.fileDelete.split(',').forEach((item) => {
+        //     item = item.trim();
+        //     if(!item) return;
+        //     respFileList.forEach((fileItem) => {
+        //       if(fileItem.fileKey === item) {
+        //         deleteFileIdList.push(fileItem.id);
+        //       }
+        //     });
+        //   });
+        // }
         // 图片
-        if(typeof params.image === 'string' && params.image) {
-            params.image.split(',').forEach((item) => {
-              item = item.trim();
-              // if(!item) return;
-               let resInfo:any = null;
-              respFileList.forEach((fileItem) => {
-                if(fileItem.fileKey === item) {
-                  resInfo = fileItem;
-                }
-              });
-              if(!resInfo) {
-              //   addFileList.push({
-              //     assignId: assignId,
-              //     fileKey: resInfo.fileKey,
-              //     fileName: resInfo.fileName,
-              //     id: resInfo.id,
-              //     remark: resInfo.remark || '',
-              //     type: '2' // 2 image
-              //   });
-              // } else{
-                // 处理图片
-                addFileList.push({
-                    assignId: assignId,
-                    fileKey: item,
-                    fileName: item,
-                    id: null,
-                    remark: '',
-                    type: '2' // 2 image
-                  });
-              }
+        if(uploadImageList.length > 0) {
+          uploadImageList.filter(item => !item.id).forEach((item: UploadFileItem) => {
+            // 新增
+            addFileList.push({
+              assignId: assignId,
+              fileKey: item.url,
+              fileName: item.name,
+              id: null,
+              remark: '',
+              type: '2' // 2 image
             });
+          });
         }
+        // if(typeof params.image === 'string' && params.image) {
+        //     params.image.split(',').forEach((item) => {
+        //       item = item.trim();
+        //       // if(!item) return;
+        //        let resInfo:any = null;
+        //       respFileList.forEach((fileItem) => {
+        //         if(fileItem.fileKey === item) {
+        //           resInfo = fileItem;
+        //         }
+        //       });
+        //       if(!resInfo) {
+        //       //   addFileList.push({
+        //       //     assignId: assignId,
+        //       //     fileKey: resInfo.fileKey,
+        //       //     fileName: resInfo.fileName,
+        //       //     id: resInfo.id,
+        //       //     remark: resInfo.remark || '',
+        //       //     type: '2' // 2 image
+        //       //   });
+        //       // } else{
+        //         // 处理图片
+        //         addFileList.push({
+        //             assignId: assignId,
+        //             fileKey: item,
+        //             fileName: item,
+        //             id: null,
+        //             remark: '',
+        //             type: '2' // 2 image
+        //           });
+        //       }
+        //     });
+        // }
         // 判断是否有图片删除
-        if(params.imageDelete) {
-          params.imageDelete.split(',').forEach((item) => {
-            item = item.trim();
-            if(!item) return;
-            respFileList.forEach((fileItem) => {
-              if(fileItem.fileKey === item) {
-                deleteFileIdList.push(fileItem.id);
-              }
-            });
-          });
-        }
+        // if(params.imageDelete) {
+        //   params.imageDelete.split(',').forEach((item) => {
+        //     item = item.trim();
+        //     if(!item) return;
+        //     respFileList.forEach((fileItem) => {
+        //       if(fileItem.fileKey === item) {
+        //         deleteFileIdList.push(fileItem.id);
+        //       }
+        //     });
+        //   });
+        // }
         // 音频
-        if(typeof params.audio === 'string' && params.audio) {
-          params.audio.split(',').forEach((item) => {
-            item = item.trim();
-            if(!item) return;
-            let resInfo:any = null;
-            respFileList.forEach((fileItem) => {
-              if(fileItem.fileKey === item) {
-                resInfo = fileItem;
-              }
+        if(uploadAudioList.length > 0) {
+          uploadAudioList.filter(item => !item.id).forEach((item: UploadFileItem) => {
+            // 新增
+            addFileList.push({
+              assignId: assignId,
+              fileKey: item.url,
+              fileName: item.name,
+              id: null,
+              remark: '',
+              type: '3' // 3 audio
             });
-            if(!resInfo) {
-            //   addFileList.push({
-            //     assignId: assignId,
-            //     fileKey: resInfo.fileKey,
-            //     fileName: resInfo.fileName,
-            //     id: resInfo.id,
-            //     remark: resInfo.remark || '',
-            //     type: '3' // 3 audio
-            //   });
-            // } else {
-              // 处理音频
-              addFileList.push({
-                assignId: assignId,
-                fileKey: item,
-                fileName: item,
-                id: null,
-                remark: '',
-                type: '3' // 3 audio
-              });
-            }
           });
         }
+        // if(typeof params.audio === 'string' && params.audio) {
+        //   params.audio.split(',').forEach((item) => {
+        //     item = item.trim();
+        //     if(!item) return;
+        //     let resInfo:any = null;
+        //     respFileList.forEach((fileItem) => {
+        //       if(fileItem.fileKey === item) {
+        //         resInfo = fileItem;
+        //       }
+        //     });
+        //     if(!resInfo) {
+        //     //   addFileList.push({
+        //     //     assignId: assignId,
+        //     //     fileKey: resInfo.fileKey,
+        //     //     fileName: resInfo.fileName,
+        //     //     id: resInfo.id,
+        //     //     remark: resInfo.remark || '',
+        //     //     type: '3' // 3 audio
+        //     //   });
+        //     // } else {
+        //       // 处理音频
+        //       addFileList.push({
+        //         assignId: assignId,
+        //         fileKey: item,
+        //         fileName: item,
+        //         id: null,
+        //         remark: '',
+        //         type: '3' // 3 audio
+        //       });
+        //     }
+        //   });
+        // }
         // 判断是否有音频删除
-        if(params.audioDelete) {
-          params.audioDelete.split(',').forEach((item) => {
-            item = item.trim();
-            if(!item) return;
-            respFileList.forEach((fileItem) => {
-              if(fileItem.fileKey === item) {
-                deleteFileIdList.push(fileItem.id);
-              }
-            });
-          });
-        }
+        // if(params.audioDelete) {
+        //   params.audioDelete.split(',').forEach((item) => {
+        //     item = item.trim();
+        //     if(!item) return;
+        //     respFileList.forEach((fileItem) => {
+        //       if(fileItem.fileKey === item) {
+        //         deleteFileIdList.push(fileItem.id);
+        //       }
+        //     });
+        //   });
+        // }
       // 判断文件列表是否为空
       if(addFileList.length === 0 && respFileList.length === 0) {
         createMessage.error('上传附件不能为空，必选上传其中任意一种！');
+        setModalProps({ confirmLoading: false });
         return;
       }
       // 优先保存区级信息
@@ -500,13 +700,14 @@
         closeModal();
         //刷新列表
         emit('success',{isUpdateVal ,values});
-      } finally {
-        setModalProps({ confirmLoading: false });
+      } catch (error) {
+        console.error('表单验证失败', error);
       }
+      setModalProps({ confirmLoading: false });
     }
 
     function closeTheModal() {
-      isQjFormCloseDirect= false;
+      // isQjFormCloseDirect= false;
     }
   </script>
   

@@ -151,15 +151,15 @@
           <div class="whitespace-pre-wrap">{{ currentDetail.resolveResult }}</div>
         </a-descriptions-item>
         <a-descriptions-item label="文件/视频">
-          <BasicUpload v-if="currentDetail.fileList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.fileList" readOnly />
+          <BasicUploadItem v-if="currentDetail.fileList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.fileList" readOnly />
           <span v-else>无</span>
         </a-descriptions-item>
         <a-descriptions-item label="图片">
-          <BasicUpload v-if="currentDetail.imageList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.imageList" readOnly />
+          <BasicUploadItem v-if="currentDetail.imageList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.imageList" readOnly />
           <span v-if="!currentDetail.imageList?.length">无</span>
         </a-descriptions-item>
         <a-descriptions-item label="音频">
-          <BasicUpload v-if="currentDetail.audioList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.audioList" readOnly />
+          <BasicUploadItem v-if="currentDetail.audioList?.length > 0" :showUpload="false" :showDelete="false" :value="currentDetail.audioList" readOnly />
           <span v-if="!currentDetail.audioList?.length">无</span>
         </a-descriptions-item>
         <!-- <a-descriptions-item label="督办人">
@@ -177,7 +177,7 @@
     </a-modal>
     
     <!-- 文件预览 -->
-    <UploadPreviewModal :value="previewFileList" :showDelete='false' @register="registerPreviewModal" />
+    <UploadItemPreviewModal :value="previewFileList" :showDelete='false' @register="registerPreviewModal" />
   </div>
 </template>
 
@@ -187,8 +187,8 @@ import { ref, computed, watch, PropType, h } from 'vue';
 import { useMessage } from '/@/hooks/web/useMessage';
 // @ts-ignore
 import UploadList from '../../components/UploadList/index.vue';
-import { BasicUpload } from '/@/components/Upload';
-import UploadPreviewModal from '/@/components/Upload/src/UploadPreviewModal.vue';
+import { BasicUploadItem } from '/@/components/UploadItem';
+import UploadItemPreviewModal from '/@/components/UploadItem/src/UploadItemPreviewModal.vue';
 import { audioTypes, imageTypes } from '/@/utils/fileType';
 
 // 定义回复列表项类型
@@ -393,7 +393,7 @@ const handleViewFiles = (record, type) => {
      let fileType = item.fileName.split('.').pop();
       if (audioTypes.includes(fileType)) {
         audioList.push({
-          uid: item.id,
+          id: item.id,
           name: item.fileName,
           status: 'done',
           url: item.fileKey,
@@ -401,7 +401,7 @@ const handleViewFiles = (record, type) => {
         });
       } else if (imageTypes.includes(fileType)) {
         imageList.push({
-          uid: item.id,
+          id: item.id,
           name: item.fileName,
           status: 'done',
           url: item.fileKey,
@@ -409,7 +409,7 @@ const handleViewFiles = (record, type) => {
         });
       } else {
         fileList.push({
-          uid: item.id,
+          id: item.id,
           name: item.fileName,
           status: 'done',
           url: item.fileKey,

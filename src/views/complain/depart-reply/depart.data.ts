@@ -739,7 +739,7 @@ export const addFormSchema: FormSchema[] = [
       }
     },
   },
- // 存储删除音频id
+  // 存储删除音频id
   {
     label: '',
     field: 'audioDelete',

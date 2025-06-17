@@ -1,4 +1,4 @@
-import { getCitySevenFiveList, getDictItems, getSecondTreeList } from '/@/api/common/api';
+import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -303,28 +303,60 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
     },
     {
-      label: '反映社区',
-      field: 'reportCommunityId',
-      component: 'ApiCascader',
-      componentProps: {
+      label: '反映管区',
+      field: 'reportDistrictId',
+      component: 'ApiSelect',
+      componentProps: ({ formActionType }) => ({
         api: async () => {
-          const res = await getSecondTreeList('3'); // 3表示管区、社区
+          const res = await getCommunityList('3') // 3表示管区
           if (Array.isArray(res)) {
-            const newList = treeToList(res);
-            return newList.map(v => {
-              return {
-                id: v.id,
-                parentId: v.parentId,
-                label: v.title,
-                value: v.id,
-              }
-            });
+            // res.unshift({ departName: '==请选择==', id: '' });
+            return res;
           } else {
             return [];
           }
+        }, 
+        onSelect: async (_options, values) => {
+          // console.log(options, values);
+          const { updateSchema } = formActionType;
+          const { value } = values;
+          const res = await getCommunityChildList(value)
+          // console.log(res)
+          if (Array.isArray(res)) {
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: res.map(v => {
+                  return {
+                    label: v.departName,
+                    value: v.id
+                  }
+                }),
+                placeholder: '==请选择==',
+              }
+            });
+          } else {
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: [],
+                placeholder: '==请选择==',
+              }
+            });
+          }
         },
-        labelField: 'label',
-        valueField: 'value',
+        labelField: 'departName',
+        valueField: 'id',
+        placeholder: '==请选择==',
+      }),
+      colProps: { span: 6 },
+    },
+    {
+      label: '反映社区',
+      field: 'reportCommunityId',
+      component: 'Select',
+      componentProps: {
+        options: [],
         placeholder: '==请选择==',
       },
       colProps: { span: 6 },
@@ -416,26 +448,6 @@ export const columns: BasicColumn[] = [
       componentProps: {
         presets: rangePresets,
         placeholder: ['开始日期', '结束日期'],
-      },
-      colProps: { span: 6 },
-    },
-    {
-      label: '反映居委会',
-      field: 'reportCommittee',
-      component: 'ApiSelect',
-      componentProps: {
-        api: async () => {
-          const res = await getDictItems('biz_committee_list');
-          if (Array.isArray(res)) {
-            res.unshift({ text: '==请选择==', value: '' });
-            return res;
-          } else {
-            return [];
-          }
-        },
-        labelField: 'text',
-        valueField: 'value',
-        placeholder: '==请选择==',
       },
       colProps: { span: 6 },
     },

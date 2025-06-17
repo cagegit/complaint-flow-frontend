@@ -1,4 +1,4 @@
-import { getDictItems, getSecondTreeList } from '/@/api/common/api';
+import { getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs from 'dayjs';
@@ -96,6 +96,8 @@ export const columns: BasicColumn[] = [
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
    { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
+   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
    { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
    { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
    { title: '来电时间', dataIndex: 'callTime', width: 150 },
@@ -121,8 +123,6 @@ export const columns: BasicColumn[] = [
    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
   //  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
    { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
-   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
    { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
    { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
    { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
@@ -301,141 +301,153 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
     },
     {
-        label: '反映社区',
-        field: 'reportCommunityId',
-        component: 'ApiCascader',
-        componentProps: {
-          api: async () => {
-            const res = await getSecondTreeList('3'); // 3表示管区、社区
-            if (Array.isArray(res)) {
-              const newList = treeToList(res);
-              return newList.map(v => {
-                return {
-                  id: v.id,
-                  parentId: v.parentId,
-                  label: v.title,
-                  value: v.id,
-                }
-              });
-            } else {
-              return [];
-            }
-          },
-          labelField: 'label',
-          valueField: 'value',
-          placeholder: '==请选择==',
+      label: '反映管区',
+      field: 'reportDistrictId',
+      component: 'ApiSelect',
+      componentProps: ({ formActionType }) => ({
+        api: async () => {
+          const res = await getCommunityList('3') // 3表示管区
+          if (Array.isArray(res)) {
+            // res.unshift({ departName: '==请选择==', id: '' });
+            return res;
+          } else {
+            return [];
+          }
+        }, 
+        onSelect: async (_options, values) => {
+          // console.log(options, values);
+          const { updateSchema } = formActionType;
+          const { value } = values;
+          const res = await getCommunityChildList(value)
+          // console.log(res)
+          if (Array.isArray(res)) {
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: res.map(v => {
+                  return {
+                    label: v.departName,
+                    value: v.id
+                  }
+                }),
+                placeholder: '==请选择==',
+              }
+            });
+          } else {
+            updateSchema({
+              field: 'reportCommunityId',
+              componentProps: {
+                options: [],
+                placeholder: '==请选择==',
+              }
+            });
+          }
         },
-        colProps: { span: 6 },
+        labelField: 'departName',
+        valueField: 'id',
+        placeholder: '==请选择==',
+      }),
+      colProps: { span: 6 },
+    },
+    {
+      label: '反映社区',
+      field: 'reportCommunityId',
+      component: 'Select',
+      componentProps: {
+        options: [],
+        placeholder: '==请选择==',
       },
-      {
-        label: '处理科室',
-        field: 'reportDistrictId',
-        component: 'ApiCascader',
-        componentProps: {
-          api: async () => {
-            const res = await getSecondTreeList('2'); // 2表示科室、部门
-            if (Array.isArray(res)) {
-              const newList = treeToList(res);
-              return newList.map(v => {
-                return {
-                  id: v.id,
-                  parentId: v.parentId,
-                  label: v.title,
-                  value: v.id,
-                }
-              });
-            } else {
-              return [];
-            }
-          },
-          labelField: 'label',
-          valueField: 'value',
-          placeholder: '==请选择==',
+      colProps: { span: 6 },
+    },
+    {
+      label: '处理科室',
+      field: 'reportDistrictId',
+      component: 'ApiCascader',
+      componentProps: {
+        api: async () => {
+          const res = await getSecondTreeList('2'); // 2表示科室、部门
+          if (Array.isArray(res)) {
+            const newList = treeToList(res);
+            return newList.map(v => {
+              return {
+                id: v.id,
+                parentId: v.parentId,
+                label: v.title,
+                value: v.id,
+              }
+            });
+          } else {
+            return [];
+          }
         },
-        colProps: { span: 6 },
+        labelField: 'label',
+        valueField: 'value',
+        placeholder: '==请选择==',
       },
-      {
-        label: () => h('span', {}, [
-          '处理社区/', h('br'), '居委会'
-        ]),
-        field: 'assignCommunityId',
-        component: 'ApiCascader',
-        componentProps: {
-          api: async () => {
-            const res = await getSecondTreeList('3'); // 3表示管区、社区
-            if (Array.isArray(res)) {
-              const newList = treeToList(res);
-              return newList.map(v => {
-                return {
-                  id: v.id,
-                  parentId: v.parentId,
-                  label: v.title,
-                  value: v.id,
-                }
-              });
-            } else {
-              return [];
-            }
-          },
-          labelField: 'label',
-          valueField: 'value',
-          placeholder: '==请选择==',
+      colProps: { span: 6 },
+    },
+    {
+      label: () => h('span', {}, [
+        '处理社区/', h('br'), '居委会'
+      ]),
+      field: 'assignCommunityId',
+      component: 'ApiCascader',
+      componentProps: {
+        api: async () => {
+          const res = await getSecondTreeList('3'); // 3表示管区、社区
+          if (Array.isArray(res)) {
+            const newList = treeToList(res);
+            return newList.map(v => {
+              return {
+                id: v.id,
+                parentId: v.parentId,
+                label: v.title,
+                value: v.id,
+              }
+            });
+          } else {
+            return [];
+          }
         },
-        colProps: { span: 6 },
+        labelField: 'label',
+        valueField: 'value',
+        placeholder: '==请选择==',
       },
-      {
-        label: '办结状态',
-        field: 'resolveStatus',
-        component: 'Select',
-        componentProps: {
-          options: [
-            { label: '==请选择==', value: '' },
-            { label: '已办结', value: '1' },
-            { label: '未办结', value: '0' },
-          ],
-          placeholder: '==请选择==',
-        },
-        colProps: { span: 6 },
+      colProps: { span: 6 },
+    },
+    {
+      label: '办结状态',
+      field: 'resolveStatus',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '==请选择==', value: '' },
+          { label: '已办结', value: '1' },
+          { label: '未办结', value: '0' },
+        ],
+        placeholder: '==请选择==',
       },
-      {
-        label: '办结时间',
-        field: 'resolveTime',
-        component: 'RangePicker',
-        componentProps: {
-          presets: rangePresets,
-          placeholder: ['开始日期', '结束日期'],
-        },
-        colProps: { span: 6 },
+      colProps: { span: 6 },
+    },
+    {
+      label: '办结时间',
+      field: 'resolveTime',
+      component: 'RangePicker',
+      componentProps: {
+        presets: rangePresets,
+        placeholder: ['开始日期', '结束日期'],
       },
-      {
-        label: '派单时间',
-        field: 'sendTime',
-        component: 'RangePicker',
-        componentProps: {
-          presets: rangePresets,
-          placeholder: ['开始日期', '结束日期'],
-        },
-        colProps: { span: 6 },
+      colProps: { span: 6 },
+    },
+    {
+      label: '派单时间',
+      field: 'sendTime',
+      component: 'RangePicker',
+      componentProps: {
+        presets: rangePresets,
+        placeholder: ['开始日期', '结束日期'],
       },
-      {
-        label: '反映居委会',
-        field: 'reportCommittee',
-        component: 'ApiSelect',
-        componentProps: {
-          api: async () => {
-            const res = await getDictItems('biz_committee_list');
-            if (Array.isArray(res)) {
-              res.unshift({ text: '==请选择==', value: '' });
-              return res;
-            } else {
-              return [];
-            }
-          },
-          labelField: 'text',
-          valueField: 'value',
-          placeholder: '==请选择==',
-        },
-        colProps: { span: 6 },
+      colProps: { span: 6 },
     },
     {
         label: '发生地址',

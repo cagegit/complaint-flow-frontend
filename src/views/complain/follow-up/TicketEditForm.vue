@@ -111,7 +111,7 @@
     import RejectInfo from '../components/RejectInfo/index.vue';
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
-    import { getComplaintDetail } from '/@/api/common/api';
+    import { getCitySevenFiveList, getComplaintDetail } from '/@/api/common/api';
     import { getDictItemsByCode } from '/@/utils/dict';
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
@@ -168,7 +168,7 @@
       baseRowStyle: { width: '100%', }
     });
     //回复审核表单配置
-    const [registerAuditForm, { setProps: setAuditProps, validate }] = useForm({
+    const [registerAuditForm, { setProps: setAuditProps, setFieldsValue: setAuditFieldsValue, validate }] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -256,6 +256,29 @@
         try {
           detailRes = await getComplaintDetail(data.record.id);
           ticketDetail.value = detailRes;
+          // 七有五性回显
+          if(detailRes?.sevenFiveId) {
+            getCitySevenFiveList().then(sevenFiveData => {
+              if(Array.isArray(sevenFiveData)) {
+                sevenFiveData.forEach((item:any) => {
+                  let sevenFiveId = detailRes.sevenFiveId;
+                  if(detailRes.sevenFiveId.indexOf(',') > -1) {
+                    // 取最后一个字符1,2,3,4,取最后一个
+                    sevenFiveId = detailRes.sevenFiveId.split(',').pop();
+                  } 
+                  if(item.id == sevenFiveId) {
+                    // detailRes.sevenFiveId = item.name;
+                    setAuditFieldsValue({
+                      sevenFiveId: item.allParentIds ? item.allParentIds.split(',') : [],
+                    });
+                  }
+                });
+              }
+            }).catch(error => {
+              console.log(error);
+            });
+          }
+
         } catch (error) {
           console.log(error);
         }

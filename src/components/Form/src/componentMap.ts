@@ -34,6 +34,7 @@ import ApiSelect from './components/ApiSelect.vue';
 import ApiCascader from './components/ApiCascader.vue';
 import ApiTreeSelect from './components/ApiTreeSelect.vue';
 import { BasicUpload } from '/@/components/Upload';
+import { BasicUploadItem } from '/@/components/UploadItem';
 import { StrengthMeter } from '/@/components/StrengthMeter';
 import { IconPicker } from '/@/components/Icon';
 import { CountdownInput } from '/@/components/CountDown';
@@ -114,6 +115,7 @@ componentMap.set('IconPicker', IconPicker);
 componentMap.set('InputCountDown', CountdownInput);
 
 componentMap.set('Upload', BasicUpload);
+componentMap.set('UploadItem', BasicUploadItem);
 componentMap.set('Divider', Divider);
 
 //注册自定义组件
