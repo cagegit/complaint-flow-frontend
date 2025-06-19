@@ -49,7 +49,7 @@
                     </template>
                     <!-- 附件 -->
                       <template #uploadAttachmentsSlot="{model, field}">
-                      <UploadList v-model:value="model[field]" @change="changePreList" @delete="handleDeleteList" />
+                      <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList" />
                       </template>
                   </BasicForm>
                 </div>
@@ -121,6 +121,8 @@
     // 回复列表
     const replyList = ref<any[]>([]);
     const total = ref(0);
+    // 全部回复文件列表
+    const allReplyFileList = ref<any[]>([]);
     // 表单详情
     const ticketDetail = ref<any>({});
     // 预回文件列表
@@ -199,6 +201,7 @@
       // 恢复默认设置
       preReplyFileList = []
       preReplyDeleteFileIdList = [];
+      allReplyFileList.value = [];
       activeKey.value = '1'; // 默认选中预回复
       finalChoice.value = '1'; // 默认选择最终回复
       showFooter.value = data?.showFooter ?? true;
@@ -212,6 +215,22 @@
        if (res) {
           replyList.value = res.replyList || [];
           total.value = res.total || 0;
+          // 处理回复文件列表
+          let replyFileList:any[] =[];
+          res?.replyList?.forEach((item:any) => {
+              item.fileList?.forEach((file:any) => {
+                replyFileList.push({
+                  id: file.id || '',
+                  fileName: file.fileName || '',
+                  fileSize: file.fileSize || 0,
+                  fileKey: file.fileKey || '',
+                  districtFileTagType: null,
+                  fileTagType: null,
+                });
+              });
+            });
+            console.log('replyFileList', replyFileList);
+            allReplyFileList.value = replyFileList;
         }
       } catch (error) {
         console.error('Error fetching reply list:', error);

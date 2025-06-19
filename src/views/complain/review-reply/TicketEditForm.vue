@@ -49,7 +49,7 @@
                   </template>
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model:value="model[field]"  @change="changePreList" @delete="handleDeleteList"/>
+                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList"/>
                   </template>
               </BasicForm>
             </a-tab-pane>
@@ -81,6 +81,8 @@
     // import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
     const replyList = ref<any[]>([]);
     const finalReplyList = ref<any[]>([]);
+    // 全部回复文件列表
+    const allReplyFileList = ref<any[]>([]);
     const total = ref(0);
     // @ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
@@ -170,6 +172,7 @@
       // 恢复默认值
       preReplyFileList = []
       preReplyDeleteFileIdList = [];
+      allReplyFileList.value = [];
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
@@ -202,7 +205,23 @@
         }) || [];
         replyList.value = newFileList;
         total.value = res?.replyList?.length || 0;
-        finalReplyList.value = res?.replyList || [];
+        finalReplyList.value = res?.replyList || []; 
+        // 处理回复文件列表
+        let replyFileList:any[] =[];
+        res?.replyList?.forEach((item:any) => {
+          item.fileList?.forEach((file:any) => {
+            replyFileList.push({
+              id: file.id || '',
+              fileName: file.fileName || '',
+              fileSize: file.fileSize || 0,
+              fileKey: file.fileKey || '',
+              districtFileTagType: null,
+              fileTagType: null,
+            });
+          });
+        });
+        console.log('replyFileList', replyFileList);
+        allReplyFileList.value = replyFileList;
       } catch (error) {
         console.error('获取详情失败', error);
       }

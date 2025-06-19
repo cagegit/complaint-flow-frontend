@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-import { uploadApi } from '/@/api/sys/upload';
 import { FormSchema } from '/@/components/Form';
 import { getDistrictDictItemsByCode } from '/@/utils/dict';
 import { getCityQuestionCategoryList, getCitySevenFiveList, getCommunityListByCode, getDisposeDepartmentList, getHoldRemoveList } from '/@/api/common/api';
@@ -607,11 +605,36 @@ export const formSchema: FormSchema[] = [
     field: 'appeal',
     label: '不计入诉求总量类别',
     component: 'Select',
-    componentProps: {
+    componentProps: ({formActionType, formModel}) => ({
       placeholder: '请选择不计入诉求总量类别',
       options: getDistrictDictItemsByCode('appeal_category'),  // 需要从接口获取
       allowClear: true,
-    },
+      onChange: () => {
+        const { updateSchema } = formActionType;
+        if(formModel['appeal'] == '2' || formModel['hangingAccountsLabel'] !== '3') {
+          updateSchema([
+             {
+              field: 'hangingAccountsLabel',
+              colProps: { span: 12 },
+              itemProps: {
+                wrapperCol: { span: 12, sm: { span: 21 } },
+              }
+            }
+          ])
+        } else {
+          updateSchema([
+             {
+              field: 'hangingAccountsLabel',
+              colProps: { span: 12 },
+              itemProps: {
+                wrapperCol: { span: 12, sm: { span: 21 } },
+              }
+            }
+          ])
+        }
+        formModel['networkPlatform'] = null;
+      }
+    }),
     colProps: { span: 12 },
   },
   // 选择2的时候，展示网络平台名称
@@ -672,7 +695,7 @@ export const formSchema: FormSchema[] = [
                 allowClear: true,
                 showSearch: true
               },
-            },
+            }
           ]);
         } else {
           updateSchema([
@@ -687,10 +710,34 @@ export const formSchema: FormSchema[] = [
             },
           ]);
         }
+        if(formModel['appeal'] == '2' || formModel['hangingAccountsLabel'] !== '3') {
+          updateSchema([
+            {
+              field: 'hangingAccountsLabel',
+              colProps: { span: 12 },
+              itemProps: {
+                wrapperCol: { span: 12, sm: { span: 21 } },
+              }
+            }
+          ]);
+        } else {
+          updateSchema([
+            {
+              field: 'hangingAccountsLabel',
+              colProps: { span: 24 },
+              itemProps: {
+                wrapperCol: { span: 24, sm: { span: 21 } },
+              }
+            }
+          ]);
+        }
         formModel['removeHangingAccountsTypeId'] = null;
       }
     }),
-    colProps: { span: 12 },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   // 选择非3的时候，展示剔除挂账类型
   {
@@ -1405,7 +1452,10 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
         formModel['removeHangingAccountsTypeId'] = null;
       }
     }),
-    colProps: { span: 12 },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    }
   },
   // 选择非3的时候，展示剔除挂账类型
   {

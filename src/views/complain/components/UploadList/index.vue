@@ -11,15 +11,15 @@
       <!-- 上传按钮 -->
       <div class="flex gap-2">
         <!-- 从已有列表上传 -->
-        <!-- <a-button @click="handleUploadFromList" class="flex items-center">
-          <span>从回复文件选择</span>
-        </a-button> -->
+        <a-button :disabled="readOnly" @click="handleUploadFromList" class="flex items-center">
+          <span>从回复记录添加</span>
+        </a-button>
         <!-- 添加 -->
-        <a-button type="primary" @click="handleAddClick" class="flex items-center">
+        <a-button :disabled="readOnly" type="primary" @click="handleAddClick" class="flex items-center">
           <PlusOutlined />
           <span>添加</span>
         </a-button>
-        <a-button @click="toggleExpand" class="ml-2">
+        <a-button :disabled="readOnly" @click="toggleExpand" class="ml-2">
           <DownOutlined v-if="!expanded" />
           <UpOutlined v-else />
         </a-button>
@@ -170,8 +170,9 @@
       :title="previewFile?.fileName || '文件预览'"
       :width="800"
       :footer="null"
+      :destroyOnClose="true"
     >
-      <div class="preview-container flex justify-center" style="height: 500px; overflow: auto;">
+      <div class="preview-container flex justify-center" style="max-height: 750px; overflow: auto;">
         <!-- 图片预览 -->
         <img
           v-if="isImageFile(previewFile)"
@@ -213,6 +214,40 @@
         </div>
       </div>
     </a-modal>
+    <!-- 从回复记录的附件里选择文件 -->
+    <a-modal
+      v-model:visible="replyFileListModalVisible"
+      :title="'回复记录附件选择'"
+      :width="800"
+      :footer="null"
+    >
+      <div class="bg-transparent p-2 max-h-[400px] overflow-auto">
+        <a-alert :message="`已选择：${selectedReplyRowKeys.length}，重复项在添加时将被自动忽略`" type="warning" class="mb-4" show-icon />
+        <a-table 
+          :dataSource="replyFileList" 
+          :columns="replyColumns" 
+          :pagination="false"
+          :rowKey="'fileKey'"
+          :rowSelection="{
+            type: 'checkbox',
+            selectedRowKeys: selectedReplyRowKeys,
+            onChange: changeReplyRowSelect,
+          }"
+          size="small"
+          bordered
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'fileName'">
+              <a-button type="link" @click="handlePreview(record)">{{ record.fileName || record.name }}</a-button>
+            </template>
+          </template>
+        </a-table>
+        <div class="flex justify-end mt-4">
+          <a-button type="primary" :disabled="selectedReplyRowKeys.length === 0" @click="handleSelectReplyFiles">确定选择</a-button>
+          <a-button class="ml-2" @click="replyFileListModalVisible = false">取消</a-button>
+        </div>
+      </div>
+  </a-modal>
   </div>
 </template>
 
@@ -268,6 +303,11 @@ const props = defineProps({
   accept: {
     type: String,
     default: '.pdf,.doc,.docx,.xls,.xlsx,.txt,.png,.jpg,.jpeg,.aac,.wma,.cda,.flac,.mid,.mka,.mp2,.mpa,.mpc,.ape,.ofr,.ogg,.ra,.wv,.tta,.ac3,.dts,.mp3,.mp4,.m4a,.wav'
+  },
+  // 回复附件列表
+  replyFileList: {
+    type: Array as PropType<FileItem[]>,
+    default: () => []
   }
 });
 const modelValue = defineModel('value', {
@@ -286,9 +326,56 @@ const uploadModalVisible = ref(false);
 const previewModalVisible = ref(false);
 const previewFile = ref<FileItem | null>(null);
 const previewUrl = ref('');
-const selectedRowKeys = ref<(string | number)[]>([]);
+const selectedRowKeys = ref<any[]>([]);
 const uploadedFiles = ref<FileItem[]>([]);
 const draggerFiles = ref<any[]>([]);
+
+// 回复记录附件选择
+const replyFileListModalVisible = ref(false);
+// const replyFileList = ref<FileItem[]>([]); // 假设从API获取的
+const selectedReplyRowKeys = ref<(string | number)[]>([]);
+const replyColumns = [
+  {
+    title: '文件名',
+    dataIndex: 'fileName',
+    key: 'fileName',
+  },
+  // {
+  //   title: '大小 (kb)',
+  //   dataIndex: 'fileSize',
+  //   key: 'fileSize',
+  //   width: '100',
+  //   customRender: ({ text }) => {
+  //     return text ? (text / 1024).toFixed(2) : '0';
+  //   }
+  // },
+];
+// 监听文件列表变化
+function changeReplyRowSelect(selectedRowKeys: (string | number)[], selectedRows: FileItem[]) {
+  selectedReplyRowKeys.value = selectedRowKeys;
+  console.log('选中的回复记录附件:', selectedRows);
+}
+// 选择回复记录附件
+function handleSelectReplyFiles() {
+  if (selectedReplyRowKeys.value.length === 0) {
+    createMessage.warning('请至少选择一个回复记录附件');
+    return;
+  }
+  
+  // 将选中的回复记录附件添加到文件列表
+  const selectedFiles = props.replyFileList.filter(file => 
+    selectedReplyRowKeys.value.includes(file.fileKey)
+  );
+  
+  // fileList.value = [...fileList.value, ...selectedFiles];
+  // 去重，然后合并到 fileList
+  const existingFileKeys = new Set(fileList.value.map(file => file.fileKey));
+  const newFiles = selectedFiles.filter(file => !existingFileKeys.has(file.fileKey));
+  fileList.value = [...fileList.value, ...newFiles];
+  replyFileListModalVisible.value = false;
+  createMessage.success('已选择回复记录附件');
+}
+
 
 // 表格列定义
 const columns = [
@@ -365,8 +452,8 @@ const uploadColumns = [
 
 // 选择框配置
 const rowSelection = {
-  onChange: (selectedRowKeys: (string | number)[], selectedRows: FileItem[]) => {
-    selectedRowKeys.value = selectedRowKeys;
+  onChange: (selRowKeys: string[]) => {
+    selectedRowKeys.value = selRowKeys;
   },
   selectedRowKeys,
 };
@@ -668,7 +755,12 @@ const handleTypeChange = (value, record, type) => {
 };
 
 function handleUploadFromList() {
+   if (props.readOnly) {
+    createMessage.warning('当前为只读模式，不能上传文件');
+    return;
+  }
   // 选择文件逻辑
+  replyFileListModalVisible.value = true;
 }
 
 // 判断是否为图片文件
