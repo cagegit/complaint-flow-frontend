@@ -276,6 +276,10 @@
         try {
           detailRes = await getComplaintDetail(data.record.id);
           ticketDetail.value = detailRes;
+          setAuditFieldsValue({
+            remark: detailRes.remark || '',
+            labelCode: detailRes.labelCode  ? detailRes.labelCode + '' : '',
+          });
           // 七有五性回显
           if(detailRes?.sevenFiveId) {
             getCitySevenFiveList().then(sevenFiveData => {

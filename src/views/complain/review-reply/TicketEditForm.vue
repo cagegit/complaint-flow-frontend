@@ -132,7 +132,7 @@
       baseRowStyle: { width: '100%', }
     });
     //回复审核表单配置
-    const [registerAuditForm, {setProps: setAuditFormProps, validate}] = useForm({
+    const [registerAuditForm, {setProps: setAuditFormProps, setFieldsValue: setAuditFieldsValue, validate}] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -235,6 +235,16 @@
         try {
           detailRes = await getComplaintDetail(data.record.id);
           ticketDetail.value = detailRes;
+          const keys = Object.keys(detailRes);
+          // 回显审核表单
+          if(keys.includes('fileRead') && keys.includes('followCode')) {
+            setAuditFieldsValue({
+              fileRead: detailRes.fileRead ? detailRes.fileRead +'' : null,
+              followCode: detailRes.followCode ? detailRes.followCode +'' : null,
+              overseeUserName: detailRes.overseeUserName ? detailRes.overseeUserName : null,
+              finalResolveResult: detailRes.finalResolveResult ? detailRes.finalResolveResult : null,
+            });
+          }
         } catch (error) {
           console.log(error);
         }

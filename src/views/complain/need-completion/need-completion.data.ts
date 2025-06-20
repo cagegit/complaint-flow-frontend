@@ -361,7 +361,7 @@ export const columns: BasicColumn[] = [
     },
     {
       label: '处理科室',
-      field: 'reportDistrictId',
+      field: 'assignDeptId',
       component: 'ApiCascader',
       componentProps: {
         api: async () => {
