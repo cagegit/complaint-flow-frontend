@@ -63,18 +63,19 @@
     import { useMessage } from '/@/hooks/web/useMessage';
     import { useRoute, useRouter } from 'vue-router';
     import dayjs from 'dayjs';
+    import { usePermission } from '/@/hooks/web/usePermission';
 
     const route = useRoute();
     const router = useRouter();
     const { createMessage } = useMessage();
 
     const [registerModal, { openModal }] = useModal();
-
+    const { hasPermission } = usePermission();
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
 
     // 列表页面公共参数、方法
-    const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+    const { tableContext } = useListPage({
         designScope: 'ticket-list',
         tableProps: {
           title: '回复审核列表',
@@ -146,7 +147,7 @@
           {
             label: '审核',
             onClick: handleEdit.bind(null, record),
-            // ifShow: () => hasPermission('system:user:edit'),
+            ifShow: () => hasPermission('biz:complain:reply:audit'),
           },
         ];
       }
@@ -173,11 +174,11 @@
     //     }
     //   }
     
-      function batchHandleDelete() {
-            // deleteUser({ ids: selectedRowKeys }).then(() => {
-            //   reload();
-            // });
-        }
+      // function batchHandleDelete() {
+      //       // deleteUser({ ids: selectedRowKeys }).then(() => {
+      //       //   reload();
+      //       // });
+      //   }
     
       /**
        * 成功回调

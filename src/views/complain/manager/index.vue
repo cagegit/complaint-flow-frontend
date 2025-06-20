@@ -1,13 +1,13 @@
 <template>
   <!--引用表格-->
-  <BasicTable @register="registerTable" :rowSelection="rowSelection" @ref="basicTable">
+  <BasicTable @register="registerTable" :rowSelection="rowSelection">
     <!--插槽:table标题-->
     <template #tableTitle>
       <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
-      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportTicketWords"> 导出word工单</a-button>
-      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportKickOut"> 导出剔除统计表</a-button>
-      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportExcelStatis">导出Excel统计表</a-button>
-      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportDayExcel">导出日报表</a-button>
+      <a-button type="primary" v-auth="'complain:manager:exportTicketWord'" preIcon="ant-design:export-outlined" @click="onExportTicketWords"> 导出word工单</a-button>
+      <a-button type="primary" v-auth="'complain:manager:exportKickOut'" preIcon="ant-design:export-outlined" @click="onExportKickOut"> 导出剔除统计表</a-button>
+      <a-button type="primary" v-auth="'complain:manager:exportExcelStatis'" preIcon="ant-design:export-outlined" @click="onExportExcelStatis">导出Excel统计表</a-button>
+      <a-button type="primary" v-auth="'complain:manager:exportDayExport'" preIcon="ant-design:export-outlined" @click="onExportDayExcel">导出日报表</a-button>
     </template>
     <!--插槽:表格内容-->
     <template #bodyCell="{ text, column, record }">
@@ -30,7 +30,7 @@
 <script lang="ts" setup>
 import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
 import { useListPage } from '/@/hooks/system/useListPage';
-import { list, deleteTicket, deleteBatchTicket, exportTicketWord, exportKickOut, exportExcelStatis, Api, getDayExcelColumns } from './manager.api';
+import { list, exportTicketWord, exportKickOut, exportExcelStatis, getDayExcelColumns } from './manager.api';
 import { columns, searchFormSchema } from './manager.data';
 import { useModal, useModalInner } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
@@ -47,6 +47,7 @@ import { ref, watch } from 'vue';
 import { reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
+import { usePermission } from '/@/hooks/web/usePermission';
 
 //注册modal
 const [registerModal, { openModal }] = useModal();
@@ -55,7 +56,7 @@ const [registerExportDayModal, { openModal: openExportModal }] = useModal();
 const route = useRoute();
 const router = useRouter();
 const { createMessage } = useMessage();
-
+const { hasPermission } = usePermission();
 // const { isDisabledAuth } = usePermission();
 const columnNames = ref({});
 const form = reactive({
@@ -217,6 +218,7 @@ function getTableAction(record): ActionItem[] {
     {
       label: '编辑',
       onClick: handleEdit.bind(null, record),
+      ifShow: () => hasPermission('complain:manager:edit'),
     },
     // {
     //   label: '删除',
@@ -392,6 +394,10 @@ function handleDownload(res) {
     url = `/citizen-voice/sys/common/static/${res.fileKey}`;
   }
   downloadByUrl({ url, fileName });
+}
+
+function handleSuccessExportDay() {
+  console.log('导出日报表成功');
 }
 </script>
 <style scoped>

@@ -3,7 +3,7 @@
     <div class="py-4">
       <a-button type="link" style="color: #0c3c3a" @click="goBack" preIcon="ant-design:arrow-left-outlined">返回知识库</a-button>
     </div>
-    <div class="py-4">
+    <div class="p-4">
       <a-radio-group button-style="solid" size="large" v-model:value="type" :style="{ marginBottom: '8px' }" @change="handleTypeChange">
         <a-radio-button v-for="item in typeList" :key="item.value" :value="item.value">{{ item.label }}</a-radio-button>
       </a-radio-group>
@@ -17,7 +17,7 @@
       </template>
       <!--插槽:table标题-->
       <template #tableTitle>
-        <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate">新增</a-button>
+        <a-button type="primary" v-auth="'complain:biz_knowledge_library:save'" preIcon="ant-design:plus-outlined" @click="handleCreate">新增</a-button>
       </template>
       <!--操作栏-->
       <template #action="{ record }">
@@ -43,11 +43,13 @@
   import { useRouter } from 'vue-router';
   import { onMounted, ref } from 'vue';
   import { message, Modal } from 'ant-design-vue';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
+  
   const [registerFormModal, { openModal }] = useModal();
   // 获取router query
   const router = useRouter();
-
+  const { hasPermission } = usePermission();
   let query = router.currentRoute.value.query;
   //   类型
   const type = ref((query.type as string) || '1');
@@ -156,10 +158,12 @@
       {
         label: '编辑',
         onClick: handleEdit.bind(null, record),
+        ifShow: () => hasPermission('complain:biz_knowledge_library:edit'),
       },
       {
         label: '删除',
         onClick: handleDelete.bind(null, record),
+        ifShow: () => hasPermission('complain:biz_knowledge_library:delete'),
       },
     ];
   }

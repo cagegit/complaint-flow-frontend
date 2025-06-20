@@ -180,6 +180,7 @@ export const formSchema: FormSchema[] = [
     required: true,
     component: 'Input',
     dynamicRules: ({ model, schema }) => rules.duplicateCheckRule('sys_user', 'work_no', model, schema, true),
+    show: false, // 工号字段默认隐藏
   },
   {
     label: '职务',
@@ -189,6 +190,7 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       labelKey: 'name',
     },
+    show: false, // 职务字段默认隐藏
   },
   {
     label: '角色',
@@ -299,7 +301,7 @@ export const formSchema: FormSchema[] = [
     label: '邮箱',
     field: 'email',
     component: 'Input',
-    required: true,
+    // required: true,
     dynamicRules: ({ model, schema }) => {
       return [
         { ...rules.duplicateCheckRule('sys_user', 'email', model, schema, true)[0], trigger: 'blur' },

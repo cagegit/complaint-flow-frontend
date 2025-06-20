@@ -56,11 +56,12 @@
     import UploadPreviewModal from '/@/components/Upload/src/UploadPreviewModal.vue';
     import { useRoute, useRouter } from 'vue-router';
     import dayjs from 'dayjs';
+    import { usePermission } from '/@/hooks/web/usePermission';
 
     const route = useRoute();
     const router = useRouter();
     const [registerModal, { openModal }] = useModal();
-
+    const { hasPermission } = usePermission();
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
     // const { createMessage, createConfirm } = useMessage();
     // 预览modal
@@ -140,7 +141,7 @@
           {
             label: '下载录音',
             onClick: handleEdit.bind(null, record),
-            // ifShow: () => hasPermission('system:user:edit'),
+            ifShow: () => hasPermission('biz:complain:complete:downloadAudio'),
           },
         ];
       }

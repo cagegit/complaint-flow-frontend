@@ -1,26 +1,26 @@
 <template>
     <!--引用表格-->
-    <BasicTable @register="registerTable" :rowSelection="rowSelection">
+    <BasicTable @register="registerTable">
           <!--插槽:table标题-->
           <template #tableTitle>
             <!-- <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button> -->
             <!-- <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls" :disabled="isDisabledAuth('system:user:export')"> 导出</a-button> -->
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
             <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:send-outlined">转出</a-button> -->
-            <a-dropdown v-if="selectedRowKeys.length > 0">
-              <!-- <template #overlay>
+            <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
+              <template #overlay>
                 <a-menu>
                   <a-menu-item key="1" @click="batchHandleDelete">
                     <Icon icon="ant-design:send-outlined"></Icon>
                     批量转出
                   </a-menu-item>
                 </a-menu>
-              </template> -->
+              </template>
               <a-button
                 >批量操作
                 <Icon icon="mdi:chevron-down"></Icon>
               </a-button>
-            </a-dropdown>
+            </a-dropdown> -->
           </template>
           <!--插槽:表格内容-->
           <template #bodyCell="{ text, column, record }">
@@ -62,12 +62,14 @@
     //@ts-ignore
     import ContactHistory from '../components/ContactHistory/index.vue';
     import { useRoute, useRouter } from 'vue-router';
+    import { usePermission } from '/@/hooks/web/usePermission';
+    
 
     const route = useRoute();
     const router = useRouter();
     const { createMessage } = useMessage();
     const [registerModal, { openModal }] = useModal();
-
+    const { hasPermission } = usePermission();
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
     const [registerHistoryModal, { openModal: openHistoryModal }] = useModal();
 
@@ -133,14 +135,14 @@
       });
     
       //注册table数据
-       const [registerTable, { reload, getForm }, { rowSelection, selectedRowKeys }] = tableContext;
+       const [registerTable, { reload, getForm } ] = tableContext;
        
       function getTableAction(record): ActionItem[] {
         return [
           {
             label: '审核回访内容',
             onClick: handleEdit.bind(null, record),
-            // ifShow: () => hasPermission('system:user:edit'),
+            ifShow: () => hasPermission('biz:complain:visitAudit:save'),
           },
         ];
       }
@@ -167,11 +169,11 @@
     //     }
     //   }
     
-      function batchHandleDelete() {
-            // deleteUser({ ids: selectedRowKeys }).then(() => {
-            //   reload();
-            // });
-        }
+      // function batchHandleDelete() {
+      //       // deleteUser({ ids: selectedRowKeys }).then(() => {
+      //       //   reload();
+      //       // });
+      //   }
     
       /**
        * 成功回调

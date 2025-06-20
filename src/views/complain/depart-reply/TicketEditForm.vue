@@ -81,8 +81,8 @@
         <div class="align-right">
           <a-space>
             <a-button @click="closeModal">取消</a-button>
-            <a-button type="primary" @click="handleSubmit('2')">提交回复</a-button>
-            <a-button type="default" @click="handleSubmit('1')">保存回复</a-button>
+            <a-button v-auth="'biz:complain:reply:submit'" type="primary" @click="handleSubmit('2')">提交回复</a-button>
+            <a-button v-auth="'biz:complain:reply:save'" type="default" @click="handleSubmit('1')">保存回复</a-button>
           </a-space>
         </div>
       </template>

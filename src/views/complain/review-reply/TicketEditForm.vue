@@ -8,6 +8,9 @@
       :showFooter="showFooter"
       destroyOnClose
       :maskClosable="false"
+      :okButtonProps="{
+       'v-auth': 'biz:complain:reply:audit',
+      }"
     >
       <div class="flex px-3">
         <div style="flex: 1">
@@ -211,7 +214,7 @@
         res?.replyList?.forEach((item:any) => {
           item.fileList?.forEach((file:any) => {
             replyFileList.push({
-              id: file.id || '',
+              id: null, // 新增的文件ID为null
               fileName: file.fileName || '',
               fileSize: file.fileSize || 0,
               fileKey: file.fileKey || '',

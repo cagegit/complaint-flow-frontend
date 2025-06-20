@@ -8,6 +8,7 @@
       :showFooter="showFooter"
       destroyOnClose
       :maskClosable="false"
+      :ok-button-props="{vAuth:['biz:complain:upAudit:finalReply','biz:complain:upAudit:reject']}"
     >
       <div class="flex px-3">
         <div style="flex: 1">
@@ -19,8 +20,8 @@
                 <div class="py-4 flex border-b border-gray-200 mb-4">
                   <div class="text-dark-100">请选择最终回复或驳回终审：</div>
                   <a-radio-group v-model:value="finalChoice" name="choiceGroup">
-                    <a-radio value="1">最终回复</a-radio>
-                    <a-radio value="0"><span class="text-red-500">驳回终审</span></a-radio>
+                    <a-radio v-auth="'biz:complain:upAudit:finalReply'" value="1">最终回复</a-radio>
+                    <a-radio v-auth="'biz:complain:upAudit:reject'" value="0"><span class="text-red-500">驳回终审</span></a-radio>
                   </a-radio-group>
                 </div>
                 <!-- <a-divider class="mb-4"></a-divider> -->
@@ -220,7 +221,7 @@
           res?.replyList?.forEach((item:any) => {
               item.fileList?.forEach((file:any) => {
                 replyFileList.push({
-                  id: file.id || '',
+                  id: null, // 新增的文件ID为null
                   fileName: file.fileName || '',
                   fileSize: file.fileSize || 0,
                   fileKey: file.fileKey || '',

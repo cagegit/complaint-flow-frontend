@@ -10,7 +10,7 @@
             <a-dropdown v-if="selectedRowKeys.length > 0">
               <template #overlay>
                 <a-menu>
-                  <a-menu-item key="1" @click="batchHandleAssign">
+                  <a-menu-item key="1" v-auth="'complain:assign:add'" @click="batchHandleAssign">
                     <Icon icon="ant-design:send-outlined"></Icon>
                     批量分派
                   </a-menu-item>
@@ -214,12 +214,12 @@
          {
             label: '编辑',
             onClick: handleEdit.bind(null, record),
-            // ifShow: () => hasPermission('system:user:edit'),
+            ifShow: () => hasPermission('complain:biz_complaint_ticket:edit'),
           },
         {
           label: '转出',
           onClick: handleTransfer.bind(null, record),
-          ifShow: () => hasPermission('complain:assign:add'),
+          ifShow: () => hasPermission('complain:biz_complaint_ticket:turnOut'),
         },
          {
           label: '分派',

@@ -8,6 +8,7 @@
     :showFooter="showFooter"
     destroyOnClose
     :maskClosable="false"
+    :ok-button-props="{ vAuth: 'complain:manager:edit' }"
   >
     <div class="pl-8">
       <BasicForm @register="registerForm" />

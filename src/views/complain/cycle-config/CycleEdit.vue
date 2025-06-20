@@ -6,15 +6,16 @@
   </div>
 </template>
   <script lang="ts" setup>
-import { ref, computed, unref, useAttrs, onMounted } from 'vue';
+import { ref, useAttrs, onMounted } from 'vue';
 import { BasicForm, useForm } from '/@/components/Form/index';
 import { formSchema } from './cycle.data';
-
+import { usePermission } from '/@/hooks/web/usePermission';
 import { getConfig, saveCycle } from './cycle.api';
 import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
 import { useMessage } from '/@/hooks/web/useMessage';
-const { createMessage } = useMessage();
 
+const { createMessage } = useMessage();
+const { hasPermission } = usePermission();
 // 声明Emits
 const emit = defineEmits(['success', 'register']);
 const attrs = useAttrs();
@@ -28,7 +29,7 @@ const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSc
   schemas: formSchema,
   submitButtonOptions: {
     loading: false,
-    disabled: false,
+    disabled: !hasPermission('biz:complain:time_cycle:save'),
     text: '保存',
     preIcon: 'ant-design:check-circle-outlined',
     onClick: handleSubmit,
@@ -50,7 +51,7 @@ const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSc
   // baseRowStyle: { width: '100%' },
   actionColOptions: {
     span: 24,
-    offset: 19,
+    offset: 21,
   },
 });
 

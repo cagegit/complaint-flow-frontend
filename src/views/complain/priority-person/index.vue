@@ -3,14 +3,14 @@
   <BasicTable @register="registerTable" :rowSelection="rowSelection">
     <!--插槽:table标题-->
     <template #tableTitle>
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button>
+      <a-button type="primary" v-auth="'complain:biz_monitor_people:add'" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button>
       <!-- <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls" :disabled="isDisabledAuth('system:user:export')"> 导出</a-button> -->
       <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
       <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:hdd-outlined">编辑</a-button> -->
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <template #overlay>
           <a-menu>
-            <a-menu-item key="1" @click="batchHandleDelete">
+            <a-menu-item v-auth="'complain:biz_monitor_people:deleteBatch'" key="1" @click="batchHandleDelete">
               <Icon icon="ant-design:delete-outlined"></Icon>
               批量删除
             </a-menu-item>
@@ -46,11 +46,13 @@ import { useModal } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
 //@ts-ignore
 import PriorityEdit from './PriorityEdit.vue';
+import { usePermission } from '/@/hooks/web/usePermission';
 //注册drawer
 const [registerModal, { openModal }] = useModal();
 const { createConfirm } = useMessage();
+const { hasPermission } = usePermission();
 // 列表页面公共参数、方法
-const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+const { tableContext } = useListPage({
   designScope: 'priority-list',
   tableProps: {
     title: '重点对象列表',
@@ -87,7 +89,7 @@ function getTableAction(record): ActionItem[] {
     {
       label: '编辑',
       onClick: handleEdit.bind(null, { ...record, type: record.type.toString() }),
-      // ifShow: () => hasPermission('system:user:edit'),
+      ifShow: () => hasPermission('complain:biz_monitor_people:edit'),
     },
     {
       label: '删除',
@@ -95,6 +97,7 @@ function getTableAction(record): ActionItem[] {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
       },
+      ifShow: () => hasPermission('complain:biz_monitor_people:delete'),
     },
   ];
 }
