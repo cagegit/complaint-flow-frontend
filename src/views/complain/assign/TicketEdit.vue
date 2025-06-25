@@ -198,7 +198,7 @@
       if (!unref(isUpdate)) {
         return '转派工单';
       } else {
-        return '工单转派';
+        return '工单分派';
       }
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });

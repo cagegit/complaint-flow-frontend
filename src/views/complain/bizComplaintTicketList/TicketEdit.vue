@@ -11,7 +11,11 @@
       :ok-button-props="{ vAuth: ['complain:biz_complaint_ticket:add', 'complain:biz_complaint_ticket:edit'] }"
     >
       <div class="pl-18">
+        <!-- 拒绝信息 -->
+        <RejectInfo :detailInfo="ticketDetail" />
+        <!-- 基本信息区域 -->
         <BasicForm @register="registerForm"/>
+        <!-- 领导批示区域 -->
         <LeaderInstruction 
           v-if="currentUnionRecord?.id"
           :ticketId="currentUnionRecord?.id" 
@@ -32,6 +36,10 @@
     import { getComplaintDetail } from '/@/api/common/api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
+    // @ts-ignore
+    import RejectInfo from '../components/RejectInfo/index.vue';
+
+    
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -40,6 +48,8 @@
     const inTurnOut = ref(false);
     const departOptions = ref([]);
     let isFormDepartUser = false;
+    // 表单详情
+    const ticketDetail = ref<any>({});
     //表单配置
     const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
       labelWidth: 150,
@@ -76,6 +86,8 @@
           ...detailRes,
           ...(res ? res : {})
         };
+        // 工单详情
+        ticketDetail.value = res;
         if(data.inTurnOut) {
           console.log(res);
           setFieldsValue({
