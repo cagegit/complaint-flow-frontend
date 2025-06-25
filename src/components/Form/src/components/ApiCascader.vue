@@ -60,7 +60,9 @@
       immediate: propTypes.bool.def(true),
       styles: {
         type: Object as PropType<Recordable>,
-        default: () => ({}),
+        default: () => ({
+          maxWidth: '100%',
+        }),
       },
     },
     emits: ['options-change', 'change'],

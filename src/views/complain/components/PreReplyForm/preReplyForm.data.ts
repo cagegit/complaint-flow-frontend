@@ -693,7 +693,8 @@ export const formSchema: FormSchema[] = [
                 labelField: 'name',
                 valueField: 'id',
                 allowClear: true,
-                showSearch: true
+                showSearch: true,
+                styles: {maxWidth: '100%'}
               },
             }
           ]);
@@ -706,6 +707,7 @@ export const formSchema: FormSchema[] = [
                  placeholder: '请选择剔除挂账类型',
                  options:[],
                 allowClear: true,
+                styles: {maxWidth: '100%'}
               },
             },
           ]);
@@ -748,6 +750,7 @@ export const formSchema: FormSchema[] = [
       placeholder: '请选择剔除挂账类型',
       options:[],
       allowClear: true,
+      styles: {maxWidth: '100%'}
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
@@ -1432,7 +1435,8 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
                 labelField: 'name',
                 valueField: 'id',
                 allowClear: true,
-                showSearch: true
+                showSearch: true,
+                styles: {maxWidth: '100%'}
               },
             },
           ]);
@@ -1445,6 +1449,7 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
                  placeholder: '请选择剔除挂账类型',
                  options:[],
                 allowClear: true,
+                styles: {maxWidth: '100%'}
               },
             },
           ]);
@@ -1466,6 +1471,7 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
       placeholder: '请选择剔除挂账类型',
       options:[],
       allowClear: true,
+      styles: {maxWidth: '100%'}
     },
     colProps: { span: 12 },
     ifShow: ({values}) => {
@@ -2123,7 +2129,8 @@ export const formFinalSchema: FormSchema[] = [
                 labelField: 'name',
                 valueField: 'id',
                 allowClear: true,
-                showSearch: true
+                showSearch: true,
+                styles: {maxWidth: '100%'}
               },
             },
           ]);
@@ -2136,6 +2143,7 @@ export const formFinalSchema: FormSchema[] = [
                  placeholder: '请选择剔除挂账类型',
                  options:[],
                 allowClear: true,
+                styles: {maxWidth: '100%'}
               },
             },
           ]);
@@ -2154,6 +2162,7 @@ export const formFinalSchema: FormSchema[] = [
       placeholder: '请选择剔除挂账类型',
       options:[],
       allowClear: true,
+      styles: {maxWidth: '100%'}
     },
     required: true,
     colProps: { span: 12 },
