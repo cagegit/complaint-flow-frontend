@@ -17,18 +17,18 @@
     </a-row>
     <a-row :gutter="24" class="py-4" v-if="hasUpReplyAudit">
         <a-col :span="24">
-            <div class="flex items-center">
-                <div class="text-gray-400">最终回复审核内容:</div>
-                <div class="pl-2">{{ props.detailInfo.upReplyAuditContent || '无' }}</div>
+            <div class="flex items-start">
+                <div class="text-gray-400 flex-nowrap">最终回复审核内容:</div>
+                <div class="pl-2 flex-1 max-w-[75%]">{{ props.detailInfo.upReplyAuditContent || '无' }}</div>
             </div>
         </a-col>
     </a-row>
     <template v-if="hasUpRevisit">
         <a-row :gutter="24" class="py-4">
             <a-col :span="24">
-                <div class="flex items-center">
-                    <div class="text-gray-400">区回访内容:</div>
-                    <div class="pl-2">{{ props.detailInfo.upRevisitContent || '无' }}</div>
+                <div class="flex items-start">
+                    <div class="text-gray-400 flex-nowrap">最终区级回访内容:</div>
+                    <div class="pl-2 flex-1 max-w-[75%]">{{ props.detailInfo.upRevisitContent || '无' }}</div>
                 </div>
             </a-col>
         </a-row>

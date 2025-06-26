@@ -81,7 +81,7 @@ export function useBasicFormSchema() {
 // 机构类型选项
 export const orgCategoryOptions = {
   // 一级部门
-  root: [{ value: '1', label: '公司' }],
+  root: [{ value: '1', label: '街道' }],
   // 子级部门
   child: [
     { value: '2', label: '部门' },
