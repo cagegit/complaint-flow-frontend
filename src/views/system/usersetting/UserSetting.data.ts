@@ -8,8 +8,6 @@ import geren1 from './icons/geren1.png'
 import geren2 from './icons/geren2.png'
 import zuhu1 from './icons/zuhu1.png'
 import zuhu2 from './icons/zuhu2.png'
-import { calculateFileSize } from "/@/utils/common/compUtils";
-import { BasicColumn } from "@/components/Table";
 
 export interface ListItem {
   key: string;
@@ -47,14 +45,14 @@ export const settingList = [
     img1: anquan1,
     img2: anquan2,
   },
-  {
-    key: '4',
-    name: '第三方APP',
-    component: 'WeChatDingSetting',
-    icon: 'ant-design:contacts-outlined',
-    img1: app1,
-    img2: app2,
-  },
+  // {
+  //   key: '4',
+  //   name: '第三方APP',
+  //   component: 'WeChatDingSetting',
+  //   icon: 'ant-design:contacts-outlined',
+  //   img1: app1,
+  //   img2: app2,
+  // },
 ];
 
 

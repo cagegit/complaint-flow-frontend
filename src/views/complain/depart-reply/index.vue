@@ -49,6 +49,7 @@
         <ContactHistory @register="registerHistoryModal" />
     </template>
     <script lang="ts" setup name="deaprt-reply">
+    import { h, ref } from 'vue';
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list} from './depart.api'
@@ -64,12 +65,20 @@
     import { useRoute } from 'vue-router';
     import dayjs from 'dayjs';
     import { usePermission } from '/@/hooks/web/usePermission';
+    import ApiCascader from '/@/components/Form/src/components/ApiCascader.vue';
+    import { Input } from 'ant-design-vue';
+    import { assignOther } from '../assign/assign.api';
+    import { useMessage } from '/@/hooks/web/useMessage';
+    import { getAuthTree } from '../follow-up/follow-up.api';
+import { is } from '/@/utils/is';
 
+    const AInputTextArea = Input.TextArea;
     const route = useRoute();
     const [registerModal, { openModal }] = useModal();
     const { hasPermission } = usePermission();
     const [registerReplyModal, { openModal:openReplyModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
+    const { createMessage, createConfirm } = useMessage();
     // 列表页面公共参数、方法
     const { tableContext } = useListPage({
         designScope: 'ticket-list',
@@ -83,7 +92,7 @@
             schemas: searchFormSchema,
           },
           actionColumn: {
-            width: 120,
+            width: 150,
             fixed: 'right',
           },
           beforeFetch: (params) => {
@@ -131,11 +140,11 @@
             onClick: handleEdit.bind(null, record),
             ifShow: () => hasPermission('biz:complain:reply:save') || hasPermission('biz:complain:reply:submit'),
           },
-          // {
-          //   label: '预回复',
-          //   onClick: handlePreReply.bind(null, record),
-          //   // ifShow: () => hasPermission('system:user:edit'),
-          // },
+          {
+            label: '重新分派',
+            onClick: handleTransfer.bind(null, record),
+            ifShow: () => hasPermission('complain:assign:assignOther'),
+          },
         ];
       }
     
@@ -198,4 +207,113 @@
           showFooter: false,
         });
       }
-    </script>
+      const orgId = ref<any>(null);
+      const remark = ref<string>('');
+      const isTransfer = ref<boolean>(false);
+      // 重新分派
+      async function handleTransfer(record: Recordable) {
+        //重置
+        orgId.value = '';
+        remark.value = '';
+        const fowardTitle = record.orgType == 2 ? '转出部门' : '转出管区';
+        createConfirm({
+          title: '是否重新分派选中的工单？',
+          content: () => {
+            // 使用 h 渲染函数创建 vnode
+            return h('div', {style: {width: '100%'}}, [
+              // h('p', '是否确认转出选中工单？'),
+              h('p', fowardTitle +'：'),
+              h(ApiCascader, {
+                style: 'width: 100%;',
+                placeholder: '请选择',  
+                styles:{
+                  width: '100%',
+                },
+                onChange: (val:any) => {
+                  console.log('val', val);
+                  orgId.value = val;
+                },
+                treeDataSimpleMode: true,
+                api: async () => {
+                  const res = await getAuthTree(record.orgType);
+                  // console.log(res)
+                  if (Array.isArray(res)) {
+                    const newList = treeToList(res);
+                    return newList.map(v => {
+                      return {
+                        id: v.id,
+                        parentId: v.parentId,
+                        label: v.departName,
+                        value: v.id,
+                      }
+                    });
+                  } else {
+                    return [];
+                  }
+                },
+              }),
+              // 备注
+              h('p',{style: { marginTop: ' 15px'}}, '备注：'),
+              h(AInputTextArea, {
+                style: 'width: 100%;',
+                placeholder: '请输入备注',
+                rows: 6,
+                maxLength: 800,
+                onChange: (e:any) => {
+                  remark.value = e.target.value;
+                },
+              }), 
+            ]);
+          },
+          iconType: 'warning',
+          onOk: async () => {
+            console.log(record);
+            if (isTransfer.value) {
+              // createMessage.warning('请勿重复操作');
+              return Promise.reject('请勿重复操作');
+            }
+              // 添加类型参数
+            if (orgId.value === '' || orgId.value === null || orgId.value === undefined) {
+              createMessage.warning('请选择' + fowardTitle);
+              return Promise.reject('未选择' + fowardTitle);
+            }
+            isTransfer.value = true;
+            try {
+              await assignOther({ 
+                assignId: record.assignId,
+                // 取列表最后一项
+                orgId: (Array.isArray(orgId.value) && orgId.value.length > 0) ? orgId.value.pop() : orgId.value,
+                remark: remark.value,
+              });
+              reload();
+              createMessage.success('分派成功');
+            } catch (error:any) {
+              console.error('分派失败', error);
+              createMessage.error(error?.message || '分派失败');
+            } finally {
+              isTransfer.value = false;
+            } 
+          },
+          onCancel: () => {
+            console.log('取消分派');
+            isTransfer.value = false;
+            // 重置 orgId 和 remark
+            orgId.value = '';
+            remark.value = '';
+          },
+        });
+      
+      }
+
+      function treeToList(tree: any[]) {
+        const list: any[] = [];
+        function traverse(node) {
+          list.push(node);
+          if (node.children) {
+            node.children.forEach(traverse);
+          }
+        }
+        tree.forEach(traverse);
+        return list;
+      }
+</script>

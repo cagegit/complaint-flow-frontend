@@ -4,7 +4,7 @@
     <div class="account-row-item clearfix">
       <div class="account-label gray-75">手机</div>
       <span class="gray" v-if="userDetail.phoneText">{{ userDetail.phoneText}}</span>
-      <span class="pointer blue-e5 phone-margin" @click="updatePhone" v-if="userDetail.phone">修改</span>
+      <!-- <span class="pointer blue-e5 phone-margin" @click="updatePhone" v-if="userDetail.phone">修改</span> -->
       <span class="pointer blue-e5 phone-margin" @click="bindPhone" v-else>绑定</span>
       <!--      <span class="pointer blue-e5" @click="unbindPhone" v-if="userDetail.phone">解绑?</span>-->
       <!--      <span class="pointer blue-e5" @click="unbindPhone" v-else>绑定?</span>-->

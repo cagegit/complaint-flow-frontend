@@ -7,7 +7,9 @@ export enum Api {
   // 获取回访详情
   getReviewReplyDetail = '/complain/visit/getVisitDetail',
   // 保存回访信息
-  saveReviewReply = '/complain/visit/saveVisit'
+  saveReviewReply = '/complain/visit/saveVisit',
+  // 获取授权树状列表
+  getAuthTree = '/biz/depart/getAuthTree',
 }
 /**
  * 已接收列表
@@ -60,4 +62,11 @@ export const getReplyDetail = (param) => {
  */
 export const saveReviewReply = (param) => {
   return defHttp.post({ url: Api.saveReviewReply, data: param})
+}
+
+/**
+ * 获取授权树状列表
+ */
+export const getAuthTree = (orgCategory:string) => {
+  return defHttp.get({ url: Api.getAuthTree + '?orgCategory=' + orgCategory })
 }

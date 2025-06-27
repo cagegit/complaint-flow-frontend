@@ -64,7 +64,6 @@
     import { useRoute, useRouter } from 'vue-router';
     import dayjs from 'dayjs';
     import { usePermission } from '/@/hooks/web/usePermission';
-
     const route = useRoute();
     const router = useRouter();
     const [registerModal, { openModal }] = useModal();
@@ -210,4 +209,4 @@
           showFooter: true
         });
       }
-    </script>
+</script>
