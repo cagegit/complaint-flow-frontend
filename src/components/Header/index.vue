@@ -4,7 +4,7 @@
       <router-link
         v-for="item in navItems"
         :key="item.path"
-        :to="item.name === '案件办理' ? defaultCasePath : item.path"
+        :to="item.title === '案件办理' ? defaultCasePath : item.path"
         :class="{ 'nav-item-select': currentPath === item.path, 'nav-item': true }"
         active-class="active"
       >
