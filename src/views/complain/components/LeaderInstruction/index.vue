@@ -1,5 +1,28 @@
 <template>
     <div class="flex flex-col mb-4">
+      <!-- 书记批示区域 -->
+      <div class="flex flex-col items-end">
+          <a-textarea
+          v-model:value="shuJiContent"
+          :placeholder="'书记批示内容'"
+          :disabled="!isShuJi || readOnly"
+          :rows="6"
+          autoresize
+          class="mb-4"
+          >
+            <template #prefix>
+              <a-icon icon="ant-design:message-outlined" />
+            </template>
+          </a-textarea>
+          <a-button
+            type="primary"
+            @click="submitShuJiContent"
+            v-if="isShuJi && !readOnly"
+            style="width: 120px;"
+          >
+            书记批示
+          </a-button>
+        </div>
       <!-- 主任批示区域 -->
       <div class="mb-4 flex flex-col items-end">
         <a-textarea 
@@ -23,29 +46,6 @@
           主任批示
         </a-button>
       </div>
-     <!-- 书记批示区域 -->
-      <div class="flex flex-col items-end">
-          <a-textarea
-          v-model:value="shuJiContent"
-          :placeholder="'书记批示内容'"
-          :disabled="!isShuJi || readOnly"
-          :rows="6"
-          autoresize
-          class="mb-4"
-          >
-            <template #prefix>
-              <a-icon icon="ant-design:message-outlined" />
-            </template>
-          </a-textarea>
-          <a-button
-            type="primary"
-            @click="submitShuJiContent"
-            v-if="isShuJi && !readOnly"
-            style="width: 120px;"
-          >
-            书记批示
-          </a-button>
-        </div>
     </div>
 </template>
 <script lang="ts" name="leader-instruction" setup>
