@@ -70,7 +70,6 @@
     import { assignOther } from '../assign/assign.api';
     import { useMessage } from '/@/hooks/web/useMessage';
     import { getAuthTree } from '../follow-up/follow-up.api';
-import { is } from '/@/utils/is';
 
     const AInputTextArea = Input.TextArea;
     const route = useRoute();
@@ -215,7 +214,7 @@ import { is } from '/@/utils/is';
         //重置
         orgId.value = '';
         remark.value = '';
-        const fowardTitle = record.orgType == 2 ? '转出部门' : '转出管区';
+        const fowardTitle = '指派单位';
         createConfirm({
           title: '是否重新分派选中的工单？',
           content: () => {
@@ -289,7 +288,7 @@ import { is } from '/@/utils/is';
               createMessage.success('分派成功');
             } catch (error:any) {
               console.error('分派失败', error);
-              createMessage.error(error?.message || '分派失败');
+              // createMessage.error(error?.message || '分派失败');
             } finally {
               isTransfer.value = false;
             } 

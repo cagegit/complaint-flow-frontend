@@ -4,7 +4,7 @@
       <router-link
         v-for="item in navItems"
         :key="item.path"
-        :to="item.path"
+        :to="item.name === '案件办理' ? defaultCasePath : item.path"
         :class="{ 'nav-item-select': currentPath === item.path, 'nav-item': true }"
         active-class="active"
       >
@@ -36,7 +36,7 @@
   import { UserDropDown } from '/@/layouts/default/header/components';
   import { calculateAspectRatioFit } from '/@/utils';
   import { useAppStore } from "@/store/modules/app";
-
+  import { usePermissionStore } from '/@/store/modules/permission';
   const props = defineProps({
     index: {
       type: Number,
@@ -49,6 +49,7 @@
     },
   });
   const appStore = useAppStore()
+  const permissionStore = usePermissionStore();
   const { getHeaderTheme } = useHeaderSetting();
 
   const platformName = '城北街道诉求管理平台';
@@ -82,6 +83,12 @@
     }
     return {};
   });
+
+  // 案件办理默认路径
+  const defaultCasePath = computed(() => {
+    return permissionStore.defaultPath;
+  });
+
   // 控制header高度
   function changeHeaderStyle() {
     const [styles, currScale] = calculateAspectRatioFit(1920,1080,72);

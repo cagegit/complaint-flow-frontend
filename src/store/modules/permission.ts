@@ -55,6 +55,8 @@ interface PermissionState {
   sysSafeMode: boolean;
   // online子表按钮权限
   onlineSubTableAuthMap: object;
+  // 默认路径
+  defaultPath: string;
 }
 export const usePermissionStore = defineStore({
   id: 'app-permission',
@@ -72,6 +74,8 @@ export const usePermissionStore = defineStore({
     allAuthList: [],
     sysSafeMode: false,
     onlineSubTableAuthMap: {},
+    // 默认路径
+    defaultPath: '/complaint/assign',
   }),
   getters: {
     getPermCodeList(): string[] | number[] {
@@ -131,6 +135,8 @@ export const usePermissionStore = defineStore({
       
       //菜单路由
       const routeList = systemPermission.menu;
+      // 案件办理默认路径
+      this.setDefaultPath(systemPermission.firstRoute?.path || '/complaint/assign');
       return routeList;
     },
     async buildRoutesAction(): Promise<AppRouteRecordRaw[]> {
@@ -304,6 +310,9 @@ export const usePermissionStore = defineStore({
     //update-begin-author:taoyan date:2022-6-1 for: VUEN-1162 子表按钮没控制
     setOnlineSubTableAuth(code, hideBtnList) {
       this.onlineSubTableAuthMap[code] = hideBtnList;
+    },
+    setDefaultPath(path: string) {
+      this.defaultPath = path;
     },
     //update-end-author:taoyan date:2022-6-1 for: VUEN-1162 子表按钮没控制
   },
