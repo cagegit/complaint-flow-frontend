@@ -8,6 +8,28 @@
       <a-button type="primary" v-auth="'complain:manager:exportKickOut'" preIcon="ant-design:export-outlined" @click="onExportKickOut"> 导出剔除工单</a-button>
       <a-button type="primary" v-auth="'complain:manager:exportExcelStatis'" preIcon="ant-design:export-outlined" @click="onExportExcelStatis">导出Excel统计表</a-button>
       <a-button type="primary" v-auth="'complain:manager:exportDayExport'" preIcon="ant-design:export-outlined" @click="onExportDayExcel">导出日报表</a-button>
+      <a-dropdown>
+        <template #overlay>
+          <a-menu @click="handleMenuClick">
+            <a-menu-item key="1">
+              <ExportOutlined />
+              导出申请延期工单
+            </a-menu-item>
+            <a-menu-item key="2">
+              <ExportOutlined />
+              导出申请提前销账
+            </a-menu-item>
+            <a-menu-item key="3">
+              <ExportOutlined />
+              导出申请销账
+            </a-menu-item>
+          </a-menu>
+        </template>
+        <a-button>
+          更多
+          <DownOutlined />
+        </a-button>
+      </a-dropdown>
     </template>
     <!--插槽:表格内容-->
     <template #bodyCell="{ text, column, record }">
@@ -30,9 +52,9 @@
 <script lang="ts" setup>
 import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
 import { useListPage } from '/@/hooks/system/useListPage';
-import { list, exportTicketWord, exportKickOut, exportExcelStatis, getDayExcelColumns } from './manager.api';
+import { list, exportTicketWord, exportKickOut, exportExcelStatis, getDayExcelColumns, exportSqyqTicket, exportTicketAdvance, exportTicketDone } from './manager.api';
 import { columns, searchFormSchema } from './manager.data';
-import { useModal, useModalInner } from '/@/components/Modal';
+import { useModal } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
 
 //@ts-ignore
@@ -42,12 +64,14 @@ import ManagerEdit from './ManagerEdit.vue';
 // import { usePermission } from '/@/hooks/web/usePermission';
 // import { getExportUrl } from '../../system/dict/dict.api';
 import { downloadByUrl } from '/@/utils/file/download';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 // import { JCheckbox } from '/@/components/Form';
 import { reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import { usePermission } from '/@/hooks/web/usePermission';
+// @ts-ignore
+import { DownOutlined, ExportOutlined } from '@ant-design/icons-vue'; 
 
 //注册modal
 const [registerModal, { openModal }] = useModal();
@@ -398,6 +422,62 @@ function handleDownload(res) {
 
 function handleSuccessExportDay() {
   console.log('导出日报表成功');
+}
+
+/**
+ * 导出申请延期工单
+ */
+function onExportSqyqTicket() {
+  if (!selectedRowKeys.value || selectedRowKeys.value.length === 0) {
+    createMessage.info(`请先选择要导出的数据！`);
+    return;
+  }
+  exportSqyqTicket({ ids: selectedRowKeys.value.join(',') }).then((res) => {
+    if (res) {
+      handleDownload(res);
+    }
+  });
+}
+
+/**
+ * 导出申请提前销账工单
+ */
+function onExportTicketAdvance() {
+  if (!selectedRowKeys.value || selectedRowKeys.value.length === 0) {
+    createMessage.info(`请先选择要导出的数据！`);
+    return;
+  }
+  exportTicketAdvance({ ids: selectedRowKeys.value.join(',') }).then((res) => {
+    if (res) {
+      handleDownload(res);
+    }
+  });
+}
+
+/**
+ * 导出申请销账工单
+ */
+function onExportTicketDone() {
+  if (!selectedRowKeys.value || selectedRowKeys.value.length === 0) {
+    createMessage.info(`请先选择要导出的数据！`); 
+    return;
+  }
+  exportTicketDone({ ids: selectedRowKeys.value.join(',') }).then((res) => {
+    if (res) {
+      handleDownload(res);
+    }
+  });
+}
+
+function handleMenuClick({ key }) {
+  console.log('handleMenuClick', key);
+  if (key === '1') {
+    onExportSqyqTicket();
+  } else if (key === '2') {
+    onExportTicketAdvance();
+  } else if (key === '3') {
+    onExportTicketDone();
+  }
 }
 </script>
 <style scoped>

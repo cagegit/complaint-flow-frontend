@@ -29,6 +29,12 @@ export enum Api {
   getDayExcelColumns = '/complain/manage/getDayExcelColumns',
   //获取日报表字段
   exportDayExcel = '/complain/manage/exportDayExcel',
+  //导出申请延期工单
+  exportSqyqTicket = '/complain/manage/exportReqDelay',
+  //导出申请提前销账工单
+  exportTicketAdvance = '/complain/manage/exportReqEarlyRemove',
+  //导出申请销账工单
+  exportTicketDone = '/complain/manage/exportReqRemove',
 }
 
 /**
@@ -210,3 +216,23 @@ export const getExportDayExcel = (param) => {
   });
 };
 
+/**
+ * 导出申请延期工单
+ */
+export const exportSqyqTicket = (param) => {
+  return defHttp.post({ url: Api.exportSqyqTicket, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } })
+};
+
+/**
+ * 导出申请提前销账工单
+ */
+export const exportTicketAdvance = (param) => {   
+  return defHttp.post({ url: Api.exportTicketAdvance, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } })
+}
+
+/**
+ * 导出申请销账工单
+ */
+export const exportTicketDone = (param) => {
+  return defHttp.post({ url: Api.exportTicketDone, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } })
+}
