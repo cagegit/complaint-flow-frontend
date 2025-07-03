@@ -247,7 +247,8 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
         componentProps: {
           presets: rangePresets,
-          allowClear: false
+          allowClear: false,
+          showTime: true
         },
         defaultValue: [
           dayjs().add(-3, 'M'),

@@ -38,10 +38,8 @@
 <script lang="ts" setup>
 import { ref, computed, unref } from 'vue';
 import { getExportDayExcel } from './manager.api';
-import { JCheckbox } from '/@/components/Form';
 import { BasicModal, useModalInner } from '/@/components/Modal';
 // import { editComplain, getManageInfo } from './manager.api';
-import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
 import { downloadByUrl } from '/@/utils/file/download';
 //@ts-ignore
 import draggable from 'vuedraggable'; // For Vue 3
@@ -72,10 +70,10 @@ const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (dat
 
 // 下载
 function handleDownload(res) {
-  let url = '';
-  let fileName = res.fileName;
+  let url = res?.fileKey;
+  let fileName = res?.fileName;
   // 兼容新的上传接口
-  if (url.indexOf('app-data/down/') > -1) {
+  if (url.indexOf('app-data/tmp/download') > -1) {
     url = `/citizen-voice/sys/common/static/${res.fileKey}`;
   }
   downloadByUrl({ url, fileName });

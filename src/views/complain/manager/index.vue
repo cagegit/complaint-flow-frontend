@@ -5,7 +5,7 @@
     <template #tableTitle>
       <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
       <a-button type="primary" v-auth="'complain:manager:exportTicketWord'" preIcon="ant-design:export-outlined" @click="onExportTicketWords"> 导出word工单</a-button>
-      <a-button type="primary" v-auth="'complain:manager:exportKickOut'" preIcon="ant-design:export-outlined" @click="onExportKickOut"> 导出剔除统计表</a-button>
+      <a-button type="primary" v-auth="'complain:manager:exportKickOut'" preIcon="ant-design:export-outlined" @click="onExportKickOut"> 导出剔除工单</a-button>
       <a-button type="primary" v-auth="'complain:manager:exportExcelStatis'" preIcon="ant-design:export-outlined" @click="onExportExcelStatis">导出Excel统计表</a-button>
       <a-button type="primary" v-auth="'complain:manager:exportDayExport'" preIcon="ant-design:export-outlined" @click="onExportDayExcel">导出日报表</a-button>
     </template>
@@ -387,10 +387,10 @@ async function onExportDayExcel() {
 
 // 下载
 function handleDownload(res) {
-  let url = '';
+  let url = res?.fileKey;
   let fileName = res.fileName;
   // 兼容新的上传接口
-  if (url.indexOf('app-data/down/') > -1) {
+  if (url.indexOf('app-data/tmp/download/') > -1) {
     url = `/citizen-voice/sys/common/static/${res.fileKey}`;
   }
   downloadByUrl({ url, fileName });

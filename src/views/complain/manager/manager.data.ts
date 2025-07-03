@@ -213,7 +213,8 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       presets: rangePresets,
       placeholder: ['开始日期', '结束日期'],
-      allowClear: false
+      allowClear: false,
+      showTime: true, // 显示时间选择
     },
     colProps: { span: 8 },
     defaultValue: [
@@ -792,7 +793,7 @@ export const formSchema: FormSchema[] = [
     required: true,
     componentProps: {
       showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
+      format: 'YYYY-MM-DD HH:mm:ss'
     },
     colProps: { span: 12 },
   },
