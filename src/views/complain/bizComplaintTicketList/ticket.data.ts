@@ -260,6 +260,7 @@ export const columns: BasicColumn[] = [
         colProps: { span: 6 },
         componentProps: {
           presets: rangePresets,
+          showTime: true
         },
         defaultValue: [
             dayjs().add(-3, 'M'),
@@ -378,6 +379,9 @@ export const formSchema: FormSchema[] = [
       field: 'importTime',
       component: 'DatePicker',
       required: true,
+      componentProps: {
+        showTime: true
+      }
     },
     {
       label: '来电时间',
