@@ -90,8 +90,7 @@ export const columns: BasicColumn[] = [
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  {
-    title: '状态', dataIndex: 'processName', width: 120 },
+  { title: '状态', dataIndex: 'processName', width: 120 },
   { title: '月次', dataIndex: 'monthCount', width: 80 },
   { title: '年次', dataIndex: 'yearCount', width: 80 },
   { title: '标题', dataIndex: 'title', width: 180 },

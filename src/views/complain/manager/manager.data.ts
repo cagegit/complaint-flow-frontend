@@ -43,14 +43,7 @@ export const columns: BasicColumn[] = [
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  // {
-  //   title: '状态',
-  //   dataIndex: 'receiveStatus',
-  //   width: 120,
-  //   customRender: ({ text }) => {
-  //     return text === 0 ? '待接收' : '已接收';
-  //   }
-  // },
+  { title: '状态', dataIndex: 'processName', width: 120 },
   { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
   { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
   { title: '月次', dataIndex: 'monthCount', width: 80 },
