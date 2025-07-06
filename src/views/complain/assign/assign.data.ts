@@ -1,4 +1,4 @@
-import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList } from '/@/api/common/api';
+import { getBackDepartList, getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getDistrictDictByCode, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -93,8 +93,15 @@ export const columns: BasicColumn[] = [
   { title: '状态', dataIndex: 'processName', width: 120 },
   { title: '月次', dataIndex: 'monthCount', width: 80 },
   { title: '年次', dataIndex: 'yearCount', width: 80 },
+  { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+  { title: '重点工单', dataIndex: 'importFlag', width: 100, customRender({text}) {
+    return text == 1 ? '是' : '否';
+  }},
+  { title: '点单工单', dataIndex: 'pointFlag', width: 100, customRender({text}) {
+    return text == 1 ? '是' : '否';
+  }},
   { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
@@ -493,6 +500,28 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
+    label: '重点工单',
+    field: 'importFlag',
+    component: 'RadioGroup',
+    componentProps: {
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],  
+    }
+  },
+    {
+    label: '点单工单',
+    field: 'pointFlag',
+    component: 'RadioGroup',
+    componentProps: {
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],  
+    }
+  },
+  {
     label: '派单人员',
     field: 'sendUser',
     component: 'Input',
@@ -730,6 +759,89 @@ export const addFormSchema: FormSchema[] = [
   },
 ];
 
+// 工单转出表单
+export const forwardFormSchema: FormSchema[] = [
+  // 转出位置
+  {
+    field: 'forwardType',
+    label: '转出位置',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请输入转出位置',
+      options: [
+        { value: 'city', label: '转出到市' },
+        { value: 'district', label: '转出到区' },
+      ],
+    },
+    required: true,
+    defaultValue: 'city',
+    colProps: { span: 12 }
+  },
+  // 退回类型
+  {
+    field: 'backType',
+    label: '退回类型',
+    component: 'ApiSelect',
+    componentProps: {
+      placeholder: '请输入退回类型',
+      api:  () => getDistrictDictByCode('back_type'),
+      labelField: 'name',
+      valueField: 'id',
+    },
+    required: true,
+    ifShow: ({values}) => {
+      return values.forwardType === 'city';
+    },
+    colProps: { span: 12 }
+  },
+  // 退回单位
+  {
+    field: 'adviceOffice',
+    label: '退回单位',
+    component: 'ApiSelect',
+    componentProps: {
+      placeholder: '请输入退回单位',
+      api: getBackDepartList,
+      labelField: 'name',
+      valueField: 'id',
+    },
+    required: true,
+    ifShow: ({values}) => {
+      return values.forwardType === 'district';
+    },
+    colProps: { span: 12 }
+  },
+  // 退回原因
+  {
+    field: 'backReason',
+    label: '退回原因',
+    component: 'InputTextArea',
+    componentProps: {
+      rows: 3,
+      maxLength: 800,
+      placeholder: '请输入退回原因',
+      style: { width: '100%' },
+    },
+    required: true,
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    }
+  },
+  // 上传附件
+  {
+    field: 'replyFileList',
+    label: '附件',
+    component: 'Upload',
+    slot: 'uploadAttachmentsSlot',
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    // 可以通过showTable来展示已上传文件列表
+    helpMessage: '请上传附件',
+  },
+];
 
 function treeToList(tree: any[]) {
   const list: any[] = [];

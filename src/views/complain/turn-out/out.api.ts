@@ -65,9 +65,9 @@ export const forwardTicketBatch = (params) => defHttp.post({ url: Api.forwardTic
 export const forwardTicket = (params) => {
   console.log(params);
   if(params.forwardType === 'city') {
-     return defHttp.post({ url: Api.forwardTicketToCity, data: params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
+     return defHttp.post({ url: Api.forwardTicketToCity, params });
   } else {
-     return defHttp.post({ url: Api.forwardTicketToDistrict, data: params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
+     return defHttp.post({ url: Api.forwardTicketToDistrict, params });
   }
 };
 

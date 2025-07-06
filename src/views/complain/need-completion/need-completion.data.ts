@@ -95,6 +95,12 @@ export const columns: BasicColumn[] = [
   { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+  { title: '重点工单', dataIndex: 'importFlag', width: 100, customRender({text}) {
+     return text == 1 ? '是' : '否';
+   }},
+   { title: '点单工单', dataIndex: 'pointFlag', width: 100, customRender({text}) {
+     return text == 1 ? '是' : '否';
+   }},
    { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
    { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
    { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
@@ -692,6 +698,28 @@ export const formSchema: FormSchema[] = [
       colProps: { span: 24 },
       itemProps: {
         wrapperCol: { span: 24, sm: { span: 21 } },
+      }
+    },
+    {
+      label: '重点工单',
+      field: 'importFlag',
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          { label: '是', value: 1 },
+          { label: '否', value: 0 },
+        ],  
+      }
+    },
+    {
+      label: '点单工单',
+      field: 'pointFlag',
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          { label: '是', value: 1 },
+          { label: '否', value: 0 },
+        ],  
       }
     },
     {
