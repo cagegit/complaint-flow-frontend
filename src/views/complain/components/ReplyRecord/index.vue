@@ -19,9 +19,21 @@
         
         <!-- 回复内容列 -->
         <template v-if="column.key === 'content'">
-          <div class="content-ellipsis">{{ record.resolveResult }}</div>
+          <div class="content-ellipsis" :title="record.resolveResult">{{ record.resolveResult }}</div>
         </template>
-        
+        <!-- 是否属实 -->
+        <template v-if="column.key === 'replyFact'">
+          {{ record.replyFact == '1' ? '是' : '否' }}
+        </template>
+        <!-- 是否解决 -->
+        <template v-if="column.key === 'replyResolve'">
+          {{ record.replyResolve == '1' ? '是' : '否' }}
+        </template>
+        <!-- 是否满意 -->
+        <template v-if="column.key === 'replySatisfy'">
+          {{ record.replySatisfy == '1' ? '是' : '否' }}
+        </template>
+
         <!-- 视频/文件个数列 -->
         <template v-if="column.key === 'fileCount'">
           <a-button 
@@ -272,13 +284,31 @@ const columns = [
     title: '社区/部门',
     dataIndex: 'orgName',
     key: 'department',
-    width: '15%'
+    width: '10%'
   },
   {
     title: '回复内容',
     dataIndex: 'resolveResult',
     key: 'content',
-    width: '30%'
+    width: '20%'
+  },
+  {
+    title: '是否属实',
+    dataIndex: 'replyFact',
+    key: 'replyFact',
+    width: '10%'
+  },
+  {
+    title: '是否解决',
+    dataIndex: 'replyResolve',
+    key: 'replyResolve',
+    width: '10%'
+  },
+  {
+    title: '是否满意',
+    dataIndex: 'replySatisfy',
+    key: 'replySatisfy',
+    width: '10%'
   },
   {
     title: '文件/视频',
@@ -306,7 +336,7 @@ const columns = [
     ]),
     dataIndex: 'auditStatus',
     key: 'audit',
-    width: '15%'
+    width: '10%'
   },
   {
     title: '操作',

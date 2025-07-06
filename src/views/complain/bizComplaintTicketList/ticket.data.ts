@@ -94,15 +94,19 @@ export const columns: BasicColumn[] = [
       customRender: 'monthCount',
     } 
   },
-   { title: '年次', dataIndex: 'yearCount', width: 80,
+  { title: '年次', dataIndex: 'yearCount', width: 80,
     slots:{
       customRender: 'yearCount',
     }
   },
-   { title: '标题', dataIndex: 'title', width: 180
-    },
+   { title: '标题', dataIndex: 'title', width: 180 },
    { title: '主要内容', dataIndex: 'mainContent', width: 200 },
-
+   { title: '重点工单', dataIndex: 'importFlag', width: 100, customRender({text}) {
+     return text == 1 ? '是' : '否';
+   }},
+   { title: '点单工单', dataIndex: 'pointFlag', width: 100, customRender({text}) {
+     return text == 1 ? '是' : '否';
+   }},
     { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
     { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
     { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
@@ -488,6 +492,28 @@ export const formSchema: FormSchema[] = [
       colProps: { span: 24 },
       itemProps: {
         wrapperCol: { span: 24, sm: { span: 21 } },
+      }
+    },
+    {
+      label: '重点工单',
+      field: 'importFlag',
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          { label: '是', value: 1 },
+          { label: '否', value: 0 },
+        ],  
+      }
+    },
+     {
+      label: '点单工单',
+      field: 'pointFlag',
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          { label: '是', value: 1 },
+          { label: '否', value: 0 },
+        ],  
       }
     },
     {

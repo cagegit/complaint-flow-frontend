@@ -269,6 +269,57 @@
               }
             }
           },
+          colProps: {
+            span: 12
+          }
+        },
+        {
+          field: 'replyFact',
+          label: '是否属实',
+          component: 'RadioGroup',
+          // required: true,
+          componentProps: {
+            options: [
+              { label: '是', value: '1' },
+              { label: '否', value: '0' },
+            ],
+          },
+          colProps: {
+            span: 12
+          },
+          defaultValue: '-1',
+        },
+        {
+          field: 'replyResolve',
+          label: '是否解决',
+          component: 'RadioGroup',
+          // required: true,
+          componentProps: {
+            options: [
+              { label: '是', value: '1' },
+              { label: '否', value: '0' },
+            ],
+          },
+          colProps: {
+            span: 12
+          },
+          defaultValue: '-1',
+        },
+        {
+          field: 'replySatisfy',
+          label: '是否满意',
+          component: 'RadioGroup',
+          // required: true,
+          componentProps: {
+            options: [
+              { label: '是', value: '1' },
+              { label: '否', value: '0' },
+            ],
+          },
+          colProps: {
+            span: 12
+          },
+          defaultValue: '-1',
         },
         {
           field: 'resolveResult',
@@ -686,6 +737,9 @@
           "replyAudioDuration": 0,
           "replyAudioNote": "",
           "resolveResult": params.resolveResult,
+          replyFact: params.replyFact, // 是否属实
+          replyResolve: params.replyResolve, // 是否解决
+          replySatisfy: params.replySatisfy, // 是否满意
         };
         try {
           if(tp === '2') { // 执行社区审核操作

@@ -11,7 +11,7 @@
       <!-- 上传按钮 -->
       <div class="flex gap-2">
         <!-- 从已有列表上传 -->
-        <a-button :disabled="readOnly" @click="handleUploadFromList" class="flex items-center">
+        <a-button v-if="showReplySelectBtn" :disabled="readOnly" @click="handleUploadFromList" class="flex items-center">
           <span>从回复记录添加</span>
         </a-button>
         <!-- 添加 -->
@@ -308,6 +308,11 @@ const props = defineProps({
   replyFileList: {
     type: Array as PropType<FileItem[]>,
     default: () => []
+  },
+  // 展示回复选择按钮
+  showReplySelectBtn: {
+    type: Boolean,
+    default: true
   }
 });
 const modelValue = defineModel('value', {

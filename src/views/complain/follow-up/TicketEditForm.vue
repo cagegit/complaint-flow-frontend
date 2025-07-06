@@ -215,6 +215,7 @@
       preReplyFileList = []
       preReplyDeleteFileIdList = []
       allReplyFileList.value = [];
+      activeKey.value = '1'; // 默认选中第一个tab
       showFooter.value = data?.showFooter ?? true;
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;

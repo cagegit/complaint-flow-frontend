@@ -46,6 +46,8 @@
        <TicketEditForm @register="registerEditModal" @success="handleSuccess" />
        <!-- 联系历史 -->
        <ContactHistory @register="registerHistoryModal" />
+       <!-- 转出工单弹窗 -->
+       <ForwardForm @register="registerForwardModal" @success="handleSuccess" />
        <!-- 书记/主任批示弹窗 -->
       <BasicModal
         v-bind="$attrs"
@@ -64,11 +66,10 @@
       </BasicModal>
     </template>
 <script lang="ts" setup name="forward-complain">
-    import { ref, nextTick, h, onMounted } from 'vue';
+    import { ref, nextTick, onMounted } from 'vue';
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
     import { list, shujiSuggest, zhurenSuggest } from './assign.api'
-    import { forwardTicket } from '../turn-out/out.api';
     import { columns, searchFormSchema } from './assign.data'
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { BasicModal, useModal } from '/@/components/Modal';
@@ -79,27 +80,29 @@
     import ContactHistory from '../components/ContactHistory/index.vue';
     import { useMessage } from '/@/hooks/web/useMessage';
     import { usePermission } from '/@/hooks/web/usePermission';
-    import { Select, Input } from 'ant-design-vue';
-    import ApiCascader from '/@/components/Form/src/components/ApiCascader.vue';
-    import { getBackDepartList, getDistrictDictByCode } from '/@/api/common/api';
+    // import { Select, Input } from 'ant-design-vue';
+    import { getDistrictDictByCode } from '/@/api/common/api';
     //@ts-ignore
     import TicketEditForm from '../bizComplaintTicketList/TicketEdit.vue';
+    //@ts-ignore
+    import ForwardForm from './ForwardForm.vue';
     import { useRoute, useRouter } from 'vue-router';
     import dayjs from 'dayjs';
 
     const route = useRoute();
     const router = useRouter();
     // 创建消息实例
-    const { createMessage, createConfirm } = useMessage();
+    const { createMessage } = useMessage();
     //注册 modal
     const [registerModal, { openModal }] = useModal();
     const [registerHistoryModal, { openModal:openHistoryModal }] = useModal();
     const [registerSuggestModal, { openModal:openSuggestModal, closeModal }] = useModal();
     const [registerEditModal, { openModal:openEditModal }] = useModal();
+    const [registerForwardModal, { openModal:openForwardModal }] = useModal();
     const { hasPermission } = usePermission();
-    const ASelect = Select;
-    const AInput = Input;
-    const AInputTextArea = Input.TextArea;
+    // const ASelect = Select;
+    // const AInput = Input;
+    // const AInputTextArea = Input.TextArea;
     // 选择转出位置
     const forwardType = ref<string|undefined>('city');
     // 退回原因
@@ -331,135 +334,18 @@
 
   // 转出工单
   async function handleTransfer(record: Recordable) {
-        //重置
-        forwardType.value = 'city';
-        forwardReason.value = undefined;
-        backType.value = undefined;
-        backOffice.value = undefined;
-        createConfirm({
-          title: '是否确认转出选中工单？',
-          content: () => {
-            // 使用 h 渲染函数创建 vnode
-            return h('div', {}, [
-              // h('p', '是否确认转出选中工单？'),
-              h('p', '转出位置：'),
-              h(ASelect, {
-                style: 'width: 100%; margin-bottom: 15px;',
-                value: forwardType.value,
-                placeholder: '请选择',
-                onChange: (val:any) => {
-                  console.log('val', val);
-                  forwardType.value = val;
-                },
-                options: [
-                  { value: 'city', label: '转出到市' },
-                  { value: 'district', label: '转出到区' },
-                ],
-              }),
-              // 退回原因
-              h('p', '退回原因：'),
-              h(AInputTextArea, {
-                style: 'width: 100%; margin-bottom: 15px;',
-                placeholder: '请输入退回原因',
-                value: forwardReason.value,
-                rows: 6,
-                maxLength: 800,
-                onChange: (e:any) => {
-                  forwardReason.value = e.target.value;
-                },
-              }),
-              ...forwardType.value === 'city' ? [
-                h('div', '退回类型：'),
-                h(ASelect, {
-                  style: 'width: 100%; margin: 15px auto;',
-                  value: backType.value,
-                  placeholder: '请选择退回类型',
-                  onChange: (val:any) => {
-                    console.log('val', val);
-                    backType.value = val;
-                  },
-                  options: [
-                    ...backTypeDict.value.map((item) => {
-                      return { value: item.id, label: item.name };
-                    }),
-                  ],
-                }),
-              ]: [],
-               ...forwardType.value === 'district' ? [
-                h('div', '退回单位：'),
-                h(ApiCascader, {
-                  styles: {width: '100%', margin: '15px auto'},
-                  value: backOffice.value,
-                  placeholder: '请选择退回单位',
-                  api: getBackDepartList,
-                  labelField: 'name',
-                  valueField: 'id',
-                  onChange: (val:any) => {
-                    console.log('val', val);
-                    backOffice.value = val;
-                  },
-                }),
-              ]: [],
-              //  选择city时展示，backType 退回类型
-              // h(ASelect, {
-              //   style: 'width: 100%; margin-bottom: 15px;',
-              //   value: forwardType.value,
-              //   placeholder: '请选择',
-              //   onChange: (val:any) => {
-              //     console.log('val', val);
-              //     forwardType.value = val;
-              //   },
-              //   options: [
-              //     { value: 'city', label: '转出到市' },
-              //     { value: 'district', label: '转出到区' },
-              //   ], 
-            ]);
-          },
-          iconType: 'warning',
-          onOk: async () => {
-            console.log(record);
-              // 添加类型参数
-            if (!forwardType.value) {
-              createMessage.warning('请选择转出位置');
-              return Promise.reject('未选择转出位置');
-            }
-            if (!forwardReason.value) {
-              createMessage.warning('请输入退回原因');
-              return Promise.reject('未输入退回原因');
-            }
-            if (forwardType.value === 'city' && !backType.value) {
-              createMessage.warning('请选择退回类型');
-              return Promise.reject('未选择退回类型');
-            }
-            if (forwardType.value === 'district' && !backOffice.value) {
-              createMessage.warning('请选择退回单位');
-              return Promise.reject('未选择退回单位');
-            }
-            console.log(backOffice.value);
-            try {
-              await forwardTicket({ 
-                id: record.id,
-                forwardType: forwardType.value,
-                backReason: forwardReason.value || null,
-                adviceOffice: Array.isArray(backOffice.value) && backOffice.value.length ? backOffice.value[backOffice.value.length-1] : null,
-                backType: backType.value || null
-              });
-              reload();
-              createMessage.success('转出成功');
-            } catch (error) {
-              console.error('转出失败', error);
-              createMessage.error('转出失败');
-            }
-          },
-        });
-      
-      }
-    /**
-     * 成功回调
-     */
-    function handleSuccess() {
+      openForwardModal(true, {
+        record,
+        isUpdate: true,
+        showFooter: true,
+      });
+  }
+  /**
+   * 成功回调
+   */
+  function handleSuccess() {
     reload();
-    }
+  }
 
     function showEdit(record:any) {
       handleEdit(record)

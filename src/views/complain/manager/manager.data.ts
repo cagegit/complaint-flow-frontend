@@ -43,12 +43,20 @@ export const columns: BasicColumn[] = [
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
   { title: '状态', dataIndex: 'processName', width: 120 },
-  { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
-  { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
   { title: '月次', dataIndex: 'monthCount', width: 80 },
   { title: '年次', dataIndex: 'yearCount', width: 80 },
+  { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+  { title: '重点工单', dataIndex: 'importFlag', width: 100, customRender({text}) {
+     return text == 1 ? '是' : '否';
+  }},
+  { title: '点单工单', dataIndex: 'pointFlag', width: 100, customRender({text}) {
+    return text == 1 ? '是' : '否';
+  }},
+  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+  { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
+  { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
   { title: '派单时间', dataIndex: 'sendTime', width: 200 },
   { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
   { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
@@ -100,7 +108,6 @@ export const columns: BasicColumn[] = [
   { title: '导入时间', dataIndex: 'importTime', width: 200 },
   { title: '来电时间', dataIndex: 'callTime', width: 200 },
   { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
-  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
   { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
   { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
   { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
@@ -738,6 +745,32 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 8 },
   },
+  // 重点工单
+  {
+    label: '重点工单',
+    field: 'importFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],
+    },
+    colProps: { span: 8 },
+  },
+  // 点单工单
+  {
+    label: '点单工单',
+    field: 'pointFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],
+    },
+    colProps: { span: 8 },
+  },
 ];
 
 // 表单数据，用于编辑和新增
@@ -924,19 +957,28 @@ export const formSchema: FormSchema[] = [
       wrapperCol: { span: 24, sm: { span: 21 } },
     }
   },
-  // {
-  //   field: 'receiveStatus',
-  //   label: '状态',
-  //   component: 'Select',
-  //   componentProps: {
-  //     options: [
-  //       { label: '待接收', value: 0 },
-  //       { label: '已接收', value: 1 },
-  //     ],
-  //   },
-  //   colProps: { span: 12 },
-  // },
-
+  {
+    label: '重点工单',
+    field: 'importFlag',
+    component: 'RadioGroup',
+    componentProps: {
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],  
+    }
+  },
+  {
+    label: '点单工单',
+    field: 'pointFlag',
+    component: 'RadioGroup',
+    componentProps: {
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],  
+    }
+  },
   {
     field: 'sendUser',
     label: '派单人员',
