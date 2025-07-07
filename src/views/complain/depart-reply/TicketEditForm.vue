@@ -280,14 +280,14 @@
           // required: true,
           componentProps: {
             options: [
-              { label: '是', value: '1' },
-              { label: '否', value: '0' },
+              { label: '是', value: 1 },
+              { label: '否', value: 0 },
             ],
           },
           colProps: {
             span: 12
           },
-          defaultValue: '-1',
+          defaultValue: -1,
         },
         {
           field: 'replyResolve',
@@ -296,14 +296,14 @@
           // required: true,
           componentProps: {
             options: [
-              { label: '是', value: '1' },
-              { label: '否', value: '0' },
+              { label: '是', value: 1 },
+              { label: '否', value: 0 },
             ],
           },
           colProps: {
             span: 12
           },
-          defaultValue: '-1',
+          defaultValue: -1,
         },
         {
           field: 'replySatisfy',
@@ -312,14 +312,14 @@
           // required: true,
           componentProps: {
             options: [
-              { label: '是', value: '1' },
-              { label: '否', value: '0' },
+              { label: '是', value: 1 },
+              { label: '否', value: 0 },
             ],
           },
           colProps: {
             span: 12
           },
-          defaultValue: '-1',
+          defaultValue: -1,
         },
         {
           field: 'resolveResult',
@@ -472,6 +472,9 @@
          resolveResult: res.resolveResult || null,
          remark: res.remark || null,
          overseeUserName: res.overseeUserName || null,
+         replyFact: res.replyFact !== undefined ?  res.replyFact: null,
+         replyResolve: res.replyResolve !== undefined ?  res.replyResolve: null,
+         replySatisfy: res.replySatisfy !== undefined ?  res.replySatisfy: null
         });
       }
       // 查询预回复详情
