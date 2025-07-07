@@ -2,8 +2,7 @@ import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictI
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
-import { ref } from 'vue';
-import { h } from 'vue';
+import { ref, h } from 'vue';
 import { getProcessList } from './manager.api';
 import { getDictItemsByCode } from '/@/utils/dict';
 
