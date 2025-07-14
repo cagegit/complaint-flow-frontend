@@ -30,3 +30,8 @@ export const getParentLayout = (_name?: string) => {
  * @description: web layout
  */
 export const WEB_LAYOUT = () => import('/@/layouts/web/index.vue');
+
+/**
+ * @description: h5 layout
+ */
+export const H5_LAYOUT = () => import('/@/layouts/h5/index.vue');
