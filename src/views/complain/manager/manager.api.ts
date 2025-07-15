@@ -128,8 +128,7 @@ export const list = (param) => {
 export const editComplain = (params) =>
   defHttp.post({
     url: Api.editComplain,
-    params,
-    headers: { ContentType: ContentTypeEnum.FORM_URLENCODED },
+    params
   });
 
 /**
@@ -139,7 +138,7 @@ export const deleteTicket = (params) =>
   defHttp.post({
     url: Api.deleteComplain,
     params,
-    headers: { ContentType: ContentTypeEnum.FORM_URLENCODED },
+    headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED },
   });
 
 /**
@@ -149,7 +148,7 @@ export const deleteBatchTicket = (params) =>
   defHttp.post({
     url: Api.deleteBatchComplain,
     params,
-    headers: { ContentType: ContentTypeEnum.FORM_URLENCODED },
+    headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED },
   });
 
 /**
