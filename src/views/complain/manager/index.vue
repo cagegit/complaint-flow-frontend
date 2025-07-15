@@ -52,7 +52,7 @@
 <script lang="ts" setup>
 import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
 import { useListPage } from '/@/hooks/system/useListPage';
-import { list, exportTicketWord, exportKickOut, exportExcelStatis, getDayExcelColumns, exportSqyqTicket, exportTicketAdvance, exportTicketDone } from './manager.api';
+import { list, exportTicketWord, exportKickOut, exportExcelStatis, getDayExcelColumns, exportSqyqTicket, exportTicketAdvance, exportTicketDone, deleteTicket } from './manager.api';
 import { columns, searchFormSchema } from './manager.data';
 import { useModal } from '/@/components/Modal';
 import { useMessage } from '/@/hooks/web/useMessage';
@@ -244,13 +244,14 @@ function getTableAction(record): ActionItem[] {
       onClick: handleEdit.bind(null, record),
       ifShow: () => hasPermission('complain:manager:edit'),
     },
-    // {
-    //   label: '删除',
-    //   popConfirm: {
-    //     title: '是否确认删除',
-    //     confirm: handleDelete.bind(null, record),
-    //   },
-    // },
+    {
+      label: '删除',
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+      },
+      ifShow: () => hasPermission('complain:manager:delete'),
+    },
   ];
 }
 // 监听路由变化
@@ -292,14 +293,14 @@ function handleEdit(record: Recordable) {
   });
 }
 
-// async function handleDelete(record: Recordable) {
-//   try {
-//     await deleteTicket({ id: record.id });
-//     reload();
-//   } catch (error) {
-//     console.error('删除失败', error);
-//   }
-// }
+async function handleDelete(record: Recordable) {
+  try {
+    await deleteTicket({ id: record.id });
+    reload();
+  } catch (error) {
+    console.error('删除失败', error);
+  }
+}
 
 // function batchHandleDelete() {
 //   if (!selectedRowKeys.value || selectedRowKeys.value.length === 0) {
