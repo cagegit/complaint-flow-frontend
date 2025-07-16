@@ -64,7 +64,7 @@ export function configThemePlugin(isBuild: boolean): PluginOption[] {
       filter: (id) => (isBuild ? !id.endsWith('antd.less') : true),
       // extractCss: false,
       darkModifyVars: {
-        ...generateModifyVars(true),
+        ...generateModifyVars(),
         'text-color': '#c9d1d9',
         'primary-1': 'rgb(255 255 255 / 8%)',
         'text-color-base': '#c9d1d9',

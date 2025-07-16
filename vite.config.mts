@@ -9,7 +9,7 @@ import { wrapperEnv } from './build/utils.js';
 import { createVitePlugins } from './build/vite/plugin/index.js';
 import { OUTPUT_DIR } from './build/constant.js';
 import tailwindcss from '@tailwindcss/vite'
-
+// import legacy from '@vitejs/plugin-legacy'
 
 
 function pathResolve(dir: string) {
@@ -47,6 +47,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 
   return {
     base: isQiankunMicro ? VITE_GLOB_QIANKUN_MICRO_APP_ENTRY : VITE_PUBLIC_PATH,
+    decodedBase: 'http://10.169.247.235:18089',
     root,
     resolve: {
       alias: [

@@ -5,7 +5,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import Icons from 'unplugin-icons/vite'
 import UnoCSS from 'unocss/vite';
 import { presetTypography, presetUno } from 'unocss';
-
 // 本地调试https配置方法
 import VitePluginCertificate from 'vite-plugin-mkcert';
 //[issues/555]开发环境，vscode断点调试，文件或行数对不上
@@ -85,7 +84,6 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean, isQiankunM
     
     // rollup-plugin-gzip
     vitePlugins.push(configCompressPlugin(VITE_BUILD_COMPRESS, VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE));
-
   }
 
   // //vite-plugin-theme【预编译加载插件，解决vite首次打开界面加载慢问题】
