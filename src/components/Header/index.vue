@@ -3,11 +3,11 @@
     <nav class="nav-menu">
       <router-link
         v-for="item in navItems"
-        :key="item.path"
-        :to="item.title === '案件办理' ? defaultCasePath : item.path"
-        :class="{ 'nav-item-select': currentPath === item.path, 'nav-item': true }"
         v-auth="item.auth"
         active-class="active"
+        :key="item.path"
+        :to="item.title === '案件办理' ? defaultCasePath : item.path"
+        :class="{ 'nav-item-select': currentPath.includes(item.path), 'nav-item': true }"
       >
         {{ item.title }}
       </router-link>
@@ -31,13 +31,14 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+  import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
   import dayjs from 'dayjs';
   import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
   import { UserDropDown } from '/@/layouts/default/header/components';
   import { calculateAspectRatioFit } from '/@/utils';
   import { useAppStore } from "@/store/modules/app";
   import { usePermissionStore } from '/@/store/modules/permission';
+  import { useRoute } from 'vue-router';
   const props = defineProps({
     index: {
       type: Number,
@@ -52,6 +53,7 @@
   const appStore = useAppStore()
   const permissionStore = usePermissionStore();
   const { getHeaderTheme } = useHeaderSetting();
+  const route = useRoute();
 
   const platformName = '城北街道诉求管理平台';
   const currentTime = ref('');
@@ -109,6 +111,25 @@
       window.addEventListener('resize', changeHeaderStyle);
     }
   });
+  const pathList = navItems.filter(item => item.path !== '/complaint/assign').map(item => item.path);
+
+  watch(() => route.path, (newPath, oldPath) => {
+    console.log('pathList:', pathList);
+    if (newPath === oldPath) return;
+    let hasIn = false;
+    pathList.forEach(item => {
+      if (newPath.includes(item)) {
+        hasIn = true;
+      }
+    });
+    if (hasIn) {
+      currentPath.value = newPath;
+    } else {
+      // 如果上面的三类路径，选中案件办理
+      currentPath.value = '/complaint/assign';
+    }
+    console.log('currentPath:', currentPath.value, 'newPath:', newPath, 'hasIn:', hasIn);
+  }, { immediate: true });
 
   onBeforeUnmount(() => {
     if (timer.value) clearInterval(timer.value);
