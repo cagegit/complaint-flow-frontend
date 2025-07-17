@@ -6,6 +6,7 @@
         :key="item.path"
         :to="item.title === '案件办理' ? defaultCasePath : item.path"
         :class="{ 'nav-item-select': currentPath === item.path, 'nav-item': true }"
+        v-auth="item.auth"
         active-class="active"
       >
         {{ item.title }}
@@ -61,10 +62,10 @@
   const calcStyle = ref({});
 
   const navItems = [
-    { title: '综合事态', path: '/composite' },
-    { title: '运行事态', path: '/runtime' },
-    { title: '案件办理', path: '/complaint/assign' },
-    { title: '知识库', path: '/knowledge/index' },
+    { title: '综合事态', path: '/composite', auth: 'complain:menu:zonghe' },
+    { title: '运行事态', path: '/runtime', auth: 'complain:menu:yunxing' },
+    { title: '案件办理', path: '/complaint/assign', auth: 'complain:menu:anjian' },
+    { title: '知识库', path: '/knowledge/index', auth: 'complain:menu:zhishi' },
   ];
 
   // 更新时间

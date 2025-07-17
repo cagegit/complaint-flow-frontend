@@ -15,12 +15,7 @@
 
 <script lang="ts" setup name="WelcomeDashboard">
   import { useUserStore } from '/@/store/modules/user'
-import { router } from '/@/router';
-import { ref, computed } from 'vue'
-import {
-  DashboardOutlined,
-  FileTextOutlined,
-} from '@ant-design/icons-vue'
+  import { ref, computed } from 'vue'
 
 // 用户信息
 const userInfo = ref(useUserStore().getUserInfo)
