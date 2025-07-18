@@ -318,22 +318,32 @@
         let newFileList:any[] = [];
         // 如果审核状态不是-1，则需要检查预回复的附件
         if(auditValues.auditStatus != -1) {
-          if (!preReplyValues?.attachments) {
-            createMessage.error('请上传附件');
-            setModalProps({ confirmLoading: false });
-            throw new Error('请上传附件');
-          } else {
-            newFileList = preReplyFileList.map(v => {
-              return {
-                districtFileTagType: v.districtFileTagType,
-                fileKey: v.fileKey,
-                fileName: v.fileName,
-                fileSize: v.fileSize,
-                fileTagType: v.fileTagType,
-                id: v.id
-              }
-            });  
-          }
+          // if (!preReplyValues?.attachments) {
+          //   createMessage.error('请上传附件');
+          //   setModalProps({ confirmLoading: false });
+          //   throw new Error('请上传附件');
+          // } else {
+          //   newFileList = preReplyFileList.map(v => {
+          //     return {
+          //       districtFileTagType: v.districtFileTagType,
+          //       fileKey: v.fileKey,
+          //       fileName: v.fileName,
+          //       fileSize: v.fileSize,
+          //       fileTagType: v.fileTagType,
+          //       id: v.id
+          //     }
+          //   });  
+          // }
+          newFileList = preReplyFileList.map(v => {
+            return {
+              districtFileTagType: v.districtFileTagType,
+              fileKey: v.fileKey,
+              fileName: v.fileName,
+              fileSize: v.fileSize,
+              fileTagType: v.fileTagType,
+              id: v.id
+            }
+          });  
         }
         // console.log('newFileList', newFileList);
         let isUpdateVal = unref(isUpdate);

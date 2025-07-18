@@ -41,13 +41,20 @@
     <template #action="{ record }">
       <TableAction :actions="getTableAction(record)" />
     </template>
+    <!-- 自定义slots -->
+    <template #monthCount="{ record }">
+      <a-button type="link" @click="showHistoryModal('1', record)">{{ record.monthCount }}</a-button>
+    </template>
+    <template #yearCount="{ record }">
+      <a-button type="link" @click="showHistoryModal('2', record)">{{ record.yearCount }}</a-button>
+    </template>
   </BasicTable>
-
   <!--导出日报表-->
   <ExportDayExcel @register="registerExportDayModal" @success="handleSuccessExportDay" />
-
   <!--工单编辑-->
   <ManagerEdit @register="registerModal" @success="handleSuccess" />
+  <!-- 联系历史 -->
+  <ContactHistory @register="registerHistoryModal" />
 </template>
 <script lang="ts" setup>
 import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
@@ -72,10 +79,12 @@ import dayjs from 'dayjs';
 import { usePermission } from '/@/hooks/web/usePermission';
 // @ts-ignore
 import { DownOutlined, ExportOutlined } from '@ant-design/icons-vue'; 
-
+//@ts-ignore
+import ContactHistory from '../components/ContactHistory/index.vue';
 //注册modal
 const [registerModal, { openModal }] = useModal();
 const [registerExportDayModal, { openModal: openExportModal }] = useModal();
+const [registerHistoryModal, { openModal: openHistoryModal }] = useModal();
 // 当前路由
 const route = useRoute();
 const router = useRouter();
@@ -87,6 +96,7 @@ const form = reactive({
   sex: '1',
   sport: '1,3',
 });
+
 
 const sportOptions = [
   {
@@ -102,6 +112,8 @@ const sportOptions = [
     value: '3',
   },
 ];
+
+const firstQuery = ref(1);
 
 // 列表页面公共参数、方法
 const { tableContext } = useListPage({
@@ -141,7 +153,6 @@ const { tableContext } = useListPage({
       fixed: 'right',
     },
     beforeFetch: (params) => {
-      console.log(params);
       const query=  route.query;
       // @ts-ignore
       const startTime = query?.startTime ? dayjs(query.startTime) : null;
@@ -480,6 +491,14 @@ function handleMenuClick({ key }) {
     onExportTicketDone();
   }
 }
+// 联系历史
+  function showHistoryModal(type: string, record: Recordable) {
+    openHistoryModal(true, {
+      record: { timeType: type, ...record },
+      isUpdate: true,
+      showFooter: true
+    });
+  }
 </script>
 <style scoped>
 :deep(.ant-form-item-label > label) {

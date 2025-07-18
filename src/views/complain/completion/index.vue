@@ -32,6 +32,13 @@
           <template #action="{ record }">
             <TableAction :actions="getTableAction(record)" />
           </template>
+          <!-- 自定义slots -->
+          <template #monthCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('1', record)">{{ record.monthCount }}</a-button>
+          </template>
+          <template #yearCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('2', record)">{{ record.yearCount }}</a-button>
+          </template>
         </BasicTable>
     
         <!--工单编辑-->
@@ -39,7 +46,9 @@
         <!-- 预回复 -->
         <pre-reply-form @register="registerReplyModal" @success="handleReplySuccess" />
         <!-- 文件预览 -->
-         <UploadPreviewModal :value="previewFileList" @register="registerPreviewModal" :showDelete="false" />
+        <UploadPreviewModal :value="previewFileList" @register="registerPreviewModal" :showDelete="false" />
+        <!-- 联系历史 -->
+        <ContactHistory @register="registerHistoryModal" />
     </template>
     <script lang="ts" setup name="completion">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
@@ -54,6 +63,8 @@
     import PreReplyForm from '../components/PreReplyForm/index.vue';
     //@ts-ignore
     import UploadPreviewModal from '/@/components/Upload/src/UploadPreviewModal.vue';
+    //@ts-ignore
+    import ContactHistory from '../components/ContactHistory/index.vue';
     import { useRoute, useRouter } from 'vue-router';
     import dayjs from 'dayjs';
     import { usePermission } from '/@/hooks/web/usePermission';
@@ -66,6 +77,7 @@
     // const { createMessage, createConfirm } = useMessage();
     // 预览modal
     const [registerPreviewModal, { openModal: openPreviewModal }] = useModal();
+    const [registerHistoryModal, { openModal: openHistoryModal }] = useModal();
     // 预览文件列表
     const previewFileList = ref<any[]>([]);
     // 列表页面公共参数、方法
@@ -212,4 +224,13 @@
       function handleReplySuccess() {
         reload();
       }
-    </script>
+
+      // 联系历史
+      function showHistoryModal(type: string, record: Recordable) {
+        openHistoryModal(true, {
+          record: { timeType: type, ...record },
+          isUpdate: true,
+          showFooter: true
+        });
+      }
+</script>

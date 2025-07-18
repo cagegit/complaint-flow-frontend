@@ -312,13 +312,7 @@
           let params = values;
           const { _responseFlag, _rejectReason, ...rest } = params;
           // 判断附件是否存在
-          let newFileList:any[] = [];
-          if (!params?.attachments) {
-            createMessage.error('请上传附件');
-            setModalProps({ confirmLoading: false });
-            throw new Error('请上传附件');
-          } else {
-            newFileList = preReplyFileList.map(v => {
+          let newFileList:any[] = preReplyFileList.map(v => {
               return {
                 districtFileTagType: v.districtFileTagType,
                 fileKey: v.fileKey,
@@ -327,8 +321,23 @@
                 fileTagType: v.fileTagType,
                 id: v.id
               }
-             });  
-          }
+             }); ;
+          // if (!params?.attachments) {
+          //   createMessage.error('请上传附件');
+          //   setModalProps({ confirmLoading: false });
+          //   throw new Error('请上传附件');
+          // } else {
+          //   newFileList = preReplyFileList.map(v => {
+          //     return {
+          //       districtFileTagType: v.districtFileTagType,
+          //       fileKey: v.fileKey,
+          //       fileName: v.fileName,
+          //       fileSize: v.fileSize,
+          //       fileTagType: v.fileTagType,
+          //       id: v.id
+          //     }
+          //    });  
+          // }
           // 最终回复
           const newParams = {
             "replyFileList": [...newFileList],

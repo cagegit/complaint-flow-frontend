@@ -90,8 +90,12 @@ export const columns: BasicColumn[] = [
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
   { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
   { title: '状态', dataIndex: 'processName', width: 120 },
-  { title: '月次', dataIndex: 'monthCount', width: 80 },
-  { title: '年次', dataIndex: 'yearCount', width: 80 },
+  { title: '月次', dataIndex: 'monthCount', width: 80,
+    slots: { customRender: 'monthCount' }
+  },
+  { title: '年次', dataIndex: 'yearCount', width: 80,
+    slots: { customRender: 'yearCount' }
+  },
   { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },

@@ -707,11 +707,11 @@
         //   });
         // }
       // 判断文件列表是否为空
-      if(addFileList.length === 0 && respFileList.length === 0) {
-        createMessage.error('上传附件不能为空，必选上传其中任意一种！');
-        setModalProps({ confirmLoading: false });
-        return;
-      }
+      // if(addFileList.length === 0 && respFileList.length === 0) {
+      //   createMessage.error('上传附件不能为空，必选上传其中任意一种！');
+      //   setModalProps({ confirmLoading: false });
+      //   return;
+      // }
       // 优先保存区级信息
       try{
         if(currentEditRecordRef.value) {

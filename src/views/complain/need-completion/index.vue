@@ -32,12 +32,21 @@
           <template #action="{ record }">
             <TableAction :actions="getTableAction(record)" />
           </template>
+          <!-- 自定义slots -->
+          <template #monthCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('1', record)">{{ record.monthCount }}</a-button>
+          </template>
+          <template #yearCount="{ record }">
+            <a-button type="link" @click="showHistoryModal('2', record)">{{ record.yearCount }}</a-button>
+          </template>
         </BasicTable>
     
         <!--工单编辑-->
         <TicketEdit @register="registerModal" @success="handleSuccess" />
         <!-- 预回复 -->
         <pre-reply-form @register="registerReplyModal" @success="handleReplySuccess" />
+          <!-- 联系历史 -->
+        <ContactHistory @register="registerHistoryModal" />
     </template>
     <script lang="ts" setup name="need-completion">
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
@@ -48,8 +57,10 @@
     // import { useMessage } from '/@/hooks/web/useMessage';
     //@ts-ignore
     import TicketEdit from './TicketEditForm.vue';
-     //@ts-ignore
+    //@ts-ignore
     import PreReplyForm from '../components/PreReplyForm/index.vue';
+    //@ts-ignore
+    import ContactHistory from '../components/ContactHistory/index.vue';
     import { useRoute, useRouter } from 'vue-router';
     import dayjs from 'dayjs';
     import { usePermission } from '/@/hooks/web/usePermission';
@@ -60,7 +71,7 @@
     const { hasPermission } = usePermission();
     const [registerReplyModal] = useModal();
     // const { createMessage, createConfirm } = useMessage();
-
+    const [registerHistoryModal, { openModal: openHistoryModal }] = useModal();
     // 列表页面公共参数、方法
     const { tableContext } = useListPage({
         designScope: 'ticket-list',
@@ -182,4 +193,13 @@
       function handleReplySuccess() {
         reload();
       }
-    </script>
+
+      // 联系历史
+      function showHistoryModal(type: string, record: Recordable) {
+        openHistoryModal(true, {
+          record: { timeType: type, ...record },
+          isUpdate: true,
+          showFooter: true
+        });
+      }
+</script>

@@ -48,6 +48,7 @@
        <ContactHistory @register="registerHistoryModal" />
        <!-- 转出工单弹窗 -->
        <ForwardForm @register="registerForwardModal" @success="handleSuccess" />
+       
        <!-- 书记/主任批示弹窗 -->
       <BasicModal
         v-bind="$attrs"
