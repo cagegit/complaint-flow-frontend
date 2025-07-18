@@ -13,6 +13,7 @@ import {isOAuth2AppEnv, isOAuth2DingAppEnv} from '/@/views/sys/login/useLogin';
 import { OAUTH2_THIRD_LOGIN_TENANT_ID } from "/@/enums/cacheEnum";
 import { setAuthCache } from "/@/utils/auth";
 import { PAGE_NOT_FOUND_NAME_404 } from '/@/router/constant';
+import { getUrlParam } from '/@/utils';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 //auth2登录路由
@@ -28,7 +29,7 @@ const ROOT_PATH = RootRoute.path;
 
 //update-begin---author:wangshuai ---date:20220629  for：[issues/I5BG1I]vue3不支持auth2登录------------
 //update-begin---author:wangshuai ---date:20221111  for: [VUEN-2472]分享免登录------------
-const whitePathList: any[] = [LOGIN_PATH, OAUTH2_LOGIN_PAGE_PATH,SYS_FILES_PATH, TOKEN_LOGIN, '/composite' ];
+const whitePathList: any[] = [LOGIN_PATH, OAUTH2_LOGIN_PAGE_PATH,SYS_FILES_PATH, TOKEN_LOGIN ];
 //update-end---author:wangshuai ---date:20221111  for: [VUEN-2472]分享免登录------------
 //update-end---author:wangshuai ---date:20220629  for：[issues/I5BG1I]vue3不支持auth2登录------------
 
@@ -53,7 +54,7 @@ export function createPermissionGuard(router: Router) {
       return;
     }
 
-    const token = userStore.getToken;
+    let token = userStore.getToken;
 
     // Whitelist can be directly entered
     if (whitePathList.includes(to.path as PageEnum)) {
@@ -86,6 +87,29 @@ export function createPermissionGuard(router: Router) {
       }
       next();
       return;
+    }
+
+    // 增加对url中携带token的支持
+    // 如果是邮件中的链接，携带token直接跳转到办理页面
+    // 从location.href中获取token
+    const urlToken = getUrlParam('token');
+    console.log("urlToken",urlToken, 'token:', token, 'to.path:', to.path, 'to.query.path:', to.query.path);
+    if (!token && urlToken) {
+      // 设置token到缓存中
+      userStore.setToken(urlToken);
+      const userInfo = await userStore.getUserInfoAction();
+      if (userInfo) {
+        // 清除session过期标志
+        userStore.setSessionTimeout(false);
+        // const {token:_, ...rest} = to.query
+        delete to.query.token; // 删除token参数
+        // 跳转到办理页面
+        next({ path: to.path as string, query: to.query, replace: true });
+        return
+      } else {
+        // 登录失败，清除token
+        userStore.setToken('');
+      }
     }
 
     // token does not exist

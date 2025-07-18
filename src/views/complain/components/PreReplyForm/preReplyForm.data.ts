@@ -1,6 +1,6 @@
 import { FormSchema } from '/@/components/Form';
 import { getDistrictDictItemsByCode } from '/@/utils/dict';
-import { getCityQuestionCategoryList, getCitySevenFiveList, getCommunityListByCode, getDisposeDepartmentList, getHoldRemoveList } from '/@/api/common/api';
+import { getCityQuestionCategoryList, getCommunityListByCode, getDisposeDepartmentList, getHoldRemoveList } from '/@/api/common/api';
 
 // 表单字段信息
 export const formSchema: FormSchema[] = [
@@ -52,6 +52,7 @@ export const formSchema: FormSchema[] = [
       allowClear: true,
     },
     colProps: { span: 12 },
+    required: true,
   },
   {
     field: 'communityId',
@@ -820,6 +821,7 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
       allowClear: true,
     },
     colProps: { span: 12 },
+    required: true,
   },
   {
     field: 'communityId',
@@ -1504,6 +1506,7 @@ export const formFinalSchema: FormSchema[] = [
       allowClear: true,
     },
     colProps: { span: 12 },
+    required: true,
   },
   {
     field: 'communityId',

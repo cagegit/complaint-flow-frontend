@@ -47,7 +47,7 @@
           <!-- 文件名称 -->
           <template v-if="column.key === 'fileName'">
             <div class="flex items-center">
-              <a-input v-model:value="record.fileName"  :maxLength="200"/>
+              <a-input v-model:value="record.fileName" :maxLength="200"/>
               <PaperClipOutlined v-if="record.fileKey" class="ml-1 text-gray-400" />
             </div>
           </template>
@@ -275,7 +275,7 @@ interface FileItem {
   fileSize: number;
   fileKey: string;
   fileTagType: number | null;
-  districtFileTagType: number | null;
+  districtFileTagType: number | string | null;
   sourcePage?: number;
   name?: string;
   status?: string;
@@ -370,7 +370,11 @@ function handleSelectReplyFiles() {
   // 将选中的回复记录附件添加到文件列表
   const selectedFiles = props.replyFileList.filter(file => 
     selectedReplyRowKeys.value.includes(file.fileKey)
-  );
+  ).map(file => ({
+    ...file,
+    fileTagType: file.fileTagType || 2, // 默认处置过程
+    districtFileTagType: file.districtFileTagType || (isAudioFile(file) ? 2 : ''), // 录音类型默认选择
+  }));
   
   // fileList.value = [...fileList.value, ...selectedFiles];
   // 去重，然后合并到 fileList
@@ -465,15 +469,16 @@ const rowSelection = {
 
 // 附件类型选项（示例）
 const cityFileTypeOptions = [
-  { label: '联系核实附件', value: 1 },
   { label: '处置过程附件', value: 2 },
+  { label: '联系核实附件', value: 1 },
   { label: '红头证明附件', value: 3 },
   { label: '回访信息附件', value: 4 },
 ];
 
 const districtFileTypeOptions = [
-  { label: '三办一签附件', value: 1 },
   { label: '录音', value: 2 },
+  { label: '三办一签附件', value: 1 },
+  // { label: '其他', value: '' },
 ];
 
 // // 监听props变化
@@ -632,8 +637,8 @@ const handleUploadChange = async (info) => {
           fileName: file.name,
           fileSize: file.size,
           fileKey: fileData,
-          fileTagType: null,
-          districtFileTagType: null,
+          fileTagType: 2, // 默认处置过程
+          districtFileTagType: isAudioFile(file) ? 2 : '', // 录音类型默认选择
         };
         
         // 添加到已上传文件列表
