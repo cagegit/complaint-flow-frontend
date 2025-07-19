@@ -2,6 +2,12 @@ import { FormSchema } from '/@/components/Form';
 import { getDistrictDictItemsByCode } from '/@/utils/dict';
 import { getCityQuestionCategoryList, getCommunityListByCode, getDisposeDepartmentList, getHoldRemoveList } from '/@/api/common/api';
 
+const contactOptions = [
+  { label: '联系', value: '1' },
+  { label: '未联系', value: '0' },
+  { label: '无法联系', value: '2' },
+]
+
 // 表单字段信息
 export const formSchema: FormSchema[] = [
   // {
@@ -134,7 +140,8 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请输入是否联系',
-      options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+      // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+      options: contactOptions,  // 固定选项
       allowClear: true,
     },
     // required: true,
@@ -901,7 +908,8 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请输入是否联系',
-      options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+      // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+      options: contactOptions,  // 固定选项
       allowClear: true,
     },
     // required: true,
@@ -1588,7 +1596,8 @@ export const formFinalSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       placeholder: '请输入是否联系',
-      options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+      // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+      options: contactOptions,  // 固定选项
       allowClear: true,
     },
     required: true,
