@@ -1028,11 +1028,11 @@ export const formSchema: FormSchema[] = [
   {
     field: 'resolveTimeLimit',
     label: '处理时限',
-    component: 'InputNumber',
-    componentProps: {
-      min: 1,
-      addonAfter: '天',
-    },
+    component: 'Input',
+    // componentProps: {
+    //   min: 1,
+    //   addonAfter: '天',
+    // },
     colProps: { span: 12 },
   },
   {

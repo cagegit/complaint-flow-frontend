@@ -105,7 +105,7 @@
     import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
-    const { createMessage } = useMessage();
+    const { createMessage, createConfirmSync } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -312,22 +312,7 @@
           let params = values;
           const { _responseFlag, _rejectReason, ...rest } = params;
           // 判断附件是否存在
-          let newFileList:any[] = preReplyFileList.map(v => {
-              return {
-                districtFileTagType: v.districtFileTagType,
-                fileKey: v.fileKey,
-                fileName: v.fileName,
-                fileSize: v.fileSize,
-                fileTagType: v.fileTagType,
-                id: v.id
-              }
-             }); ;
-          // if (!params?.attachments) {
-          //   createMessage.error('请上传附件');
-          //   setModalProps({ confirmLoading: false });
-          //   throw new Error('请上传附件');
-          // } else {
-          //   newFileList = preReplyFileList.map(v => {
+          // let newFileList:any[] = preReplyFileList.map(v => {
           //     return {
           //       districtFileTagType: v.districtFileTagType,
           //       fileKey: v.fileKey,
@@ -336,8 +321,33 @@
           //       fileTagType: v.fileTagType,
           //       id: v.id
           //     }
-          //    });  
-          // }
+          //    }); ;
+          let newFileList:any[] = [];
+          let fileResult:any = false;
+          if(!params?.attachments) {
+            fileResult = await createConfirmSync({
+              title: '提示',
+              content: '附件列表为空，请确认是否继续？',
+              okText: '继续',
+              cancelText: '取消',
+            });
+          }
+          if (!fileResult && !params?.attachments) {
+            createMessage.error('请上传附件');
+            setModalProps({ confirmLoading: false });
+            throw new Error('请上传附件');
+          } else {
+            newFileList = preReplyFileList.map(v => {
+              return {
+                districtFileTagType: v.districtFileTagType,
+                fileKey: v.fileKey,
+                fileName: v.fileName,
+                fileSize: v.fileSize,
+                fileTagType: v.fileTagType,
+                id: v.id
+              }
+             });  
+          }
           // 最终回复
           const newParams = {
             "replyFileList": [...newFileList],
