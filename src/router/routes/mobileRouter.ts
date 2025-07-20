@@ -79,5 +79,53 @@ export const ReplyRouter: AppRouteRecordRaw = {
   ],
 };
 
+export const FollowRouter: AppRouteRecordRaw = {
+  path: '/h5-follow',
+  name: 'H5Follow',
+  component: H5_LAYOUT,
+  redirect: '/h5-follow/index',
+  meta: {
+    title: 'H5Follow',
+    hideBreadcrumb: true,
+    hideChildrenInMenu: true,
+  },
+  children: [
+    {
+      path: 'index',
+      name: 'H5FollowIndex',
+      component: () => import('/@/views/h5/follow/index.vue'),
+      meta: {
+        title: '工单回访',
+        hideBreadcrumb: true,
+        currentActiveMenu: '/h5-follow',
+      },
+    },
+  ],
+};
+
+export const AuditRouter: AppRouteRecordRaw = {
+  path: '/h5-audit',
+  name: 'H5Audit',
+  component: H5_LAYOUT,
+  redirect: '/h5-audit/index',
+  meta: {
+    title: 'H5Audit',
+    hideBreadcrumb: true,
+    hideChildrenInMenu: true,
+  },
+  children: [
+    {
+      path: 'index',
+      name: 'H5AuditIndex',
+      component: () => import('/@/views/h5/need-completion/index.vue'),
+      meta: {
+        title: '工单审核',
+        hideBreadcrumb: true,
+        currentActiveMenu: '/h5-audit',
+      },
+    },
+  ],
+};
+
 // 移动端h5路由列表
-export const mobileH5RoutesList = [AssignRouter, ReplyRouter];
+export const mobileH5RoutesList = [AssignRouter, ReplyRouter, FollowRouter, AuditRouter];
