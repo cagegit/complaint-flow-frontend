@@ -64,7 +64,7 @@
       })
 
       const getShowTabs = computed(() => {
-        return false;
+        // return false;
         // 控制是否显示多Tabs切换
         if (appStore.mainAppProps.hideMultiTabs) {
           return false;

@@ -134,7 +134,7 @@ const setting: ProjectConfig = {
     // 刷新后是否保留已经打开的标签页
     cache: false,
     // 开启
-    show: false,
+    show: true,
     // 是否可以拖拽
     canDrag: true,
     // 开启快速操作
