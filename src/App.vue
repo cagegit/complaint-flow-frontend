@@ -104,6 +104,9 @@
       split: false,
       topMenuAlign: 'center',
     },
+    multiTabsSetting: {
+      show: true, // 默认开启多页签
+    }
   });
   // 设置全局header高度
   setCssVariable('global-header-height', `72px`);
