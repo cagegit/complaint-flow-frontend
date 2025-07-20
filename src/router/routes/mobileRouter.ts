@@ -22,6 +22,16 @@ export const AssignRouter: AppRouteRecordRaw = {
         currentActiveMenu: '/h5-assign',
       },
     },
+    {
+      path: 'detail',
+      name: 'H5AssignDetail',
+      component: () => import('/@/views/h5/assign/detail.vue'),
+      meta: {
+        title: '工单分配详情',
+        hideBreadcrumb: true,
+        currentActiveMenu: '/h5-assign',
+      },
+    },
   ],
 };
 
