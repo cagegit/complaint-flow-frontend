@@ -112,7 +112,7 @@ const sportOptions = [
     value: '3',
   },
 ];
-
+// 初始化状态，query只查询一次
 const firstQuery = ref(1);
 
 // 列表页面公共参数、方法
@@ -154,74 +154,82 @@ const { tableContext } = useListPage({
     },
     beforeFetch: (params) => {
       const query=  route.query;
-      // @ts-ignore
-      const startTime = query?.startTime ? dayjs(query.startTime) : null;
-      // @ts-ignore
-      const endTime = query?.endTime ? dayjs(query.endTime) : null;
-     if(query?.statusCode == '-1' && query?.resolveCount !== undefined) { // 二次办理statusCode + resolveCount
-        getForm?.()?.setFieldsValue({
-          statusCode: query.statusCode,
-          resolveCount: query.resolveCount,
-          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
-        });
-        return Object.assign(params, { 
-          pageNum: params.pageNo, 
-          statusCode: query.statusCode, 
-          resolveCount: query.resolveCount,
-          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {}, 
-        });
-      } else if(query?.statusCode == 'complete_done') {
-        // 诉件统计
-        getForm?.()?.setFieldsValue({
-          statusCode: query.statusCode ? query.statusCode +'' : null,
-          sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
-          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
-          caseType: query.caseType  || null, // 案件类型
-          caseNature: query.caseNature || null, // 案件性质
-          satisfyFlag: query.satisfyFlag || null, // 是否满意
-          resolveFlag: query.resolveFlag || null, // 是否解决
-        });
-        return Object.assign(params, { 
-          pageNum: params.pageNo, 
-          statusCode: query.statusCode ? query.statusCode +'' : null,
-          sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
+      // 如果route.query中有值，query参数只在首次查询时生效，再次查询时不再使用route.query中的值
+      if (firstQuery.value === 1 &&Object.keys(query).length > 0) {
+        // 如果没有查询参数，设置默认查询参数
+        firstQuery.value = 2;
+        // @ts-ignore
+        const startTime = query?.startTime ? dayjs(query.startTime) : null;
+        // @ts-ignore
+        const endTime = query?.endTime ? dayjs(query.endTime) : null;
+        if(query?.statusCode == '-1' && query?.resolveCount !== undefined) { // 二次办理statusCode + resolveCount
+          getForm?.()?.setFieldsValue({
+            statusCode: query.statusCode,
+            resolveCount: query.resolveCount,
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+          });
+          return Object.assign(params, { 
+            pageNum: params.pageNo, 
+            statusCode: query.statusCode, 
+            resolveCount: query.resolveCount,
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {}, 
+          });
+        } else if(query?.statusCode == 'complete_done') {
+          // 诉件统计
+          getForm?.()?.setFieldsValue({
+            statusCode: query.statusCode ? query.statusCode +'' : null,
+            sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+            caseType: query.caseType  || null, // 案件类型
+            caseNature: query.caseNature || null, // 案件性质
+            satisfyFlag: query.satisfyFlag || null, // 是否满意
+            resolveFlag: query.resolveFlag || null, // 是否解决
+          });
+          return Object.assign(params, { 
+            pageNum: params.pageNo, 
+            statusCode: query.statusCode ? query.statusCode +'' : null,
+            sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+            caseType: query.caseType  || null,//案件类型
+            caseNature: query.caseNature || null, //案件性质
+            satisfyFlag: query.satisfyFlag || null, // 是否满意
+            resolveFlag: query.resolveFlag || null, // 是否解决
+          });
+        } else if(query?.statusCode !== undefined) {
+          getForm?.()?.setFieldsValue({
+            statusCode: query.statusCode,
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+          });
+          return Object.assign(params, { 
+            pageNum: params.pageNo, 
+            statusCode: query.statusCode,
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+          });
+        } else if(query?.caseNature && query?.startTime && query?.endTime) {
+          // console.log('query', query);
+          getForm?.()?.setFieldsValue({
+            caseNature: query.caseNature || null, // 案件性质
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+          });
+          return Object.assign(params, { 
+            pageNum: params.pageNo, 
+            caseNature: query.caseNature || null, // 案件性质
           ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
-          caseType: query.caseType  || null,//案件类型
-          caseNature: query.caseNature || null, //案件性质
-          satisfyFlag: query.satisfyFlag || null, // 是否满意
-          resolveFlag: query.resolveFlag || null, // 是否解决
-        });
-      } else if(query?.statusCode !== undefined) {
-        getForm?.()?.setFieldsValue({
-          statusCode: query.statusCode,
-          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
-        });
-        return Object.assign(params, { 
-          pageNum: params.pageNo, 
-          statusCode: query.statusCode,
+          });
+        } else if(query?.startTime && query?.endTime) {
+          // console.log('query', query);
+          getForm?.()?.setFieldsValue({
+            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+          });
+          return Object.assign(params, { 
+            pageNum: params.pageNo, 
           ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
-         });
-      } else if(query?.caseNature && query?.startTime && query?.endTime) {
-        // console.log('query', query);
-        getForm?.()?.setFieldsValue({
-          caseNature: query.caseNature || null, // 案件性质
-          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
-        });
-        return Object.assign(params, { 
-          pageNum: params.pageNo, 
-          caseNature: query.caseNature || null, // 案件性质
-         ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
-        });
-      } else if(query?.startTime && query?.endTime) {
-        // console.log('query', query);
-        getForm?.()?.setFieldsValue({
-          ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
-        });
-        return Object.assign(params, { 
-          pageNum: params.pageNo, 
-         ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
-        });
+          });
+        } else {
+          return Object.assign(params, { pageNum: params.pageNo });
+        }
       } else {
+        // 如果没有查询参数，设置默认查询参数
         return Object.assign(params, { pageNum: params.pageNo });
       }
     },
