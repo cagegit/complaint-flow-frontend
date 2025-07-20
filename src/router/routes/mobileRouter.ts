@@ -32,6 +32,16 @@ export const AssignRouter: AppRouteRecordRaw = {
         currentActiveMenu: '/h5-assign',
       },
     },
+    {
+      path: 'resign',
+      name: 'H5AssignDetail',
+      component: () => import('/@/views/h5/assign/resign.vue'),
+      meta: {
+        title: '工单转出',
+        hideBreadcrumb: true,
+        currentActiveMenu: '/h5-assign',
+      },
+    },
   ],
 };
 

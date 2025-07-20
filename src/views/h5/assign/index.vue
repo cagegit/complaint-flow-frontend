@@ -45,14 +45,7 @@
   const route = useRoute();
 
   const { createMessage } = useMessage();
-
-  // 声明Emits
-  const emit = defineEmits(['success', 'register']);
-  const attrs = useAttrs();
   const isUpdate = ref(true);
-  const rowId = ref('');
-  const departOptions = ref([]);
-  let isFormDepartUser = false;
   // 当前表单内容
   let currentData: any = {};
   // 表单详情
@@ -115,9 +108,10 @@
       record: {},
     };
     try {
-      if (route.query.record) {
-        // 如果是字符串，转换为对象
-        data.record = route.query.record ? JSON.parse(route.query.record as string) : {};
+      if (route.query) {
+        data.record = {
+          ...route.query,
+        };
       }
     } catch (error) {
       console.error('Error parsing record from query:', error);
@@ -137,14 +131,14 @@
       assignDetail = await getAssignDetail(data.record.id);
       // console.log(res);
       // 回显数据
-      // if(assignDetail) {
-      //   setFieldsValue({
-      //     ...assignDetail,
-      //     reportDistrictId: assignDetail?.assignCommunityList[0]?.parentOrgId || null,
-      //     reportCommunityId: assignDetail?.assignCommunityList[0]?.orgId || null,
-      //     assignDeptIdList: assignDetail?.assignDeptList?.map(v => v.orgId)?.join(',') || null,
-      //   });
-      // }
+      if (assignDetail) {
+        setFieldsValue({
+          ...assignDetail,
+          reportDistrictId: assignDetail?.assignCommunityList[0]?.parentOrgId || null,
+          reportCommunityId: assignDetail?.assignCommunityList[0]?.orgId || null,
+          assignDeptIdList: assignDetail?.assignDeptList?.map((v) => v.orgId)?.join(',') || null,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -229,17 +223,6 @@
       });
     }
   });
-  //获取标题
-  const getTitle = computed(() => {
-    // update-begin--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
-    if (!unref(isUpdate)) {
-      return '转派工单';
-    } else {
-      return '工单分派';
-    }
-    // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
-  });
-  // const { adaptiveWidth } = useDrawerAdaptiveWidth();
 
   //提交事件
   async function handleSubmit() {
@@ -314,10 +297,10 @@
       }
       //提交表单
       await addAssign(params);
-      //关闭弹窗
-      closeModal();
-      //刷新列表
-      emit('success', { isUpdateVal, values });
+      createMessage.info('提交成功');
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
     } finally {
       setModalProps({ confirmLoading: false });
     }

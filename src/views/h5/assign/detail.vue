@@ -42,8 +42,6 @@
 
   const { createMessage } = useMessage();
 
-  // 声明Emits
-  const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
   // 当前表单内容
   let currentData: any = {};
