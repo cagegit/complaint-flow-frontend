@@ -1,0 +1,394 @@
+<template>
+  <div class="p-0">
+    <div style="width: 100%; overflow: auto; padding: 20px 15px">
+      <div class="flex px-3">
+        <div style="flex: 1">
+          <a-tabs v-model:activeKey="activeKey">
+            <a-tab-pane key="1" tab="回访审核" force-render>
+              <div class="pl-20">
+                <a-divider orientation="left">审核内容</a-divider>
+                <BasicForm @register="registerAuditForm" />
+                <a-divider orientation="left">预回复</a-divider>
+                <BasicForm @register="registerPreReplyForm">
+                  <template #satisfactionTimeSlot="{ model, field }">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <template #contactTimeSlot="{ model, field }">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <template #resolutionTimeSlot="{ model, field }">
+                    <a-space>
+                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                    </a-space>
+                  </template>
+                  <!-- 附件 -->
+                  <template #uploadAttachmentsSlot="{ model, field }">
+                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList" />
+                  </template>
+                </BasicForm>
+              </div>
+            </a-tab-pane>
+            <a-tab-pane key="2" tab="基础信息" force-render>
+              <!-- 拒绝信息 -->
+              <RejectInfo :detailInfo="ticketDetail" />
+              <!-- 基本信息区域 -->
+              <BasicForm @register="registerForm" />
+              <!-- 领导批示区域 -->
+              <LeaderInstruction
+                v-if="ticketDetail.id"
+                :ticketId="ticketDetail.id"
+                :zrContent="ticketDetail.zhurenSuggest"
+                :sjContent="ticketDetail.shujiSuggest"
+                :style="{ width: '85%' }"
+              />
+            </a-tab-pane>
+            <a-tab-pane key="3" tab="回复记录" force-render>
+              <div class="pr-4">
+                <ReplyRecord :replyData="replyList" :total="total" :readOnly="true" />
+              </div>
+            </a-tab-pane>
+          </a-tabs>
+        </div>
+      </div>
+    </div>
+    <!-- 底部按钮 停靠在底部 -->
+    <div class="flex justify-between mt-4 gap-2 fixed bottom-0 left-0 right-0 bg-white p-4">
+      <a-button block @click="closeModal">关闭</a-button>
+      <a-button type="primary" block :loading="confirmLoading" @click="handleSubmit">提交</a-button>
+    </div>
+  </div>
+</template>
+<script lang="ts" setup>
+  import { ref, computed, unref, useAttrs, onMounted } from 'vue';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import { useRoute } from 'vue-router';
+  import { BasicForm, useForm } from '/@/components/Form/index';
+  import { formSchema, auditFormSchema } from '/@/views/complain/follow-audit/follow-audit.data';
+  import { saveReviewReply, getReplyDetail } from '/@/views/complain/follow-audit/follow-audit.api';
+  // @ts-ignore
+  import UploadList from '/@/views/complain/components/UploadList/index.vue';
+  // @ts-ignore
+  import { preFormLogicHandler, formFinalSchema as preReplyFormSchema } from '/@/views/complain/components/PreReplyForm/preReplyForm.data';
+  //@ts-ignore
+  import ReplyRecord from '/@/views/complain/components/ReplyRecord/index.vue'; // 导入回复记录组件
+  // @ts-ignore
+  import RejectInfo from '/@/views/complain/components/RejectInfo/index.vue';
+  import { getCitySevenFiveList, getComplaintDetail } from '/@/api/common/api';
+  import { getPreReplyDetail } from '/@/views/complain/components/PreReplyForm/preReplyForm.api';
+  // @ts-ignore 领导批示组件
+  import LeaderInstruction from '/@/views/complain/components/LeaderInstruction/index.vue';
+  import { audioTypes, imageTypes } from '/@/utils/fileType';
+  // 声明wx小程序web-view 对象
+  declare const wx: any;
+
+  const route = useRoute();
+  const { createMessage } = useMessage();
+  const replyList = ref<any[]>([]);
+  const total = ref(0);
+  // 全部回复文件列表
+  const allReplyFileList = ref<any[]>([]);
+  // 当前key
+  const activeKey = ref('1');
+  // 当前编辑工单
+  const currentEditRecordRef = ref<any>(null);
+  // 表单详情
+  const ticketDetail = ref<any>({});
+  // 预回文件列表
+  let preReplyFileList: any[] = [];
+  // 预回复删除的文件ID列表
+  let preReplyDeleteFileIdList: any[] = [];
+
+  const confirmLoading = ref(false);
+
+  function setModalProps(props: any) {
+    // 设置modal属性
+    confirmLoading.value = props?.confirmLoading || false;
+  }
+  function closeModal() {
+    // 关闭当前页面,发送数据给打开页面并返回
+    try {
+      if (wx?.miniProgram) {
+        wx?.miniProgram?.navigateBack?.();
+      } else {
+        // 如果是h5页面，直接关闭
+        window?.history?.back?.();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  // 预回复表单
+  const [
+    registerPreReplyForm,
+    { validate: validatePreReplyForm, clearValidate: clearPreReplyValidate, setFieldsValue: setPreReplyFieldsValue, updateSchema },
+  ] = useForm({
+    labelWidth: 150,
+    schemas: preReplyFormSchema,
+    showActionButtonGroup: false,
+    layout: 'vertical',
+    rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+    //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+    baseColProps: { span: 12 },
+    //row行的样式
+    baseRowStyle: { width: '100%' },
+  });
+  //基础信息表单配置
+  const [registerForm, { setProps, resetFields, setFieldsValue, validate }] = useForm({
+    labelWidth: 150,
+    schemas: formSchema,
+    showActionButtonGroup: false,
+    layout: 'vertical',
+    rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+    //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+    baseColProps: { span: 12 },
+    //row行的样式
+    baseRowStyle: { width: '100%' },
+    disabled: true,
+  });
+  //回访审核表单配置
+  const [registerAuditForm, { validate: validateAuditForm, setFieldsValue: setAuditFieldsValue }] = useForm({
+    labelWidth: 150,
+    schemas: auditFormSchema,
+    showActionButtonGroup: false,
+    layout: 'vertical',
+    rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+    //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+    //row行的样式
+  });
+
+  onMounted(async () => {
+    // 从url获取record信息
+    let data: any = {
+      isUpdate: true,
+      record: {},
+    };
+    try {
+      if (route.query) {
+        data.record = {
+          ...route.query,
+          assignId: route.query.id,
+        };
+      }
+    } catch (error) {
+      console.error('Error parsing record from query:', error);
+    }
+
+    await resetFields();
+    console.log(data);
+    // 恢复默认值
+    preReplyFileList = [];
+    preReplyDeleteFileIdList = [];
+    allReplyFileList.value = [];
+    activeKey.value = '1'; // 默认选中第一个tab
+    setModalProps({ confirmLoading: false });
+    currentEditRecordRef.value = data.record;
+    // 查询详情数据
+    try {
+      const res = await getReplyDetail({ ticketId: data.record.id });
+      console.log(res);
+      if (res) {
+        // 处理文件数据
+        let newFileList =
+          res?.replyList?.map((v: any) => {
+            v.fileCount = 0;
+            v.imageCount = 0;
+            v.audioCount = 0;
+            v.fileList?.forEach((item) => {
+              // console.log('item', item);
+              // item.fileCount = (item.fileCount || 0) + 1;
+              let fileType = item.fileName.split('.').pop();
+              if (audioTypes.includes(fileType)) {
+                v.audioCount++;
+              } else if (imageTypes.includes(fileType)) {
+                v.imageCount++;
+              } else {
+                v.fileCount++;
+              }
+            });
+            return {
+              ...v,
+            };
+          }) || [];
+        replyList.value = newFileList;
+        total.value = res.replyList?.length || 0;
+        // 处理回复文件列表
+        let replyFileList: any[] = [];
+        res?.replyList?.forEach((item: any) => {
+          item.fileList?.forEach((file: any) => {
+            replyFileList.push({
+              id: null, // 新增的文件ID为null
+              fileName: file.fileName || '',
+              fileSize: file.fileSize || 0,
+              fileKey: file.fileKey || '',
+              districtFileTagType: null,
+              fileTagType: null,
+            });
+          });
+        });
+        console.log('replyFileList', replyFileList);
+        allReplyFileList.value = replyFileList;
+      }
+    } catch (error) {
+      console.error('Error fetching reply list:', error);
+    }
+
+    // 无论新增还是编辑，都可以设置表单值
+    if (typeof data.record === 'object') {
+      let detailRes: any = {};
+      try {
+        detailRes = await getComplaintDetail(data.record.id);
+        ticketDetail.value = detailRes;
+      } catch (error) {
+        console.log(error);
+      }
+      setFieldsValue({
+        ...data.record,
+        ...detailRes,
+      });
+      // 设置审核表单值
+      setAuditFieldsValue({
+        followCode: detailRes.followCode ? detailRes.followCode + '' : '',
+        labelCode: detailRes.labelCode ? detailRes.labelCode + '' : '',
+        rejectReason: detailRes.rejectReason ? detailRes.rejectReason : '',
+        finalResolveResult: detailRes.finalResolveResult ? detailRes.finalResolveResult : '',
+        remark: detailRes.remark ? detailRes.remark : '',
+      });
+      // 七有五性回显
+      if (detailRes?.sevenFiveId) {
+        getCitySevenFiveList()
+          .then((sevenFiveData) => {
+            if (Array.isArray(sevenFiveData)) {
+              sevenFiveData.forEach((item: any) => {
+                if (item.id == detailRes.sevenFiveId) {
+                  // detailRes.sevenFiveId = item.name;
+                  setAuditFieldsValue({
+                    sevenFiveId: item.allParentIds ? item.allParentIds.split(',') : [],
+                  });
+                }
+              });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+    // 查询预回复详情
+    getPreReplyDetail({ ticketId: data.record?.id })
+      .then((preRes) => {
+        console.log(preRes);
+        if (preRes?.upReply) {
+          // 设置预回复表单值
+          setPreReplyFieldsValue({
+            ...preRes.upReply,
+            replySatisfiedTime: preRes.upReply.replySatisfiedTime ? preRes.upReply.replySatisfiedTime.split(',') : [],
+            replyContactTime: preRes.upReply.replyContactTime ? preRes.upReply.replyContactTime.split(',') : [],
+            replyResolveTime: preRes.upReply.replyResolveTime ? preRes.upReply.replyResolveTime.split(',') : [],
+            // 增加对级联字段的处理
+            replyRequestType: preRes.upReply.replyRequestType ? preRes.upReply.replyRequestType.split(',') : [],
+            lastOfficeId: preRes.upReply.lastOfficeId ? preRes.upReply.lastOfficeId.split(',') : [],
+            whistleDepartmentId: preRes.upReply.whistleDepartmentId ? preRes.upReply.whistleDepartmentId.split(',') : [],
+            removeHangingAccountsTypeId: preRes.upReply.removeHangingAccountsTypeId ? preRes.upReply.removeHangingAccountsTypeId.split(',') : [],
+            // 增加对ApiSelect组件的处理
+            // communityId: preRes.upReply.communityId ? preRes.upReply.communityId.split(',') : [],
+            // 处理附件
+            attachments: Array.isArray(preRes.handleFileList) ? preRes.handleFileList : [],
+          });
+          const upReply = preRes.upReply;
+          // 更新组件级联关系
+          preFormLogicHandler(upReply, updateSchema);
+          // 清除验证
+          clearPreReplyValidate?.();
+        }
+      })
+      .catch((err) => {
+        console.error('查询预回复详情失败', err);
+      });
+  });
+  function changePreList(list: any[]) {
+    console.log(list);
+    preReplyFileList = list;
+  }
+  // 删除预回复文件
+  function handleDeleteList(file: any) {
+    console.log('删除预回复文件', file);
+    // preReplyFileList = preReplyFileList.filter(v => v.fileKey !== file.fileKey);
+    if (preReplyDeleteFileIdList.indexOf(file.id) === -1) {
+      preReplyDeleteFileIdList.push(file.id);
+    }
+  }
+  //提交事件
+  async function handleSubmit() {
+    try {
+      // 审核表单
+      let auditValues = await validateAuditForm();
+      // 预回复表单
+      let preReplyValues = await validatePreReplyForm();
+      // console.log('auditValues', auditValues);
+      // console.log('preReplyValues', preReplyValues);
+      // 先验证回访审核表单
+      // let values = await validate();
+      setModalProps({ confirmLoading: true });
+      // 判断附件是否存在
+      let newFileList: any[] = [];
+      // 如果审核状态不是-1，则需要检查预回复的附件
+      if (auditValues.auditStatus != -1) {
+        if (!preReplyValues?.attachments) {
+          createMessage.error('请上传附件');
+          setModalProps({ confirmLoading: false });
+          throw new Error('请上传附件');
+        } else {
+          newFileList = preReplyFileList.map((v) => {
+            return {
+              districtFileTagType: v.districtFileTagType,
+              fileKey: v.fileKey,
+              fileName: v.fileName,
+              fileSize: v.fileSize,
+              fileTagType: v.fileTagType,
+              id: v.id,
+            };
+          });
+        }
+      }
+      // let params = values;
+      const ticketId = currentEditRecordRef.value?.id;
+      const newParams = {
+        auditStatus: auditValues.auditStatus,
+        deleteFileIdList: [],
+        finalResolveResult: auditValues.finalResolveResult,
+        followCode: auditValues.followCode,
+        labelCode: auditValues.labelCode,
+        needVisit: auditValues.needVisit,
+        rejectReason: auditValues.rejectReason,
+        remark: auditValues.remark,
+        replyFileList: [
+          // ...replyList.value,
+          ...newFileList,
+        ],
+        sevenFiveId: auditValues.sevenFiveId,
+        // "ticketId": 0,
+        ticketReplyDataVo: {
+          ...preReplyValues,
+          replyRequestName: preReplyValues.replyRequestType,
+        },
+        ticketId: ticketId,
+      };
+      //提交表单
+      await saveReviewReply(newParams);
+
+      createMessage.success('提交成功');
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
+    } finally {
+      setModalProps({ confirmLoading: false });
+    }
+  }
+</script>

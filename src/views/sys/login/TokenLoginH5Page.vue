@@ -54,7 +54,8 @@
         console.log('routeQuery', routeQuery);
         if (routeQuery.path) {
           const { path, ...other } = routeQuery;
-          router.replace({ path, query: other });
+          const decodePath = decodeURIComponent(path);
+          router.replace({ path: decodePath, query: other });
         } else {
           notification.error({
             message: '参数失效',
