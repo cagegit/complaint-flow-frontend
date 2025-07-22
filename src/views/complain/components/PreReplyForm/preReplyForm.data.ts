@@ -1659,6 +1659,7 @@ export const formFinalSchema: FormSchema[] = [
         const { updateSchema } = formActionType;
         const value = e.target.value;
         // console.log(value);
+        formModel['taskType'] = null;
         if(value == '0') {
           updateSchema([
             {
@@ -1670,6 +1671,7 @@ export const formFinalSchema: FormSchema[] = [
               },
             },
           ]);
+          formModel['taskType'] = '0'; // 否，默认选择其他
         } else {
           updateSchema([
             {
@@ -1680,7 +1682,6 @@ export const formFinalSchema: FormSchema[] = [
             },
           ]);
         }
-        formModel['taskType'] = null;
       }
     }),
     required: true,
