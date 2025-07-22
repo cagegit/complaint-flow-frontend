@@ -6,6 +6,7 @@ import { h, ref } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict';
 import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
+import { getDateDiff } from '/@/utils/dateUtil';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -60,9 +61,9 @@ import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 
 //根据上面的内容生成表格的columns和搜索表单的schema
 export const columns: BasicColumn[] = [
-  { title: 'id', dataIndex: 'id', width: 80 },
+  { title: 'id', dataIndex: 'id', width: 70 },
   // 紧急程度
-  { title: '紧急程度', dataIndex: 'emergencyLevel', width: 100,
+  { title: '紧急程度', dataIndex: 'emergencyLevel', width: 80,
     customRender: ({record}) => {
       let text = '';
       let color = '';
@@ -79,7 +80,7 @@ export const columns: BasicColumn[] = [
       }
     },
     },
-  { title: '数据来源', dataIndex: 'sourceType', width: 100,
+  { title: '数据来源', dataIndex: 'sourceType', width: 80,
     customRender: ({ text }) => {
       return render.renderDict(text, 'biz_source_type');
     }
@@ -110,7 +111,7 @@ export const columns: BasicColumn[] = [
    { title: '点单工单', dataIndex: 'pointFlag', width: 80, customRender({text}) {
      return text == 1 ? '是' : '否';
    }},
-   { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
+   { title: '受理单位', dataIndex: 'acceptDepartment', width: 120 },
    { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
    { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
    { title: '来电时间', dataIndex: 'callTime', width: 160 },
@@ -122,23 +123,25 @@ export const columns: BasicColumn[] = [
    { title: '创建人名称', dataIndex: 'createBy', width: 120 },
    { title: '创建时间', dataIndex: 'createTime', width: 160 },
   //  { title: '创建人id', dataIndex: 'createUserId', width: 120 },
-   { title: '截止时间', dataIndex: 'deadline', width: 160 },
-   { title: '剩余待处置时间', dataIndex: 'remainingTime', width: 250,
+   { title: '截止时间', dataIndex: 'deadline', width: 170 },
+   { title: '剩余待处置时间', dataIndex: 'remainingTime', width: 150,
     customRender: ({ record }) => {
       if (!record.deadline || !dayjs(record.deadline).isValid()) {
         return  '';
       }
-      const remainingTime = dayjs(record.deadline).subtract(1, 'day').diff(dayjs(), 'day');
+      // const remainingTime = dayjs(record.deadline).subtract(1, 'day').diff(dayjs(), 'day');
+      const expireDate = dayjs(record.deadline).subtract(1, 'day');
+      const { expires, days, hours} = getDateDiff(expireDate);
       // 如果小于等于0，超时用红色，不超时用绿色tag
-      if (remainingTime < 0) {
-        return h('span', { style: { color: '#cf1322' } }, `超时 ${Math.abs(remainingTime)} 天`);
+      if (expires) {
+        return h('span', { style: { color: '#cf1322' } }, `超期${days}天${hours}小时`);
       }
-      return h('span', { style: { color: '#389e0d' } }, `剩余 ${remainingTime} 天`);
+      return h('span', { style: { color: '#389e0d' } }, `剩余${days}天${hours}小时`);
     }
    },
    { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
    { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
-   { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
+   { title: '工单导入时间', dataIndex: 'importTime', width: 160 },
    { title: '重点对象类型', dataIndex: 'monitorType_dictText', width: 150 },
    { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
    { title: '所属部门', dataIndex: 'orgName', width: 150 },
@@ -148,19 +151,19 @@ export const columns: BasicColumn[] = [
   //  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
   //  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
-   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
-   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
-   { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
-   { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
+   { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 120 },
+   { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 120 },
+   { title: '处理次数', dataIndex: 'resolveCount', width: 100 },
+   { title: '承办单位', dataIndex: 'resolveDepartment', width: 120 },
    { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
    { title: '处理时限', dataIndex: 'resolveTimeLimit', width: 120 },
-   { title: '派单时间', dataIndex: 'sendTime', width: 150 },
+   { title: '派单时间', dataIndex: 'sendTime', width: 160 },
    { title: '派单人员', dataIndex: 'sendUser', width: 120 },
-   { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
+   { title: '七有五性', dataIndex: 'sevenFiveId_dictText', width: 120 },
   //  { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
-  { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-  { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
+  { title: '工单分类', dataIndex: 'workOrderCategory', width: 120 },
   { title: '书记批示', dataIndex: 'shujiSuggest', width: 150 },
+  { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
   {
     title: '回访结果', dataIndex: 'upRevisitResultState', width: 120,
     customRender: ({ text }) => {
@@ -174,7 +177,7 @@ export const columns: BasicColumn[] = [
   // suddenCase（突发案件）
   { title: '突发案件', dataIndex: 'suddenCase', width: 120 },
   { title: '修改人名称', dataIndex: 'updateBy', width: 120 },
-  { title: '修改时间', dataIndex: 'updateTime', width: 150 },
+  { title: '修改时间', dataIndex: 'updateTime', width: 160 },
    { title: '备注', dataIndex: 'remark', width: 180 },
   ];
 

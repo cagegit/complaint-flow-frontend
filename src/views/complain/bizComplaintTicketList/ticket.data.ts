@@ -39,8 +39,8 @@ import { getDictItemsByCode } from '/@/utils/dict/index';
 // receiveStatus	是否已接收（0否;1是）	integer	
 // rejectReason	驳回原因	string	
 // remark	备注	string	
-// reportCommunityId	反应社区	string	
-// reportDistrictId	反应管区	string	
+// reportCommunityId	反映社区	string	
+// reportDistrictId	反映管区	string	
 // resolveCount	处理次数	integer	
 // resolveDepartment	承办单位	string	
 // resolveOpinion	处理意见	string	
@@ -61,7 +61,7 @@ import { getDictItemsByCode } from '/@/utils/dict/index';
 export const columns: BasicColumn[] = [
   { title: 'id', dataIndex: 'id', width: 80 },
   // 紧急程度
-  { title: '紧急程度', dataIndex: 'emergencyLevel', width: 100,
+  { title: '紧急程度', dataIndex: 'emergencyLevel', width: 80,
     customRender: ({record}) => {
       let text = '';
       let color = '';
@@ -78,12 +78,12 @@ export const columns: BasicColumn[] = [
       }
     },
    },
-  { title: '数据来源', dataIndex: 'sourceType', width: 120,
+  { title: '数据来源', dataIndex: 'sourceType', width: 80,
     customRender: ({ text }) => {
       return render.renderDict(text, 'biz_source_type');
     },
    },
-  { title: '案件标签', dataIndex: 'labelCode_dictText', width: 120 },
+  { title: '案件标签', dataIndex: 'labelCode_dictText', width: 100 },
   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
@@ -133,8 +133,8 @@ export const columns: BasicColumn[] = [
     { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
     // { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
     { title: '驳回原因', dataIndex: 'rejectReason', width: 180 },
-    { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
-    { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
+    { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
+    { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
     { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
     { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
     { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
@@ -143,8 +143,8 @@ export const columns: BasicColumn[] = [
     { title: '派单人员', dataIndex: 'sendUser', width: 120 },
     { title: '七有五性', dataIndex: 'sevenFiveId', width: 120 },
     { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-    { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
     { title: '书记批示', dataIndex: 'shujiSuggest', width: 150 },
+    { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
     {
       title: '回访结果', dataIndex: 'upRevisitResultState', width: 120,
       customRender: ({ text }) => {

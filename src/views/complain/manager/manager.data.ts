@@ -2,11 +2,10 @@ import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictI
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
-import { ref } from 'vue';
-import { render } from '/@/utils/common/renderUtils';
-import { h } from 'vue';
+import { ref, h } from 'vue';
 import { getProcessList } from './manager.api';
 import { getDictItemsByCode } from '/@/utils/dict';
+import { render } from '/@/utils/common/renderUtils';
 
 function treeToList(tree: any[]) {
   const list: any[] = [];
@@ -22,11 +21,11 @@ function treeToList(tree: any[]) {
 
 // 基于工单接收的列定义，保持一致
 export const columns: BasicColumn[] = [
-  { title: 'id', dataIndex: 'id', width: 80 },
+  { title: 'id', dataIndex: 'id', width: 70 },
   {
     title: '数据来源',
     dataIndex: 'sourceType_dictText',
-    width: 120,
+    width: 80,
     // customRender: ({ text }) => {
     //   return render.renderDict(text, 'biz_source_type');
     // },
@@ -34,70 +33,71 @@ export const columns: BasicColumn[] = [
   {
     title: '案件标签',
     dataIndex: 'labelCode_dictText',
-    width: 120,
+    width: 100,
     // customRender: ({ text }) => {
     //   return render.renderDict(text, 'biz_complaint_lavel');
     // },
   },
-  { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
-  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '案件编号', dataIndex: 'caseNumber', width: 120 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', width: 160 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
-  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  { title: '状态', dataIndex: 'processName', width: 120 },
+  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 160 },
+  { title: '状态', dataIndex: 'processName', width: 100 },
+  { title: '驳回原因', dataIndex: 'rejectReason', width: 200 },
   { title: '月次', dataIndex: 'monthCount', width: 80,
     slots: { customRender: 'monthCount' }
   },
   { title: '年次', dataIndex: 'yearCount', width: 80,
     slots: { customRender: 'yearCount' }
   },
-  { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
+  { title: '当前处理单位', dataIndex: 'orgName', width: 120 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
-  { title: '重点工单', dataIndex: 'importFlag', width: 100, customRender({text}) {
+  { title: '重点工单', dataIndex: 'importFlag', width: 80, customRender({text}) {
      return text == 1 ? '是' : '否';
   }},
-  { title: '点单工单', dataIndex: 'pointFlag', width: 100, customRender({text}) {
+  { title: '点单工单', dataIndex: 'pointFlag', width: 80, customRender({text}) {
     return text == 1 ? '是' : '否';
   }},
-  { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
-  { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
-  { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
-  { title: '派单时间', dataIndex: 'sendTime', width: 200 },
+  { title: '受理单位', dataIndex: 'acceptDepartment', width: 120 },
+  { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 120 },
+  { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 120 },
+  { title: '派单时间', dataIndex: 'sendTime', width: 160 },
   { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
   { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
   { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
-  { title: '处理科室', dataIndex: 'assignDepts', width: 200 },
+  { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
   { title: '处理社区/居委会', dataIndex: 'assignCommunitys', width: 200 },
-  { title: '办结时间', dataIndex: 'doneTime', width: 200 },
+  { title: '办结时间', dataIndex: 'doneTime', width: 160 },
   // { title: '回复内容', dataIndex: '', width: 150 }, 去掉
-  { title: '截止时间', dataIndex: 'deadline', width: 200 },
+  { title: '截止时间', dataIndex: 'deadline', width: 170 },
   { title: '督办人', dataIndex: 'overseeUserName', width: 120 },
   {
-    title: '是否解决', dataIndex: 'resolveFlag', width: 120, customRender: ({ text }) => {
+    title: '是否解决', dataIndex: 'resolveFlag', width: 80, customRender: ({ text }) => {
       // 是否解决(-1默认;0否;1是)
       return text === 1 ? '已解决' : (text === 0 ? '未解决' : '-');
     }
   },
   {
-    title: '是否满意', dataIndex: 'satisfyFlag', width: 120, customRender: ({ text }) => {
+    title: '是否满意', dataIndex: 'satisfyFlag', width: 80, customRender: ({ text }) => {
       // 是否满意(-1默认;0否;1是)
       return text === 1 ? '满意' : (text === 0 ? '不满意' : '-');
     }
   },
   {
-    title: '是否响应', dataIndex: 'responseFlag', width: 120, customRender: ({ text }) => {
+    title: '是否响应', dataIndex: 'responseFlag', width: 80, customRender: ({ text }) => {
       // 	是否响应（0否;1是）
       return text === 1 ? '响应' : (text === 0 ? '未响应' : '-');
     }
   },
   {
-    title: '是否接收', dataIndex: 'receiveStatus_dictText', width: 120,
+    title: '是否接收', dataIndex: 'receiveStatus_dictText', width: 80,
     //  customRender: ({ text }) => {
     //   // 是否已接收（0否;1是;-1已转出）
     //   return text === 1 ? '已接收' : (text === 0 ? '待接收' : '-');
     // }
   },
-  { title: '跟进情况', dataIndex: 'followCode', width: 120 },
+  { title: '跟进情况', dataIndex: 'followCode_dictText', width: 120 },
   {
     title: '案件性质', dataIndex: 'caseNature_dictText', width: 120,
     //  customRender: ({ text }) => {
@@ -110,13 +110,21 @@ export const columns: BasicColumn[] = [
     //   return render.renderDict(text, 'biz_case_nature');
     // },
   },
-  { title: '导入时间', dataIndex: 'importTime', width: 200 },
-  { title: '来电时间', dataIndex: 'callTime', width: 200 },
+  { title: '导入时间', dataIndex: 'importTime', width: 160 },
+  { title: '来电时间', dataIndex: 'callTime', width: 160 },
   { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
   { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
   { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
   { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
-  { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
+  { title: '工单分类', dataIndex: 'workOrderCategory', width: 120 },
+  { title: '书记批示', dataIndex: 'shujiSuggest', width: 150 },
+  { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
+  {
+    title: '回访结果', dataIndex: 'upRevisitResultState', width: 120,
+    customRender: ({ text }) => {
+      return render.renderDict(text, 'biz_up_revisit_yes_no', true);
+    }
+  },
   { title: '发生地址', dataIndex: 'occurrenceAddress', width: 180 },
   // { title: '被反映单位', dataIndex: '', width: 120 },去掉
   { title: '派单人员', dataIndex: 'sendUser', width: 120 },
@@ -127,7 +135,7 @@ export const columns: BasicColumn[] = [
   { title: '审核时间', dataIndex: 'replyAuditTime', width: 200 },
   { title: '回访时间', dataIndex: 'visitTime', width: 200 },
   {
-    title: '已倾听', dataIndex: 'fileRead', width: 120, customRender: ({ text }) => {
+    title: '已倾听', dataIndex: 'fileRead', width: 100, customRender: ({ text }) => {
       // 录音是否已倾听(0否;1是)
       return text === 1 ? '已倾听' : (text === 0 ? '未倾听' : '-');
     }

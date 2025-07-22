@@ -40,8 +40,8 @@ import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 // receiveStatus	是否已接收（0否;1是）	integer	
 // rejectReason	驳回原因	string	
 // remark	备注	string	
-// reportCommunityId	反应社区	string	
-// reportDistrictId	反应管区	string	
+// reportCommunityId	反映社区	string	
+// reportDistrictId	反映管区	string	
 // resolveCount	处理次数	integer	
 // resolveDepartment	承办单位	string	
 // resolveOpinion	处理意见	string	
@@ -133,8 +133,8 @@ export const columns: BasicColumn[] = [
   //  { title: '流程节点状态', dataIndex: 'processStatus', width: 150 },
    { title: '问题分类', dataIndex: 'questionCategory', width: 120 },
   //  { title: '是否已接收', dataIndex: 'receiveStatus', width: 120 },
-   { title: '反应社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
-   { title: '反应管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
+   { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 150 },
+   { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 150 },
    { title: '处理次数', dataIndex: 'resolveCount', width: 120 },
    { title: '承办单位', dataIndex: 'resolveDepartment', width: 150 },
    { title: '处理意见', dataIndex: 'resolveOpinion', width: 180 },
@@ -146,8 +146,8 @@ export const columns: BasicColumn[] = [
   //  { title: '修改时间', dataIndex: 'updateTime', width: 150 },
   //  { title: '修改人id', dataIndex: 'updateUserId', width: 120 },
    { title: '工单分类', dataIndex: 'workOrderCategory', width: 150 },
-   { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
   { title: '书记批示', dataIndex: 'shujiSuggest', width: 150 },
+   { title: '主任批示', dataIndex: 'zhurenSuggest', width: 150 },
   {
     title: '回访结果', dataIndex: 'upRevisitResultState', width: 120,
     customRender: ({ text }) => {
