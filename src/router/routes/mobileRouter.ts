@@ -127,5 +127,30 @@ export const AuditRouter: AppRouteRecordRaw = {
   ],
 };
 
+export const LoginRouter: AppRouteRecordRaw = {
+  path: '/h5-login',
+  name: 'H5Login',
+  component: H5_LAYOUT,
+  redirect: '/h5-login/index',
+  meta: {
+    title: 'H5Login',
+    hideBreadcrumb: true,
+    hideChildrenInMenu: true,
+  },
+  children: [
+    {
+      path: 'index',
+      name: 'H5LoginIndex',
+      component: () => import('/@/views/sys/login/TokenLoginH5Page.vue'),
+      meta: {
+        title: '登录',
+        hideBreadcrumb: true,
+        ignoreAuth: true,
+        currentActiveMenu: '/h5-login',
+      },
+    },
+  ],
+};
+
 // 移动端h5路由列表
-export const mobileH5RoutesList = [AssignRouter, ReplyRouter, FollowRouter, AuditRouter];
+export const mobileH5RoutesList = [LoginRouter, AssignRouter, ReplyRouter, FollowRouter, AuditRouter];
