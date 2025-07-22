@@ -84,7 +84,7 @@ export const columns: BasicColumn[] = [
       return render.renderDict(text, 'biz_source_type');
     }
   },
-  { title: '标签code', dataIndex: 'labelCode_dictText', width: 120 },
+  { title: '案件标签', dataIndex: 'labelCode_dictText', width: 120 },
   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
   { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
@@ -164,45 +164,20 @@ export const columns: BasicColumn[] = [
   ];
 
    const rangePresets = ref([
-    { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+    // { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+    { label: '今天', value: [dayjs().startOf('day'), dayjs().endOf('day')] },
     { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
-      { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
-      { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
+    { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
+    { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
   ]);
 
   export const searchFormSchema: FormSchema[] = [
-    //   {
-    //     label: '姓名',
-    //     field: 'realname',
-    //     component: 'Input',
-    //     colProps: { span: 6 },
-    //   },
-    //   {
-    //     label: '工号',
-    //     field: 'workNo',
-    //     component: 'Input',
-    //     colProps: { span: 6 },
-    //   },
-    // {
-    //     label: '案件标签',
-    //     field: 'labelCode',
-    //     component: 'ApiSelect',
-    //     componentProps: {
-    //         api: async () => {
-    //             const res  = await getDictItems('biz_complaint_lavel')
-    //             console.log(res)
-    //             if(Array.isArray(res)){
-    //                 res.unshift({text: '所有', value: ''})
-    //                 return res;
-    //             } else {
-    //                 return [];
-    //             }
-    //         },
-    //         labelField: 'text',
-    //         valueField: 'value'
-    //     },
-    //     colProps: { span: 6 }
-    // },
+    {
+      label: '工单编号',
+      field: 'workOrderNumber',
+      component: 'Input',
+      colProps: { span: 6 },
+    },
     {
         label: '状态',
         field: 'visitStatus',
@@ -300,12 +275,6 @@ export const columns: BasicColumn[] = [
     {
         label: '案件编号',
         field: 'caseNumber',
-        component: 'Input',
-        colProps: { span: 6 },
-    },
-    {
-        label: '工单编号',
-        field: 'workOrderNumber',
         component: 'Input',
         colProps: { span: 6 },
     },

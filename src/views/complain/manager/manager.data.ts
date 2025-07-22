@@ -162,7 +162,8 @@ export const columns: BasicColumn[] = [
 
 // 日期范围预设
 const rangePresets = ref([
-  { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+  // { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+  { label: '今天', value: [dayjs().startOf('day'), dayjs().endOf('day')] },
   { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
   { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
   { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },

@@ -1,5 +1,5 @@
 import { ContentTypeEnum } from '/@/enums/httpEnum';
-import { pageNoToPageNum } from '/@/utils';
+import { pageNoToPageNum, paramsToQuery } from '/@/utils';
 import { defHttp } from '/@/utils/http/axios';
 import dayjs from 'dayjs';
 export enum Api {
@@ -15,6 +15,8 @@ export enum Api {
   shujiList = '/complain/assign/shujiSuggest',
   // 主任批示
   zhurenList = '/complain/assign/zhurenSuggest',
+  // 导出word工单
+  exportTicketWord = '/complain/assign/exportTicketWord',
 }
 /**
  * 分派列表
@@ -77,4 +79,11 @@ export const shujiSuggest = (params) => defHttp.post({ url: Api.shujiList, data:
  * 主任批示
  */
 export const zhurenSuggest = (params) => defHttp.post({ url: Api.zhurenList, data:params, headers: {'content-type': ContentTypeEnum.FORM_URLENCODED} });
+
+/**
+ * 导出word工单
+ */
+export const exportTicketWord = (params) => {
+  return defHttp.post({ url: paramsToQuery(Api.exportTicketWord, params), params });
+};
 

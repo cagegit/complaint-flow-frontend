@@ -3,8 +3,9 @@
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
           <!--插槽:table标题-->
           <template #tableTitle>
+            <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportTicketWords" v-auth="'complain:assign:exportTicketWord'">导出word工单</a-button>
             <!-- <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button> -->
-            <!-- <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls" :disabled="isDisabledAuth('system:user:export')"> 导出</a-button> -->
+            <!--  -->
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
             <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:edit-outlined">分派</a-button> -->
             <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -70,7 +71,7 @@
     import { ref, nextTick, onMounted } from 'vue';
     import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
     import { useListPage } from '/@/hooks/system/useListPage';
-    import { list, shujiSuggest, zhurenSuggest } from './assign.api'
+    import { exportTicketWord, list, shujiSuggest, zhurenSuggest } from './assign.api'
     import { columns, searchFormSchema } from './assign.data'
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { BasicModal, useModal } from '/@/components/Modal';
@@ -89,6 +90,7 @@
     import ForwardForm from './ForwardForm.vue';
     import { useRoute, useRouter } from 'vue-router';
     import dayjs from 'dayjs';
+    import { downloadByUrl } from '/@/utils/file/download';
 
     const route = useRoute();
     const router = useRouter();
@@ -369,4 +371,29 @@
         showFooter: true
       });
     }
+    /**
+     * 导出word工单
+     */
+  function onExportTicketWords() {
+    if (!selectedRowKeys.value || selectedRowKeys.value.length === 0) {
+      createMessage.info(`请先选择要导出的数据！`);
+      return;
+    }
+    exportTicketWord({ ids: selectedRowKeys.value.join(',') }).then((res) => {
+      if (res) {
+        handleDownload(res);
+      }
+    });
+  }
+
+  // 下载
+  function handleDownload(res) {
+    let url = res?.fileKey;
+    let fileName = res.fileName;
+    // 兼容新的上传接口
+    if (url.indexOf('app-data/tmp/download/') > -1) {
+      url = `/citizen-voice/sys/common/static/${res.fileKey}`;
+    }
+    downloadByUrl({ url, fileName });
+  }
 </script>

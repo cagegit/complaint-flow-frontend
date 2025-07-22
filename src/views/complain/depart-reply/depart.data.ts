@@ -79,17 +79,17 @@ export const columns: BasicColumn[] = [
       }
     },
     },
-  { title: '数据来源', dataIndex: 'sourceType', width: 120,
+  { title: '数据来源', dataIndex: 'sourceType', width: 100,
     customRender: ({ text }) => {
       return render.renderDict(text, 'biz_source_type');
     }
   },
-  { title: '标签code', dataIndex: 'labelCode_dictText', width: 120 },
-  { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
-  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '案件标签', dataIndex: 'labelCode_dictText', width: 100 },
+  { title: '案件编号', dataIndex: 'caseNumber', width: 120 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', width: 160 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
-  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  { title: '状态', dataIndex: 'processName', width: 120 },
+  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 110 },
+  { title: '状态', dataIndex: 'processName', width: 100 },
   { title: '驳回原因', dataIndex: 'rejectReason', width: 200 },
   { title: '月次', dataIndex: 'monthCount', width: 80, 
     slots:{
@@ -101,28 +101,41 @@ export const columns: BasicColumn[] = [
       customRender: 'yearCount',
     }
   },
-  { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
+  { title: '当前处理单位', dataIndex: 'orgName', width: 120 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
-  { title: '重点工单', dataIndex: 'importFlag', width: 100, customRender({text}) {
+  { title: '重点工单', dataIndex: 'importFlag', width: 80, customRender({text}) {
      return text == 1 ? '是' : '否';
    }},
-   { title: '点单工单', dataIndex: 'pointFlag', width: 100, customRender({text}) {
+   { title: '点单工单', dataIndex: 'pointFlag', width: 80, customRender({text}) {
      return text == 1 ? '是' : '否';
    }},
    { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },
    { title: '处理社区', dataIndex: 'assignCommunitys', width: 150 },
    { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
-   { title: '来电时间', dataIndex: 'callTime', width: 150 },
+   { title: '来电时间', dataIndex: 'callTime', width: 160 },
    { title: '来电人地址', dataIndex: 'callUserAddress', width: 180 },
    { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
    { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
    { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
    { title: '联系方式', dataIndex: 'contactInfo', width: 150 },
    { title: '创建人名称', dataIndex: 'createBy', width: 120 },
-   { title: '创建时间', dataIndex: 'createTime', width: 150 },
+   { title: '创建时间', dataIndex: 'createTime', width: 160 },
   //  { title: '创建人id', dataIndex: 'createUserId', width: 120 },
-   { title: '截止时间', dataIndex: 'deadline', width: 150 },
+   { title: '截止时间', dataIndex: 'deadline', width: 160 },
+   { title: '剩余待处置时间', dataIndex: 'remainingTime', width: 250,
+    customRender: ({ record }) => {
+      if (!record.deadline || !dayjs(record.deadline).isValid()) {
+        return  '';
+      }
+      const remainingTime = dayjs(record.deadline).subtract(1, 'day').diff(dayjs(), 'day');
+      // 如果小于等于0，超时用红色，不超时用绿色tag
+      if (remainingTime < 0) {
+        return h('span', { style: { color: '#cf1322' } }, `超时 ${Math.abs(remainingTime)} 天`);
+      }
+      return h('span', { style: { color: '#389e0d' } }, `剩余 ${remainingTime} 天`);
+    }
+   },
    { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
    { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
    { title: '工单导入时间', dataIndex: 'importTime', width: 150 },
@@ -166,25 +179,20 @@ export const columns: BasicColumn[] = [
   ];
 
    const rangePresets = ref([
-    { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+    // { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
+    { label: '今天', value: [dayjs().startOf('day'), dayjs().endOf('day')] },
     { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
-      { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
-      { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
+    { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
+    { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
   ]);
 
   export const searchFormSchema: FormSchema[] = [
-    //   {
-    //     label: '姓名',
-    //     field: 'realname',
-    //     component: 'Input',
-    //     colProps: { span: 6 },
-    //   },
-    //   {
-    //     label: '工号',
-    //     field: 'workNo',
-    //     component: 'Input',
-    //     colProps: { span: 6 },
-    //   },
+    {
+        label: '工单编号',
+        field: 'workOrderNumber',
+        component: 'Input',
+        colProps: { span: 6 },
+    },
     {
         label: '案件标签',
         field: 'labelCode',
@@ -283,12 +291,6 @@ export const columns: BasicColumn[] = [
     {
         label: '案件编号',
         field: 'caseNumber',
-        component: 'Input',
-        colProps: { span: 6 },
-    },
-    {
-        label: '工单编号',
-        field: 'workOrderNumber',
         component: 'Input',
         colProps: { span: 6 },
     },

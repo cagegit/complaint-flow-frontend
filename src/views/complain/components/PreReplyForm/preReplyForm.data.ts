@@ -1612,7 +1612,9 @@ export const formFinalSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('is_solved'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    required: ({values}) => {
+      return values.isContact !== '2';
+    },
     colProps: { span: 12 },
   },
   {
@@ -1624,7 +1626,9 @@ export const formFinalSchema: FormSchema[] = [
       options: getDistrictDictItemsByCode('is_satisfaction'),  // 需要从接口获取
       allowClear: true,
     },
-    required: true,
+    required: ({values}) => {
+      return values.isContact !== '2';
+    },
     colProps: { span: 12 },
   },
   {
