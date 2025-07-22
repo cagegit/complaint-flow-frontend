@@ -80,30 +80,30 @@ export const columns: BasicColumn[] = [
     },
   },
   {
-    title: '数据来源', dataIndex: 'sourceType', width: 120,
+    title: '数据来源', dataIndex: 'sourceType', width: 100,
     customRender: ({ text }) => {
       return render.renderDict(text, 'biz_source_type');
     }
   },
-  { title: '案件标签', dataIndex: 'labelCode_dictText', width: 120 },
-  { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
-  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '案件标签', dataIndex: 'labelCode_dictText', width: 100 },
+  { title: '案件编号', dataIndex: 'caseNumber', width: 120 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', width: 160 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
-  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
-  { title: '状态', dataIndex: 'processName', width: 120 },
+  { title: '来电号码', dataIndex: 'callPhoneNumber', width: 110 },
+  { title: '状态', dataIndex: 'processName', width: 100 },
   { title: '月次', dataIndex: 'monthCount', width: 80,
     slots: { customRender: 'monthCount' } 
   },
   { title: '年次', dataIndex: 'yearCount', width: 80,
     slots: { customRender: 'yearCount' }
   },
-  { title: '当前处理单位', dataIndex: 'orgName', width: 200 },
+  { title: '当前处理单位', dataIndex: 'orgName', width: 120 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
-  { title: '重点工单', dataIndex: 'importFlag', width: 100, customRender({text}) {
+  { title: '重点工单', dataIndex: 'importFlag', width: 80, customRender({text}) {
     return text == 1 ? '是' : '否';
   }},
-  { title: '点单工单', dataIndex: 'pointFlag', width: 100, customRender({text}) {
+  { title: '点单工单', dataIndex: 'pointFlag', width: 80, customRender({text}) {
     return text == 1 ? '是' : '否';
   }},
   { title: '受理单位', dataIndex: 'acceptDepartment', width: 150 },

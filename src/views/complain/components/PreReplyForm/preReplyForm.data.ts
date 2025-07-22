@@ -199,6 +199,7 @@ export const formSchema: FormSchema[] = [
         const { updateSchema } = formActionType;
         const value = e.target.value;
         // console.log(value);
+        formModel['taskType'] = null;
         if(value == '0') {
           updateSchema([
             {
@@ -210,6 +211,7 @@ export const formSchema: FormSchema[] = [
               },
             },
           ]);
+          formModel['taskType'] = null;
         } else {
           updateSchema([
             {
@@ -220,7 +222,6 @@ export const formSchema: FormSchema[] = [
             },
           ]);
         }
-        formModel['taskType'] = null;
       }
     }),
     // required: true,
@@ -967,6 +968,7 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
         const { updateSchema } = formActionType;
         const value = e.target.value;
         // console.log(value);
+        formModel['taskType'] = null;
         if(value == '0') {
           updateSchema([
             {
@@ -978,6 +980,7 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
               },
             },
           ]);
+          formModel['taskType'] = '0'; // 否，默认选择其他
         } else {
           updateSchema([
             {
@@ -988,7 +991,6 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
             },
           ]);
         }
-        formModel['taskType'] = null;
       }
     }),
     // required: true,
