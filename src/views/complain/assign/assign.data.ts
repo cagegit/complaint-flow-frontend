@@ -80,6 +80,21 @@ export const columns: BasicColumn[] = [
       }
     },
   },
+  { title: '剩余待处置时间', dataIndex: 'remainingTime', width: 130,
+    customRender: ({ record }) => {
+      if (!record.deadline || !dayjs(record.deadline).isValid()) {
+        return  '';
+      }
+      // const remainingTime = dayjs(record.deadline).subtract(1, 'day').diff(dayjs(), 'day');
+      const expireDate = dayjs(record.deadline).subtract(1, 'day');
+      const { expires, days, hours} = getDateDiff(expireDate);
+      // 如果小于等于0，超时用红色，不超时用绿色tag
+      if (expires) {
+        return h('span', { style: { color: '#cf1322' } }, `超期${days}天${hours}小时`);
+      }
+      return h('span', { style: { color: '#389e0d' } }, `剩余${days}天${hours}小时`);
+    }
+  },
   {
     title: '数据来源', dataIndex: 'sourceType', width: 80,
     customRender: ({ text }) => {
@@ -123,21 +138,6 @@ export const columns: BasicColumn[] = [
   { title: '创建时间', dataIndex: 'createTime', width: 160 },
   // { title: '创建人id', dataIndex: 'createUserId', width: 120 },
   { title: '截止时间', dataIndex: 'deadline', width: 170 },
-  { title: '剩余待处置时间', dataIndex: 'remainingTime', width: 150,
-    customRender: ({ record }) => {
-      if (!record.deadline || !dayjs(record.deadline).isValid()) {
-        return  '';
-      }
-      // const remainingTime = dayjs(record.deadline).subtract(1, 'day').diff(dayjs(), 'day');
-      const expireDate = dayjs(record.deadline).subtract(1, 'day');
-      const { expires, days, hours} = getDateDiff(expireDate);
-      // 如果小于等于0，超时用红色，不超时用绿色tag
-      if (expires) {
-        return h('span', { style: { color: '#cf1322' } }, `超期${days}天${hours}小时`);
-      }
-      return h('span', { style: { color: '#389e0d' } }, `剩余${days}天${hours}小时`);
-    }
-   },
   { title: '处理情况', dataIndex: 'finalResolveResult', width: 180 },
   { title: '热线号码', dataIndex: 'hotlineNumber', width: 150 },
   { title: '工单导入时间', dataIndex: 'importTime', width: 160 },
