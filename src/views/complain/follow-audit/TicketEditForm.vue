@@ -241,7 +241,12 @@
           getCitySevenFiveList().then(sevenFiveData => {
             if(Array.isArray(sevenFiveData)) {
               sevenFiveData.forEach((item:any) => {
-                if(item.id == detailRes.sevenFiveId) {
+                let sevenFiveId = detailRes.sevenFiveId;
+                if(sevenFiveId.indexOf(',') > -1) {
+                  // 取最后一个字符1,2,3,4,取最后一个
+                  sevenFiveId = sevenFiveId.split(',').pop();
+                }
+                if(item.id == sevenFiveId) {
                   // detailRes.sevenFiveId = item.name;
                   setAuditFieldsValue({
                     sevenFiveId: item.allParentIds ? item.allParentIds.split(',') : [],

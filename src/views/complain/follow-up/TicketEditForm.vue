@@ -287,10 +287,10 @@
               if(Array.isArray(sevenFiveData)) {
                 sevenFiveData.forEach((item:any) => {
                   let sevenFiveId = detailRes.sevenFiveId;
-                  if(detailRes.sevenFiveId.indexOf(',') > -1) {
+                  if(sevenFiveId.indexOf(',') > -1) {
                     // 取最后一个字符1,2,3,4,取最后一个
-                    sevenFiveId = detailRes.sevenFiveId.split(',').pop();
-                  } 
+                    sevenFiveId = sevenFiveId.split(',').pop();
+                  }
                   if(item.id == sevenFiveId) {
                     // detailRes.sevenFiveId = item.name;
                     setAuditFieldsValue({
