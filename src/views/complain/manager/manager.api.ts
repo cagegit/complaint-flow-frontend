@@ -35,6 +35,10 @@ export enum Api {
   exportTicketAdvance = '/complain/manage/exportReqEarlyRemove',
   //导出申请销账工单
   exportTicketDone = '/complain/manage/exportReqRemove',
+  // 工单历史记录
+  recordList = '/complain/manage/getTicketHistoryList',
+  // 修改分配信息
+  editAssignComplain = '/complain/manage/editAssignInfo',
 }
 
 /**
@@ -234,4 +238,39 @@ export const exportTicketAdvance = (param) => {
  */
 export const exportTicketDone = (param) => {
   return defHttp.post({ url: Api.exportTicketDone, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } })
+}
+
+/**
+ * 工单历史记录
+ */
+export const ticketRecordList = (param) => {
+  if(param.column) {
+    delete param.column;
+  }
+  if(param.order) {
+    delete param.order;
+  }
+  const params = formatParams(param);
+  return new Promise((resolve, reject) => {
+    defHttp
+      .get({ url: Api.recordList, params })
+      .then((res) => {
+        console.log(res);
+        res.records = res.list;
+        delete res.list;
+        resolve(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(err);
+      });
+  });
+}
+
+// 修改分配信息
+export const editAssignComplain = (params) => {
+  return defHttp.post({
+    url: Api.editAssignComplain,
+    params
+  });
 }

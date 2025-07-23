@@ -1,11 +1,13 @@
-import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getQywxTreeList, getSecondTreeList } from '/@/api/common/api';
+import { getCitySevenFiveList, getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
 import { ref, h } from 'vue';
+import { Tooltip } from 'ant-design-vue';
 import { getProcessList } from './manager.api';
 import { getDictItemsByCode } from '/@/utils/dict';
 import { render } from '/@/utils/common/renderUtils';
+import TicketRecord from './TicketRecord.vue';
 
 function treeToList(tree: any[]) {
   const list: any[] = [];
@@ -1239,3 +1241,40 @@ export const addFormSchema: FormSchema[] = [
   },
 ];
 
+// 工单历史记录
+// createTime	创建时间，排序
+// orgId	所属部门
+// createBy	创建人
+// dataChangeJson	数据变更json ，自定义render，toolTip显示
+// dataName	数据名称
+// remark	备注
+export const ticketRecordListColumns: BasicColumn[] = [
+  // { title: 'ID', dataIndex: 'id', width: 70, fixed: 'left' },
+  { title: '操作时间', dataIndex: 'createTime', width: 160 },
+  { title: '操作人', dataIndex: 'createBy', width: 120, ellipsis:true },
+  { title: '所属部门', dataIndex: 'orgId_dictText', width: 120, ellipsis:true },
+  { title: '数据名称', dataIndex: 'dataName', width: 140, ellipsis:true },
+  { title: '数据变更', dataIndex: 'dataChangeJson', width: 100, ellipsis:true,
+    customRender: ({ text }) => {
+    return h(Tooltip, {
+      title: h(TicketRecord, {
+        jsonStr: text,
+        maxHeight: 300,
+        columns: [
+          { title: '字段名', dataIndex: 'fieldName', width: 120 },
+          { title: '旧值', dataIndex: 'oldValue', width: 200, ellipsis:true },
+          { title: '新值', dataIndex: 'newValue', width: 200, ellipsis:true },
+        ]
+      }),
+      placement: "topRight",
+      autoAdjustOverflow: false,
+      overlayClassName: 'tooltip-wrapper',
+      overlayInnerStyle: {padding: '20px', backgroundColor: '#fff', color: '#333'}
+    }, {
+      default: () => h('span', {
+        style: { cursor: 'pointer', color: '#1677ff' },
+      }, '详情')
+    })
+  }},
+  { title: '备注', dataIndex: 'remark', width: 150, ellipsis:true },
+]

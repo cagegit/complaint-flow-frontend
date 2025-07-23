@@ -596,7 +596,7 @@ export const addFormSchema: FormSchema[] = [
     label: '反映管区',
     component: 'ApiSelect',
     required: true,
-    componentProps: ({ formActionType }) => {
+    componentProps: ({ formActionType, formModel }) => {
       return {
         api: async () => {
           const res = await getCommunityList('3') // 3表示管区
@@ -610,10 +610,11 @@ export const addFormSchema: FormSchema[] = [
         },
         onSelect: async (options, values) => {
           console.log(options, values);
-          const { updateSchema, setFieldsValue } = formActionType;
+          const { updateSchema } = formActionType;
           const { value } = values;
           const res = await getCommunityChildList(value)
           // console.log(res)
+          formModel.reportCommunityId = null; // 清空反映社区
           if (Array.isArray(res)) {
             // res.unshift({label: '所有', value: ''})
             updateSchema({
@@ -745,9 +746,7 @@ export const addFormSchema: FormSchema[] = [
         const res = await getDictItems('biz_case_nature')
         // console.log(res)
         if (Array.isArray(res)) {
-          return res.filter(item => {
-            return item.text !== '默认';
-          });
+          return res;
         } else {
           return [];
         }

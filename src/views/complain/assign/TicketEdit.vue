@@ -171,7 +171,7 @@
               getCitySevenFiveList().then(sevenFiveData => {
                 if(Array.isArray(sevenFiveData)) {
                   sevenFiveData.forEach((item:any) => {
-                    if(item.id == res.sevenFiveId) {
+                    if(item.id == res.sevenFiveId || item.allParentIds == res.sevenFiveId) {
                       // res.sevenFiveId = item.name;
                       setFieldsValue({
                         sevenFiveId: item.allParentIds ? item.allParentIds.split(',') : [],
