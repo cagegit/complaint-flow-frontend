@@ -67,7 +67,7 @@
                   :ticketId="ticketDetail.id"
                   :zrContent="ticketDetail.zhurenSuggest"
                   :sjContent="ticketDetail.shujiSuggest"
-                  :style="{width: '85%'}"
+                  :style="{width: '89%'}"
                />
             </a-tab-pane>
             <a-tab-pane key="3" tab="回复记录" force-render>
@@ -105,6 +105,7 @@
     import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
+    import { defaultSpan } from '../shareInfo';
     const { createMessage, createConfirmSync } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -153,7 +154,7 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: 8 },
       //row行的样式
       baseRowStyle: { width: '100%', }
     });
@@ -166,7 +167,7 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: 8 },
       //row行的样式
       baseRowStyle: { width: '100%', }
     });
@@ -178,7 +179,7 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: defaultSpan },
       //row行的样式
       baseRowStyle: { width: '100%', },
       disabled: true

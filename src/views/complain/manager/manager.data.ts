@@ -8,6 +8,7 @@ import { getProcessList } from './manager.api';
 import { getDictItemsByCode } from '/@/utils/dict';
 import { render } from '/@/utils/common/renderUtils';
 import TicketRecord from './TicketRecord.vue';
+import { defaultColProps } from '../shareInfo';
 
 function treeToList(tree: any[]) {
   const list: any[] = [];
@@ -414,80 +415,6 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 8 },
   },
-  // {
-  //   label: '处理科室',
-  //   field: 'assignDeptId',
-  //   component: 'ApiSelect',
-  //   // componentProps: {
-  //   //   api: async () => {
-  //   //     const res = await getDictItems('biz_dept_list');
-  //   //     if (Array.isArray(res)) {
-  //   //       res.unshift({ text: '==请选择==', value: '' });
-  //   //       return res;
-  //   //     } else {
-  //   //       return [];
-  //   //     }
-  //   //   },
-  //   //   labelField: 'text',
-  //   //   valueField: 'value',
-  //   //   placeholder: '==请选择==',
-  //   // },
-  //   componentProps: () => {
-  //     return {
-  //       api: async () => {
-  //         const res = await getCommunityList('2') // 2表示部门
-  //         console.log(res)
-  //         if (Array.isArray(res)) {
-  //           // res.unshift({label: '所有', value: ''})
-  //           return res;
-  //         } else {
-  //           return [];
-  //         }
-  //       },
-  //       labelField: 'departName',
-  //       valueField: 'id',
-  //       multiple: true,
-  //       checkable: true,
-  //     }
-  //   },
-  //   colProps: { span: 8 },
-  // },
-  // {
-  //   label: () => h('span', {}, [
-  //     '处理社区/', h('br'), '居委会'
-  //   ]),
-  //   field: 'assignCommunityId',
-  //   component: 'ApiTreeSelect',
-  //   componentProps: {
-  //     checkable: true,
-  //     multiple: true,
-  //     api: async () => {
-  //       const res = await getSecondTreeList('3');
-  //       console.log(res)
-  //       if (Array.isArray(res)) {
-  //         // res.unshift({text: '==请选择==', value: ''})
-  //         // 把tree格式数据展开
-  //         const newList = treeToList(res);
-  //         // console.log(res)
-  //         // res.unshift({text: '==请选择==', value: ''})
-  //         // console.log(res)
-  //         return newList.map(v => {
-  //           return {
-  //             id: v.id,
-  //             pId: v.parentId,
-  //             title: v.title,
-  //             value: v.id,
-  //           }
-  //         });
-  //       } else {
-  //         return [];
-  //       }
-  //     },
-  //     treeDataSimpleMode: true,
-  //     placeholder: '==请选择==',
-  //   },
-  //   colProps: { span: 8 },
-  // },
   {
     label: () => h('span', {}, [
       '处理社区/', h('br'), '居委会'
@@ -818,16 +745,21 @@ export const formSchema: FormSchema[] = [
         }
       }
     },
-    colProps: { span: 12 },
   },
   {
     field: 'caseNumber',
     label: '案件编号',
     component: 'Input',
     required: true,
-    colProps: { span: 12 },
   },
   {
+    field: 'workOrderNumber',
+    label: '工单编号',
+    component: 'Input',
+
+    required: true,
+  },
+   {
     field: 'importTime',
     label: '导入时间',
     component: 'DatePicker',
@@ -836,15 +768,6 @@ export const formSchema: FormSchema[] = [
       showTime: true,
       format: 'YYYY-MM-DD HH:mm:ss'
     },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'workOrderNumber',
-    label: '工单编号',
-    component: 'Input',
-
-    required: true,
-    colProps: { span: 12 },
   },
   {
     field: 'callTime',
@@ -855,20 +778,17 @@ export const formSchema: FormSchema[] = [
       showTime: true,
       format: 'YYYY-MM-DD HH:mm:ss',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'hotlineNumber',
     label: '热线号码',
     component: 'Input',
-    colProps: { span: 12 },
   },
 
   {
     field: 'acceptDepartment',
     label: '受理单位',
     component: 'Input',
-    colProps: { span: 12 },
   },
   {
     field: 'callUserName',
@@ -878,7 +798,6 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入来电人',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'callPhoneNumber',
@@ -889,7 +808,6 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入来电号码',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'callUserAddress',
@@ -898,7 +816,6 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入来电人地址',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'workOrderCategory',
@@ -907,7 +824,6 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入工单分类',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'questionCategory',
@@ -916,7 +832,6 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入问题分类',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'occurrenceAddress',
@@ -925,25 +840,25 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入发生地址',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'categoryOne',
     label: '一级分类',
     component: 'Input',
-    colProps: { span: 12 },
   },
   {
     field: 'categoryTwo',
     label: '二级分类',
     component: 'Input',
-    colProps: { span: 12 },
   },
   {
     field: 'categoryThree',
     label: '三级分类',
     component: 'Input',
-    colProps: { span: 12 },
+    colProps: { span: 16 },
+    itemProps: {
+      wrapperCol: { span: 16, sm: { span: 21 } },
+    }
   },
   {
     field: 'title',
@@ -956,7 +871,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 24 },
     itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
+      wrapperCol: { ...defaultColProps },
     }
   },
   {
@@ -970,7 +885,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 24 },
     itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
+      wrapperCol: { ...defaultColProps },
     }
   },
   {
@@ -999,7 +914,6 @@ export const formSchema: FormSchema[] = [
     field: 'sendUser',
     label: '派单人员',
     component: 'Input',
-    colProps: { span: 12 },
   },
   {
     field: 'sendTime',
@@ -1010,20 +924,6 @@ export const formSchema: FormSchema[] = [
       showTime: true,
       format: 'YYYY-MM-DD HH:mm:ss',
     },
-    colProps: { span: 12 },
-  },
-  {
-    field: 'resolveOpinion',
-    label: '处理意见',
-    component: 'InputTextArea',
-    componentProps: {
-      rows: 4,
-      placeholder: '请输入处理意见',
-    },
-    colProps: { span: 24 },
-    itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
-    }
   },
   {
     field: 'deadline',
@@ -1034,7 +934,6 @@ export const formSchema: FormSchema[] = [
       showTime: true,
       format: 'YYYY-MM-DD HH:mm:ss',
     },
-    colProps: { span: 12 },
   },
   {
     field: 'resolveTimeLimit',
@@ -1044,20 +943,32 @@ export const formSchema: FormSchema[] = [
     //   min: 1,
     //   addonAfter: '天',
     // },
-    colProps: { span: 12 },
   },
   {
     field: 'resolveDepartment',
     label: '承办单位',
     component: 'Input',
-    colProps: { span: 12 },
+    colProps: { span: 16 },
+    itemProps: {
+      wrapperCol: { span: 16, sm: { span: 21 } },
+    }
+  },
+    {
+    field: 'resolveOpinion',
+    label: '处理意见',
+    component: 'InputTextArea',
+    componentProps: {
+      rows: 4,
+      placeholder: '请输入处理意见',
+    },
+    colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { ...defaultColProps },
+    }
   },
   {
     field: 'finalResolveResult',
     label: '最终处理情况',
-    // label: () => h('span', {}, [
-    //   '最终处理情况/', h('br'), '居委会'
-    // ]),
     component: 'InputTextArea',
     required: true,
     componentProps: {
@@ -1065,6 +976,9 @@ export const formSchema: FormSchema[] = [
       placeholder: '请输入最终处理情况',
     },
     colProps: { span: 24 },
+    itemProps: {
+         wrapperCol: { ...defaultColProps },
+      }
   },
 ];
 

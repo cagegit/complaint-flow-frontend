@@ -1,4 +1,4 @@
-import { getDictItems, uploadJsFile } from '/@/api/common/api';
+import { getCommunityChildList, getCommunityList, getDictItems, getSecondTreeList, uploadJsFile } from '/@/api/common/api';
 import { FormSchema } from '/@/components/Form';
 import { BasicColumn } from '/@/components/Table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -7,6 +7,19 @@ import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict';
 import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 import { getDateDiff } from '/@/utils/dateUtil';
+
+
+function treeToList(tree: any[]) {
+  const list: any[] = [];
+  function traverse(node) {
+    list.push(node);
+    if (node.children) {
+      node.children.forEach(traverse);
+    }
+  }
+  tree.forEach(traverse);
+  return list;
+}
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -223,7 +236,8 @@ export const columns: BasicColumn[] = [
             options: [
                 { label: '待回复', value: 0 },
                 { label: '已回复', value: 1 },
-                { label: '回复已审核', value: 2 },
+                { label: '已提交', value: 2 },
+                { label: '回复已审核', value: 3 },
             ],
             allowClear: false  
         },
@@ -308,32 +322,125 @@ export const columns: BasicColumn[] = [
         component: 'Input',
         colProps: { span: 6 },
     },
-    // {
-    //     label: '重点对象',
-    //     field: 'monitorType',
-    //     component: 'ApiSelect',
-    //     componentProps: {
-    //       // options: [
-    //       //     { label: '==请选择==', value: '' },
-    //       //     { label: '红名单', value: '0' },
-    //       //     { label: '黑名单', value: '1' },
-    //       //     { label: '失信名单', value: '3' },
-    //       // ],
-    //       api: async () => {
-    //         const res  = await getDictItems('biz_monitor_type')
-    //           console.log(res)
-    //           if(Array.isArray(res)){
-    //               res.unshift({text: '==请选择==', value: ''})
-    //               return res;
-    //           } else {
-    //               return [];
-    //           }
-    //       },
-    //       labelField: 'text',
-    //       valueField: 'value',
-    //     },
-    //     colProps: { span: 6 },
-    // }
+    {
+        label: '反映管区',
+        field: 'reportDistrictId',
+        component: 'ApiSelect',
+        componentProps: ({ formActionType }) => {
+          return {
+            api: async () => {
+              const res = await getCommunityList('3') // 3表示管区
+              console.log(res)
+              if (Array.isArray(res)) {
+                // res.unshift({label: '所有', value: ''})
+                return res;
+              } else {
+                return [];
+              }
+            },
+            onSelect: async (options, values) => {
+              // console.log('onSelect', options, values, formActionType);
+              const { updateSchema, setFieldsValue } = formActionType;
+              const { value } = values;
+              const res = await getCommunityChildList(value)
+              // console.log(res)
+              // 切换时清空社区数据
+              setFieldsValue({
+                reportCommunityId: ''
+              });
+              if (Array.isArray(res)) {
+                // res.unshift({label: '所有', value: ''})
+                updateSchema({
+                  field: 'reportCommunityId',
+                  componentProps: {
+                    options: res.map(v => {
+                      return {
+                        label: v.departName,
+                        value: v.id
+                      }
+                    }),
+                  }
+                });
+              } else {
+                updateSchema({
+                  field: 'reportCommunityId',
+                  componentProps: {
+                    options: [],
+                  }
+                });
+              }
+            },
+            labelField: 'departName',
+            valueField: 'id'
+          }
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: '反映社区',
+        field: 'reportCommunityId',
+        component: 'Select',
+        componentProps: {
+          options: []
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: '处理科室',
+        field: 'assignDeptId',
+        component: 'ApiCascader',
+        componentProps: {
+          api: async () => {
+            const res = await getSecondTreeList('2'); // 2表示科室、部门
+            if (Array.isArray(res)) {
+              const newList = treeToList(res);
+              return newList.map(v => {
+                return {
+                  id: v.id,
+                  parentId: v.parentId,
+                  label: v.title,
+                  value: v.id,
+                }
+              });
+            } else {
+              return [];
+            }
+          },
+          labelField: 'label',
+          valueField: 'value',
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+      },
+      {
+        label: () => h('span', {}, [
+          '处理社区/', h('br'), '居委会'
+        ]),
+        field: 'assignCommunityId',
+        component: 'ApiCascader',
+        componentProps: {
+          api: async () => {
+            const res = await getSecondTreeList('3'); // 3表示管区、社区
+            if (Array.isArray(res)) {
+              const newList = treeToList(res);
+              return newList.map(v => {
+                return {
+                  id: v.id,
+                  parentId: v.parentId,
+                  label: v.title,
+                  value: v.id,
+                }
+              });
+            } else {
+              return [];
+            }
+          },
+          labelField: 'label',
+          valueField: 'value',
+          placeholder: '==请选择==',
+        },
+        colProps: { span: 6 },
+      },
 ];
 
 // 新增或者编辑表单项

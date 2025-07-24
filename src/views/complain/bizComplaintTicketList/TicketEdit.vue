@@ -21,7 +21,7 @@
           :ticketId="currentUnionRecord?.id" 
           :sjContent="currentUnionRecord?.shujiSuggest" 
           :zrContent="currentUnionRecord?.zhurenSuggest"
-          :style="{width: '85%'}"
+          :style="{width: '89%'}"
           />
       </div>
     </BasicModal>
@@ -58,9 +58,9 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12, style: { marginBottom: '10px'} },
+      baseColProps: { span: 8 },
       //row行的样式
-      baseRowStyle: { width: '100%', }
+      baseRowStyle: { width: '100%', },
     });
     // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
     const showFooter = ref(true);

@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { ref } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict/index';
+import { defaultColProps } from '../shareInfo';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -448,9 +449,9 @@ export const formSchema: FormSchema[] = [
       label: '三级分类',
       field: 'categoryThree',
       component: 'Input',
-      colProps: { span: 24 },
+      colProps: { span: 16 },
       itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
+        wrapperCol: { span: 16, sm: { span: 21 } },
       }
     },
     {
@@ -465,7 +466,7 @@ export const formSchema: FormSchema[] = [
       },
       colProps: { span: 24 },
       itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
+        wrapperCol: { ...defaultColProps },
       }
     },
     {
@@ -480,7 +481,7 @@ export const formSchema: FormSchema[] = [
       },
       colProps: { span: 24 },
       itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
+       wrapperCol: { ...defaultColProps },
       }
     },
     {
@@ -536,7 +537,10 @@ export const formSchema: FormSchema[] = [
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
-      // colProps: { pull: 6 },
+      colProps: { span: 16 },
+      itemProps: {
+        wrapperCol: { span: 16, sm: { span: 21 } },
+      }
     },
     {
       label: '处理情况',
@@ -544,13 +548,13 @@ export const formSchema: FormSchema[] = [
       component: 'InputTextArea',
       // required: true,
       componentProps: {
-        rows: 6,
+        rows: 3,
         placeholder: '请输入处理情况',
         style: { width: '100%' },
       },
-      colProps: { span: 24, sm: { span: 24 } },
+      colProps: { span: 24 },
       itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
+        wrapperCol: { ...defaultColProps },
       }
     },
     {

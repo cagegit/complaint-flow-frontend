@@ -6,7 +6,7 @@
           v-model:value="shuJiContent"
           :placeholder="'书记批示内容'"
           :disabled="!isShuJi || readOnly"
-          :rows="6"
+          :rows="4"
           autoresize
           class="mb-4"
           >
@@ -29,7 +29,7 @@
         v-model:value="zhuRenContent" 
         :placeholder="'主任批示内容'" 
         :disabled="!isZhuRen || readOnly"
-        :rows="6"
+        :rows="4"
         autoresize
         class="mb-4"
         >

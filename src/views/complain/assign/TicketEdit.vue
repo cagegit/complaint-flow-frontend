@@ -21,7 +21,7 @@
               :ticketId="ticketResult.id"
               :zrContent="ticketResult.zhurenSuggest"
               :sjContent="ticketResult.shujiSuggest"
-              :style="{width: '85%'}"
+              :style="{width: '89%'}"
             />
         </div>
         <div style="width: 300px; padding-left: 30px;">
@@ -47,6 +47,7 @@
     import { useMessage } from '/@/hooks/web/useMessage';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
+    import { defaultSpan } from '../shareInfo'
 
     const { createMessage } = useMessage();
   
@@ -71,11 +72,11 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: defaultSpan },
       //row行的样式
       baseRowStyle: { width: '100%', },
       // 禁用表单
-      disabled: true
+      disabled: true,
     });
     //待补充表单配置
     const [registerAddForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({

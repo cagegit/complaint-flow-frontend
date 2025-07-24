@@ -6,6 +6,7 @@ import { ref, h } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict';
 import { getDateDiff } from '/@/utils/dateUtil';
+import { defaultColProps } from '../shareInfo';
 // acceptDepartment	受理单位	string	
 // assignCommunitys	处理社区(名称逗号拼接)	string	
 // assignDepts	处理科室(名称逗号拼接)	string	
@@ -357,27 +358,23 @@ export const formSchema: FormSchema[] = [
         labelField: 'text',
         valueField: 'value'
     },
-    colProps: { span: 12 },
   },
   {
     label: '工单编号',
     field: 'workOrderNumber',
     component: 'Input',
-    colProps: { span: 12 },
     required: true,
   },
   {
     label: '案件编号',
     field: 'caseNumber',
     component: 'Input',
-    colProps: { span: 12 },
     required: true,
   },
   {
     label: '导入时间',
     field: 'importTime',
     component: 'RangePicker',
-    colProps: { span: 12 },
     componentProps: {
       presets: rangePresets,
       style: { width: '100%' },
@@ -387,14 +384,12 @@ export const formSchema: FormSchema[] = [
     label: '案件编号',
     field: 'caseNumber',
     component: 'Input',
-    colProps: { span: 12 },
     required: true,
   },
   {
     label: '导入时间',
     field: 'importTime',
     component: 'RangePicker',
-    colProps: { span: 12 },
     componentProps: {
       presets: rangePresets,
       style: { width: '100%' },
@@ -475,7 +470,7 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     colProps: { span: 24 },
     itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
+      wrapperCol: { ...defaultColProps },
     }
   },
   {
@@ -490,7 +485,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 24 },
     itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
+      wrapperCol: { ...defaultColProps },
     }
   },
   {
@@ -505,7 +500,7 @@ export const formSchema: FormSchema[] = [
     },
     colProps: { span: 24 },
     itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
+      wrapperCol: { ...defaultColProps },
     }
   },
   {
@@ -517,7 +512,7 @@ export const formSchema: FormSchema[] = [
         { label: '是', value: 1 },
         { label: '否', value: 0 },
       ],  
-    }
+    },
   },
     {
     label: '点单工单',
@@ -528,7 +523,7 @@ export const formSchema: FormSchema[] = [
         { label: '是', value: 1 },
         { label: '否', value: 0 },
       ],  
-    }
+    },
   },
   {
     label: '派单人员',
@@ -560,7 +555,8 @@ export const formSchema: FormSchema[] = [
   {
     label: '承办单位',
     field: 'resolveDepartment',
-    component: 'Input'
+    component: 'Input',
+    colProps: { span: 16 },
   },
   {
     label: '处理情况',
@@ -568,13 +564,13 @@ export const formSchema: FormSchema[] = [
     component: 'InputTextArea',
     required: true,
     componentProps: {
-      rows: 6,
+      rows: 3,
       placeholder: '请输入处理情况',
       style: { width: '100%' },
     },
-    colProps: { span: 24, sm: { span: 24 } },
+    colProps: { span: 24 },
     itemProps: {
-      wrapperCol: { span: 24, sm: { span: 21 } },
+      wrapperCol: { ...defaultColProps },
     }
   },
 ];

@@ -67,7 +67,7 @@
                 :ticketId="ticketDetail.id"
                 :zrContent="ticketDetail.zhurenSuggest"
                 :sjContent="ticketDetail.shujiSuggest"
-                :style="{width: '85%'}"
+                :style="{width: '89%'}"
               />
             </a-tab-pane>
           </a-tabs>
@@ -100,6 +100,7 @@
     // @ts-ignore
     import { preFormLogicHandler, formFinalNoRequiredSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
+import { defaultSpan } from '../shareInfo';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -151,7 +152,7 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: defaultSpan },
       //row行的样式
       baseRowStyle: { width: '100%', },
       disabled: true

@@ -12,40 +12,19 @@
   >
     <div class="pl-8">
       <a-tabs v-model:activeKey="activeKey" @change="activeKeyChange">
-        <a-tab-pane key="1" tab="基础信息">
-            <a-collapse v-model:activeKey="collapsibleKey" ghost>
-              <a-collapse-panel key="1" header="回复记录">
-                <!-- 回复列表 -->
-                <div class="pr-4">
-                  <ReplyRecord 
-                    :replyData="replyList" 
-                    :total="total" 
-                    :readOnly="true"
-                  />
-                </div>
-              </a-collapse-panel>
-              <a-collapse-panel key="2" header="回复审核结果">
-                  <div class="grid grid-cols-2 gap-4">
-                    <div class="flex">
-                      <p class="font-bold">录音已倾听：</p>
-                      <p class="text-gray-600">{{ replyDetailRef?.fileRead === 1? '是' : '否' }}</p>
-                    </div>
-                    <div class="flex">
-                      <p class="font-bold">跟进情况：</p>
-                      <p class="text-gray-600">{{ followCodeInfo }}</p>
-                    </div>
-                    <div class="flex">
-                      <p class="font-bold">督办人：</p>
-                      <p class="text-gray-600">{{ replyDetailRef?.overseeUserName || '-' }}</p>
-                    </div>
-                    <div class="flex">
-                      <p class="font-bold">最终处理情况：</p>
-                      <p class="text-gray-600">{{ replyDetailRef?.finalResolveResult || '-' }}</p>
-                    </div>
-                </div>
-              </a-collapse-panel>
-            </a-collapse>
-            <a-divider orientation="left" >基础信息</a-divider>
+        <a-tab-pane key="1" tab="基本信息">
+            <!-- 拒绝信息 -->
+            <RejectInfo :detailInfo="ticketDetail" />
+            <!-- 领导批示区域 -->
+            <LeaderInstruction
+                v-if="ticketDetail.id"
+                :ticketId="ticketDetail.id"
+                :zrContent="ticketDetail.zhurenSuggest"
+                :sjContent="ticketDetail.shujiSuggest"
+                :readOnly="true"
+                :style="{width: '89%'}"
+            />
+            <!-- <a-divider orientation="left" >基础信息</a-divider> -->
             <div class="p-1">
                <BasicForm @register="registerForm" />
             </div>
@@ -58,6 +37,37 @@
         <a-tab-pane key="3" tab="工单记录" forceRender>
           <div class="record-list">
             <BasicTable @register="registerRecordTable" />
+          </div>
+        </a-tab-pane>
+         <a-tab-pane key="4" tab="回复记录" forceRender>
+          <div class="record-list">
+            <!-- 回复列表 -->
+            <div class="pr-4">
+                <ReplyRecord 
+                  :replyData="replyList" 
+                  :total="total" 
+                  :readOnly="true"
+                />
+              </div>
+            <a-divider orientation="center" >回复审核结果</a-divider>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex">
+                  <p class="font-bold">录音已倾听：</p>
+                  <p class="text-gray-600">{{ replyDetailRef?.fileRead === 1? '是' : '否' }}</p>
+                </div>
+                <div class="flex">
+                  <p class="font-bold">跟进情况：</p>
+                  <p class="text-gray-600">{{ followCodeInfo }}</p>
+                </div>
+                <div class="flex">
+                  <p class="font-bold">督办人：</p>
+                  <p class="text-gray-600">{{ replyDetailRef?.overseeUserName || '-' }}</p>
+                </div>
+                <div class="flex">
+                  <p class="font-bold">最终处理情况：</p>
+                  <p class="text-gray-600">{{ replyDetailRef?.finalResolveResult || '-' }}</p>
+                </div>
+            </div>
           </div>
         </a-tab-pane>
       </a-tabs>
@@ -82,12 +92,18 @@ import { editAssignComplain, editComplain, ticketRecordList } from './manager.ap
 import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
 //@ts-ignore
 import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
+// @ts-ignore
+import RejectInfo from '../components/RejectInfo/index.vue';
 import { getDictItemsByCode } from '/@/utils/dict';
 import { getReplyDetail } from '../follow-up/follow-up.api';
 import { audioTypes, imageTypes } from '/@/utils/fileType';
 import { useListPage } from '/@/hooks/system/useListPage';
 import { addFormSchema as EditAssignForm } from '../assign/assign.data';
-import { getCitySevenFiveList, getCommunityChildList } from '/@/api/common/api';
+import { getCitySevenFiveList, getCommunityChildList, getComplaintDetail } from '/@/api/common/api';
+import { defaultSpan } from '../shareInfo';
+
+// 表单详情
+const ticketDetail = ref<any>({});
 // 声明Emits
 const emit = defineEmits(['success', 'register']);
 const isUpdate = ref(true);
@@ -121,7 +137,7 @@ const [registerForm, { setFieldsValue: setBasicFieldsValue, validate, resetField
   // layout: 'vertical',
   rowProps: { gutter: 24, justify: 'start', align: 'middle' },
   //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-  baseColProps: { span: 12 },
+  baseColProps: { span: defaultSpan },
   //row行的样式
   baseRowStyle: { width: '100%' },
 });
@@ -241,6 +257,16 @@ const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (dat
         caseNature: record.caseNature != undefined  ? `${record.caseNature}` : null,
         remark: record.remark,
       });
+      //  查询工单详情数据
+      let detailRes:any = {};
+      try {
+        detailRes = await getComplaintDetail(data.record.id);
+        ticketDetail.value = {
+          ...detailRes,
+        };
+      } catch (error) {
+        console.log(error);
+      }
    }
   // 隐藏底部时禁用整个表单
   setProps({ disabled: !showFooter.value });

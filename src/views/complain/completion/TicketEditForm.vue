@@ -25,7 +25,7 @@
                 :zrContent="ticketDetail.zhurenSuggest"
                 :sjContent="ticketDetail.shujiSuggest"
                 :readOnly="true"
-                :style="{width: '85%'}"
+                :style="{width: '89%'}"
                />
             </a-tab-pane>
             <a-tab-pane key="2" tab="预回复" force-render>
@@ -65,7 +65,6 @@
     import { BasicForm, useForm } from '/@/components/Form/index';
     import { formSchema } from './completion.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
-    
     import { saveReviewReply, getReplyDetail } from './completion.api';
     import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
     // @ts-ignore
@@ -78,6 +77,7 @@
     import { getPreReplyDetail } from '../components/PreReplyForm/preReplyForm.api';
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
+    import { defaultSpan } from '../shareInfo';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
     const attrs = useAttrs();
@@ -111,7 +111,7 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: defaultSpan },
       //row行的样式
       baseRowStyle: { width: '100%', },
       disabled: true
@@ -189,7 +189,7 @@
       if (!unref(isUpdate)) {
         return '回复审核';
       } else {
-        return '回复';
+        return '工单办结';
       }
       // update-end--author:liaozhiyang---date:20240306---for：【QQYUN-8389】系统用户详情抽屉title更改
     });
