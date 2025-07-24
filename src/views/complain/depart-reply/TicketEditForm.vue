@@ -17,8 +17,8 @@
             <LeftCircleOutlined style="font-size: 24px;" title="收起" v-if="showLeft"  @click="handleCollapse(false)"/>
             <RightCircleOutlined style="font-size: 24px;" title="展开" v-if="!showLeft" @click="handleCollapse(true)"/>
          </div>
-        <div v-if="!showLeft" style="border-right: 1px solid #ddd; padding-right: 15px;"></div> 
-        <div style="flex: 1; border-right: 1px solid #ddd; padding-right: 15px; " :style="{display: showLeft ? 'block': 'none'}">
+        <div v-if="!showLeft" style="border-right: 1px solid #ddd; padding-right: 10px;"></div> 
+        <div style="flex: 1; border-right: 1px solid #ddd; padding-right: 10px; " :style="{display: showLeft ? 'block': 'none'}">
           <div >
             <RejectInfo :detailInfo="ticketDetail" />
             <BasicForm @register="registerForm"/>
@@ -27,13 +27,13 @@
               :ticketId="ticketDetail.id"
               :zrContent="ticketDetail.zhurenSuggest"
               :sjContent="ticketDetail.shujiSuggest"
-              :style="{width: '85%'}"
+              :style="{width: '89%'}"
             />
           </div>
         </div>
 
-        <div style="width: 500px; padding-left: 40px; " :style="{width: showLeft ? '500px': 'auto'}">
-            <a-divider><span class="text-red-500">必填表单区域</span></a-divider>
+        <div style="width: 450px; padding-left: 20px; " :style="{width: showLeft ? '450px': 'auto'}">
+            <a-divider><span class="text-red-500">必填表单</span></a-divider>
             <BasicForm @register="registerAddForm">
               <template #audioDurationSlot="record">
                 <a-space>
@@ -46,33 +46,31 @@
                 </a-space>
                 </template>
             </BasicForm>
-            <a-divider>可选表单区域</a-divider>
-               <a-collapse v-model:activeKey="subActiveKey" ghost>
+            <a-divider>预回复表单</a-divider>
+            <BasicForm @register="registerPreReplyForm" >
+                <template #satisfactionTimeSlot="{model, field}">
+                  <a-space>
+                    <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                    <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                  </a-space>
+                </template>
+                <template #contactTimeSlot="{model, field}">
+                  <a-space>
+                    <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                    <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                  </a-space>
+                </template>
+                  <template #resolutionTimeSlot="{model, field}">
+                  <a-space>
+                    <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                    <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                  </a-space>
+                </template>
+              </BasicForm>
+               <!-- <a-collapse v-model:activeKey="subActiveKey" ghost>
                 <a-collapse-panel key="1" header="预回复表单" forceRender>
-                  <BasicForm
-                    @register="registerPreReplyForm"
-                  >
-                   <template #satisfactionTimeSlot="{model, field}">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                  <template #contactTimeSlot="{model, field}">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                    <template #resolutionTimeSlot="{model, field}">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                  </BasicForm>
                 </a-collapse-panel>
-              </a-collapse>
+              </a-collapse> -->
         </div>
       </div>
       </div>
@@ -101,7 +99,7 @@
     // @ts-ignore
     import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
     // 预回复表单
-    import { preFormLogicHandler, formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formReplaySchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
@@ -140,7 +138,7 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: 8 },
       //row行的样式
       baseRowStyle: { width: '100%', },
       disabled: true
@@ -341,7 +339,7 @@
           component: 'InputTextArea',
           componentProps: {
             placeholder: '请输入备注',
-            rows: 3,
+            rows: 2,
           },
           colProps: { span: 24 },
           itemProps: {
@@ -358,7 +356,7 @@
     //预回复表单配置
     const [registerPreReplyForm, { setFieldsValue: setPreReplyFieldValues, validate: preReplyValidate, updateSchema: preReplyUpdateSchema }] = useForm({
       labelWidth: 150,
-      schemas: preReplyFormSchema,
+      schemas: formReplaySchema,
       showActionButtonGroup: false,
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
@@ -713,21 +711,33 @@
       //   return;
       // }
       // 优先保存区级信息
-      try{
-        if(currentEditRecordRef.value) {
-          const preParams = await preReplyValidate();
-          const resResult = await savePreReply({
-            "deleteFileIdList": [],
-            "replyFileList": [],
-            "ticketId": currentEditRecordRef.value?.id,
-            "ticketReplyDataVo": {
-              ...preParams
-            }
-          });
-          console.log('保存预回复信息成功', resResult);
-        }
-      } catch (error) {
-        console.error('保存区级信息失败', error);
+      // try{
+      //   if(currentEditRecordRef.value) {
+      //     const preParams = await preReplyValidate();
+      //     const resResult = await savePreReply({
+      //       "deleteFileIdList": [],
+      //       "replyFileList": [],
+      //       "ticketId": currentEditRecordRef.value?.id,
+      //       "ticketReplyDataVo": {
+      //         ...preParams
+      //       }
+      //     });
+      //     console.log('保存预回复信息成功', resResult);
+      //   }
+      // } catch (error) {
+      //   console.error('保存区级信息失败', error);
+      // }
+      if(currentEditRecordRef.value) {
+        const preParams = await preReplyValidate();
+        const resResult = await savePreReply({
+          "deleteFileIdList": [],
+          "replyFileList": [],
+          "ticketId": currentEditRecordRef.value?.id,
+          "ticketReplyDataVo": {
+            ...preParams
+          }
+        });
+        console.log('保存预回复信息成功', resResult);
       }
       
        const newParams = {

@@ -16,9 +16,8 @@
             <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="回访审核">               
                <!-- 回复审核内容回显，三行两列，第一行显示：录音已倾听、跟进情况，第二行：督办人，第三行：最终处理情况 -->
-               <a-collapse v-model:activeKey="collapsibleKey" ghost>
+               <!-- <a-collapse v-model:activeKey="collapsibleKey" ghost>
                 <a-collapse-panel key="1" header="回复记录">
-                  <!-- 回复列表 -->
                   <div class="pr-4">
                     <ReplyRecord 
                       :replyData="replyList" 
@@ -48,12 +47,12 @@
                       </div>
                   </div>
                 </a-collapse-panel>
-               </a-collapse>
+               </a-collapse> -->
               <!-- 分割线 -->
              <a-divider orientation="left" ><span class="text-red-500">*工单回访(必填表单)</span></a-divider>
               <!-- 回复审核表单 -->
               <BasicForm @register="registerAuditForm"/>
-               <a-divider orientation="left">预回复(可选)</a-divider>
+               <a-divider orientation="left">预回复表单</a-divider>
               <BasicForm @register="registerPreReplyForm">
                   <template #satisfactionTimeSlot="{model, field}">
                     <a-space>
@@ -84,15 +83,49 @@
                <RejectInfo :detailInfo="ticketDetail" />
               <!-- 基本信息区域 -->   
                <BasicForm @register="registerForm"/>
-              <!-- 领导批示区域 -->
-              <LeaderInstruction
-                v-if="ticketDetail.id"
-                :ticketId="ticketDetail.id"
-                :zrContent="ticketDetail.zhurenSuggest"
-                :sjContent="ticketDetail.shujiSuggest"
-                :style="{width: '89%'}"
-              />
             </a-tab-pane>
+            <a-tab-pane key="3" tab="记录" force-render>
+                  <!-- 回复列表 -->
+                  <div class="pr-4">
+                    <ReplyRecord 
+                      :replyData="replyList" 
+                      :total="total" 
+                      :readOnly="true"
+                      @auditChange="handleAuditChange"
+                    />
+                  </div>
+                  <a-divider orientation="center">回复审核结果</a-divider>
+                  <div class="grid grid-cols-2 gap-4">
+                      <div class="flex">
+                        <p class="font-bold">录音已倾听：</p>
+                        <p class="text-gray-600">{{ replyDetailRef?.fileRead === 1? '是' : '否' }}</p>
+                      </div>
+                      <div class="flex">
+                        <p class="font-bold">跟进情况：</p>
+                        <p class="text-gray-600">{{ followCodeInfo }}</p>
+                      </div>
+                      <div class="flex">
+                        <p class="font-bold">督办人：</p>
+                        <p class="text-gray-600">{{ replyDetailRef?.overseeUserName || '-' }}</p>
+                      </div>
+                      <div class="flex">
+                        <p class="font-bold">最终处理情况：</p>
+                        <p class="text-gray-600">{{ replyDetailRef?.finalResolveResult || '-' }}</p>
+                      </div>
+                  </div>
+             </a-tab-pane>
+             <a-tab-pane key="4" tab="领导批示" force-render>
+                <div class="pr-4">
+                   <!-- 领导批示区域 -->
+                  <LeaderInstruction
+                    v-if="ticketDetail.id"
+                    :ticketId="ticketDetail.id"
+                    :zrContent="ticketDetail.zhurenSuggest"
+                    :sjContent="ticketDetail.shujiSuggest"
+                    :style="{width: '89%'}"
+                    />
+                    </div>
+             </a-tab-pane>
           </a-tabs>
         </div>
       </div>
@@ -117,7 +150,7 @@
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // @ts-ignore
-    import { preFormLogicHandler, formFinalNoRequiredSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFollowUpSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     import { audioTypes, imageTypes } from '/@/utils/fileType';
     import { defaultSpan } from '../shareInfo';
@@ -162,12 +195,12 @@
     // 预回复表单
     const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue, updateSchema: preReplyUpdateSchema }] = useForm({
       labelWidth: 150,
-      schemas: preReplyFormSchema,
+      schemas: formFollowUpSchema,
       showActionButtonGroup: false,
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: 8 },
       //row行的样式
       baseRowStyle: { width: '100%', }
     });
@@ -179,7 +212,7 @@
       layout: 'vertical',
       rowProps: { gutter: 24, justify: 'center', align: 'middle' },
       //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
-      baseColProps: { span: 12 },
+      baseColProps: { span: 8 },
       //row行的样式
       baseRowStyle: { width: '100%', }
     });
@@ -372,35 +405,36 @@
         // 先校验回复审核表单
         let values = await validate();
         // 优先保存预回复表单
-        try{
-          if(currentEditRecordRef.value) {
-            const preParams = await validatePreReplyForm();
-            // 判断附件是否存在
-            let newFileList:any[] = [];
-            if (preParams?.attachments) {
-              newFileList = preReplyFileList.map(v => {
-                return {
-                  districtFileTagType: v.districtFileTagType,
-                  fileKey: v.fileKey,
-                  fileName: v.fileName,
-                  fileSize: v.fileSize,
-                  fileTagType: v.fileTagType,
-                  id: v.id
-                }
-               });  
-            }
-            const resResult = await savePreReply({
-              "deleteFileIdList": preReplyDeleteFileIdList,
-              "replyFileList": newFileList,
-              "ticketId": currentEditRecordRef.value?.id,
-              "ticketReplyDataVo": {
-                ...preParams
+        // try{
+          
+        // } catch (error) {
+        //   console.error('保存区级信息失败', error);
+        // }
+        if(currentEditRecordRef.value) {
+          const preParams = await validatePreReplyForm();
+          // 判断附件是否存在
+          let newFileList:any[] = [];
+          if (preParams?.attachments) {
+            newFileList = preReplyFileList.map(v => {
+              return {
+                districtFileTagType: v.districtFileTagType,
+                fileKey: v.fileKey,
+                fileName: v.fileName,
+                fileSize: v.fileSize,
+                fileTagType: v.fileTagType,
+                id: v.id
               }
-            });
-            console.log('保存预回复信息成功', resResult);
+              });  
           }
-        } catch (error) {
-          console.error('保存区级信息失败', error);
+          const resResult = await savePreReply({
+            "deleteFileIdList": preReplyDeleteFileIdList,
+            "replyFileList": newFileList,
+            "ticketId": currentEditRecordRef.value?.id,
+            "ticketReplyDataVo": {
+              ...preParams
+            }
+          });
+          console.log('保存预回复信息成功', resResult);
         }
         setModalProps({ confirmLoading: true });
         values.userIdentity === 1 && (values.departIds = '');

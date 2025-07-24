@@ -947,5 +947,9 @@ export const formAuditSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入备注',
     },
+    // colProps: { span: 8 },
+    // itemProps: {
+    //   wrapperCol: { span: 8, pull: 12 },
+    // }
   }
 ];

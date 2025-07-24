@@ -7,6 +7,7 @@ import { render } from '/@/utils/common/renderUtils';
 import { getDictItemsByCode } from '/@/utils/dict';
 import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 import { getDateDiff } from '/@/utils/dateUtil';
+import { defaultColProps } from '../shareInfo';
 
 
 function treeToList(tree: any[]) {
@@ -558,9 +559,9 @@ export const formSchema: FormSchema[] = [
       label: '三级分类',
       field: 'categoryThree',
       component: 'Input',
-      colProps: { span: 24 },
+      colProps: { span: 16 },
       itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
+        wrapperCol: { span: 16, sm: { span: 21 } },
       }
     },
     {
@@ -575,7 +576,7 @@ export const formSchema: FormSchema[] = [
       },
       colProps: { span: 24 },
       itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
+        wrapperCol: { ...defaultColProps },
       }
     },
     {
@@ -590,7 +591,7 @@ export const formSchema: FormSchema[] = [
       },
       colProps: { span: 24 },
       itemProps: {
-        wrapperCol: { span: 24, sm: { span: 21 } },
+        wrapperCol: { ...defaultColProps },
       }
     },
     {
@@ -646,8 +647,9 @@ export const formSchema: FormSchema[] = [
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
-      colProps: {
-        span: 12
+      colProps: { span: 16 },
+      itemProps: {
+        wrapperCol: { span: 16, sm: { span: 21 } },
       }
     },
     {
