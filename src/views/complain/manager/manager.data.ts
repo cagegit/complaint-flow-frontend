@@ -1165,6 +1165,7 @@ export const addFormSchema: FormSchema[] = [
 export const ticketRecordListColumns: BasicColumn[] = [
   // { title: 'ID', dataIndex: 'id', width: 70, fixed: 'left' },
   { title: '操作时间', dataIndex: 'createTime', width: 160 },
+  { title: '操作节点', dataIndex: 'remark', width: 150, ellipsis:true },
   { title: '操作人', dataIndex: 'createBy', width: 120, ellipsis:true },
   { title: '所属部门', dataIndex: 'orgId_dictText', width: 120, ellipsis:true },
   { title: '数据名称', dataIndex: 'fieldZhName', width: 140, ellipsis:true },
@@ -1181,7 +1182,7 @@ export const ticketRecordListColumns: BasicColumn[] = [
         ]
       }),
       placement: "topRight",
-      autoAdjustOverflow: false,
+      autoAdjustOverflow: true,
       overlayClassName: 'tooltip-wrapper',
       overlayInnerStyle: {padding: '20px', backgroundColor: '#fff', color: '#333'}
     }, {
@@ -1190,5 +1191,4 @@ export const ticketRecordListColumns: BasicColumn[] = [
       }, '详情')
     })
   }},
-  { title: '备注', dataIndex: 'remark', width: 150, ellipsis:true },
 ]

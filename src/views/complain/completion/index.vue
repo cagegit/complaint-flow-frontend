@@ -151,7 +151,7 @@
       function getTableAction(record): ActionItem[] {
         return [
           {
-            label: '下载录音',
+            label: '下载附件',
             onClick: handleEdit.bind(null, record),
             ifShow: () => hasPermission('biz:complain:complete:downloadAudio'),
           },

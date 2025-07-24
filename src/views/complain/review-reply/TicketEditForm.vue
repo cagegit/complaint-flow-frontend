@@ -60,15 +60,17 @@
                <RejectInfo :detailInfo="ticketDetail" />
                 <!-- 基本信息区域 -->   
                <BasicForm @register="registerForm"/>
-               <!-- 领导批示区域 -->
-              <LeaderInstruction
-                v-if="ticketDetail.id"
-                :ticketId="ticketDetail.id"
-                :zrContent="ticketDetail.zhurenSuggest"
-                :sjContent="ticketDetail.shujiSuggest"
-                :style="{width: '89%'}"
-              />
             </a-tab-pane>
+             <a-tab-pane key="3" tab="领导批示" force-render>
+                <!-- 领导批示区域 -->
+                <LeaderInstruction
+                  v-if="ticketDetail.id"
+                  :ticketId="ticketDetail.id"
+                  :zrContent="ticketDetail.zhurenSuggest"
+                  :sjContent="ticketDetail.shujiSuggest"
+                  :style="{width: '89%'}"
+                />
+             </a-tab-pane>
           </a-tabs>
         </div>
       </div>

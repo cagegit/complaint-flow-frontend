@@ -38,6 +38,10 @@ export const list = (param) => {
       }
         delete params.sendTime;
     }
+    // 处理社区、委员也 也是传参这里 只穿最后一个id
+    if (params.assignCommunityId) {
+      params.assignCommunityId = params.assignCommunityId.split(',').pop();
+    }
     return new Promise((resolve,reject) => {
       defHttp.get({ url: Api.list, params}).then(res => {
         res.records = res.list;

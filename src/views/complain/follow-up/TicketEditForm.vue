@@ -14,7 +14,7 @@
         <div style="flex: 1; border-right: 1px solid #ddd;">
             <!-- <BasicForm @register="registerForm"/> -->
             <a-tabs v-model:activeKey="activeKey">
-            <a-tab-pane key="1" tab="回访审核">               
+            <a-tab-pane key="1" tab="工单回访">               
                <!-- 回复审核内容回显，三行两列，第一行显示：录音已倾听、跟进情况，第二行：督办人，第三行：最终处理情况 -->
                <!-- <a-collapse v-model:activeKey="collapsibleKey" ghost>
                 <a-collapse-panel key="1" header="回复记录">
@@ -56,20 +56,20 @@
               <BasicForm @register="registerPreReplyForm">
                   <template #satisfactionTimeSlot="{model, field}">
                     <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      <a-input-number style="width: 50px;" v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number style="width: 50px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
                     </a-space>
                   </template>
                   <template #contactTimeSlot="{model, field}">
                     <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      <a-input-number style="width: 50px;"  v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number style="width: 50px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
                     </a-space>
                   </template>
                     <template #resolutionTimeSlot="{model, field}">
                     <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      <a-input-number style="width: 50px;" v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number style="width: 50px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
                     </a-space>
                   </template>
                   <!-- 附件 -->

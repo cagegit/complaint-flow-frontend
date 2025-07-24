@@ -15,15 +15,6 @@
         <a-tab-pane key="1" tab="基本信息">
             <!-- 拒绝信息 -->
             <RejectInfo :detailInfo="ticketDetail" />
-            <!-- 领导批示区域 -->
-            <LeaderInstruction
-                v-if="ticketDetail.id"
-                :ticketId="ticketDetail.id"
-                :zrContent="ticketDetail.zhurenSuggest"
-                :sjContent="ticketDetail.shujiSuggest"
-                :readOnly="true"
-                :style="{width: '89%'}"
-            />
             <!-- <a-divider orientation="left" >基础信息</a-divider> -->
             <div class="p-1">
                <BasicForm @register="registerForm" />
@@ -39,7 +30,7 @@
             <BasicTable @register="registerRecordTable" />
           </div>
         </a-tab-pane>
-         <a-tab-pane key="4" tab="回复记录" forceRender>
+         <a-tab-pane key="4" tab="记录" forceRender>
           <div class="record-list">
             <!-- 回复列表 -->
             <div class="pr-4">
@@ -69,6 +60,17 @@
                 </div>
             </div>
           </div>
+        </a-tab-pane>
+        <a-tab-pane key="5" tab="领导批示" forceRender>
+            <!-- 领导批示区域 -->
+            <LeaderInstruction
+                v-if="ticketDetail.id"
+                :ticketId="ticketDetail.id"
+                :zrContent="ticketDetail.zhurenSuggest"
+                :sjContent="ticketDetail.shujiSuggest"
+                :readOnly="true"
+                :style="{width: '89%'}"
+            />
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -101,7 +103,8 @@ import { useListPage } from '/@/hooks/system/useListPage';
 import { addFormSchema as EditAssignForm } from '../assign/assign.data';
 import { getCitySevenFiveList, getCommunityChildList, getComplaintDetail } from '/@/api/common/api';
 import { defaultSpan } from '../shareInfo';
-
+// @ts-ignore 领导批示组件
+import LeaderInstruction from '../components/LeaderInstruction/index.vue';
 // 表单详情
 const ticketDetail = ref<any>({});
 // 声明Emits
@@ -350,7 +353,7 @@ const getTitle = computed(() => {
     // activeKey.value = key;
     console.log('activeKeyChange', key);
     // 切换到工单记录时隐藏底部按钮
-    if (key == '3') {
+    if (key == '3' || key == '4' || key == '5') {
        showFooter.value = false; // 隐藏底部按钮
     } else {
        showFooter.value = true; // 显示底部按钮

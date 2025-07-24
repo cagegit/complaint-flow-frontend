@@ -122,6 +122,9 @@ export const columns: BasicColumn[] = [
    { title: '点单工单', dataIndex: 'pointFlag', width: 80, customRender({text}) {
      return text == 1 ? '是' : '否';
    }},
+   { title: '是否满意', dataIndex: 'isSatisfaction_dictText', width: 100 },
+   { title: '是否解决', dataIndex: 'isSolved_dictText', width: 100 },
+   { title: '是否属实', dataIndex: 'isTrue_dictText', width: 100 },
    { title: '受理单位', dataIndex: 'acceptDepartment', width: 120 },
    { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 120 },
    { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 120 },
@@ -943,13 +946,14 @@ export const formAuditSchema: FormSchema[] = [
   {
     field: 'remark',
     label: '备注',
-    component: 'Input',
+    component: 'InputTextArea',
     componentProps: {
       placeholder: '请输入备注',
+      rows: 2,
     },
-    // colProps: { span: 8 },
-    // itemProps: {
-    //   wrapperCol: { span: 8, pull: 12 },
-    // }
+    colProps: { span: 24 },
+    itemProps: {
+      wrapperCol: { span: 24, sm: { span: 23 } },
+    }
   }
 ];
