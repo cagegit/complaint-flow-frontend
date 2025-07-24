@@ -56,7 +56,7 @@
     const total = processedData.reduce((sum, item) => sum + item.value, 0);
     const result = [...processedData];
 
-    chartNumber.value = total;
+    chartNumber.value = total > 100 ? 100 : total;
 
     console.log('total', total, 'result', result);
 
