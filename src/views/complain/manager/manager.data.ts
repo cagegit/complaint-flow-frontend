@@ -1167,7 +1167,7 @@ export const ticketRecordListColumns: BasicColumn[] = [
   { title: '操作时间', dataIndex: 'createTime', width: 160 },
   { title: '操作人', dataIndex: 'createBy', width: 120, ellipsis:true },
   { title: '所属部门', dataIndex: 'orgId_dictText', width: 120, ellipsis:true },
-  { title: '数据名称', dataIndex: 'dataName', width: 140, ellipsis:true },
+  { title: '数据名称', dataIndex: 'fieldZhName', width: 140, ellipsis:true },
   { title: '数据变更', dataIndex: 'dataChangeJson', width: 100, ellipsis:true,
     customRender: ({ text }) => {
     return h(Tooltip, {
