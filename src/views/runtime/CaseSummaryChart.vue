@@ -29,7 +29,6 @@
   const chartRef = ref(null);
   const chartNumber = ref(0);
   let chartInstance = null;
-  let isNo100 = ref(false);
 
   // 生成模拟数据
   const generateMockData = () => {
@@ -56,24 +55,7 @@
     const total = processedData.reduce((sum, item) => sum + item.value, 0);
     const result = [...processedData];
 
-    chartNumber.value = total > 100 ? 100 : total;
-
-    console.log('total', total, 'result', result);
-
-    isNo100.value = total < 100;
-    if (total < 100) {
-      result.push({
-        value: 100 - total,
-        name: 'Empty',
-        itemStyle: {
-          color: 'rgba(200, 200, 200, 0.1)', // 透明扇区
-        },
-        color: '200, 200, 200',
-        label: { show: false }, // 不显示标签
-        // 这里不想hover时提示
-        hoverAnimation: false,
-      });
-    }
+    chartNumber.value = total > 0 ? 100 : 0;
 
     return result;
   }
@@ -130,18 +112,6 @@
         },
         rate: item.rate,
       };
-      if (isNo100.value && index === data.length - 1) {
-        targetSerie = {
-          ...targetSerie,
-          itemStyle: {
-            color: 'rgba(255,255,255,0)',
-          },
-          label: {
-            show: false,
-          },
-          tooltip: { show: false }, // 不显示提示
-        };
-      }
       series.push(targetSerie);
 
       startAngle = endAngle;
