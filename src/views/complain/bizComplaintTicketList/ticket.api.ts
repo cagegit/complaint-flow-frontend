@@ -27,9 +27,11 @@ export const list = (param) => {
     if(params.importTime) {
       let dateList = params.importTime.split(',');
       if(dateList.length === 4) {
-        params.startImportTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD') + ' 00:00:00';
-        // 时分秒 设置为00:00:00
-        params.endImportTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD') + ' 23:59:59';
+        // params.startImportTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD') + ' 00:00:00';
+        // // 时分秒 设置为00:00:00
+        // params.endImportTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD') + ' 23:59:59';
+        params.startImportTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
+        params.endImportTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
       }
        delete params.importTime;
     }

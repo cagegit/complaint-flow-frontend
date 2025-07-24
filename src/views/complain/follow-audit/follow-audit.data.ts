@@ -183,9 +183,11 @@ export const columns: BasicColumn[] = [
    const rangePresets = ref([
     // { label: '今天', value: [dayjs().add(-1, 'd'), dayjs()] },
     { label: '今天', value: [dayjs().startOf('day'), dayjs().endOf('day')] },
-    { label: '近7天', value: [dayjs().add(-7, 'd'), dayjs()] },
-    { label: '近1个月', value: [dayjs().add(-1, 'M'), dayjs()] },
-    { label: '近3个月', value: [dayjs().add(-3, 'M'), dayjs()] },
+    { label: '近7天', value: [dayjs().add(-7, 'd').startOf('day'), dayjs().endOf('day')] },
+    { label: '近1个月', value: [dayjs().add(-1, 'M').startOf('day'), dayjs().endOf('day')] },
+    { label: '近3个月', value: [dayjs().add(-3, 'M').startOf('day'), dayjs().endOf('day')] },
+    //近一年
+    { label: '近1年', value: [dayjs().add(-1, 'y').startOf('day'), dayjs().endOf('day')] },
   ]);
 
   export const searchFormSchema: FormSchema[] = [
@@ -246,8 +248,8 @@ export const columns: BasicColumn[] = [
           showTime: true
         },
         defaultValue: [
-          dayjs().add(-3, 'M'),
-          dayjs()
+          dayjs().add(-3, 'M').startOf('day'),
+          dayjs().endOf('day')
         ]
     },
     {
