@@ -139,7 +139,7 @@
           setFieldsValue({
             ...res,
             caseNature: res?.caseNature ? res.caseNature + '' : null,
-            labelCode: res?.labelCode ? res.labelCode + '' : null,
+            labelCode: res?.labelCode ? res.labelCode + '' : '1', // 默认值为1
             // 处理科室
             assignDeptIdList: Array.isArray(assignDetail?.assignDeptList) ? assignDetail.assignDeptList.map(v => v.orgId) : [],
             // 处理社区/居委会

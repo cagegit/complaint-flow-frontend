@@ -212,7 +212,7 @@ export const formSchema: FormSchema[] = [
               },
             },
           ]);
-          formModel['taskType'] = null;
+          formModel['taskType'] = '0';
         } else {
           updateSchema([
             {
@@ -2512,7 +2512,7 @@ export const formReplaySchema: FormSchema[] = [
               },
             },
           ]);
-          formModel['taskType'] = null;
+          formModel['taskType'] = '0'; // 否，默认选择其他
         } else {
           updateSchema([
             {
@@ -3303,7 +3303,7 @@ export const formFollowUpSchema: FormSchema[] = [
       null,
       null
     ],
-    required: true
+    // required: true
   },
   {
     field: 'replyContactTime',
@@ -3316,7 +3316,7 @@ export const formFollowUpSchema: FormSchema[] = [
       null,
       null
     ],
-    required: true
+    // required: true
   },
   {
     field: 'replyResolveTime',
@@ -3329,7 +3329,7 @@ export const formFollowUpSchema: FormSchema[] = [
       null,
       null
     ],
-    required: true
+    // required: true
   },
   // {
   //   field: 'liveHoodIssueId',

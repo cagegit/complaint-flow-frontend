@@ -585,7 +585,7 @@ export const addFormSchema: FormSchema[] = [
       options: getDictItemsByCode('biz_complaint_lavel')
     },
     defaultValue: '1',
-    // required: true
+    required: true
   },
   {
     field: 'reportDistrictId',

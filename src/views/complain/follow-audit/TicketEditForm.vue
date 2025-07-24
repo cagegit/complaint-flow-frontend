@@ -221,6 +221,7 @@
         let detailRes:any = {};
         try {
           detailRes = await getComplaintDetail(data.record.id);
+          console.log('工单详情', detailRes);
           ticketDetail.value = detailRes;
         } catch (error) {
           console.log(error);
@@ -231,10 +232,10 @@
         });
         // 判断原始标签的值
         if(detailRes?.originalLabel) {
-          updateAuditSchema({
+          updateAuditSchema([{
             field: 'sevenFiveId',
             required: detailRes.originalLabel.indexOf('七有五性') > -1 ? true : false,
-          })
+          }])
         }
         // 设置审核表单值
         setAuditFieldsValue({

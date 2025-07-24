@@ -205,7 +205,7 @@
       baseRowStyle: { width: '100%', }
     });
     //回复审核表单配置
-    const [registerAuditForm, { setProps: setAuditProps, setFieldsValue: setAuditFieldsValue, validate }] = useForm({
+    const [registerAuditForm, { setProps: setAuditProps, setFieldsValue: setAuditFieldsValue, validate, updateSchema: updateAuditSchema }] = useForm({
       labelWidth: 150,
       schemas: formAuditSchema,
       showActionButtonGroup: false,
@@ -336,6 +336,13 @@
             }).catch(error => {
               console.log(error);
             });
+          }
+          // 判断原始标签的值
+          if(detailRes?.originalLabel) {
+            updateAuditSchema([{
+              field: 'sevenFiveId',
+              required: detailRes.originalLabel.indexOf('七有五性') > -1 ? true : false,
+            }])
           }
 
         } catch (error) {
