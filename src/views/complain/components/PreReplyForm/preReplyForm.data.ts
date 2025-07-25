@@ -3149,12 +3149,39 @@ export const formFollowUpSchema: FormSchema[] = [
     field: 'isContact',
     label: '是否联系',
     component: 'Select',
-    componentProps: {
+    componentProps: ({formActionType, formModel}) => ({
       placeholder: '请输入是否联系',
       // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
       options: contactOptions,  // 固定选项
       allowClear: true,
-    },
+      onChange: (value) => {
+        const { updateSchema } = formActionType;
+        // 处理变化 无法联系
+        if(value == '2') {
+          formModel['isSolved'] = null; // 如果选择了联系，默认解决状态为已解决
+          formModel['isSatisfaction'] = null; // 如果选择了联系，默认满意状态为不满意
+          updateSchema([
+            {
+            field: 'isSolved',
+            required: false,
+          },
+          {
+            field: 'isSatisfaction',
+            required: false,
+          }])
+        } else {
+          updateSchema([
+            {
+              field: 'isSolved',
+              required: true,
+            },
+            {
+              field: 'isSatisfaction',
+              required: true,
+            }])
+        }
+      }
+    }),
     // required: true,
     colProps: { span: 6 },
     required: true
