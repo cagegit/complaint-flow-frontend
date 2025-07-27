@@ -50,7 +50,7 @@ const formatParams = (param) => {
 
   // 导入时间范围处理
   if (params.importTime) {
-    let dateList = params.importTime.split(',');
+    const dateList = params.importTime.split(',');
     if (dateList.length === 4) {
       // params.startImportTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
       // params.endImportTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
@@ -62,7 +62,7 @@ const formatParams = (param) => {
 
   // 派单时间范围处理
   if (params.sendTime) {
-    let dateList = params.sendTime.split(',');
+    const dateList = params.sendTime.split(',');
     if (dateList.length === 4) {
       params.startSendTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
       params.endSendTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
@@ -72,7 +72,7 @@ const formatParams = (param) => {
 
   // 办结时间范围处理
   if (params.doneTime) {
-    let dateList = params.doneTime.split(',');
+    const dateList = params.doneTime.split(',');
     if (dateList.length === 4) {
       params.startDoneTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
       params.endDoneTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
@@ -82,7 +82,7 @@ const formatParams = (param) => {
 
   // 开始回复审核时间	范围处理
   if (params.replyAuditTime) {
-    let dateList = params.replyAuditTime.split(',');
+    const dateList = params.replyAuditTime.split(',');
     if (dateList.length === 4) {
       params.startReplyAuditTime = dayjs(dateList[0] + dateList[1]).format('YYYY-MM-DD HH:mm:ss');
       params.endReplyAuditTime = dayjs(dateList[2] + dateList[3]).format('YYYY-MM-DD HH:mm:ss');
@@ -97,8 +97,7 @@ const formatParams = (param) => {
     params.sevenFiveId = params.sevenFiveId.split(',').pop();
   }
   return params;
-}
-
+};
 
 /**
  * 工单管理列表
@@ -134,7 +133,7 @@ export const list = (param) => {
 export const editComplain = (params) =>
   defHttp.post({
     url: Api.editComplain,
-    params
+    params,
   });
 
 /**
@@ -175,13 +174,14 @@ export const getDayExcelColumns = () => defHttp.get({ url: Api.getDayExcelColumn
 /**
  * 导出word工单
  */
-export const exportTicketWord = (params) => defHttp.post({ url: paramsToQuery(Api.exportTicketWord, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
+export const exportTicketWord = (params) =>
+  defHttp.post({ url: paramsToQuery(Api.exportTicketWord, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
 
 /**
  * 导出剔除统计表
  */
-export const exportKickOut = (params) => defHttp.post({ url: paramsToQuery(Api.exportKickOut, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
-
+export const exportKickOut = (params) =>
+  defHttp.post({ url: paramsToQuery(Api.exportKickOut, params), params, headers: { ContentType: ContentTypeEnum.FORM_URLENCODED } });
 
 /**
  * 导出统计表
@@ -225,31 +225,31 @@ export const getExportDayExcel = (param) => {
  * 导出申请延期工单
  */
 export const exportSqyqTicket = (param) => {
-  return defHttp.post({ url: Api.exportSqyqTicket, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } })
+  return defHttp.post({ url: Api.exportSqyqTicket, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } });
 };
 
 /**
  * 导出申请提前销账工单
  */
-export const exportTicketAdvance = (param) => {   
-  return defHttp.post({ url: Api.exportTicketAdvance, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } })
-}
+export const exportTicketAdvance = (param) => {
+  return defHttp.post({ url: Api.exportTicketAdvance, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } });
+};
 
 /**
  * 导出申请销账工单
  */
 export const exportTicketDone = (param) => {
-  return defHttp.post({ url: Api.exportTicketDone, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } })
-}
+  return defHttp.post({ url: Api.exportTicketDone, data: param, headers: { 'content-type': ContentTypeEnum.FORM_URLENCODED } });
+};
 
 /**
  * 工单历史记录
  */
 export const ticketRecordList = (param) => {
-  if(param.column) {
+  if (param.column) {
     delete param.column;
   }
-  if(param.order) {
+  if (param.order) {
     delete param.order;
   }
   const params = formatParams(param);
@@ -267,12 +267,12 @@ export const ticketRecordList = (param) => {
         reject(err);
       });
   });
-}
+};
 
 // 修改分配信息
 export const editAssignComplain = (params) => {
   return defHttp.post({
     url: Api.editAssignComplain,
-    params
+    params,
   });
-}
+};

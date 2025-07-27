@@ -42,8 +42,6 @@
 
   const { createMessage } = useMessage();
 
-  // 声明Emits
-  const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
   // 当前表单内容
   let currentData: any = {};
@@ -67,19 +65,12 @@
     // 禁用表单
     disabled: false,
   });
-  // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
   const showFooter = ref(true);
 
-  function closeModal(data: any = null) {
+  function closeModal() {
     // 关闭当前页面,发送数据给打开页面并返回
     try {
       if (wx?.miniProgram) {
-        wx?.miniProgram?.postMessage?.({
-          data: JSON.stringify({
-            action: 'postData',
-            data: data,
-          }),
-        });
         wx?.miniProgram?.navigateBack?.();
       } else {
         // 如果是h5页面，直接关闭
@@ -167,8 +158,10 @@
         await addTicket(params);
       }
       createMessage.info('提交成功');
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
       //关闭弹窗
-      closeModal();
     } finally {
       confirmLoading.value = false;
     }

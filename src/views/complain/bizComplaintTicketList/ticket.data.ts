@@ -509,6 +509,28 @@ export const formSchema: FormSchema[] = [
       }
     },
     {
+      label: '重点工单',
+      field: 'importFlag',
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          { label: '是', value: 1 },
+          { label: '否', value: 0 },
+        ],  
+      }
+    },
+     {
+      label: '点单工单',
+      field: 'pointFlag',
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          { label: '是', value: 1 },
+          { label: '否', value: 0 },
+        ],  
+      }
+    },
+    {
       label: '派单人员',
       field: 'sendUser',
       component: 'Input',

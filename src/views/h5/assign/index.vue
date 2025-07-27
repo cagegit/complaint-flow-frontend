@@ -45,9 +45,6 @@
   const route = useRoute();
 
   const { createMessage } = useMessage();
-
-  // 声明Emits
-  const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
   // 当前表单内容
   let currentData: any = {};
@@ -105,7 +102,6 @@
   }
 
   onMounted(async () => {
-    console.log('route.query', route.query);
     // 从url获取record信息
     let data: any = {
       isUpdate: true,
@@ -128,13 +124,13 @@
     isUpdate.value = !!data?.isUpdate;
     // 给当前data赋值
     currentData = data;
-    console.log('data', data);
+    console.log(data);
     let assignDetail: any = {};
     // 查询分派详情
     try {
       assignDetail = await getAssignDetail(data.record.id);
       // console.log(res);
-      //   回显数据;
+      // 回显数据
       if (assignDetail) {
         setFieldsValue({
           ...assignDetail,
@@ -205,7 +201,7 @@
             .then((sevenFiveData) => {
               if (Array.isArray(sevenFiveData)) {
                 sevenFiveData.forEach((item: any) => {
-                 if(item.id == res.sevenFiveId || item.allParentIds == res.sevenFiveId) {
+                  if (item.id == res.sevenFiveId) {
                     // res.sevenFiveId = item.name;
                     setFieldsValue({
                       sevenFiveId: item.allParentIds ? item.allParentIds.split(',') : [],
@@ -301,10 +297,10 @@
       }
       //提交表单
       await addAssign(params);
-      //关闭弹窗
-      closeModal();
-      //刷新列表
-      emit('success', { isUpdateVal, values });
+      createMessage.info('提交成功');
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
     } finally {
       setModalProps({ confirmLoading: false });
     }
