@@ -8,15 +8,22 @@
       :maskClosable="false"
     >
   <div style="min-height: 350px">
-      <BasicTable @register="registerTable" />
+      <BasicTable @register="registerTable" > 
+        <template #workOrderNumberSlot="{ text, record }">
+          <a href="javascript:void(0)" @click="showDetailModal(record)">{{ text }}</a>
+        </template>
+      </BasicTable>
   </div>
 </BasicModal>
+<!-- 工单详情 -->
+<TicketDetailModal  @register="registerDetailModal" />
 </template>
 <script lang="ts" setup name="contact-history-list">
     import { ref, useAttrs } from 'vue';
     import { BasicTable } from '/@/components/Table';
-    import { BasicModal, useModalInner } from '/@/components/Modal';
-
+    import { BasicModal, useModal, useModalInner } from '/@/components/Modal';
+    // @ts-ignore
+    import TicketDetailModal from './TicketDetailModal.vue';
 
     import { list } from './contactHistory.api';
     import { columns, searchFormSchema } from './contactHistory.data';
@@ -25,6 +32,9 @@
 
     // const emit = defineEmits(['register']);
     const $attrs = useAttrs();
+
+   // 注册工单详情
+   const [registerDetailModal, { openModal }] = useModal();
 
    // 列表页面公共参数、方法
     const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
@@ -73,4 +83,14 @@
           }
         }
       }); 
+
+      // 打开详情弹窗
+      const showDetailModal = (record: any) => {
+        console.log(record);
+        openModal(true, {
+          isUpdate: false,
+          record: record,
+          showFooter: false,
+        });
+      };
 </script>

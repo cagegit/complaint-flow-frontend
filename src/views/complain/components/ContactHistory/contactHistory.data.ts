@@ -10,7 +10,7 @@ export const columns: BasicColumn[] =[
     }
   },
   { title: '案件编号', dataIndex: 'caseNumber', width: 150 },
-  { title: '工单编号', dataIndex: 'workOrderNumber', width: 150 },
+  { title: '工单编号', dataIndex: 'workOrderNumber', slots: { customRender: 'workOrderNumberSlot' }, width: 150 },
   { title: '来电人', dataIndex: 'callUserName', width: 120 },
    { title: '来电号码', dataIndex: 'callPhoneNumber', width: 150 },
   { title: '来电时间', dataIndex: 'callTime', width: 150 },
