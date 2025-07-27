@@ -67,7 +67,17 @@
 <script lang="ts" setup>
   import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
-  import { list, exportTicketWord, exportKickOut, exportExcelStatis, getDayExcelColumns, exportSqyqTicket, exportTicketAdvance, exportTicketDone, deleteTicket } from './manager.api';
+  import {
+    list,
+    exportTicketWord,
+    exportKickOut,
+    exportExcelStatis,
+    getDayExcelColumns,
+    exportSqyqTicket,
+    exportTicketAdvance,
+    exportTicketDone,
+    deleteTicket,
+  } from './manager.api';
   import { columns, searchFormSchema } from './manager.data';
   import { useModal } from '/@/components/Modal';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -87,12 +97,8 @@
   import { usePermission } from '/@/hooks/web/usePermission';
   // @ts-ignore
   import { DownOutlined, ExportOutlined } from '@ant-design/icons-vue';
-  <<<<<<< HEAD
   //@ts-ignore
   import ContactHistory from '../components/ContactHistory/index.vue';
-  =======
-
-  >>>>>>> develop-h5
   //注册modal
   const [registerModal, { openModal }] = useModal();
   const [registerExportDayModal, { openModal: openExportModal }] = useModal();
@@ -108,7 +114,6 @@
     sex: '1',
     sport: '1,3',
   });
-
 
   const sportOptions = [
     {
@@ -158,84 +163,85 @@
         //   span: 24,
         //   style: { textAlign: 'left' }, // 可选，按钮靠左
         // },
-        resetFunc: resetSearchList
+        resetFunc: resetSearchList,
       },
       actionColumn: {
         width: 120,
         fixed: 'right',
       },
       beforeFetch: (params) => {
-        const query=  route.query;
+        const query = route.query;
         // 如果route.query中有值，query参数只在首次查询时生效，再次查询时不再使用route.query中的值
-        if (firstQuery.value === 1 &&Object.keys(query).length > 0) {
+        if (firstQuery.value === 1 && Object.keys(query).length > 0) {
           // 如果没有查询参数，设置默认查询参数
           firstQuery.value = 2;
           // @ts-ignore
           const startTime = query?.startTime ? dayjs(query.startTime) : null;
           // @ts-ignore
           const endTime = query?.endTime ? dayjs(query.endTime) : null;
-          if(query?.statusCode == '-1' && query?.resolveCount !== undefined) { // 二次办理statusCode + resolveCount
+          if (query?.statusCode == '-1' && query?.resolveCount !== undefined) {
+            // 二次办理statusCode + resolveCount
             getForm?.()?.setFieldsValue({
               statusCode: query.statusCode,
               resolveCount: query.resolveCount,
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime] } : {}),
             });
             return Object.assign(params, {
               pageNum: params.pageNo,
               statusCode: query.statusCode,
               resolveCount: query.resolveCount,
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime].join(',') } : {}),
             });
-          } else if(query?.statusCode == 'complete_done') {
+          } else if (query?.statusCode == 'complete_done') {
             // 诉件统计
             getForm?.()?.setFieldsValue({
-              statusCode: query.statusCode ? query.statusCode +'' : null,
-              sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
-              caseType: query.caseType  || null, // 案件类型
+              statusCode: query.statusCode ? query.statusCode + '' : null,
+              sourceType: query.sourceType ? query.sourceType + '' : null, // 来源类型
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime] } : {}),
+              caseType: query.caseType || null, // 案件类型
               caseNature: query.caseNature || null, // 案件性质
               satisfyFlag: query.satisfyFlag || null, // 是否满意
               resolveFlag: query.resolveFlag || null, // 是否解决
             });
             return Object.assign(params, {
               pageNum: params.pageNo,
-              statusCode: query.statusCode ? query.statusCode +'' : null,
-              sourceType: query.sourceType ? query.sourceType +'' : null, // 来源类型
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
-              caseType: query.caseType  || null,//案件类型
+              statusCode: query.statusCode ? query.statusCode + '' : null,
+              sourceType: query.sourceType ? query.sourceType + '' : null, // 来源类型
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime].join(',') } : {}),
+              caseType: query.caseType || null, //案件类型
               caseNature: query.caseNature || null, //案件性质
               satisfyFlag: query.satisfyFlag || null, // 是否满意
               resolveFlag: query.resolveFlag || null, // 是否解决
             });
-          } else if(query?.statusCode !== undefined) {
+          } else if (query?.statusCode !== undefined) {
             getForm?.()?.setFieldsValue({
               statusCode: query.statusCode,
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime] } : {}),
             });
             return Object.assign(params, {
               pageNum: params.pageNo,
               statusCode: query.statusCode,
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime].join(',') } : {}),
             });
-          } else if(query?.caseNature && query?.startTime && query?.endTime) {
+          } else if (query?.caseNature && query?.startTime && query?.endTime) {
             // console.log('query', query);
             getForm?.()?.setFieldsValue({
               caseNature: query.caseNature || null, // 案件性质
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime] } : {}),
             });
             return Object.assign(params, {
               pageNum: params.pageNo,
               caseNature: query.caseNature || null, // 案件性质
-            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime].join(',') } : {}),
             });
-          } else if(query?.startTime && query?.endTime) {
+          } else if (query?.startTime && query?.endTime) {
             // console.log('query', query);
             getForm?.()?.setFieldsValue({
-              ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime] } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime] } : {}),
             });
             return Object.assign(params, {
               pageNum: params.pageNo,
-            ...(query.startTime && query.endTime) ? { importTime: [startTime, endTime].join(',') } : {},
+              ...(query.startTime && query.endTime ? { importTime: [startTime, endTime].join(',') } : {}),
             });
           } else {
             return Object.assign(params, { pageNum: params.pageNo });
@@ -246,9 +252,9 @@
         }
       },
       // 高亮状态为重点件的行
-      rowClassName: (record:any) => {
+      rowClassName: (record: any) => {
         return record.labelCode == '11' ? 'highlight-table-row' : '';
-      }
+      },
     },
   });
 
@@ -257,15 +263,14 @@
 
   // 重置表单
   async function resetSearchList() {
-    if(route.query) {
+    if (route.query) {
       router.replace({ path: route.path });
     } else {
-     // console.log('重置表单');
+      // console.log('重置表单');
       getForm?.()?.resetFields();
 
       reload?.();
     }
-
   }
 
   function getTableAction(record): ActionItem[] {
@@ -511,17 +516,15 @@
       onExportTicketDone();
     }
   }
-  <<<<<<< HEAD
+
   // 联系历史
-    function showHistoryModal(type: string, record: Recordable) {
-      openHistoryModal(true, {
-        record: { timeType: type, ...record },
-        isUpdate: true,
-        showFooter: true
-      });
-    }
-  =======
-  >>>>>>> develop-h5
+  function showHistoryModal(type: string, record: Recordable) {
+    openHistoryModal(true, {
+      record: { timeType: type, ...record },
+      isUpdate: true,
+      showFooter: true,
+    });
+  }
 </script>
 <style scoped>
   :deep(.ant-form-item-label > label) {
