@@ -628,6 +628,16 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
   },
   {
+    label: '处理社区',
+    field: 'assignCommunitys',
+    component: 'Input',
+  },
+   {
+    label: '处理科室',
+    field: 'assignDepts',
+    component: 'Input',
+  },
+  {
     label: '来电人',
     field: 'callUserName',
     component: 'Input',
@@ -680,9 +690,9 @@ export const formSchema: FormSchema[] = [
     label: '三级分类',
     field: 'categoryThree',
     component: 'Input',
-    colProps: { span: 16 },
+    colProps: { span: 24 },
     itemProps: {
-      wrapperCol: { span: 16, sm: { span: 21 } },
+      wrapperCol: { span: 24, sm: { span: 22 } },
     },
   },
   {
@@ -713,28 +723,6 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 24 },
     itemProps: {
       wrapperCol: { ...defaultColProps },
-    },
-  },
-  {
-    label: '重点工单',
-    field: 'importFlag',
-    component: 'RadioGroup',
-    componentProps: {
-      options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
-      ],
-    },
-  },
-  {
-    label: '点单工单',
-    field: 'pointFlag',
-    component: 'RadioGroup',
-    componentProps: {
-      options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
-      ],
     },
   },
   {

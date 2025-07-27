@@ -107,7 +107,11 @@
     import { uploadJsFile } from '/@/api/common/api';
     import { UploadFileItem } from '/@/components/UploadItem/src/props';
     // const { showQuReplyConfirm } = useConfirm();
-
+    const contactOptions = [
+      { label: '联系', value: '1' },
+      { label: '未联系', value: '0' },
+      { label: '无法联系', value: '2' },
+    ]
     const { createMessage } = useMessage();
     // 声明Emits
     const emit = defineEmits(['success', 'register', 'qjForm']);
@@ -272,20 +276,45 @@
           }
         },
         {
-          field: 'replyFact',
-          label: '是否属实',
-          component: 'RadioGroup',
+          field: 'isContact',
+          label: '是否联系',
+          component: 'Select',
+          componentProps: ({formActionType, formModel}) => ({
+            placeholder: '请输入是否联系',
+            // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+            options: contactOptions,  // 固定选项
+            allowClear: true,
+            onChange: (value) => {
+              const { updateSchema } = formActionType;
+              // 处理变化 无法联系
+              if(value == '2') {
+                formModel['replyResolve'] = null; // 如果选择了联系，默认解决状态为已解决
+                formModel['replySatisfy'] = null; // 如果选择了联系，默认满意状态为不满意
+                updateSchema([
+                  {
+                  field: 'replyResolve',
+                  required: false,
+                },
+                {
+                  field: 'replySatisfy',
+                  required: false,
+                }])
+              } else {
+                updateSchema([
+                  {
+                    field: 'replyResolve',
+                    required: true,
+                  },
+                  {
+                    field: 'replySatisfy',
+                    required: true,
+                  }])
+              }
+            }
+          }),
           // required: true,
-          componentProps: {
-            options: [
-              { label: '是', value: 1 },
-              { label: '否', value: 0 },
-            ],
-          },
-          colProps: {
-            span: 12
-          },
-          defaultValue: -1,
+          colProps: { span: 12 },
+          required: true
         },
         {
           field: 'replyResolve',
@@ -301,7 +330,7 @@
           colProps: {
             span: 12
           },
-          defaultValue: -1,
+          // defaultValue: -1,
         },
         {
           field: 'replySatisfy',
@@ -317,7 +346,25 @@
           colProps: {
             span: 12
           },
-          defaultValue: -1,
+          // defaultValue: -1,
+        },
+        {
+          field: 'replyFact',
+          label: '是否属实',
+          component: 'RadioGroup',
+          // required: true,
+          componentProps: {
+            options: [
+              { label: '是', value: 1 },
+              { label: '否', value: 0 },
+            ],
+          },
+          colProps: {
+            span: 24
+          },
+          itemProps: {
+            wrapperCol: { span: 24, sm: { span: 21 } },
+          }
         },
         {
           field: 'resolveResult',
