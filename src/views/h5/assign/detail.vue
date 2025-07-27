@@ -22,13 +22,13 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, useAttrs, onMounted } from 'vue';
+  import { ref, onMounted } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { formSchema, addFormSchema } from '/@/views/complain/assign/assign.data';
   // import { BasicModal, useModalInner } from '/@/components/Modal';
-  import { addAssign, getAssignDetail } from '/@/views/complain/assign/assign.api';
+  import {  getAssignDetail } from '/@/views/complain/assign/assign.api';
   import { addTicket, editTicket } from '/@/views/complain/bizComplaintTicketList/ticket.api';
-  import { getCitySevenFiveList, getCommunityChildList, getComplaintDetail, getSecondTreeList } from '/@/api/common/api';
+  import { getComplaintDetail } from '/@/api/common/api';
   // @ts-ignore
   import RejectInfo from '/@/views/complain/components/RejectInfo/index.vue';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -63,7 +63,7 @@
     //row行的样式
     baseRowStyle: { width: '100%' },
     // 禁用表单
-    disabled: false,
+    disabled: true,
   });
   const showFooter = ref(true);
 
