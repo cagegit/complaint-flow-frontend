@@ -148,7 +148,7 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm, { resetFields, setFieldsValue, validate }] = useForm({
+    const [registerAddForm, { resetFields, setFieldsValue, validate, clearValidate }] = useForm({
       labelWidth: 150,
       schemas: [
            {
@@ -290,6 +290,7 @@
               if(value == '2') {
                 formModel['replyResolve'] = null; // 如果选择了联系，默认解决状态为已解决
                 formModel['replySatisfy'] = null; // 如果选择了联系，默认满意状态为不满意
+                formModel['replyFact'] = null; // 如果选择了联系，默认属实状态为不属实
                 updateSchema([
                   {
                   field: 'replyResolve',
@@ -297,6 +298,10 @@
                 },
                 {
                   field: 'replySatisfy',
+                  required: false,
+                },
+                {
+                  field: 'replyFact',
                   required: false,
                 }])
               } else {
@@ -307,6 +312,10 @@
                   },
                   {
                     field: 'replySatisfy',
+                    required: true,
+                  },
+                  {
+                    field: 'replyFact',
                     required: true,
                   }])
               }
@@ -320,7 +329,7 @@
           field: 'replyResolve',
           label: '是否解决',
           component: 'RadioGroup',
-          // required: true,
+          required: true,
           componentProps: {
             options: [
               { label: '是', value: 1 },
@@ -336,7 +345,7 @@
           field: 'replySatisfy',
           label: '是否满意',
           component: 'RadioGroup',
-          // required: true,
+          required: true,
           componentProps: {
             options: [
               { label: '是', value: 1 },
@@ -352,7 +361,7 @@
           field: 'replyFact',
           label: '是否属实',
           component: 'RadioGroup',
-          // required: true,
+          required: true,
           componentProps: {
             options: [
               { label: '是', value: 1 },
@@ -517,10 +526,13 @@
          resolveResult: res.resolveResult || null,
          remark: res.remark || null,
          overseeUserName: res.overseeUserName || null,
+         replyContact: res.replyContact !== undefined ? res.replyContact: null,
          replyFact: res.replyFact !== undefined ?  res.replyFact: null,
          replyResolve: res.replyResolve !== undefined ?  res.replyResolve: null,
          replySatisfy: res.replySatisfy !== undefined ?  res.replySatisfy: null
         });
+        // 清除验证
+        clearValidate();
       }
       // 查询预回复详情
       getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
