@@ -13,7 +13,7 @@
       <div class="flex px-3">
         <div style="flex: 1">
             <!-- <BasicForm @register="registerForm"/> -->
-            <a-tabs v-model:activeKey="activeKey">
+          <a-tabs v-model:activeKey="activeKey" @change="activeKeyChange">
             <a-tab-pane key="1" tab="预回复">
               <div class="pl-20">
                 <!-- 二选一 -->
@@ -371,6 +371,17 @@
         emit('success',{});
       } finally {
         setModalProps({ confirmLoading: false });
+      }
+    }
+    // tab切换事件
+    function activeKeyChange(key:string) {
+      console.log('当前选中tab', key, 'typeof', typeof key);
+      if(key == '1') {
+        // 回访审核
+        showFooter.value = true;
+      } else {
+        // 基础信息
+        showFooter.value = false;
       }
     }
   </script>

@@ -15,7 +15,7 @@
       <div class="flex px-3">
         <div style="flex: 1">
             <!-- <BasicForm @register="registerForm"/> -->
-            <a-tabs v-model:activeKey="activeKey">
+          <a-tabs v-model:activeKey="activeKey" @change="activeKeyChange">
             <a-tab-pane key="1" tab="回复审核">
               <!-- 回复列表 -->
                <div class="pr-4">
@@ -396,4 +396,14 @@
        }
      }
     };
+
+    // 切换tab
+    const activeKeyChange = (key:string) => {
+      console.log('切换tab', key);
+      if (key == '1') {
+        showFooter.value = true;
+      }else {
+        showFooter.value = false;
+      }
+    }
 </script>

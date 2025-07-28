@@ -1188,7 +1188,7 @@ export const ticketRecordListColumns: BasicColumn[] = [
   { title: '操作节点', dataIndex: 'remark', width: 150, ellipsis: true },
   { title: '操作人', dataIndex: 'createBy', width: 120, ellipsis: true },
   { title: '所属部门', dataIndex: 'orgId_dictText', width: 120, ellipsis: true },
-  { title: '数据名称', dataIndex: 'fieldZhName', width: 140, ellipsis: true },
+  { title: '数据名称', dataIndex: 'dataName', width: 140, ellipsis: true },
   {
     title: '数据变更',
     dataIndex: 'dataChangeJson',
@@ -1202,7 +1202,7 @@ export const ticketRecordListColumns: BasicColumn[] = [
             jsonStr: text,
             maxHeight: 300,
             columns: [
-              { title: '字段名', dataIndex: 'fieldName', width: 120 },
+              { title: '字段名', dataIndex: 'fieldZhName', width: 120 },
               { title: '旧值', dataIndex: 'oldValue', width: 200, ellipsis: true },
               { title: '新值', dataIndex: 'newValue', width: 200, ellipsis: true },
             ],
