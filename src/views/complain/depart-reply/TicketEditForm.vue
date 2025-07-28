@@ -797,6 +797,7 @@
           "replyAudioDuration": 0,
           "replyAudioNote": "",
           "resolveResult": params.resolveResult,
+          replyContact: params.replyContact, // 是否联系
           replyFact: params.replyFact, // 是否属实
           replyResolve: params.replyResolve, // 是否解决
           replySatisfy: params.replySatisfy, // 是否满意
