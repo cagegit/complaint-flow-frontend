@@ -8,7 +8,7 @@
             <!--  -->
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
             <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:edit-outlined">分派</a-button> -->
-            <a-dropdown v-if="selectedRowKeys.length > 0">
+            <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
               <template #overlay>
                 <a-menu>
                   <a-menu-item key="1" v-auth="'complain:assign:add'" @click="batchHandleAssign">
@@ -21,7 +21,7 @@
                 >批量操作
                 <Icon icon="mdi:chevron-down"></Icon>
               </a-button>
-            </a-dropdown>
+            </a-dropdown> -->
           </template>
           <!--插槽:表格内容-->
           <template #bodyCell="{ text, column, record }">

@@ -149,7 +149,19 @@
       :footer="null"
       @cancel="handleDetailModalCancel"
     >
-      <a-descriptions bordered :column="1" size="middle">
+      <a-descriptions bordered :labelStyle="{minWidth: '120px'}"  :column="2" size="middle">
+        <a-descriptions-item label="工单编号">
+          {{ currentDetail.ticketId }}
+        </a-descriptions-item>
+        <a-descriptions-item label="诉求人">
+          {{ currentDetail.callUserName }}
+        </a-descriptions-item>
+        <a-descriptions-item label="联系方式">
+          {{ currentDetail.callPhoneNumber }}
+        </a-descriptions-item>
+        <a-descriptions-item label="诉求内容">
+          {{ currentDetail.mainContent }}
+        </a-descriptions-item>
         <a-descriptions-item label="社区/部门">
           {{ currentDetail.orgName }}
         </a-descriptions-item>
@@ -202,6 +214,7 @@ import UploadList from '../../components/UploadList/index.vue';
 import { BasicUploadItem } from '/@/components/UploadItem';
 import UploadItemPreviewModal from '/@/components/UploadItem/src/UploadItemPreviewModal.vue';
 import { audioTypes, imageTypes } from '/@/utils/fileType';
+import { getComplaintDetail } from '/@/api/common/api';
 
 // 定义回复列表项类型
 interface ReplyItem {
@@ -590,6 +603,25 @@ const handleViewDetail = (record) => {
   if (record.imageList && record.imageList.length > 0) {
     previewImageList.value = record.imageList.map(img => img.url);
   }
+  // 根据ticketId查询工单详情
+  getComplaintDetail(record?.ticketId).then((res) => {
+    // 如果返回数据存在
+     console.log('工单详情', res);
+    if (res) {
+      // 工单编号
+      currentDetail.value.workOrderNumber = res.workOrderNumber || '';
+      // 诉求人
+      currentDetail.value.callUserName = res.callUserName || '';
+      // 联系方式
+      currentDetail.value.callPhoneNumber = res.callPhoneNumber || '';
+      // 诉求内容
+      currentDetail.value.mainContent = res.mainContent || '';
+    } else {
+      createMessage.error('获取工单详情失败');
+    }
+  }).catch(() => {
+    createMessage.error('获取工单详情失败');
+  });
 };
 
 // 详情弹窗关闭

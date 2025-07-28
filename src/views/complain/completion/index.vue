@@ -7,20 +7,20 @@
             <!-- <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls" :disabled="isDisabledAuth('system:user:export')"> 导出</a-button> -->
             <!-- <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入word</j-upload-button> -->
             <!-- <a-button type="primary" @click="showEdit" preIcon="ant-design:send-outlined">转出</a-button> -->
-            <a-dropdown v-if="selectedRowKeys.length > 0">
-              <!-- <template #overlay>
+            <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
+              <template #overlay>
                 <a-menu>
                   <a-menu-item key="1" @click="batchHandleDelete">
                     <Icon icon="ant-design:send-outlined"></Icon>
                     批量转出
                   </a-menu-item>
                 </a-menu>
-              </template> -->
+              </template>
               <a-button
                 >批量操作
                 <Icon icon="mdi:chevron-down"></Icon>
               </a-button>
-            </a-dropdown>
+            </a-dropdown> -->
           </template>
           <!--插槽:表格内容-->
           <template #bodyCell="{ text, column, record }">

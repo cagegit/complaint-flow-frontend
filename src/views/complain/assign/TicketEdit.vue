@@ -184,6 +184,13 @@
                 console.log(error);
               });
             }
+            // 判断原始标签的值
+            if(res?.originalLabel) {
+              updateSchema([{
+                field: 'sevenFiveId',
+                required: res.originalLabel.indexOf('七有五性') > -1 ? true : false,
+              }])
+            }
         } catch (error) {
           console.log(error);
         }

@@ -13,7 +13,7 @@
       <div class="flex px-3">
         <div style="flex: 1; border-right: 1px solid #ddd;">
             <!-- <BasicForm @register="registerForm"/> -->
-            <a-tabs v-model:activeKey="activeKey">
+            <a-tabs v-model:activeKey="activeKey" @change="activeKeyChange">
             <a-tab-pane key="1" tab="工单回访">               
                <!-- 回复审核内容回显，三行两列，第一行显示：录音已倾听、跟进情况，第二行：督办人，第三行：最终处理情况 -->
                <!-- <a-collapse v-model:activeKey="collapsibleKey" ghost>
@@ -51,27 +51,28 @@
               <!-- 分割线 -->
              <a-divider orientation="left" ><span class="text-red-500">*工单回访(必填表单)</span></a-divider>
               <!-- 回复审核表单 -->
-              <BasicForm @register="registerAuditForm"/>
-               <a-divider orientation="left">预回复表单</a-divider>
-              <BasicForm @register="registerPreReplyForm">
-                  <template #satisfactionTimeSlot="{model, field}">
+              <BasicForm @register="registerAuditForm">
+                <template #satisfactionTimeSlot="{model, field}">
                     <a-space>
-                      <a-input-number style="width: 50px;" v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number style="width: 50px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      <a-input-number style="width: 40px;" v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number style="width: 40px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
                     </a-space>
                   </template>
                   <template #contactTimeSlot="{model, field}">
                     <a-space>
-                      <a-input-number style="width: 50px;"  v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number style="width: 50px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      <a-input-number style="width: 40px;"  v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number style="width: 40px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
                     </a-space>
                   </template>
                     <template #resolutionTimeSlot="{model, field}">
                     <a-space>
-                      <a-input-number style="width: 50px;" v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number style="width: 50px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                      <a-input-number style="width: 40px;" v-model:value="model[field][0]" placeholder="请输入数字" />分
+                      <a-input-number style="width: 40px;" v-model:value="model[field][1]" placeholder="请输入数字" />秒
                     </a-space>
                   </template>
+              </BasicForm>
+               <!-- <a-divider orientation="left">预回复表单</a-divider> -->
+              <BasicForm @register="registerPreReplyForm">
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
                     <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList"/>
@@ -150,7 +151,7 @@
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // @ts-ignore
-    import { preFormLogicHandler, formFollowUpSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFollowUpSchema, contactOptions } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     import { audioTypes, imageTypes } from '/@/utils/fileType';
     import { defaultSpan } from '../shareInfo';
@@ -254,6 +255,9 @@
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
+      replyList.value = [];
+      finalReplyList.value = [];
+      total.value = 0;
       // 查询详情数据
       try {
         const res = await getReplyDetail({ ticketId: data.record.id });
@@ -337,14 +341,13 @@
               console.log(error);
             });
           }
-          // 判断原始标签的值
-          if(detailRes?.originalLabel) {
-            updateAuditSchema([{
-              field: 'sevenFiveId',
-              required: detailRes.originalLabel.indexOf('七有五性') > -1 ? true : false,
-            }])
-          }
-
+          // // 判断原始标签的值
+          // if(detailRes?.originalLabel) {
+          //   updateAuditSchema([{
+          //     field: 'sevenFiveId',
+          //     required: detailRes.originalLabel.indexOf('七有五性') > -1 ? true : false,
+          //   }])
+          // }
         } catch (error) {
           console.log(error);
         }
@@ -438,7 +441,15 @@
             "replyFileList": newFileList,
             "ticketId": currentEditRecordRef.value?.id,
             "ticketReplyDataVo": {
-              ...preParams
+              ...preParams,
+              // 覆盖原预回复默认的字段
+              isContact: values.isContact,
+              isSolved: values.isSolved,
+              isSatisfaction: values.isSatisfaction,
+              isTrue: values.isTrue,
+              replySatisfiedTime: values.replySatisfiedTime,
+              replyContactTime: values.replyContactTime,
+              replyResolveTime: values.replyResolveTime,
             }
           });
           console.log('保存预回复信息成功', resResult);
@@ -474,6 +485,15 @@
        reply.auditStatus = res.status;
        reply.rejectReason = res.reason;
      }
+    };
+    // tab切换事件
+    const activeKeyChange = (key:string) => {
+      console.log('activeKeyChange', key, 'typeof', typeof key);
+      if (key === '1') {
+        showFooter.value = true;
+      } else {
+        showFooter.value = false;
+      }
     };
   </script>
   

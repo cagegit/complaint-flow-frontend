@@ -276,7 +276,7 @@
           }
         },
         {
-          field: 'isContact',
+          field: 'replyContact',
           label: '是否联系',
           component: 'Select',
           componentProps: ({formActionType, formModel}) => ({

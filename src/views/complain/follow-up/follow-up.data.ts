@@ -4,10 +4,11 @@ import { BasicColumn } from '/@/components/Table';
 import dayjs from 'dayjs';
 import { ref, h } from 'vue';
 import { render } from '/@/utils/common/renderUtils';
-import { getDictItemsByCode } from '/@/utils/dict';
+import { getDictItemsByCode, getDistrictDictItemsByCode } from '/@/utils/dict';
 import { treeToList } from '/@/utils';
 import { getDateDiff } from '/@/utils/dateUtil';
 import { defaultColProps } from '../shareInfo';
+import { contactOptions } from '../components/PreReplyForm/preReplyForm.data';
 // acceptDepartment	受理单位	string
 // assignCommunitys	处理社区(名称逗号拼接)	string
 // assignDepts	处理科室(名称逗号拼接)	string
@@ -948,6 +949,100 @@ export const formAuditSchema: FormSchema[] = [
     },
   },
   {
+      field: 'isContact',
+      label: '是否联系',
+      component: 'Select',
+      componentProps: ({formActionType, formModel}) => ({
+        placeholder: '请输入是否联系',
+        // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+        options: contactOptions,  // 固定选项
+        allowClear: true,
+        onChange: (value) => {
+          const { updateSchema } = formActionType;
+          // 处理变化 无法联系
+          if(value == '2') {
+            formModel['isSolved'] = null; // 如果选择了联系，默认解决状态为已解决
+            formModel['isSatisfaction'] = null; // 如果选择了联系，默认满意状态为不满意
+            formModel['isTrue'] = null; // 如果选择了联系，默认属实状态为不属实
+            updateSchema([
+              {
+              field: 'isSolved',
+              required: false,
+            },
+            {
+              field: 'isSatisfaction',
+              required: false,
+            },
+            {
+              field: 'isTrue',
+              required: false,
+            }])
+          } else {
+            updateSchema([
+              {
+                field: 'isSolved',
+                required: true,
+              },
+              {
+                field: 'isSatisfaction',
+                required: true,
+              },
+              {
+                field: 'isTrue',
+                required: true,
+              }])
+          }
+        }
+      }),
+      // required: true,
+      // colProps: { span: 6 },
+      required: true
+    },
+    {
+      field: 'isSolved',
+      label: '是否解决',
+      component: 'Select',
+      componentProps: {
+        placeholder: '请输入是否解决',
+        options: getDistrictDictItemsByCode('is_solved'),  // 需要从接口获取
+        allowClear: true,
+      },
+      // required: true,
+      // colProps: { span: 6 },
+      required: true
+    },
+    {
+      field: 'isSatisfaction',
+      label: '是否满意',
+      component: 'Select',
+      componentProps: {
+        placeholder: '请输入是否满意',
+        options: getDistrictDictItemsByCode('is_satisfaction'),  // 需要从接口获取
+        allowClear: true,
+      },
+      // required: true,
+      // colProps: { span: 6 },
+      required: true
+    },
+    {
+      field: 'isTrue',
+      label: '是否属实',
+      component: 'Select',
+      componentProps: {
+        placeholder: '请输入是否属实',
+        options: [
+          { label: '是', value: '1' },
+          { label: '否', value: '0' },
+        ],  // 需要从接口获取
+        allowClear: true,
+      },
+      // colProps: { span: 6 },
+      // itemProps: {
+      //       wrapperCol: { ...defaultColProps },
+      // },
+      required: true
+  },
+  {
     field: 'sevenFiveId',
     label: '七有五性',
     component: 'ApiCascader',
@@ -967,14 +1062,54 @@ export const formAuditSchema: FormSchema[] = [
       treeDataSimpleMode: true,
       changeOnSelect: true,
     },
+    show: false
+  },
+  {
+    field: 'replySatisfiedTime',
+    label: '满意时间',
+    component: 'InputGroup',
+    componentProps: {},
+    colProps: { span: 8 },
+    slot: 'satisfactionTimeSlot',
+    defaultValue: [
+      null,
+      null
+    ],
+    // required: true
+  },
+  {
+    field: 'replyContactTime',
+    label: '联系时间',
+    component: 'InputGroup',
+    componentProps: {},
+    colProps: { span: 8 },
+    slot: 'contactTimeSlot',
+    defaultValue: [
+      null,
+      null
+    ],
+    // required: true
+  },
+  {
+    field: 'replyResolveTime',
+    label: '解决时间',
+    component: 'InputGroup',
+    componentProps: {},
+    colProps: { span: 8 },
+    slot: 'resolutionTimeSlot',
+    defaultValue: [
+      null,
+      null
+    ],
+    // required: true
   },
   {
     field: 'remark',
     label: '备注',
-    component: 'InputTextArea',
+    component: 'Input',
     componentProps: {
       placeholder: '请输入备注',
-      rows: 2,
+      // rows: 2,
     },
     colProps: { span: 24 },
     itemProps: {

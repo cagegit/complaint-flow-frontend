@@ -3,7 +3,7 @@ import { getDistrictDictItemsByCode } from '/@/utils/dict';
 import { getCityQuestionCategoryList, getCommunityListByCode, getDisposeDepartmentList, getHoldRemoveList } from '/@/api/common/api';
 import { defaultColProps } from '../../shareInfo';
 
-const contactOptions = [
+export const contactOptions = [
   { label: '联系', value: '1' },
   { label: '未联系', value: '0' },
   { label: '无法联系', value: '2' },
@@ -3184,7 +3184,8 @@ export const formFollowUpSchema: FormSchema[] = [
     }),
     // required: true,
     colProps: { span: 6 },
-    required: true
+    required: true,
+    show: false
   },
   {
     field: 'isSolved',
@@ -3197,7 +3198,8 @@ export const formFollowUpSchema: FormSchema[] = [
     },
     // required: true,
     colProps: { span: 6 },
-    required: true
+    required: true,
+    show: false
   },
   {
     field: 'isSatisfaction',
@@ -3210,7 +3212,8 @@ export const formFollowUpSchema: FormSchema[] = [
     },
     // required: true,
     colProps: { span: 6 },
-    required: true
+    required: true,
+    show: false
   },
   {
     field: 'isTrue',
@@ -3228,7 +3231,8 @@ export const formFollowUpSchema: FormSchema[] = [
     // itemProps: {
     //       wrapperCol: { ...defaultColProps },
     // },
-    required: true
+    required: true,
+    show: false
   },
   {
     field: 'isBelong',
@@ -3330,7 +3334,8 @@ export const formFollowUpSchema: FormSchema[] = [
       null,
       null
     ],
-    // required: true
+    // required: true,
+    show: false
   },
   {
     field: 'replyContactTime',
@@ -3343,7 +3348,8 @@ export const formFollowUpSchema: FormSchema[] = [
       null,
       null
     ],
-    // required: true
+    // required: true,
+    show: false
   },
   {
     field: 'replyResolveTime',
@@ -3356,7 +3362,8 @@ export const formFollowUpSchema: FormSchema[] = [
       null,
       null
     ],
-    // required: true
+    // required: true,
+    show: false
   },
   // {
   //   field: 'liveHoodIssueId',
