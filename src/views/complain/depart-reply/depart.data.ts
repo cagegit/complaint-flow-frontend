@@ -811,7 +811,7 @@ export const addFormSchema: FormSchema[] = [
         showDownloadButton: true,
         showPreviewButton: true,
         bizPath: 'complain/files', // 业务路径
-        maxSize: 30, // 限制大小30M
+        maxSize: 20, // 限制大小20M
         uploadParams: {
           biz: 'complain/file',
         },
@@ -887,7 +887,7 @@ export const addFormSchema: FormSchema[] = [
         accept: audioTypes,
         api: uploadJsFile, // 上传接口
         bizPath: 'complain/audio', // 业务路径
-        maxSize: 30, // 限制大小30M
+        maxSize: 20, // 限制大小20M
         uploadParams: {
           biz: 'complain/audio',
         },

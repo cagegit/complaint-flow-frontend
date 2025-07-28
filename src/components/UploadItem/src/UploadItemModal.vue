@@ -183,12 +183,22 @@
             }
           );
           console.log(res);
+          if(res?.success) {
           item.status = UploadResultStatus.SUCCESS;
-          item.responseData = res;
-          return {
-            success: true,
-            error: null,
-          };
+            item.responseData = res;
+            return {
+              success: true,
+              error: null,
+            };
+          } else {
+            item.status = UploadResultStatus.ERROR;
+            createMessage.error(res?.message || t('component.upload.uploadError'));
+            return {
+              success: false,
+              error: res?.message || t('component.upload.uploadError'),
+            };
+          }
+          
         } catch (e) {
           console.log(e);
           item.status = UploadResultStatus.ERROR;

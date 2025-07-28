@@ -216,7 +216,7 @@
             showDownloadButton: true,
             showPreviewButton: true,
             bizPath: 'complain/files', // 业务路径
-            maxSize: 30, // 限制大小30M
+            maxSize: 20, // 限制大小20M
             uploadParams: {
               biz: 'complain/file',
             },
@@ -248,7 +248,7 @@
             accept: imageTypes, // 使用定义的图片类型
             api: uploadJsFile, // 上传接口
             bizPath: 'complain/images', // 业务路径
-            maxSize: 10, // 限制大小10M
+            maxSize: 20, // 限制大小20M
             uploadParams: {
               biz: 'complain/image',
             },
@@ -280,7 +280,7 @@
             accept: audioTypes,
             api: uploadJsFile, // 上传接口
             bizPath: 'complain/audio', // 业务路径
-            maxSize: 30, // 限制大小30M
+            maxSize: 20, // 限制大小20M
             uploadParams: {
               biz: 'complain/audio',
             },
