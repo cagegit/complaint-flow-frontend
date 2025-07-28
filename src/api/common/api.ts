@@ -14,6 +14,8 @@ enum Api {
   getDictItems = '/sys/dict/getDictItems/',
   getTableList = '/sys/user/queryUserComponentData',
   getCategoryData = '/sys/category/loadAllData',
+  // 修改回复解决情况
+  editReplyStatus = '/complain/reply/editResolve'
 }
 
 /**
@@ -342,4 +344,8 @@ export const getComplaintDetail = (id: string) => {
  */
 export const getBackDepartList = () => {
   return defHttp.get({ url: `/biz/upDict/getBackOfficeList` });
+};
+// 修改回复状态
+export const editReplyYesNoStatus = (params) => {
+  return defHttp.post({ url: Api.editReplyStatus, params });
 };

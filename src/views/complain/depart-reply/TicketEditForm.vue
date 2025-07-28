@@ -526,7 +526,7 @@
          resolveResult: res.resolveResult || null,
          remark: res.remark || null,
          overseeUserName: res.overseeUserName || null,
-         replyContact: res.replyContact !== undefined ? res.replyContact: null,
+         replyContact: res.replyContact !== undefined ? `${res.replyContact}`: null,
          replyFact: res.replyFact !== undefined ?  res.replyFact: null,
          replyResolve: res.replyResolve !== undefined ?  res.replyResolve: null,
          replySatisfy: res.replySatisfy !== undefined ?  res.replySatisfy: null

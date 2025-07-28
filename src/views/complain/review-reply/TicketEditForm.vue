@@ -23,6 +23,7 @@
                   :replyData="replyList" 
                   :total="total" 
                   :readOnly="false"
+                  :can-edit-reply="true"
                   @auditChange="handleAuditChange"
                 />
                </div>

@@ -198,6 +198,16 @@
           {{ currentDetail.rejectReason }}
         </a-descriptions-item>
       </a-descriptions>
+      <!-- 三个是否的编辑表单 -->
+      <div class="py-2" v-if="canEditReplyStatus">
+       <a-divider orientation="left">编辑回复状态</a-divider>
+       <div class="p-4">
+         <BasicForm @register="registerForm" />
+       </div>
+       <div class="p-4 flex justify-end">
+         <a-button type="primary" :loading="isSaving" @click="handleEditSave">保存</a-button>
+       </div>
+      </div>
     </a-modal>
     
     <!-- 文件预览 -->
@@ -214,8 +224,9 @@ import UploadList from '../../components/UploadList/index.vue';
 import { BasicUploadItem } from '/@/components/UploadItem';
 import UploadItemPreviewModal from '/@/components/UploadItem/src/UploadItemPreviewModal.vue';
 import { audioTypes, imageTypes } from '/@/utils/fileType';
-import { getComplaintDetail } from '/@/api/common/api';
-
+import { editReplyYesNoStatus, getComplaintDetail } from '/@/api/common/api';
+import { BasicForm, useForm } from '/@/components/Form/index';
+import { usePermission } from '/@/hooks/web/usePermission';
 // 定义回复列表项类型
 interface ReplyItem {
   id: string | number;
@@ -256,16 +267,144 @@ const props = defineProps({
   total: {
     type: Number,
     default: 0
+  },
+  // 是否可以编辑回复状态
+  canEditReply: {
+    type: Boolean,
+    default: false
   }
 });
+const contactOptions = [
+  { label: '联系', value: '1' },
+  { label: '未联系', value: '0' },
+  { label: '无法联系', value: '2' },
+]
 
+const { hasPermission } = usePermission();
 // 定义组件事件
-const emit = defineEmits(['auditChange', 'pageChange']);
+const emit = defineEmits(['auditChange', 'pageChange', 'replyStatusChange']);
 
 // 消息实例
 const { createMessage } = useMessage();
+
 // 预览modal
 const [registerPreviewModal, { openModal: openPreviewModal }] = useModal();
+// 编辑是否状态的表单
+const [registerForm, { setFieldsValue, clearValidate, validate }] = useForm({
+    labelWidth: 150,
+    schemas: [
+      {
+        field: 'replyContact',
+        label: '是否联系',
+        component: 'Select',
+        componentProps: ({formActionType, formModel}) => ({
+          placeholder: '请输入是否联系',
+          // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
+          options: contactOptions,  // 固定选项
+          allowClear: true,
+          onChange: (value) => {
+            const { updateSchema } = formActionType;
+            // 处理变化 无法联系
+            if(value == '2') {
+              formModel['replyResolve'] = null; // 如果选择了联系，默认解决状态为已解决
+              formModel['replySatisfy'] = null; // 如果选择了联系，默认满意状态为不满意
+              formModel['replyFact'] = null; // 如果选择了联系，默认属实状态为不属实
+              updateSchema([
+                {
+                field: 'replyResolve',
+                required: false,
+              },
+              {
+                field: 'replySatisfy',
+                required: false,
+              },
+              {
+                field: 'replyFact',
+                required: false,
+              }])
+            } else {
+              updateSchema([
+                {
+                  field: 'replyResolve',
+                  required: true,
+                },
+                {
+                  field: 'replySatisfy',
+                  required: true,
+                },
+                {
+                  field: 'replyFact',
+                  required: true,
+                }])
+            }
+          }
+        }),
+        // required: true,
+        colProps: { span: 6 },
+        required: true
+      },
+      {
+        field: 'replyResolve',
+        label: '是否解决',
+        component: 'RadioGroup',
+        required: true,
+        componentProps: {
+          options: [
+            { label: '是', value: 1 },
+            { label: '否', value: 0 },
+          ],
+        },
+        colProps: {
+          span: 6
+        },
+        // defaultValue: -1,
+      },
+      {
+        field: 'replySatisfy',
+        label: '是否满意',
+        component: 'RadioGroup',
+        required: true,
+        componentProps: {
+          options: [
+            { label: '是', value: 1 },
+            { label: '否', value: 0 },
+          ],
+        },
+        colProps: {
+          span: 6
+        },
+        // defaultValue: -1,
+      },
+      {
+        field: 'replyFact',
+        label: '是否属实',
+        component: 'RadioGroup',
+        required: true,
+        componentProps: {
+          options: [
+            { label: '是', value: 1 },
+            { label: '否', value: 0 },
+          ],
+        },
+        colProps: {
+          span: 6
+        }
+      }, 
+      {
+       field: 'assignId',
+       label: '是否属实',
+       component: 'Input',
+       show: false
+      }
+    ],
+    showActionButtonGroup: false,
+    layout: 'vertical',
+    rowProps: { gutter: 24, justify: 'center', align: 'middle' },
+    //全局col列占比(每列显示多少位)，和schemas中的colProps属性一致
+    baseColProps: { span: 8 },
+    //row行的样式
+    baseRowStyle: { width: '100%', },
+  });
 // 预览文件列表
 const previewFileList = ref<any[]>([]);
 // 数据状态
@@ -278,7 +417,13 @@ const pagination = ref({
   showSizeChanger: true,
   showTotal: (total) => `共 ${total} 条记录`
 });
+// 编辑是否状态
+const isSaving = ref<boolean>(false);
+const editAuthCode = 'biz:complain:reply:editResolve'
 
+const canEditReplyStatus = computed(() => {
+  return props.canEditReply && hasPermission(editAuthCode);
+})
 // 弹窗状态
 const fileModalVisible = ref(false);
 const rejectModalVisible = ref(false);
@@ -306,12 +451,6 @@ const columns = [
     width: '20%'
   },
   {
-    title: '是否属实',
-    dataIndex: 'replyFact',
-    key: 'replyFact',
-    width: '10%'
-  },
-  {
     title: '是否解决',
     dataIndex: 'replyResolve',
     key: 'replyResolve',
@@ -321,6 +460,12 @@ const columns = [
     title: '是否满意',
     dataIndex: 'replySatisfy',
     key: 'replySatisfy',
+    width: '10%'
+  },
+  {
+    title: '是否属实',
+    dataIndex: 'replyFact',
+    key: 'replyFact',
     width: '10%'
   },
   {
@@ -560,6 +705,7 @@ const handleRejectCancel = () => {
 
 // 查看详情
 const handleViewDetail = (record) => {
+  console.log('handleViewDetail:', record)
   currentDetail.value = { ...record };
   detailModalVisible.value = true;
   
@@ -622,6 +768,18 @@ const handleViewDetail = (record) => {
   }).catch(() => {
     createMessage.error('获取工单详情失败');
   });
+  setTimeout(() => {
+    // 回显是否展示
+    setFieldsValue({
+      assignId: record.id, // id 赋值
+      replyContact: record.replyContact !== undefined ? `${record.replyContact}`: null,
+      replyFact: record.replyFact !== undefined ?  record.replyFact: null,
+      replyResolve: record.replyResolve !== undefined ?  record.replyResolve: null,
+      replySatisfy: record.replySatisfy !== undefined ?  record.replySatisfy: null
+    });
+    // 清楚首次验证
+    clearValidate();
+  },100)
 };
 
 // 详情弹窗关闭
@@ -633,6 +791,33 @@ const handleDetailModalCancel = () => {
 const previewImage = (url) => {
   // a-image 组件会自动处理预览
 };
+
+// 保存是否状态结果
+async function handleEditSave() {
+  const values = await validate();
+  if(isSaving.value) return;
+  isSaving.value = true;
+  const res = await editReplyYesNoStatus({
+    "assignId": values.assignId,
+    "replyContact": values.replyContact,
+    "replyFact": values.replyFact,
+    "replyResolve": values.replyResolve,
+    "replySatisfy": values.replySatisfy
+  })
+  console.log('handleEditSave', res);
+  isSaving.value = false;
+  createMessage.success('状态保存成功!');
+    // 更新本地数据状态
+  emit('replyStatusChange', { values });
+  // 更新localReplyList
+  localReplyList.value = localReplyList.value.map(item => {
+    if (item.id == values.assignId) {
+      return { ...item, ...values };
+    }
+    return item;
+  });
+  handleDetailModalCancel();
+}
 </script>
 
 <style scoped>
