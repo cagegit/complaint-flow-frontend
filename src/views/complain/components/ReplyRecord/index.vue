@@ -23,15 +23,15 @@
         </template>
         <!-- 是否属实 -->
         <template v-if="column.key === 'replyFact'">
-          {{ record.replyFact == '1' ? '是' : '否' }}
+          {{ record.replyFact == '1' ? '是' : (record.replyFact == '0' ? '否' : '无') }}
         </template>
         <!-- 是否解决 -->
         <template v-if="column.key === 'replyResolve'">
-          {{ record.replyResolve == '1' ? '是' : '否' }}
+          {{ record.replyResolve == '1' ? '是' : (record.replyResolve == '0' ? '否' : '无') }}
         </template>
         <!-- 是否满意 -->
         <template v-if="column.key === 'replySatisfy'">
-          {{ record.replySatisfy == '1' ? '是' : '否' }}
+          {{ record.replySatisfy == '1' ? '是'  : (record.replySatisfy == '0' ? '否' : '无') }}
         </template>
 
         <!-- 视频/文件个数列 -->
@@ -199,12 +199,12 @@
         </a-descriptions-item>
       </a-descriptions>
       <!-- 三个是否的编辑表单 -->
-      <div class="py-2" v-if="canEditReplyStatus">
+      <div class="py-2">
        <a-divider orientation="left">编辑回复状态</a-divider>
        <div class="p-4">
-         <BasicForm @register="registerForm" />
+         <BasicForm @register="registerForm"  />
        </div>
-       <div class="p-4 flex justify-end">
+       <div class="p-4 flex justify-end"  v-if="canEditReplyStatus">
          <a-button type="primary" :loading="isSaving" @click="handleEditSave">保存</a-button>
        </div>
       </div>
@@ -286,11 +286,13 @@ const emit = defineEmits(['auditChange', 'pageChange', 'replyStatusChange']);
 
 // 消息实例
 const { createMessage } = useMessage();
-
+const canEditReplyStatus = computed(() => {
+  return props.canEditReply && hasPermission(editAuthCode);
+})
 // 预览modal
 const [registerPreviewModal, { openModal: openPreviewModal }] = useModal();
 // 编辑是否状态的表单
-const [registerForm, { setFieldsValue, clearValidate, validate }] = useForm({
+const [registerForm, { setFieldsValue, clearValidate, validate, updateSchema }] = useForm({
     labelWidth: 150,
     schemas: [
       {
@@ -308,7 +310,7 @@ const [registerForm, { setFieldsValue, clearValidate, validate }] = useForm({
             if(value == '2') {
               formModel['replyResolve'] = null; // 如果选择了联系，默认解决状态为已解决
               formModel['replySatisfy'] = null; // 如果选择了联系，默认满意状态为不满意
-              formModel['replyFact'] = null; // 如果选择了联系，默认属实状态为不属实
+              // formModel['replyFact'] = null; // 如果选择了联系，默认属实状态为不属实
               updateSchema([
                 {
                 field: 'replyResolve',
@@ -316,10 +318,6 @@ const [registerForm, { setFieldsValue, clearValidate, validate }] = useForm({
               },
               {
                 field: 'replySatisfy',
-                required: false,
-              },
-              {
-                field: 'replyFact',
                 required: false,
               }])
             } else {
@@ -330,10 +328,6 @@ const [registerForm, { setFieldsValue, clearValidate, validate }] = useForm({
                 },
                 {
                   field: 'replySatisfy',
-                  required: true,
-                },
-                {
-                  field: 'replyFact',
                   required: true,
                 }])
             }
@@ -404,6 +398,7 @@ const [registerForm, { setFieldsValue, clearValidate, validate }] = useForm({
     baseColProps: { span: 8 },
     //row行的样式
     baseRowStyle: { width: '100%', },
+    disabled: !canEditReplyStatus.value
   });
 // 预览文件列表
 const previewFileList = ref<any[]>([]);
@@ -421,9 +416,7 @@ const pagination = ref({
 const isSaving = ref<boolean>(false);
 const editAuthCode = 'biz:complain:reply:editResolve'
 
-const canEditReplyStatus = computed(() => {
-  return props.canEditReply && hasPermission(editAuthCode);
-})
+
 // 弹窗状态
 const fileModalVisible = ref(false);
 const rejectModalVisible = ref(false);
@@ -777,6 +770,27 @@ const handleViewDetail = (record) => {
       replyResolve: record.replyResolve !== undefined ?  record.replyResolve: null,
       replySatisfy: record.replySatisfy !== undefined ?  record.replySatisfy: null
     });
+      if(record.replyContact == '2') {
+        updateSchema([
+          {
+          field: 'replyResolve',
+          required: false,
+        },
+        {
+          field: 'replySatisfy',
+          required: false,
+        }])
+      } else {
+        updateSchema([
+          {
+            field: 'replyResolve',
+            required: true,
+          },
+          {
+            field: 'replySatisfy',
+            required: true,
+          }])
+      }
     // 清楚首次验证
     clearValidate();
   },100)

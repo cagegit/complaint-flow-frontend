@@ -148,7 +148,7 @@
       disabled: true
     });
     //待补充表单配置
-    const [registerAddForm, { resetFields, setFieldsValue, validate, clearValidate }] = useForm({
+    const [registerAddForm, { resetFields, setFieldsValue, validate, clearValidate, updateSchema: updateAddSchema }] = useForm({
       labelWidth: 150,
       schemas: [
            {
@@ -290,7 +290,7 @@
               if(value == '2') {
                 formModel['replyResolve'] = null; // 如果选择了联系，默认解决状态为已解决
                 formModel['replySatisfy'] = null; // 如果选择了联系，默认满意状态为不满意
-                formModel['replyFact'] = null; // 如果选择了联系，默认属实状态为不属实
+                //formModel['replyFact'] = null; // 如果选择了联系，默认属实状态为不属实
                 updateSchema([
                   {
                   field: 'replyResolve',
@@ -299,11 +299,7 @@
                 {
                   field: 'replySatisfy',
                   required: false,
-                },
-                {
-                  field: 'replyFact',
-                  required: false,
-                }])
+                },])
               } else {
                 updateSchema([
                   {
@@ -312,10 +308,6 @@
                   },
                   {
                     field: 'replySatisfy',
-                    required: true,
-                  },
-                  {
-                    field: 'replyFact',
                     required: true,
                   }])
               }
@@ -533,6 +525,28 @@
         });
         // 清除验证
         clearValidate();
+        // 判断是否联系状体啊
+        if(res.replyContact == '2') {
+          updateAddSchema([
+            {
+            field: 'replyResolve',
+            required: false,
+          },
+          {
+            field: 'replySatisfy',
+            required: false,
+          },])
+        } else {
+          updateAddSchema([
+            {
+              field: 'replyResolve',
+              required: true,
+            },
+            {
+              field: 'replySatisfy',
+              required: true,
+            }])
+        }
       }
       // 查询预回复详情
       getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {

@@ -963,7 +963,6 @@ export const formAuditSchema: FormSchema[] = [
           if(value == '2') {
             formModel['isSolved'] = null; // 如果选择了联系，默认解决状态为已解决
             formModel['isSatisfaction'] = null; // 如果选择了联系，默认满意状态为不满意
-            formModel['isTrue'] = null; // 如果选择了联系，默认属实状态为不属实
             updateSchema([
               {
               field: 'isSolved',
@@ -971,10 +970,6 @@ export const formAuditSchema: FormSchema[] = [
             },
             {
               field: 'isSatisfaction',
-              required: false,
-            },
-            {
-              field: 'isTrue',
               required: false,
             }])
           } else {
@@ -985,10 +980,6 @@ export const formAuditSchema: FormSchema[] = [
               },
               {
                 field: 'isSatisfaction',
-                required: true,
-              },
-              {
-                field: 'isTrue',
                 required: true,
               }])
           }
