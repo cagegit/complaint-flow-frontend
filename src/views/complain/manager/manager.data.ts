@@ -71,14 +71,14 @@ export const columns: BasicColumn[] = [
   { title: '受理单位', dataIndex: 'acceptDepartment', width: 120 },
   { title: '反映管区', dataIndex: 'reportDistrictId_dictText', width: 120 },
   { title: '反映社区', dataIndex: 'reportCommunityId_dictText', width: 120 },
-  { title: '派单时间', dataIndex: 'sendTime', width: 160 },
+  { title: '市派单时间', dataIndex: 'cityDispatchTime', width: 160 },
+  { title: '区派单时间', dataIndex: 'sendTime', width: 160 },
   { title: '一级分类', dataIndex: 'categoryOne', width: 120 },
   { title: '二级分类', dataIndex: 'categoryTwo', width: 120 },
   { title: '三级分类', dataIndex: 'categoryThree', width: 120 },
   { title: '处理科室', dataIndex: 'assignDepts', width: 150 },
   { title: '处理社区/居委会', dataIndex: 'assignCommunitys', width: 200 },
   { title: '办结时间', dataIndex: 'doneTime', width: 160 },
-  // { title: '回复内容', dataIndex: '', width: 150 }, 去掉
   { title: '截止时间', dataIndex: 'deadline', width: 170 },
   { title: '督办人', dataIndex: 'overseeUserName', width: 120 },
   {

@@ -21,19 +21,22 @@
         <template v-if="column.key === 'content'">
           <div class="content-ellipsis" :title="record.resolveResult">{{ record.resolveResult }}</div>
         </template>
-        <!-- 是否属实 -->
-        <template v-if="column.key === 'replyFact'">
-          {{ record.replyFact == '1' ? '是' : (record.replyFact == '0' ? '否' : '无') }}
+        <!-- 是否联系 -->
+        <template v-if="column.key === 'replyContact'">
+          {{ getReplyContactText(record.replyContact) }}
         </template>
         <!-- 是否解决 -->
         <template v-if="column.key === 'replyResolve'">
-          {{ record.replyResolve == '1' ? '是' : (record.replyResolve == '0' ? '否' : '无') }}
+          {{ record.replyResolve == '1' ? '是' : (record.replyResolve == '0' ? '否' : '') }}
         </template>
         <!-- 是否满意 -->
         <template v-if="column.key === 'replySatisfy'">
-          {{ record.replySatisfy == '1' ? '是'  : (record.replySatisfy == '0' ? '否' : '无') }}
+          {{ record.replySatisfy == '1' ? '是'  : (record.replySatisfy == '0' ? '否' : '') }}
         </template>
-
+         <!-- 是否属实 -->
+        <template v-if="column.key === 'replyFact'">
+          {{ record.replyFact == '1' ? '是' : (record.replyFact == '0' ? '否' : '') }}
+        </template>
         <!-- 视频/文件个数列 -->
         <template v-if="column.key === 'fileCount'">
           <a-button 
@@ -280,6 +283,11 @@ const contactOptions = [
   { label: '无法联系', value: '2' },
 ]
 
+function getReplyContactText(value) {
+  const option = contactOptions.find(item => item.value == value);
+  return option ? option.label : '';
+}
+
 const { hasPermission } = usePermission();
 // 定义组件事件
 const emit = defineEmits(['auditChange', 'pageChange', 'replyStatusChange']);
@@ -441,25 +449,32 @@ const columns = [
     title: '回复内容',
     dataIndex: 'resolveResult',
     key: 'content',
-    width: '20%'
+    width: '15%',
+    ellipsis: true
+  },
+  {
+    title: '是否联系',
+    dataIndex: 'replyContact',
+    key: 'replyContact',
+    width: '9%'
   },
   {
     title: '是否解决',
     dataIndex: 'replyResolve',
     key: 'replyResolve',
-    width: '10%'
+    width: '9%'
   },
   {
     title: '是否满意',
     dataIndex: 'replySatisfy',
     key: 'replySatisfy',
-    width: '10%'
+    width: '9%'
   },
   {
     title: '是否属实',
     dataIndex: 'replyFact',
     key: 'replyFact',
-    width: '10%'
+    width: '9%'
   },
   {
     title: '文件/视频',
@@ -471,13 +486,13 @@ const columns = [
     title: '图片',
     dataIndex: 'imageCount',
     key: 'imageCount',
-    width: '10%'
+    width: '5%'
   },
   {
     title: '音频',
     dataIndex: 'audioCount',
     key: 'audioCount',
-    width: '10%'
+    width: '5%'
   },
   {
     // 红色星号表示必选
@@ -487,12 +502,12 @@ const columns = [
     ]),
     dataIndex: 'auditStatus',
     key: 'audit',
-    width: '10%'
+    width: '12%'
   },
   {
     title: '操作',
     key: 'action',
-    width: '10%'
+    width: '7%'
   }
 ];
 
