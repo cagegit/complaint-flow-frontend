@@ -2,6 +2,32 @@ import type { GlobConfig } from '/#/config';
 
 import { getAppEnvConfig } from '/@/utils/env';
 
+
+// 验证当前访问地址是否是域名
+function isDomainCheck() {
+  const hostname = location.hostname;
+  
+  // 特殊情况处理
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return false;
+  }
+  
+  // IPv4检查（更精确）
+  const ipv4Pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  if (ipv4Pattern.test(hostname)) {
+    return false;
+  }
+  
+  // IPv6检查
+  const ipv6Pattern = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^::$|^\[.*\]$/;
+  if (ipv6Pattern.test(hostname)) {
+    return false;
+  }
+  
+  // 包含字母的通常是域名
+  return /[a-zA-Z]/.test(hostname);
+};
+
 export const useGlobSetting = (): Readonly<GlobConfig> => {
   const {
     VITE_GLOB_APP_TITLE,
@@ -13,7 +39,7 @@ export const useGlobSetting = (): Readonly<GlobConfig> => {
     VITE_GLOB_APP_OPEN_QIANKUN,
     VITE_GLOB_DOMAIN_URL,
     VITE_GLOB_ONLINE_VIEW_URL,
-
+    VITE_GLOB_H5_URL, // 后台接口仅h5页面全路径地址，小程序端使用(必填)
     // 【JEECG作为乾坤子应用】
     VITE_GLOB_QIANKUN_MICRO_APP_NAME,
     VITE_GLOB_QIANKUN_MICRO_APP_ENTRY,
@@ -38,7 +64,8 @@ export const useGlobSetting = (): Readonly<GlobConfig> => {
     openQianKun: VITE_GLOB_APP_OPEN_QIANKUN,
     casBaseUrl: VITE_GLOB_APP_CAS_BASE_URL,
     urlPrefix: VITE_GLOB_API_URL_PREFIX,
-    uploadUrl: VITE_GLOB_DOMAIN_URL,
+    uploadUrl: isDomainCheck() ? VITE_GLOB_H5_URL : VITE_GLOB_DOMAIN_URL, // H5_URL默认必须是域名,DOMOAIN_URL可以是ip地址
+    h5UploadUrl: VITE_GLOB_H5_URL,
     viewUrl: VITE_GLOB_ONLINE_VIEW_URL,
 
     // 【JEECG作为乾坤子应用】是否以乾坤子应用模式启动

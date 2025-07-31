@@ -149,6 +149,7 @@ export interface GlobConfig {
   domainUrl: string;
   // Upload url (作废)
   uploadUrl?: string;
+  h5UploadUrl?: string;
   openSso?: string;
   openQianKun?: string;
   casBaseUrl?: string;
@@ -183,6 +184,8 @@ export interface GlobEnvConfig {
   //单点服务端地址
   VITE_GLOB_APP_CAS_BASE_URL: string;
   VITE_GLOB_DOMAIN_URL: string;
+  // H5页面全路径地址，小程序端使用(必填)
+  VITE_GLOB_H5_URL?: string;
   // Upload url
   VITE_GLOB_UPLOAD_URL?: string;
   // view url

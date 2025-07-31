@@ -36,7 +36,7 @@ export function getAppEnvConfig() {
     VITE_GLOB_APP_CAS_BASE_URL,
     VITE_GLOB_DOMAIN_URL,
     VITE_GLOB_ONLINE_VIEW_URL,
-
+    VITE_GLOB_H5_URL, // 后台接口仅h5页面全路径地址，小程序端使用(必填)
     // 【JEECG作为乾坤子应用】
     VITE_GLOB_QIANKUN_MICRO_APP_NAME,
     VITE_GLOB_QIANKUN_MICRO_APP_ENTRY,
@@ -59,7 +59,7 @@ export function getAppEnvConfig() {
     VITE_GLOB_APP_CAS_BASE_URL,
     VITE_GLOB_DOMAIN_URL,
     VITE_GLOB_ONLINE_VIEW_URL,
-
+    VITE_GLOB_H5_URL,
     // 【JEECG作为乾坤子应用】
     VITE_GLOB_QIANKUN_MICRO_APP_NAME,
     VITE_GLOB_QIANKUN_MICRO_APP_ENTRY,
