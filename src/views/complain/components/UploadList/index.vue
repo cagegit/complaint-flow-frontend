@@ -99,7 +99,7 @@
       :closable="true"
       :maskClosable="false"
     >
-      <div class="upload-modal-content">
+      <div :class="['upload-modal-content', { 'table-weixin': isWeixinH5() }]">
         <a-table 
           :dataSource="uploadedFiles" 
           :columns="uploadColumns" 
@@ -266,6 +266,7 @@ import {
 import { useMessage } from '/@/hooks/web/useMessage';
 import { uploadFile as uploadFileApi } from '/@/api/common/api';
 import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
+import { isWeixinH5 } from '/@/utils';
 
 // 定义文件类型接口
 interface FileItem {

@@ -1,7 +1,7 @@
 <template>
   <div class="p-0">
-    <div class="flex px-3 pb-[30px]">
-      <div style="flex: 1; border-right: 1px solid #ddd">
+    <div class="flex">
+      <div style="flex: 1; padding-bottom: 60px;">
         <!-- <BasicForm @register="registerForm"/> -->
         <a-tabs v-model:activeKey="activeKey">
           <a-tab-pane key="1" tab="回访审核">

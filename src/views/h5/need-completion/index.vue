@@ -1,72 +1,70 @@
 <template>
-  <div class="p-0 pb-[30px]">
-    <div class="flex">
-      <div style="flex: 1">
-        <!-- <BasicForm @register="registerForm"/> -->
-        <a-tabs v-model:activeKey="activeKey">
-          <a-tab-pane key="1" tab="预回复">
-            <div>
-              <!-- 二选一 -->
-              <div class="py-4 flex border-b border-gray-200 mb-4">
-                <div class="text-dark-100">请选择最终回复或驳回终审：</div>
-                <a-radio-group v-model:value="finalChoice" name="choiceGroup">
-                  <a-radio v-auth="'biz:complain:upAudit:finalReply'" value="1">最终回复</a-radio>
-                  <a-radio v-auth="'biz:complain:upAudit:reject'" value="0"><span class="text-red-500">驳回终审</span></a-radio>
-                </a-radio-group>
-              </div>
-              <!-- <a-divider class="mb-4"></a-divider> -->
-              <div v-show="finalChoice == '0'">
-                <BasicForm @register="registerRejectForm"></BasicForm>
-              </div>
-              <div v-show="finalChoice === '1'">
-                <BasicForm @register="registerPreReplyForm">
-                  <template #satisfactionTimeSlot="{ model, field }">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                  <template #contactTimeSlot="{ model, field }">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                  <template #resolutionTimeSlot="{ model, field }">
-                    <a-space>
-                      <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
-                      <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
-                    </a-space>
-                  </template>
-                  <!-- 附件 -->
-                  <template #uploadAttachmentsSlot="{ model, field }">
-                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList" />
-                  </template>
-                </BasicForm>
-              </div>
+  <div class="p-0 pb-[60px]">
+    <div style="flex: 1">
+    <!-- <BasicForm @register="registerForm"/> -->
+    <a-tabs v-model:activeKey="activeKey">
+        <a-tab-pane key="1" tab="预回复">
+        <div>
+            <!-- 二选一 -->
+            <div class="py-4 flex border-b border-gray-200 mb-4">
+            <div class="text-dark-100">请选择最终回复或驳回终审：</div>
+            <a-radio-group v-model:value="finalChoice" name="choiceGroup">
+                <a-radio v-auth="'biz:complain:upAudit:finalReply'" value="1">最终回复</a-radio>
+                <a-radio v-auth="'biz:complain:upAudit:reject'" value="0"><span class="text-red-500">驳回终审</span></a-radio>
+            </a-radio-group>
             </div>
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="基础信息" force-render>
-            <!-- 拒绝信息 -->
-            <RejectInfo :detailInfo="ticketDetail" />
-            <!-- 基本信息区域 -->
-            <BasicForm @register="registerForm" />
-            <!-- 领导批示区域 -->
-            <LeaderInstruction
-              v-if="ticketDetail.id"
-              :ticketId="ticketDetail.id"
-              :zrContent="ticketDetail.zhurenSuggest"
-              :sjContent="ticketDetail.shujiSuggest"
-              :style="{ width: '85%' }"
-            />
-          </a-tab-pane>
-          <a-tab-pane key="3" tab="回复记录" force-render>
-            <div class="pr-4">
-              <ReplyRecord :replyData="replyList" :total="total" :readOnly="true" />
+            <!-- <a-divider class="mb-4"></a-divider> -->
+            <div v-show="finalChoice == '0'">
+            <BasicForm @register="registerRejectForm"></BasicForm>
             </div>
-          </a-tab-pane>
-        </a-tabs>
-      </div>
+            <div v-show="finalChoice === '1'">
+            <BasicForm @register="registerPreReplyForm">
+                <template #satisfactionTimeSlot="{ model, field }">
+                <a-space>
+                    <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                    <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                </a-space>
+                </template>
+                <template #contactTimeSlot="{ model, field }">
+                <a-space>
+                    <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                    <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                </a-space>
+                </template>
+                <template #resolutionTimeSlot="{ model, field }">
+                <a-space>
+                    <a-input-number v-model:value="model[field][0]" placeholder="请输入数字" />分
+                    <a-input-number v-model:value="model[field][1]" placeholder="请输入数字" />秒
+                </a-space>
+                </template>
+                <!-- 附件 -->
+                <template #uploadAttachmentsSlot="{ model, field }">
+                <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList" />
+                </template>
+            </BasicForm>
+            </div>
+        </div>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="基础信息" force-render>
+        <!-- 拒绝信息 -->
+        <RejectInfo :detailInfo="ticketDetail" />
+        <!-- 基本信息区域 -->
+        <BasicForm @register="registerForm" />
+        <!-- 领导批示区域 -->
+        <LeaderInstruction
+            v-if="ticketDetail.id"
+            :ticketId="ticketDetail.id"
+            :zrContent="ticketDetail.zhurenSuggest"
+            :sjContent="ticketDetail.shujiSuggest"
+            :style="{ width: '85%' }"
+        />
+        </a-tab-pane>
+        <a-tab-pane key="3" tab="回复记录" force-render>
+        <div class="pr-4">
+            <ReplyRecord :replyData="replyList" :total="total" :readOnly="true" />
+        </div>
+        </a-tab-pane>
+    </a-tabs>
     </div>
     <div class="flex justify-between mt-4 gap-2 fixed bottom-0 left-0 right-0 bg-white p-4">
       <a-button block @click="closeModal">关闭</a-button>

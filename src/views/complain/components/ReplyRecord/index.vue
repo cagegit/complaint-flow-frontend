@@ -1,6 +1,6 @@
 <!-- 回复列表组件 -->
 <template>
-  <div class="reply-list-container">
+  <div :class="['reply-list-container', { 'table-weixin': isWeixinH5(), 'width-300': isWeixinH5() }]">
     <a-table 
       :dataSource="localReplyList" 
       :columns="columns" 
@@ -152,7 +152,7 @@
       :footer="null"
       @cancel="handleDetailModalCancel"
     >
-      <a-descriptions bordered :labelStyle="{minWidth: '120px'}"  :column="2" size="middle">
+      <a-descriptions bordered :labelStyle="{ minWidth: '120px' }" :column="isWeixinH5() ? 1 : 2" size="middle">
         <a-descriptions-item label="工单编号">
           {{ currentDetail.ticketId }}
         </a-descriptions-item>
@@ -230,6 +230,7 @@ import { audioTypes, imageTypes } from '/@/utils/fileType';
 import { editReplyYesNoStatus, getComplaintDetail } from '/@/api/common/api';
 import { BasicForm, useForm } from '/@/components/Form/index';
 import { usePermission } from '/@/hooks/web/usePermission';
+import { isWeixinH5 } from '/@/utils';
 // 定义回复列表项类型
 interface ReplyItem {
   id: string | number;
@@ -436,6 +437,7 @@ const currentDetail = ref<any>({});
 const rejectForm = ref({ reason: '' });
 const rejectSubmitLoading = ref(false);
 const previewImageList = ref<string[]>([]);
+const isWeixin = isWeixinH5();
 
 // 表格列定义
 const columns = [
@@ -443,56 +445,57 @@ const columns = [
     title: '社区/部门',
     dataIndex: 'orgName',
     key: 'department',
-    width: '10%'
+    width: isWeixin ? 100: '10%',
   },
   {
     title: '回复内容',
     dataIndex: 'resolveResult',
     key: 'content',
     width: '15%',
-    ellipsis: true
+    ellipsis: true,
+    minWidth: isWeixin ? 100: '100px',
   },
   {
     title: '是否联系',
     dataIndex: 'replyContact',
     key: 'replyContact',
-    width: '9%'
+    width: isWeixin ? 50: '9%'
   },
   {
     title: '是否解决',
     dataIndex: 'replyResolve',
     key: 'replyResolve',
-    width: '9%'
+    width: isWeixin ? 50: '9%'
   },
   {
     title: '是否满意',
     dataIndex: 'replySatisfy',
     key: 'replySatisfy',
-    width: '9%'
+    width: isWeixin ? 50: '9%'
   },
   {
     title: '是否属实',
     dataIndex: 'replyFact',
     key: 'replyFact',
-    width: '9%'
+    width: isWeixin ? 50: '9%'
   },
   {
     title: '文件/视频',
     dataIndex: 'fileCount',
     key: 'fileCount',
-    width: '10%'
+    width: isWeixin ? 50: '10%'
   },
   {
     title: '图片',
     dataIndex: 'imageCount',
     key: 'imageCount',
-    width: '5%'
+    width: isWeixin ? 50: '5%'
   },
   {
     title: '音频',
     dataIndex: 'audioCount',
     key: 'audioCount',
-    width: '5%'
+    width: isWeixin ? 50: '5%'
   },
   {
     // 红色星号表示必选
@@ -502,12 +505,12 @@ const columns = [
     ]),
     dataIndex: 'auditStatus',
     key: 'audit',
-    width: '12%'
+    width: isWeixin ? 120: '12%'
   },
   {
     title: '操作',
     key: 'action',
-    width: '7%'
+    width: isWeixin ? 70: '7%'
   }
 ];
 

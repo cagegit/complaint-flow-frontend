@@ -657,3 +657,9 @@ export function getCssVariableNumber(name: string): number {
   const value = getCssVariable(name);
   return parseFloat(value) || 0;
 }
+
+// 判断是微信中的H5页面
+export function isWeixinH5() {
+    const ua = navigator.userAgent.toLowerCase();
+    return ua.includes('micromessenger') && ua.includes('mobile');
+}

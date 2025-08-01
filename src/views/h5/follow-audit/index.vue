@@ -5,7 +5,7 @@
         <div style="flex: 1">
           <a-tabs v-model:activeKey="activeKey">
             <a-tab-pane key="1" tab="回访审核" force-render>
-              <div class="pl-20">
+              <div >
                 <a-divider orientation="left">审核内容</a-divider>
                 <BasicForm @register="registerAuditForm" />
                 <a-divider orientation="left">预回复</a-divider>
