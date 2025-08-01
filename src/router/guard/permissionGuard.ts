@@ -94,7 +94,7 @@ export function createPermissionGuard(router: Router) {
     // 从location.href中获取token
     const urlToken = getUrlParam('token');
     console.log("urlToken",urlToken, 'token:', token, 'to.path:', to.path, 'to.query.path:', to.query.path);
-    if (!token && urlToken) {
+    if (urlToken && urlToken != token) {
       // 设置token到缓存中
       userStore.setToken(urlToken);
       const userInfo = await userStore.getUserInfoAction();
