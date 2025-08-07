@@ -381,7 +381,7 @@
         const ticketId = currentEditRecordRef.value?.id;
         const newParams = {
           "auditStatus": auditValues.auditStatus,
-          "deleteFileIdList": [],
+          "deleteFileIdList": preReplyDeleteFileIdList,
           "finalResolveResult": auditValues.finalResolveResult,
           "followCode": auditValues.followCode,
           "labelCode": auditValues.labelCode,
