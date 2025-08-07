@@ -81,9 +81,28 @@ export function downloadByUrl({ url, target = '_blank', fileName }: { url: strin
       link.dispatchEvent(e);
       return true;
     }
+  } else if(document?.createElement) {
+     const link = document.createElement('a');
+    link.href = url;
+    link.target = target;
+    if (fileName) {
+      link.download = fileName;
+    } else {
+      link.download = url.substring(url.lastIndexOf('/') + 1, url.length);
+    }
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      // 延时移除，解决部分浏览器无法下载的问题
+      document.body.removeChild(link);
+    }, 100);
+    return true;
   }
   if (url.indexOf('?') === -1) {
-    url += '?download';
+    url += '?download=true';
+  } else if (url.indexOf('download') === -1) {
+    url += '&download=true';
   }
 
   openWindow(url, { target });
