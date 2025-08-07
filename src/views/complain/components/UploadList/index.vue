@@ -267,6 +267,7 @@ import { useMessage } from '/@/hooks/web/useMessage';
 import { uploadFile as uploadFileApi } from '/@/api/common/api';
 import { audioTypes, imageTypes, videoTypes } from '/@/utils/fileType';
 import { isWeixinH5 } from '/@/utils';
+  import { downloadByUrl } from '/@/utils/file/download';
 
 // 定义文件类型接口
 interface FileItem {
@@ -740,7 +741,8 @@ const handleDownload = (file) => {
     downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey}`;
   }
   // 模拟文件下载，实际应该调用API
-  window.open(downloadUrl);
+  // window.open(downloadUrl);
+  downloadByUrl({url:downloadUrl});
 };
 
 // 批量下载
