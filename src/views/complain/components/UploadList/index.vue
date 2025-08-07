@@ -717,7 +717,7 @@ const handlePreview = (file) => {
       // 处理临时文件路径
       previewUrl.value = `/citizen-voice/sys/common/static/${file.fileKey.replace('/citizen-voice/', '')}`;
     } else {
-      previewUrl.value = `/citizen-voice/sys/common/static/${file.fileKey}`;
+      previewUrl.value = `/citizen-voice/sys/common/static/${file.fileKey.replace('/citizen-voice/', '')}`;
     }
    
   } else {
@@ -738,7 +738,7 @@ const handleDownload = (file) => {
     // 处理临时文件路径
     downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey.replace('/citizen-voice/', '')}`;
   } else {
-    downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey}`;
+    downloadUrl = `/citizen-voice/sys/common/static/${file.fileKey.replace('/citizen-voice/', '')}`;
   }
   // 模拟文件下载，实际应该调用API
   // window.open(downloadUrl);

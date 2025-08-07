@@ -391,8 +391,8 @@
     let url = res?.fileKey;
     let fileName = res.fileName;
     // 兼容新的上传接口
-    if (url.indexOf('app-data/tmp/download/') > -1) {
-      url = `/citizen-voice/sys/common/static/${res.fileKey}`;
+    if (url?.indexOf?.('app-data/tmp/download/') > -1) {
+      url = `/citizen-voice/sys/common/static/${res.fileKey.replace('/citizen-voice/', '')}`;
     }
     downloadByUrl({ url, fileName });
   }
