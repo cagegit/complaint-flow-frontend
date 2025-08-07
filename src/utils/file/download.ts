@@ -91,13 +91,16 @@ export function downloadByUrl({ url, target = '_blank', fileName }: { url: strin
       link.download = url.substring(url.lastIndexOf('/') + 1, url.length);
     }
     link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      // 延时移除，解决部分浏览器无法下载的问题
-      document.body.removeChild(link);
-    }, 100);
-    return true;
+    if(typeof link?.click === 'function') {
+      // 兼容部分浏览器
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        // 延时移除，解决部分浏览器无法下载的问题
+        document.body.removeChild(link);
+      }, 500);
+      return true;
+    }
   }
   if (url.indexOf('?') === -1) {
     url += '?download=true';
