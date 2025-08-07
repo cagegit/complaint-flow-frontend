@@ -27,24 +27,24 @@ import { useAppStoreWithOut } from '@/store/modules/app';
 import { registerPackages } from '/@/utils/monorepo/registerPackages';
 
 // 检查URL参数中是否包含debug
-function hasDebugParam() {
-  const urlParams = new URLSearchParams(window.location.search)
-  return urlParams.has('debug')
-}
+// function hasDebugParam() {
+//   const urlParams = new URLSearchParams(window.location.search)
+//   return urlParams.has('debug')
+// }
 
-// 动态加载vconsole
-async function loadVConsole() {
-  if (hasDebugParam()) {
-    try {
-      // 动态导入vconsole
-      const VConsole = (await import('vconsole')).default
-      new VConsole()
-      console.log('VConsole已启用')
-    } catch (error) {
-      console.error('加载VConsole失败:', error)
-    }
-  }
-}
+// // 动态加载vconsole
+// async function loadVConsole() {
+//   if (hasDebugParam()) {
+//     try {
+//       // 动态导入vconsole
+//       const VConsole = (await import('vconsole')).default
+//       new VConsole()
+//       console.log('VConsole已启用')
+//     } catch (error) {
+//       console.error('加载VConsole失败:', error)
+//     }
+//   }
+// }
 
 // 程序入口
 async function main() {
@@ -67,7 +67,7 @@ async function bootstrap(props?: MainAppProps) {
   const app = createApp(App);
 
 // 加载vconsole（如果需要）
-loadVConsole()
+// loadVConsole()
   // 【QQYUN-6329】
   window['JAppRootInstance'] = app;
 
