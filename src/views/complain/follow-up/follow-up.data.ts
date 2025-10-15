@@ -1051,7 +1051,7 @@ export const formAuditSchema: FormSchema[] = [
       labelField: 'name',
       valueField: 'id',
       treeDataSimpleMode: true,
-      changeOnSelect: true,
+      changeOnSelect: false,
     },
     show: false
   },

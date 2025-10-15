@@ -1047,7 +1047,7 @@ export const auditFormSchema: FormSchema[] = [
       labelField: 'name',
       valueField: 'id',
       treeDataSimpleMode: true,
-      changeOnSelect: true,
+      changeOnSelect: false,
     },
     colProps: { span: 12 },
     dynamicDisabled: ({ values }) => {

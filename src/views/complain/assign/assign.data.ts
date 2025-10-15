@@ -744,7 +744,7 @@ export const addFormSchema: FormSchema[] = [
         },
         labelField: 'name',
         valueField: 'id',
-        changeOnSelect: true,
+        changeOnSelect: false,
         onChange: (values, options) => {
           console.log(values, options);
           // formModel.sevenFiveList = values;

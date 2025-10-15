@@ -111,3 +111,53 @@ export function downloadByUrl({ url, target = '_blank', fileName }: { url: strin
   openWindow(url, { target });
   return true;
 }
+
+export function downloadFileByUrl({ url, fileName }: { url: string; target?: TargetContext; fileName?: string }): void {
+    const ua = navigator.userAgent;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+    const isIOS = /(iPad|iPhone|iPod)/i.test(ua);
+
+    // IE10+ 专用下载
+    if (window?.navigator?.msSaveOrOpenBlob) {
+        fetch(url, { mode: 'cors' })
+            .then(res => {
+                if (!res.ok) throw new Error('网络错误，请重试！');
+                return res.blob();
+            })
+            .then(blob => {
+                window.navigator.msSaveOrOpenBlob(blob, fileName || url.split('/').pop());
+            })
+            .catch(() => {
+                window.open(url, '_blank');
+            });
+        return;
+    }
+
+    // iOS / Safari 特殊处理（只能打开预览）
+    if (isIOS || isSafari) {
+        window.open(url, '_blank');
+        return;
+    }
+
+    // 现代浏览器强制下载（fetch 解决跨域文件名问题）
+    fetch(url, { mode: 'cors' })
+        .then(res => {
+            if (!res.ok) throw new Error('网络错误，请重试！');
+            return res.blob();
+        })
+        .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = fileName || url.split('/').pop();
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 500);
+        })
+        .catch(() => {
+            // 如果 fetch 失败，直接尝试打开
+            window.open(url, '_blank');
+        });
+}
