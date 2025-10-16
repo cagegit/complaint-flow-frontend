@@ -235,12 +235,10 @@
           ...detailRes
         });
         // 判断原始标签的值
-        if(detailRes?.originalLabel) {
-          updateAuditSchema([{
-            field: 'sevenFiveId',
-            required: detailRes.originalLabel.indexOf('七有五性') > -1 ? true : false,
-          }])
-        }
+        updateAuditSchema([{
+          field: 'sevenFiveId',
+          required: (detailRes?.originalLabel && detailRes.originalLabel.indexOf('七有五性') > -1) ? true : false,
+        }])
         // 设置审核表单值
         setAuditFieldsValue({
           followCode: detailRes.followCode ? detailRes.followCode +'' : '',

@@ -267,6 +267,11 @@ const [registerDrawer, { setModalProps, closeModal }] = useModalInner(async (dat
         ticketDetail.value = {
           ...detailRes,
         };
+        // 判断原始标签的值
+        updateAssignSchema([{
+          field: 'sevenFiveId',
+          required: (detailRes?.originalLabel && detailRes.originalLabel.indexOf('七有五性') > -1) ? true : false,
+        }])
       } catch (error) {
         console.log(error);
       }
