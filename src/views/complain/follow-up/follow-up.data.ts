@@ -967,21 +967,42 @@ export const formAuditSchema: FormSchema[] = [
               {
               field: 'isSolved',
               required: false,
+              componentProps: { disabled: false }
             },
             {
               field: 'isSatisfaction',
               required: false,
+              componentProps: { disabled: false }
             }])
           } else {
-            updateSchema([
+            // 联系
+            if(value == '1') {
+             updateSchema([
               {
                 field: 'isSolved',
                 required: true,
+                componentProps: { disabled: false }
               },
               {
                 field: 'isSatisfaction',
                 required: true,
+                componentProps: { disabled: false }
               }])
+            } else {
+             updateSchema([
+              {
+                field: 'isSolved',
+                required: false,
+                componentProps: { disabled: true }
+              },
+              {
+                field: 'isSatisfaction',
+                required: false,
+                componentProps: { disabled: true }
+              }])
+            }
+            formModel['isSolved'] = null; 
+            formModel['isSatisfaction'] = null; 
           }
         }
       }),

@@ -1,12 +1,12 @@
 import { FormSchema } from '/@/components/Form';
 import { getDistrictDictItemsByCode } from '/@/utils/dict';
 import { getCityQuestionCategoryList, getCommunityListByCode, getDisposeDepartmentList, getHoldRemoveList } from '/@/api/common/api';
-import { defaultColProps } from '../../shareInfo';
+// import { defaultColProps } from '../../shareInfo';
 
 export const contactOptions = [
   { label: '联系', value: '1' },
   { label: '未联系', value: '0' },
-  { label: '无法联系', value: '2' },
+  // { label: '无法联系', value: '2' },
 ]
 
 // 表单字段信息
@@ -139,12 +139,44 @@ export const formSchema: FormSchema[] = [
     field: 'isContact',
     label: '是否联系',
     component: 'Select',
-    componentProps: {
+      componentProps:({formActionType, formModel}) => ({
       placeholder: '请输入是否联系',
       // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
       options: contactOptions,  // 固定选项
       allowClear: true,
-    },
+      onChange: (value:string) => {
+        const { updateSchema } = formActionType;
+        console.log('isContact: ',value);
+        // 联系
+        if(value  == '1') {
+          updateSchema([
+          {
+            field: 'isSolved',
+            required: true,
+            componentProps: { disabled: false }
+          },
+          {
+            field: 'isSatisfaction',
+            required: true,
+            componentProps: { disabled: false }
+          }])
+        } else {
+          updateSchema([
+          {
+            field: 'isSolved',
+            required: false,
+            componentProps: { disabled: true }
+          },
+          {
+            field: 'isSatisfaction',
+            required: false,
+            componentProps: { disabled: true }
+          }])
+        }
+        formModel['isSolved'] = null;
+        formModel['isSatisfaction'] = null;
+      }
+    }),
     // required: true,
     colProps: { span: 12 },
   },
@@ -1597,12 +1629,53 @@ export const formFinalSchema: FormSchema[] = [
     field: 'isContact',
     label: '是否联系',
     component: 'Select',
-    componentProps: {
+    componentProps:({formActionType, formModel}) => ({
       placeholder: '请输入是否联系',
       // options: getDistrictDictItemsByCode('is_contact'),  // 需要从接口获取
       options: contactOptions,  // 固定选项
       allowClear: true,
-    },
+      onChange: (value) => {
+        const { updateSchema } = formActionType;
+        // 联系
+        if(value == '1') {
+          updateSchema([
+             {
+              field: 'isSolved',
+              required: true,
+              componentProps: {
+                disabled: false
+              }
+            },
+            {
+              field: 'isSatisfaction',
+              required: true,
+              componentProps: {
+                disabled: false
+              }
+            }
+          ])
+        } else {
+          updateSchema([
+             {
+              field: 'isSolved',
+              required: false,
+              componentProps: {
+                disabled: true
+              }
+            },
+            {
+              field: 'isSatisfaction',
+              required: false,
+              componentProps: {
+                disabled: true
+              }
+            }
+          ])
+        }
+        formModel['isSolved'] = null;
+        formModel['isSatisfaction'] = null;
+      }
+    }),
     required: true,
     colProps: { span: 12 },
   },

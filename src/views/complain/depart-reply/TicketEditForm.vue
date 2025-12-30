@@ -110,7 +110,7 @@
     const contactOptions = [
       { label: '联系', value: '1' },
       { label: '未联系', value: '0' },
-      { label: '无法联系', value: '2' },
+      // { label: '无法联系', value: '2' },
     ]
     const { createMessage } = useMessage();
     // 声明Emits
