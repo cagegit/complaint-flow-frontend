@@ -147,6 +147,11 @@ export const columns: BasicColumn[] = [
   { title: '当前处理单位', dataIndex: 'orgName', width: 120 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+  { title: '是否保留', dataIndex: 'retainFlag', width: 100,
+     customRender({ text }) {
+      return text == 1 ? '保留' : '剔除';
+    },
+  },
   {
     title: '重点工单',
     dataIndex: 'importFlag',
@@ -346,6 +351,19 @@ export const searchFormSchema: FormSchema[] = [
     label: '主要内容',
     field: 'mainContent',
     component: 'Input',
+    colProps: { span: 6 },
+  },
+  {
+    label: '是否保留',
+    field: 'retainFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '保留', value: 1 },
+        { label: '剔除', value: 0 },
+      ],
+      allowClear: true,
+    },
     colProps: { span: 6 },
   },
   {
@@ -640,6 +658,17 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
+    label: '是否保留',
+    field: 'retainFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '保留', value: 1 },
+        { label: '剔除', value: 0 },
+      ],
+    }
+  },
+  {
     label: '派单人员',
     field: 'sendUser',
     component: 'Input',
@@ -670,10 +699,10 @@ export const formSchema: FormSchema[] = [
     label: '承办单位',
     field: 'resolveDepartment',
     component: 'Input',
-    colProps: { span: 16 },
-    itemProps: {
-      wrapperCol: { span: 16, sm: { span: 21 } },
-    },
+    // colProps: { span: 16 },
+    // itemProps: {
+    //   wrapperCol: { span: 16, sm: { span: 21 } },
+    // },
   },
   {
     label: '处理情况',

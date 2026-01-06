@@ -52,6 +52,11 @@ export const columns: BasicColumn[] = [
   { title: '当前处理单位', dataIndex: 'orgName', width: 120 },
   { title: '标题', dataIndex: 'title', width: 180 },
   { title: '主要内容', dataIndex: 'mainContent', width: 200 },
+  { title: '是否保留', dataIndex: 'retainFlag', width: 100,
+     customRender({ text }) {
+      return text == 1 ? '保留' : '剔除';
+    },
+  },
   {
     title: '重点工单',
     dataIndex: 'importFlag',
@@ -572,26 +577,19 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 8 },
   },
-  // {
-  //   label: '突发案件',
-  //   field: 'suddenCase',
-  //   component: 'Select',
-  //   componentProps: {
-  //     api: async () => {
-  //       const res = await getDictItems('biz_sudden_case');
-  //       if (Array.isArray(res)) {
-  //         res.unshift({ text: '==请选择==', value: '' });
-  //         return res;
-  //       } else {
-  //         return [];
-  //       }
-  //     },
-  //     labelField: 'text',
-  //     valueField: 'value',
-  //     placeholder: '==请选择==',
-  //   },
-  //   colProps: { span: 8 },
-  // },
+  {
+    label: '是否保留',
+    field: 'retainFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '保留', value: 1 },
+        { label: '剔除', value: 0 },
+      ],
+      allowClear: true,
+    },
+    colProps: { span: 8 },
+  },
   {
     label: '重点对象',
     field: 'monitorType',
@@ -931,6 +929,17 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
+    label: '是否保留',
+    field: 'retainFlag',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '保留', value: 1 },
+        { label: '剔除', value: 0 },
+      ],
+    }
+  },
+  {
     field: 'sendUser',
     label: '派单人员',
     component: 'Input',
@@ -968,10 +977,10 @@ export const formSchema: FormSchema[] = [
     field: 'resolveDepartment',
     label: '承办单位',
     component: 'Input',
-    colProps: { span: 16 },
-    itemProps: {
-      wrapperCol: { span: 16, sm: { span: 21 } },
-    },
+    // colProps: { span: 16 },
+    // itemProps: {
+    //   wrapperCol: { span: 16, sm: { span: 21 } },
+    // },
   },
   {
     field: 'resolveOpinion',

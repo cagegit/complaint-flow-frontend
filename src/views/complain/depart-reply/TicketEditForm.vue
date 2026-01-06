@@ -361,11 +361,29 @@
             ],
           },
           colProps: {
-            span: 24
+            span: 12
           },
-          itemProps: {
-            wrapperCol: { span: 24, sm: { span: 21 } },
-          }
+          // itemProps: {
+          //   wrapperCol: { span: 24, sm: { span: 21 } },
+          // }
+        },
+        {
+          field: 'retainFlag',
+          label: '是否保留',
+          component: 'RadioGroup',
+          required: true,
+          componentProps: {
+            options: [
+              { label: '保留', value: 1 },
+              { label: '剔除', value: 0 },
+            ],
+          },
+          colProps: {
+            span: 12
+          },
+          // itemProps: {
+          //   wrapperCol: { span: 24, sm: { span: 21 } },
+          // }
         },
         {
           field: 'resolveResult',

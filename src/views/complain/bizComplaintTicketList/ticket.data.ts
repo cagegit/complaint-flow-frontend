@@ -509,6 +509,17 @@ export const formSchema: FormSchema[] = [
       }
     },
     {
+      label: '是否保留',
+      field: 'retainFlag',
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '保留', value: 1 },
+          { label: '剔除', value: 0 },
+        ],
+      }
+    },
+    {
       label: '派单人员',
       field: 'sendUser',
       component: 'Input',
@@ -539,10 +550,10 @@ export const formSchema: FormSchema[] = [
       label: '承办单位',
       field: 'resolveDepartment',
       component: 'Input',
-      colProps: { span: 16 },
-      itemProps: {
-        wrapperCol: { span: 16, sm: { span: 21 } },
-      }
+      // colProps: { span: 16 },
+      // itemProps: {
+      //   wrapperCol: { span: 16, sm: { span: 21 } },
+      // }
     },
     {
       label: '处理情况',
