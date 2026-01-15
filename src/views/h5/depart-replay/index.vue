@@ -781,6 +781,7 @@
         replyFact: params.replyFact, // 是否属实
         replyResolve: params.replyResolve, // 是否解决
         replySatisfy: params.replySatisfy, // 是否满意
+        retainFlag: params.retainFlag, // 是否保留
       };
       try {
         if (tp === '2') {
