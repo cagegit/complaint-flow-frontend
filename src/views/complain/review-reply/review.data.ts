@@ -853,4 +853,17 @@ export const formAuditSchema: FormSchema[] = [
       wrapperCol: { span: 24, sm: { span: 21 } },
     },
   },
+  {
+    field: 'attachments',
+    label: '附件',
+    component: 'Upload',
+    slot: 'uploadAttachmentsSlot',
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 23 } },
+    },
+    // 可以通过showTable来展示已上传文件列表
+    helpMessage: '请上传附件',
+
+  },
 ];

@@ -30,7 +30,11 @@
                 <!-- 分割线 -->
               <a-divider orientation="left" ><span class="text-red-500">*回复审核(必填表单)</span></a-divider>
               <!-- 回复审核表单 -->
-              <BasicForm @register="registerAuditForm"/>
+              <BasicForm @register="registerAuditForm">
+                  <template #uploadAttachmentsSlot="{model, field}">
+                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList"/>
+                  </template>
+              </BasicForm>
                <!-- <a-divider orientation="left">预回复(可选)</a-divider>
               <BasicForm @register="registerPreReplyForm">
                   <template #satisfactionTimeSlot="{model, field}">
@@ -101,7 +105,7 @@
     import { audioTypes, imageTypes } from '/@/utils/fileType';
     // @ts-ignore
     import { preFormLogicHandler, formFinalNoRequiredSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
-    // import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
+    import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     import { defaultSpan } from '../shareInfo';
     // 声明Emits
     const emit = defineEmits(['success', 'register']);
@@ -123,6 +127,7 @@
     // 预回复删除文件id列表
     let preReplyDeleteFileIdList:string[] = [];
     // 预回复表单
+    let preReplyForm:any = {};
     // const [registerPreReplyForm, { validate: validatePreReplyForm, setFieldsValue: setPreReplyFieldsValue, updateSchema: preReplyUpdateSchema }] = useForm({
     //   labelWidth: 150,
     //   schemas: preReplyFormSchema,
@@ -184,6 +189,8 @@
       setModalProps({ confirmLoading: false });
       isUpdate.value = !!data?.isUpdate;
       currentEditRecordRef.value = data.record;
+      // 重置
+      preReplyForm = {};
       // 查询详情数据
       let res:any =null;
       try {
@@ -258,30 +265,24 @@
         });
       }
      // 查询预回复详情
-      // getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
-      //   console.log(preRes);
-      //   if(preRes?.upReply) {
-      //     // 设置预回复表单值
-      //     setPreReplyFieldsValue({
-      //       ...preRes.upReply,
-      //        replySatisfiedTime: preRes.upReply.replySatisfiedTime ? preRes.upReply.replySatisfiedTime.split(',') : [],
-      //       replyContactTime: preRes.upReply.replyContactTime ? preRes.upReply.replyContactTime.split(',') : [],
-      //       replyResolveTime: preRes.upReply.replyResolveTime ? preRes.upReply.replyResolveTime.split(',') : [],
-      //       // 增加对级联字段的处理
-      //       replyRequestType: preRes.upReply.replyRequestType ? preRes.upReply.replyRequestType.split(',') : [],
-      //       lastOfficeId: preRes.upReply.lastOfficeId ? preRes.upReply.lastOfficeId.split(',') : [],
-      //       whistleDepartmentId: preRes.upReply.whistleDepartmentId ? preRes.upReply.whistleDepartmentId.split(',') : [],
-      //       removeHangingAccountsTypeId: preRes.upReply.removeHangingAccountsTypeId ? preRes.upReply.removeHangingAccountsTypeId.split(',') : [],
-      //       // 处理附件
-      //       attachments: Array.isArray(preRes.handleFileList) ? preRes.handleFileList : []
-      //     });
-      //     const upReply = preRes.upReply;
-      //     // 更新组件级联关系
-      //     preFormLogicHandler(upReply, preReplyUpdateSchema);
-      //   }
-      // }).catch(err => {
-      //   console.error('查询预回复详情失败', err);
-      // });
+     getPreReplyDetail({ticketId: data.record?.id}).then(preRes => {
+        console.log(preRes);
+        if(preRes?.upReply) {
+          // 设置预回复表单值
+          setAuditFieldsValue({
+            // 处理附件
+            attachments: Array.isArray(preRes.handleFileList) ? preRes.handleFileList : []
+          });
+          // const upReply = preRes.upReply;
+          // 更新组件级联关系
+          // preFormLogicHandler(upReply, preReplyUpdateSchema);
+          preReplyForm = {
+            ...preRes.upReply
+          };
+        }
+      }).catch(err => {
+        console.error('查询预回复详情失败', err);
+      });
     });
     //获取标题
     const getTitle = computed(() => {
@@ -305,36 +306,36 @@
       try {
         let values = await validate();
         // 优先保存预回复表单
-        // try{
-        //   if(currentEditRecordRef.value) {
-        //     const preParams = await validatePreReplyForm();
-        //     // 判断附件是否存在
-        //     let newFileList:any[] = [];
-        //     if (preParams?.attachments) {
-        //       newFileList = preReplyFileList.map(v => {
-        //         return {
-        //           districtFileTagType: v.districtFileTagType,
-        //           fileKey: v.fileKey,
-        //           fileName: v.fileName,
-        //           fileSize: v.fileSize,
-        //           fileTagType: v.fileTagType,
-        //           id: v.id
-        //         }
-        //        });  
-        //     }
-        //     const resResult = await savePreReply({
-        //       "deleteFileIdList": preReplyDeleteFileIdList,
-        //       "replyFileList": newFileList,
-        //       "ticketId": currentEditRecordRef.value?.id,
-        //       "ticketReplyDataVo": {
-        //         ...preParams
-        //       }
-        //     });
-        //     console.log('保存预回复信息成功', resResult);
-        //   }
-        // } catch (error) {
-        //   console.error('保存区级信息失败', error);
-        // }
+        try{
+          if(currentEditRecordRef.value) {
+            // const preParams = await validatePreReplyForm();
+            // 判断附件是否存在
+            let newFileList:any[] = [];
+            if (values?.attachments) {
+              newFileList = preReplyFileList.map(v => {
+                return {
+                  districtFileTagType: v.districtFileTagType,
+                  fileKey: v.fileKey,
+                  fileName: v.fileName,
+                  fileSize: v.fileSize,
+                  fileTagType: v.fileTagType,
+                  id: v.id
+                }
+               });  
+            }
+            const resResult = await savePreReply({
+              "deleteFileIdList": preReplyDeleteFileIdList,
+              "replyFileList": newFileList,
+              "ticketId": currentEditRecordRef.value?.id,
+              "ticketReplyDataVo": {
+                ...preReplyForm
+              }
+            });
+            console.log('保存预回复信息成功', resResult);
+          }
+        } catch (error) {
+          console.error('保存区级信息失败', error);
+        }
         setModalProps({ confirmLoading: true });
         values.userIdentity === 1 && (values.departIds = '');
         let isUpdateVal = unref(isUpdate);
