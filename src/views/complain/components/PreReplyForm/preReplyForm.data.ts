@@ -9,6 +9,22 @@ export const contactOptions = [
   // { label: '无法联系', value: '2' },
 ]
 
+export function updateFormationEraSchema(
+  ticketInfo: any,
+  updateSchema: (items: any) => void,
+  setFieldsValue?: (values: any) => void,
+) {
+  const required = ticketInfo?.categoryOne === '城乡建设' && ticketInfo?.categoryTwo === '违法建设';
+  updateSchema([{
+    field: 'formationEra',
+    ifShow: required,
+    required,
+  }]);
+  if (!required) {
+    setFieldsValue?.({ formationEra: null });
+  }
+}
+
 // 表单字段信息
 export const formSchema: FormSchema[] = [
   // {
@@ -287,6 +303,22 @@ export const formSchema: FormSchema[] = [
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
     }
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',
@@ -1058,6 +1090,22 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
     }
   },
   {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
+  },
+  {
     field: 'handleBasisPolicy',
     label: '办理依据',
     component: 'InputTextArea',
@@ -1790,6 +1838,22 @@ export const formFinalSchema: FormSchema[] = [
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
     }
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',
@@ -2633,6 +2697,22 @@ export const formReplaySchema: FormSchema[] = [
     required: true,
   },
   {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
+  },
+  {
     field: 'handleBasisPolicy',
     label: '办理依据',
     component: 'InputTextArea',
@@ -3378,6 +3458,22 @@ export const formFollowUpSchema: FormSchema[] = [
        wrapperCol: { span: 24, sm: { span: 21 } },
     },
     show: false
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',

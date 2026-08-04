@@ -32,7 +32,7 @@
               <!-- 回复审核表单 -->
               <BasicForm @register="registerAuditForm">
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList"/>
+                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" timestamp-prefix @change="changePreList" @delete="handleDeleteList"/>
                   </template>
               </BasicForm>
                <!-- <a-divider orientation="left">预回复(可选)</a-divider>

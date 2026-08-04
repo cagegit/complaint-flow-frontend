@@ -97,7 +97,7 @@
      // @ts-ignore
     import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
     // 预回复表单
-    import { preFormLogicHandler, formSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formSchema as preReplyFormSchema, updateFormationEraSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
@@ -272,6 +272,7 @@ import { audioTypes, imageTypes } from '/@/utils/fileType';
         } else {
           preReplyDetail.value = null;
         }
+        updateFormationEraSchema({ ...data.record, ...ticketDetail.value }, preReplyUpdateSchema, setPreReplyFieldValues);
       }).catch(err => {
         console.error('查询预回复详情失败', err);
       });

@@ -39,7 +39,7 @@
                   </template>
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList" />
+                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" timestamp-prefix @change="changePreList" @delete="handleDeleteList" />
                     </template>
                 </BasicForm>
               </div>
@@ -87,7 +87,7 @@
       // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
-    import { preFormLogicHandler, formFinalSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFinalSchema as preReplyFormSchema, updateFormationEraSchema } from '../components/PreReplyForm/preReplyForm.data';
     //@ts-ignore
     import ReplyRecord from '../components/ReplyRecord/index.vue'; // 导入回复记录组件
     // @ts-ignore
@@ -296,6 +296,7 @@
           // 清除验证
           clearPreReplyValidate?.();
         }
+        updateFormationEraSchema({ ...data.record, ...ticketDetail.value }, updateSchema, setPreReplyFieldsValue);
       }).catch(err => {
         console.error('查询预回复详情失败', err);
       });
@@ -421,4 +422,3 @@
       }
     }
   </script>
-  

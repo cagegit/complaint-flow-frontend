@@ -75,7 +75,7 @@
               <BasicForm @register="registerPreReplyForm">
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList"/>
+                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" timestamp-prefix @change="changePreList" @delete="handleDeleteList"/>
                   </template>
               </BasicForm>
             </a-tab-pane>
@@ -151,7 +151,7 @@
      // @ts-ignore 领导批示组件
     import LeaderInstruction from '../components/LeaderInstruction/index.vue';
     // @ts-ignore
-    import { preFormLogicHandler, formFollowUpSchema, contactOptions } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFollowUpSchema, contactOptions, updateFormationEraSchema } from '../components/PreReplyForm/preReplyForm.data';
     import { getPreReplyDetail, savePreReply } from '../components/PreReplyForm/preReplyForm.api';
     import { audioTypes, imageTypes } from '/@/utils/fileType';
     import { defaultSpan } from '../shareInfo';
@@ -387,6 +387,7 @@
           // 更新组件级联关系
           preFormLogicHandler(upReply, preReplyUpdateSchema);
         }
+        updateFormationEraSchema({ ...data.record, ...ticketDetail.value }, preReplyUpdateSchema, setPreReplyFieldsValue);
       }).catch(err => {
         console.error('查询预回复详情失败', err);
       });
@@ -496,4 +497,3 @@
       }
     };
   </script>
-  

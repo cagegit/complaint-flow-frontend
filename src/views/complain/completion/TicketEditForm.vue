@@ -70,7 +70,7 @@
     // @ts-ignore
     import UploadList from '../components/UploadList/index.vue';
     // @ts-ignore
-    import { preFormLogicHandler, formFinalNoRequiredSchema as preReplyFormSchema } from '../components/PreReplyForm/preReplyForm.data';
+    import { preFormLogicHandler, formFinalNoRequiredSchema as preReplyFormSchema, updateFormationEraSchema } from '../components/PreReplyForm/preReplyForm.data';
     // @ts-ignore
     import RejectInfo from '../components/RejectInfo/index.vue';
     import { getComplaintDetail } from '/@/api/common/api';
@@ -177,6 +177,7 @@
           // 更新组件级联关系
           preFormLogicHandler(upReply, preReplyUpdateSchema);
         }
+        updateFormationEraSchema({ ...data.record, ...ticketDetail.value }, preReplyUpdateSchema, setPreReplyFieldValues);
       }).catch(err => {
         console.error('查询预回复详情失败', err);
       });
