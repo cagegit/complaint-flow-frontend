@@ -253,6 +253,7 @@
 
 <script setup lang="ts" name="UploadList">
 import { ref, onMounted, watch, defineModel, defineProps, PropType, unref } from 'vue';
+import dayjs from 'dayjs';
 //@ts-ignore
 import { 
   PlusOutlined, 
@@ -315,6 +316,11 @@ const props = defineProps({
   showReplySelectBtn: {
     type: Boolean,
     default: true
+  },
+  // 添加附件时为文件名增加时间前缀，避免预回复附件重名
+  timestampPrefix: {
+    type: Boolean,
+    default: false
   }
 });
 const modelValue = defineModel('value', {
@@ -368,12 +374,15 @@ function handleSelectReplyFiles() {
     createMessage.warning('请至少选择一个回复记录附件');
     return;
   }
+
+  const timestamp = dayjs().format('YYYYMMDDHHmmss');
   
   // 将选中的回复记录附件添加到文件列表
   const selectedFiles = props.replyFileList.filter(file => 
     selectedReplyRowKeys.value.includes(file.fileKey)
   ).map(file => ({
     ...file,
+    fileName: props.timestampPrefix ? `${timestamp}-${file.fileName}` : file.fileName,
     fileTagType: file.fileTagType || 2, // 默认处置过程
     districtFileTagType: file.districtFileTagType || (isAudioFile(file) ? 2 : ''), // 录音类型默认选择
   }));
@@ -619,6 +628,9 @@ const beforeUpload = (file: File) => {
 const handleUploadChange = async (info) => {
   console.log('上传文件信息:', info);
   const { file } = info;
+  const uploadFileName = props.timestampPrefix
+    ? `${dayjs().format('YYYYMMDDHHmmss')}-${file.name}`
+    : file.name;
   
   if (file.status !== 'uploading') {
     try {
@@ -626,7 +638,11 @@ const handleUploadChange = async (info) => {
       // const formData = new FormData();
       // formData.append('file', file);
       
-      const response = await uploadFileApi(info, (x:any) => {
+      const response = await uploadFileApi({
+        ...info,
+        file: file.originFileObj || file,
+        filename: uploadFileName,
+      }, (x:any) => {
         console.log(x);
       });
       console.log(response);
@@ -636,7 +652,7 @@ const handleUploadChange = async (info) => {
         // 构建文件项
         const newFile: FileItem = {
           uid: file.uid,
-          fileName: file.name,
+          fileName: uploadFileName,
           fileSize: file.size,
           fileKey: fileData,
           fileTagType: 2, // 默认处置过程
@@ -645,13 +661,13 @@ const handleUploadChange = async (info) => {
         
         // 添加到已上传文件列表
         uploadedFiles.value = [...uploadedFiles.value, newFile];
-        createMessage.success(`${file.name} 上传成功`);
+        createMessage.success(`${uploadFileName} 上传成功`);
       } else {
-        createMessage.error(`${file.name} 上传失败: ${response?.message || '未知错误'}`);
+        createMessage.error(`${uploadFileName} 上传失败: ${response?.message || '未知错误'}`);
       }
     } catch (error:any) {
       console.error('文件上传错误:', error);
-      createMessage.error(`${file.name} 上传失败: ${error?.message || '未知错误'}`);
+      createMessage.error(`${uploadFileName} 上传失败: ${error?.message || '未知错误'}`);
     }
   }
 };

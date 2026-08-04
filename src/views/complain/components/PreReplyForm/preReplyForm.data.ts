@@ -78,19 +78,6 @@ export const formSchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'formationEra',
-    label: '形成年代',
-    component: 'Select',
-    componentProps: {
-      placeholder: '请选择形成年代',
-      options: getDistrictDictItemsByCode('formation_era'),
-      allowClear: true,
-    },
-    colProps: { span: 12 },
-    ifShow: false,
-    required: false,
-  },
-  {
     field: 'communityId',
     label: '社区/村',
     component: 'ApiSelect',
@@ -316,6 +303,22 @@ export const formSchema: FormSchema[] = [
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
     }
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',
@@ -894,19 +897,6 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'formationEra',
-    label: '形成年代',
-    component: 'Select',
-    componentProps: {
-      placeholder: '请选择形成年代',
-      options: getDistrictDictItemsByCode('formation_era'),
-      allowClear: true,
-    },
-    colProps: { span: 12 },
-    ifShow: false,
-    required: false,
-  },
-  {
     field: 'communityId',
     label: '社区/村',
     component: 'ApiSelect',
@@ -1098,6 +1088,22 @@ export const formFinalNoRequiredSchema: FormSchema[] = [
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
     }
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',
@@ -1594,19 +1600,6 @@ export const formFinalSchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'formationEra',
-    label: '形成年代',
-    component: 'Select',
-    componentProps: {
-      placeholder: '请选择形成年代',
-      options: getDistrictDictItemsByCode('formation_era'),
-      allowClear: true,
-    },
-    colProps: { span: 12 },
-    ifShow: false,
-    required: false,
-  },
-  {
     field: 'communityId',
     label: '社区/村',
     component: 'ApiSelect',
@@ -1845,6 +1838,22 @@ export const formFinalSchema: FormSchema[] = [
     itemProps: {
        wrapperCol: { span: 24, sm: { span: 21 } },
     }
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',
@@ -2420,19 +2429,6 @@ export const formReplaySchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'formationEra',
-    label: '形成年代',
-    component: 'Select',
-    componentProps: {
-      placeholder: '请选择形成年代',
-      options: getDistrictDictItemsByCode('formation_era'),
-      allowClear: true,
-    },
-    colProps: { span: 12 },
-    ifShow: false,
-    required: false,
-  },
-  {
     field: 'communityId',
     label: '社区/村',
     component: 'ApiSelect',
@@ -2699,6 +2695,22 @@ export const formReplaySchema: FormSchema[] = [
     //    wrapperCol: { span: 24, sm: { span: 21 } },
     // },
     required: true,
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',
@@ -3212,19 +3224,6 @@ export const formFollowUpSchema: FormSchema[] = [
     show: false
   },
   {
-    field: 'formationEra',
-    label: '形成年代',
-    component: 'Select',
-    componentProps: {
-      placeholder: '请选择形成年代',
-      options: getDistrictDictItemsByCode('formation_era'),
-      allowClear: true,
-    },
-    colProps: { span: 12 },
-    ifShow: false,
-    required: false,
-  },
-  {
     field: 'communityId',
     label: '社区/村',
     component: 'ApiSelect',
@@ -3459,6 +3458,22 @@ export const formFollowUpSchema: FormSchema[] = [
        wrapperCol: { span: 24, sm: { span: 21 } },
     },
     show: false
+  },
+  {
+    field: 'formationEra',
+    label: '形成年代',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择形成年代',
+      options: getDistrictDictItemsByCode('formation_era'),
+      allowClear: true,
+    },
+    colProps: { span: 24 },
+    itemProps: {
+       wrapperCol: { span: 24, sm: { span: 21 } },
+    },
+    ifShow: false,
+    required: false,
   },
   {
     field: 'handleBasisPolicy',

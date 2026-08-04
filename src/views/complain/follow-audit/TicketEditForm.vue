@@ -39,7 +39,7 @@
                   </template>
                   <!-- 附件 -->
                   <template #uploadAttachmentsSlot="{model, field}">
-                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" @change="changePreList" @delete="handleDeleteList" />
+                    <UploadList v-model:value="model[field]" :replyFileList="allReplyFileList" timestamp-prefix @change="changePreList" @delete="handleDeleteList" />
                     </template>
                 </BasicForm>
               </div>
@@ -422,4 +422,3 @@
       }
     }
   </script>
-  
