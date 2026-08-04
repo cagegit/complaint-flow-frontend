@@ -41,7 +41,7 @@
 <script lang="ts" setup name="PreReplayForm">
     import { ref, useAttrs } from 'vue';
     import { BasicForm, useForm } from '/@/components/Form/index';
-    import { formSchema } from './preReplyForm.data';
+    import { formSchema, updateFormationEraSchema } from './preReplyForm.data';
     import { BasicModal, useModalInner } from '/@/components/Modal';
     import { savePreReply, getPreReplyDetail } from './preReplyForm.api';
     import { useMessage } from '/@/hooks/web/useMessage';
@@ -57,7 +57,7 @@
     let isFormDepartUser = false;
     const showFooter = ref(true);
     //表单配置
-    const [registerForm, { setProps, resetFields, setFieldsValue, validate }] = useForm({
+    const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
       labelWidth: 150,
       schemas: formSchema,
       showActionButtonGroup: false,
@@ -97,10 +97,11 @@
           // 表单内容
           if(res.upReply) {
             setFieldsValue({
-              ...res,
+              ...res.upReply,
               attachments: fileList,
             });
           }
+          updateFormationEraSchema(data.record, updateSchema, setFieldsValue);
         }
       } catch (error) {
         console.error('获取预回复详情失败:', error);
